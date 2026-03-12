@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MicroBlaze 실습 교육",
-  description: "MicroBlaze 환경 설정 및 기초 실습 가이드",
+  title: "교육 플랫폼 - ED&C",
+  description: "각종 교육 과정을 위한 웹 플랫폼",
 };
 
 export default function RootLayout({

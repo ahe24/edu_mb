@@ -4,12 +4,12 @@ import Link from 'next/link';
 
 export default function Dashboard() {
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: 'var(--slide-bg)',
       color: 'var(--text-main)',
       padding: '2rem'
@@ -22,7 +22,7 @@ export default function Dashboard() {
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', width: '100%', maxWidth: '800px' }}>
-        
+
         {/* MicroBlaze 실습 교육 카드 */}
         <Link href="/mb" style={{ textDecoration: 'none' }}>
           <div style={{
@@ -34,8 +34,8 @@ export default function Dashboard() {
             transition: 'transform 0.2s',
             cursor: 'pointer',
           }}
-          onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-          onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
           >
             <h2 style={{ fontSize: '1.8rem', color: 'var(--text-main)', marginBottom: '1rem', fontWeight: 'bold' }}>MicroBlaze 과정</h2>
             <p style={{ color: '#475569', fontSize: '1rem', lineHeight: '1.5' }}>
@@ -43,7 +43,7 @@ export default function Dashboard() {
             </p>
           </div>
         </Link>
-        
+
         {/* 향후 과정 추가 카드용 */}
         <div style={{
           backgroundColor: '#f1f5f9',
@@ -57,7 +57,7 @@ export default function Dashboard() {
           color: '#94a3b8'
         }}>
           <span style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>+</span>
-          <p style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>신규 과정 준비중 (Zynq, Verilog 등)</p>
+          <p style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>신규 과정 준비중 <br />(Verilog, Questasim 등)</p>
         </div>
 
       </div>
