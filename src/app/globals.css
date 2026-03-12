@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* Mint / Dark Green Theme */
+  --primary: #20b2aa;
+  /* Light Sea Green / Mint */
+  --primary-dark: #006400;
+  /* Dark Green */
+  --accent: #3cb371;
+  /* Medium Sea Green */
+
+  --slide-bg: #f8fbfa;
+  --text-main: #333333;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f172a;
+    --foreground: #ededed;
+    --slide-bg: #1e293b;
+    --text-main: #f8fafc;
+    --primary: #4ade80;
+    /* lighter mint for dark mode */
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes autoFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes autoFadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+
+  /* 연결선의 최종 투명도(0.6)에 맞춤 */
+}
+
+.auto-fade-up {
+  opacity: 0;
+  animation: autoFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.auto-fade-in {
+  opacity: 0;
+  animation: autoFadeIn 1s ease-in-out forwards;
+}
+
+/* Reveal.js Base Theme Override */
+.reveal,
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif !important;
+}
+
+.reveal {
+  background-color: var(--slide-bg);
+  color: var(--text-main);
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  text-transform: none !important;
+  /* simple.css가 대문자로 자동 변환하는 것 방지 */
+  font-weight: 700 !important;
+  /* 본문(400)보다 확연히 두껍게 설정 */
+  letter-spacing: -0.02em;
+  /* 약간 좁게하여 더 세련된 느낌 */
+}
+
+/* Custom UI List (배지 형태의 라벨 + 깔끔한 내용 정렬) */
+.reveal ul.info-list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--text-main);
+}
+
+.reveal ul.info-list li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.2rem;
+  font-size: inherit;
+  line-height: 1.5;
+}
+
+.reveal ul.info-list li strong {
+  flex-shrink: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100px;
+  background-color: var(--primary);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8em;
+  font-weight: 600;
+  margin-right: 1.2rem;
+  margin-top: 0.2rem;
+  /* 줄맞춤 미세 조정 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reveal ul.info-list li span {
+  flex-grow: 1;
+}
+
+/* Custom UI List for Step-by-Step guides to prevent awkward line breaks */
+.reveal ul.step-list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--text-main);
+  font-size: 1.3rem;
+}
+
+.reveal ul.step-list>li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.reveal ul.step-list>li>.step-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 32px;
+  height: 32px;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-right: 1.2rem;
+  margin-top: 0.1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reveal ul.step-list>li>.step-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.reveal ul.step-list .step-title {
+  display: inline-block;
+  color: var(--primary-dark);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.reveal ul.step-list .step-desc {
+  color: #475569;
+  font-size: 1.15rem;
+}
+
+.reveal ul.step-list-sub {
+  list-style-type: disc !important;
+  margin-top: 0.6rem !important;
+  margin-bottom: 0.2rem !important;
+  padding-left: 0.1rem !important;
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+/* Developer Monospace Font for all Code Blocks (Step 3 등) */
+.reveal code,
+.reveal pre,
+.reveal .code-block,
+div[style*="fontFamily: 'monospace'"],
+div[style*='fontFamily: "monospace"'],
+div[style*="font-family: monospace"] {
+  font-family: 'JetBrains Mono', 'D2Coding', 'Consolas', monospace !important;
+  font-variant-ligatures: none;
+}
