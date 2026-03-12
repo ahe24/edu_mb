@@ -375,6 +375,37 @@ export default function MicroBlazeSlides() {
             />
           </div>
         </section>
+
+        {/* Ex1 - Additional Code (Application) */}
+        <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>응용 실습: 패턴 테이블 활용 제어 </h2>
+          <p style={{ fontSize: '1.2rem', color: '#445569', marginBottom: '0.8rem' }}>LUT(Look-Up Table) 배열을 활용하여 스위치 입력값(0~15)에 매칭되는 다양한 LED 패턴 출력</p>
+          <div className="code-block" style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '70vh' }}>
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
+            <br />
+            <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
+            &nbsp;&nbsp;XGpio gpio_device;<br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 16가지 스위치 입력에 따른 4bit LED 출력 패턴 정의</span><br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> led_patterns[<span style={{ color: '#d19a66' }}>16</span>] = {'{'}<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x0</span>, <span style={{ color: '#d19a66' }}>0xF</span>, <span style={{ color: '#d19a66' }}>0xA</span>, <span style={{ color: '#d19a66' }}>0x5</span>, <span style={{ color: '#d19a66' }}>0x9</span>, <span style={{ color: '#d19a66' }}>0x6</span>, <span style={{ color: '#d19a66' }}>0xC</span>, <span style={{ color: '#d19a66' }}>0x3</span>,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x1</span>, <span style={{ color: '#d19a66' }}>0x2</span>, <span style={{ color: '#d19a66' }}>0x4</span>, <span style={{ color: '#d19a66' }}>0x8</span>, <span style={{ color: '#d19a66' }}>0xE</span>, <span style={{ color: '#d19a66' }}>0xD</span>, <span style={{ color: '#d19a66' }}>0xB</span>, <span style={{ color: '#d19a66' }}>0x7</span><br />
+            &nbsp;&nbsp;{'}'};<br />
+            <br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;gpio_device, XPAR_GPIO_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio_device, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio_device, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);<br />
+            <br />
+            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span>(<span style={{ color: '#d19a66' }}>1</span>) {'{'}<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> sw_data = XGpio_DiscreteRead(&amp;gpio_device, <span style={{ color: '#d19a66' }}>2</span>);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 스위치 값(0~15) 마스킹 후 패턴 테이블 참조</span><br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> led_data = led_patterns[sw_data &amp; <span style={{ color: '#d19a66' }}>0xF</span>];<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio_device, <span style={{ color: '#d19a66' }}>1</span>, led_data);<br />
+            &nbsp;&nbsp;{'}'}<br />
+            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
+            {'}'}
+          </div>
+        </section>
       </section>
 
       {/* Slide 5: 예제 2 */}
