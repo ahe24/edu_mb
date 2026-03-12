@@ -408,23 +408,321 @@ export default function MicroBlazeSlides() {
         </section>
       </section>
 
-      {/* Slide 5: 예제 2 */}
-      <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.5rem', borderBottom: '3px solid var(--accent)', paddingBottom: '0.5rem', marginBottom: '2rem' }}>예제 2: 타이머 인터럽트를 활용한 RGB LED 제어</h2>
+      {/* Slide 5: 예제 2 (Vertical Slides) */}
+      <section>
+        {/* Ex2 Overview */}
+        <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.5rem', borderBottom: '3px solid var(--accent)', paddingBottom: '0.5rem', marginBottom: '2rem' }}>예제 2: 타이머 인터럽트 기반 LED 제어</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            <ul className="info-list" style={{ fontSize: '1.5rem' }}>
+              <li><strong>학습 목표</strong> <span>하드웨어 인터럽트 개념 이해 및 다중 IP 연동</span></li>
+              <li><strong>핵심 IP</strong> <span>AXI Timer, AXI Interrupt Controller, AXI GPIO</span></li>
+              <li><strong>동작 확인</strong> <span>타이머 인터럽트마다 RGB LED 색상 자동 순환</span></li>
+              <li><strong>핵심 개념</strong> <span>ISR(Interrupt Service Routine) 작성 및 등록</span></li>
+            </ul>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', justifyContent: 'center' }}>
+              {/* 하드웨어 블록 다이어그램 */}
+              <svg viewBox="0 0 320 340" style={{ width: '100%', maxWidth: '340px', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
+                {/* AXI Timer 블록 */}
+                <rect x="70" y="8" width="180" height="44" rx="8" fill="#e0f7f5" stroke="#20b2aa" strokeWidth="2"/>
+                <text x="160" y="27" textAnchor="middle" fill="#006400" fontSize="13" fontWeight="bold">AXI Timer</text>
+                <text x="160" y="43" textAnchor="middle" fill="#475569" fontSize="11">주기 카운트 만료</text>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-          <ul className="info-list" style={{ fontSize: '1.5rem' }}>
-            <li><strong>학습 목표</strong> <span>하드웨어 인터럽트 개념 이해 및 다중 IP 연동</span></li>
-            <li><strong>실습 내용</strong> <span>AXI Timer + Interrupt Controller 추가</span></li>
-            <li><strong>동작 확인</strong> <span>주기적으로 RGB LED 색상 자동 변경</span></li>
-          </ul>
+                {/* 화살표 1 */}
+                <line x1="160" y1="52" x2="160" y2="76" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
+                <text x="174" y="68" fill="#dc2626" fontSize="10" fontWeight="bold">interrupt!</text>
 
-          <ImagePlaceholder
-            src="/images/ex2_interrupt_block.png"
-            label="예제 2 이미지 대기중"
-            desc="Interrupt Controller와 CPU 연결 구조 블록도 혹은 Vitis(SDK) 인터럽트 핸들러 코드 조각"
-          />
-        </div>
+                {/* AXI INTC 블록 */}
+                <rect x="70" y="78" width="180" height="44" rx="8" fill="#fef9e7" stroke="#f59e0b" strokeWidth="2"/>
+                <text x="160" y="97" textAnchor="middle" fill="#92400e" fontSize="13" fontWeight="bold">AXI Interrupt Controller</text>
+                <text x="160" y="113" textAnchor="middle" fill="#475569" fontSize="11">인터럽트 중재 및 전달</text>
+
+                {/* 화살표 2 */}
+                <line x1="160" y1="122" x2="160" y2="146" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
+                <text x="174" y="138" fill="#dc2626" fontSize="10" fontWeight="bold">irq</text>
+
+                {/* MicroBlaze 블록 */}
+                <rect x="50" y="148" width="220" height="44" rx="8" fill="#ede9fe" stroke="#7c3aed" strokeWidth="2.5"/>
+                <text x="160" y="167" textAnchor="middle" fill="#4c1d95" fontSize="13" fontWeight="bold">MicroBlaze CPU</text>
+                <text x="160" y="183" textAnchor="middle" fill="#475569" fontSize="11">현재 컨텍스트 저장 → ISR 진입</text>
+
+                {/* 화살표 3 */}
+                <line x1="160" y1="192" x2="160" y2="216" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
+                <text x="170" y="208" fill="#475569" fontSize="10">ISR 호출</text>
+
+                {/* ISR 함수 블록 */}
+                <rect x="60" y="218" width="200" height="44" rx="8" fill="#fce7f3" stroke="#db2777" strokeWidth="2"/>
+                <text x="160" y="237" textAnchor="middle" fill="#831843" fontSize="13" fontWeight="bold">timer_isr( )</text>
+                <text x="160" y="253" textAnchor="middle" fill="#475569" fontSize="11">색상 인덱스 증가</text>
+
+                {/* 화살표 4 */}
+                <line x1="160" y1="262" x2="160" y2="286" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
+
+                {/* RGB LED 블록 */}
+                <rect x="70" y="288" width="180" height="44" rx="8" fill="#dcfce7" stroke="#16a34a" strokeWidth="2"/>
+                <text x="160" y="308" textAnchor="middle" fill="#14532d" fontSize="13" fontWeight="bold">RGB LED</text>
+                <text x="160" y="324" textAnchor="middle" fill="#475569" fontSize="11">🔴 → 🟢 → 🔵 → ... 색상 전환</text>
+
+                {/* 화살표 마커 정의 */}
+                <defs>
+                  <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#20b2aa"/>
+                  </marker>
+                </defs>
+              </svg>
+            </div>
+
+          </div>
+          <p style={{ textAlign: 'center', marginTop: '2.5rem', fontSize: '1.2rem', color: '#64748b' }}>⬇️ 아래 방향키(↓)를 눌러 실습 단계 확인</p>
+        </section>
+
+        {/* Ex2 - Step 1: Vivado Block Design */}
+        <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 1. Vivado Block Design 구성</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '2rem' }}>
+            <div>
+              <ul className="step-list">
+                <li>
+                  <div className="step-icon">1</div>
+                  <div className="step-content">
+                    <span className="step-title">예제 1 기반 시작</span>
+                    <span className="step-desc">예제 1 Block Design에서 이어서 진행 (MicroBlaze + AXI GPIO 기존 상태 유지)</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="step-icon">2</div>
+                  <div className="step-content">
+                    <span className="step-title">AXI Timer 추가</span>
+                    <span className="step-desc">Board 탭 또는 IP Catalog에서 <code>AXI Timer</code> 검색 및 캔버스에 추가</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="step-icon">3</div>
+                  <div className="step-content">
+                    <span className="step-title">AXI Interrupt Controller 추가</span>
+                    <span className="step-desc"><code>AXI Interrupt Controller</code>(INTC) 추가 후 Timer의 <code>interrupt</code> 핀과 연결</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="step-icon">4</div>
+                  <div className="step-content">
+                    <span className="step-title">MicroBlaze 인터럽트 연결</span>
+                    <span className="step-desc">INTC의 <code>irq</code> 출력 → MicroBlaze의 <code>INTERRUPT</code> 포트 연결</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="step-icon">5</div>
+                  <div className="step-content">
+                    <span className="step-title">RGB LED GPIO 추가</span>
+                    <span className="step-desc">Board 탭에서 <code>RGB LEDs</code> 드래그 앤 드롭 (AXI GPIO 자동 생성)</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="step-icon">6</div>
+                  <div className="step-content">
+                    <span className="step-title">Connection Automation → HDL Wrapper → Bitstream</span>
+                    <span className="step-desc">자동 연결 실행 후 HDL Wrapper 생성, Generate Bitstream → Export Hardware (.xsa)</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'center' }}>
+                <ImagePlaceholder
+                  src="/images/ex2_step1_initial.png"
+                  label="IP 추가 상태"
+                  desc="AXI Timer + INTC + RGB GPIO 추가된 초기 블록 디자인"
+                  maxHeight="230px"
+                />
+                <span style={{ fontSize: '1.0rem', color: '#475569', fontWeight: '600' }}>IP 추가 직후</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'center' }}>
+                <ImagePlaceholder
+                  src="/images/ex2_step1_automation.png"
+                  label="자동 연결 완료"
+                  desc="Connection Automation 후 완성된 블록 디자인"
+                  maxHeight="230px"
+                />
+                <span style={{ fontSize: '1.0rem', color: '#475569', fontWeight: '600' }}>자동 연결(Automation) 후</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Ex2 - Step 2: Vitis Setup */}
+        <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 2. Vitis 프로젝트 설정</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '2rem' }}>
+            <div>
+              <ul className="step-list">
+                <li>
+                  <div className="step-icon">1</div>
+                  <div className="step-content">
+                    <span className="step-title">Platform 업데이트</span>
+                    <span className="step-desc">예제 2용 새 .xsa로 Platform Project를 새로 생성하거나 기존 Platform 업데이트 후 빌드</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="step-icon">2</div>
+                  <div className="step-content">
+                    <span className="step-title">Application Project 생성</span>
+                    <span className="step-desc">
+                      <ul className="step-list-sub">
+                        <li>반드시 <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Empty Application(C)</span> 템플릿 선택</li>
+                        <li><code>src/main.c</code> 파일 새로 생성하여 인터럽트 코드 작성</li>
+                      </ul>
+                    </span>
+                  </div>
+                </li>
+                <li>
+                  <div className="step-icon">3</div>
+                  <div className="step-content">
+                    <span className="step-title">BSP 라이브러리 확인</span>
+                    <span className="step-desc"><code>xparameters.h</code>에서 <code>XPAR_AXI_TIMER_*</code>, <code>XPAR_INTC_*</code> 정의 확인</span>
+                  </div>
+                </li>
+              </ul>
+              <div style={{ marginTop: '1.0rem', padding: '0.5rem', backgroundColor: 'rgba(56, 189, 248, 0.1)', borderLeft: '4px solid #38bdf8', borderRadius: '2px', fontSize: '0.85rem' }}>
+                <p style={{ fontWeight: 'bold', color: '#0369a1', marginBottom: '0.3rem' }}>💡 주의사항</p>
+                <p style={{ color: '#475569', lineHeight: '1.4', margin: 0 }}>
+                  인터럽트 컨트롤러 사용 시 MicroBlaze의 <b>Interrupt</b> 포트가 Block Design에서 실제로 연결되어 있어야 BSP에서 <code>XPAR_INTC_*</code>가 생성됨
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'center' }}>
+                <ImagePlaceholder
+                  src="/images/ex2_step2_platform.png"
+                  label="Vitis Platform 설정"
+                  desc="예제 2 .xsa를 로드한 Platform 설정 화면"
+                  maxHeight="240px"
+                />
+                <span style={{ fontSize: '1.0rem', color: '#475569', fontWeight: '600' }}>Platform 업데이트</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'center' }}>
+                <ImagePlaceholder
+                  src="/images/ex2_step2_bsp.png"
+                  label="BSP xparameters.h 확인"
+                  desc="INTC, Timer Device ID 확인 화면"
+                  maxHeight="240px"
+                />
+                <span style={{ fontSize: '1.0rem', color: '#475569', fontWeight: '600' }}>BSP 파라미터 확인</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Ex2 - Step 3: C Code */}
+        <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>Step 3. 인터럽트 제어 코드 (C)</h2>
+          <p style={{ fontSize: '1.15rem', color: '#475569', marginBottom: '0.8rem' }}>AXI Timer 인터럽트마다 ISR이 호출되어 RGB LED 색상을 순환 변경</p>
+          <div className="code-block" style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.0rem', overflowX: 'auto', lineHeight: '1.35', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '65vh' }}>
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xtmrctr.h"</span><br />
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xintc.h"</span><br />
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
+            <br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// RGB LED 색상 순환 배열 (R, G, B, RG, RB, GB, RGB, OFF)</span><br />
+            <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#e5c07b' }}>TIMER_PERIOD</span>  <span style={{ color: '#d19a66' }}>500000000</span>  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 0.5초 (100MHz 기준)</span><br />
+            <br />
+            <span style={{ color: '#e5c07b' }}>XTmrCtr</span> timer_device;<br />
+            <span style={{ color: '#e5c07b' }}>XIntc</span>   intc_device;<br />
+            <span style={{ color: '#e5c07b' }}>XGpio</span>   rgb_device;<br />
+            <span style={{ color: '#e5c07b' }}>int</span>     color_idx = <span style={{ color: '#d19a66' }}>0</span>;<br />
+            <span style={{ color: '#e5c07b' }}>int</span>     colors[] = {'{'}  <span style={{ color: '#d19a66' }}>0x1</span>, <span style={{ color: '#d19a66' }}>0x2</span>, <span style={{ color: '#d19a66' }}>0x4</span>, <span style={{ color: '#d19a66' }}>0x3</span>, <span style={{ color: '#d19a66' }}>0x5</span>, <span style={{ color: '#d19a66' }}>0x6</span>, <span style={{ color: '#d19a66' }}>0x7</span>, <span style={{ color: '#d19a66' }}>0x0</span> {'}'};<br />
+            <br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: 타이머 인터럽트 발생 시 호출</span><br />
+            <span style={{ color: '#e5c07b' }}>void</span> <span style={{ color: '#61afef' }}>timer_isr</span>(<span style={{ color: '#e5c07b' }}>void</span> *data, <span style={{ color: '#e5c07b' }}>u8</span> timer_num) {'{'}<br />
+            &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;rgb_device, <span style={{ color: '#d19a66' }}>1</span>, colors[color_idx]);<br />
+            &nbsp;&nbsp;color_idx = (color_idx + <span style={{ color: '#d19a66' }}>1</span>) % <span style={{ color: '#d19a66' }}>8</span>;<br />
+            {'}'}<br />
+            <br />
+            <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 1. GPIO 초기화 (RGB LED = 출력)</span><br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;rgb_device, XPAR_GPIO_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_device, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+            <br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 2. 타이머 초기화 및 ISR 등록</span><br />
+            &nbsp;&nbsp;XTmrCtr_Initialize(&amp;timer_device, XPAR_AXI_TIMER_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XTmrCtr_SetHandler(&amp;timer_device, timer_isr, &amp;timer_device);<br />
+            &nbsp;&nbsp;XTmrCtr_SetOptions(&amp;timer_device, <span style={{ color: '#d19a66' }}>0</span>, XTC_INT_MODE_OPTION | XTC_AUTO_RELOAD_OPTION);<br />
+            &nbsp;&nbsp;XTmrCtr_SetResetValue(&amp;timer_device, <span style={{ color: '#d19a66' }}>0</span>, <span style={{ color: '#d19a66' }}>0xFFFFFFFF</span> - TIMER_PERIOD);<br />
+            <br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 3. 인터럽트 컨트롤러 초기화 및 연결</span><br />
+            &nbsp;&nbsp;XIntc_Initialize(&amp;intc_device, XPAR_INTC_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XIntc_Connect(&amp;intc_device, XPAR_INTC_0_TMRCTR_0_VEC_ID,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XTmrCtr_InterruptHandler, &amp;timer_device);<br />
+            &nbsp;&nbsp;XIntc_Enable(&amp;intc_device, XPAR_INTC_0_TMRCTR_0_VEC_ID);<br />
+            &nbsp;&nbsp;XIntc_Start(&amp;intc_device, XIN_REAL_MODE);<br />
+            <br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 4. 타이머 시작 + 전역 인터럽트 활성화</span><br />
+            &nbsp;&nbsp;XTmrCtr_Start(&amp;timer_device, <span style={{ color: '#d19a66' }}>0</span>);<br />
+            &nbsp;&nbsp;microblaze_enable_interrupts();<br />
+            <br />
+            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span>(<span style={{ color: '#d19a66' }}>1</span>) {'{'} {'}'} <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 인터럽트 대기</span><br />
+            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
+            {'}'}
+          </div>
+        </section>
+
+        {/* Ex2 - 응용: 예제1 + 예제2 병합 코드 */}
+        <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.0rem', marginBottom: '0.8rem' }}>응용 실습: 예제 1 + 예제 2 통합 제어</h2>
+          <p style={{ fontSize: '1.1rem', color: '#475569', marginBottom: '0.7rem' }}>
+            Switch→LED 제어(예제1)와 타이머 인터럽트→RGB LED 순환(예제2)을 하나의 소스로 병합&nbsp;
+            <span style={{ backgroundColor: 'rgba(32,178,170,0.15)', border: '1px solid var(--accent)', borderRadius: '4px', padding: '2px 8px', fontSize: '0.9rem', color: 'var(--primary-dark)', fontWeight: 'bold' }}>메인 while문 + ISR 동시 구동</span>
+          </p>
+          <div className="code-block" style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.1rem', borderRadius: '8px', fontSize: '0.95rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '68vh' }}>
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xtmrctr.h"</span><br />
+            <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xintc.h"</span><br />
+            <br />
+            <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#e5c07b' }}>TIMER_PERIOD</span> <span style={{ color: '#d19a66' }}>500000000</span>  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 0.5초 (100MHz 기준)</span><br />
+            <br />
+            <span style={{ color: '#e5c07b' }}>XGpio</span>   sw_led_gpio;  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 예제1: axi_gpio_0 (2ch: SW + LED)</span><br />
+            <span style={{ color: '#e5c07b' }}>XGpio</span>   rgb_gpio;     <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 예제2: axi_gpio_1 (1ch: RGB LED)</span><br />
+            <span style={{ color: '#e5c07b' }}>XTmrCtr</span> timer;<br />
+            <span style={{ color: '#e5c07b' }}>XIntc</span>   intc;<br />
+            <span style={{ color: '#e5c07b' }}>int</span> color_idx = <span style={{ color: '#d19a66' }}>0</span>;<br />
+            <span style={{ color: '#e5c07b' }}>int</span> colors[] = {'{'} <span style={{ color: '#d19a66' }}>0x1</span>,<span style={{ color: '#d19a66' }}>0x2</span>,<span style={{ color: '#d19a66' }}>0x4</span>,<span style={{ color: '#d19a66' }}>0x3</span>,<span style={{ color: '#d19a66' }}>0x5</span>,<span style={{ color: '#d19a66' }}>0x6</span>,<span style={{ color: '#d19a66' }}>0x7</span>,<span style={{ color: '#d19a66' }}>0x0</span> {'}'};<br />
+            <span style={{ color: '#e5c07b' }}>int</span> sw_lut[] = {'{'} <span style={{ color: '#d19a66' }}>0x0</span>,<span style={{ color: '#d19a66' }}>0xF</span>,<span style={{ color: '#d19a66' }}>0xA</span>,<span style={{ color: '#d19a66' }}>0x5</span>,<span style={{ color: '#d19a66' }}>0x9</span>,<span style={{ color: '#d19a66' }}>0x6</span>,<span style={{ color: '#d19a66' }}>0xC</span>,<span style={{ color: '#d19a66' }}>0x3</span>,<span style={{ color: '#d19a66' }}>0x1</span>,<span style={{ color: '#d19a66' }}>0x2</span>,<span style={{ color: '#d19a66' }}>0x4</span>,<span style={{ color: '#d19a66' }}>0x8</span>,<span style={{ color: '#d19a66' }}>0xE</span>,<span style={{ color: '#d19a66' }}>0xD</span>,<span style={{ color: '#d19a66' }}>0xB</span>,<span style={{ color: '#d19a66' }}>0x7</span> {'}'};<br />
+            <br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: 타이머 인터럽트 → RGB LED 색상 순환</span><br />
+            <span style={{ color: '#e5c07b' }}>void</span> <span style={{ color: '#61afef' }}>timer_isr</span>(<span style={{ color: '#e5c07b' }}>void</span> *p, <span style={{ color: '#e5c07b' }}>u8</span> n) {'{'}<br />
+            &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>1</span>, colors[color_idx]);<br />
+            &nbsp;&nbsp;color_idx = (color_idx + <span style={{ color: '#d19a66' }}>1</span>) % <span style={{ color: '#d19a66' }}>8</span>;<br />
+            {'}'}<br />
+            <br />
+            <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 1. GPIO 초기화</span><br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;sw_led_gpio, XPAR_GPIO_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch1: LED</span><br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch2: SW</span><br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;rgb_gpio, XPAR_GPIO_1_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+            <br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 2. 타이머 + INTC 초기화</span><br />
+            &nbsp;&nbsp;XTmrCtr_Initialize(&amp;timer, XPAR_AXI_TIMER_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XTmrCtr_SetHandler(&amp;timer, timer_isr, &amp;timer);<br />
+            &nbsp;&nbsp;XTmrCtr_SetOptions(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>, XTC_INT_MODE_OPTION | XTC_AUTO_RELOAD_OPTION);<br />
+            &nbsp;&nbsp;XTmrCtr_SetResetValue(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>, <span style={{ color: '#d19a66' }}>0xFFFFFFFF</span> - TIMER_PERIOD);<br />
+            &nbsp;&nbsp;XIntc_Initialize(&amp;intc, XPAR_INTC_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XIntc_Connect(&amp;intc, XPAR_INTC_0_TMRCTR_0_VEC_ID, XTmrCtr_InterruptHandler, &amp;timer);<br />
+            &nbsp;&nbsp;XIntc_Enable(&amp;intc, XPAR_INTC_0_TMRCTR_0_VEC_ID);<br />
+            &nbsp;&nbsp;XIntc_Start(&amp;intc, XIN_REAL_MODE);<br />
+            &nbsp;&nbsp;XTmrCtr_Start(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
+            &nbsp;&nbsp;microblaze_enable_interrupts();<br />
+            <br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 3. 메인 루프: 스위치→LED (ISR과 독립적으로 계속 실행)</span><br />
+            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span>(<span style={{ color: '#d19a66' }}>1</span>) {'{'}<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> sw = XGpio_DiscreteRead(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>2</span>);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>1</span>, sw_lut[sw &amp; <span style={{ color: '#d19a66' }}>0xF</span>]);<br />
+            &nbsp;&nbsp;{'}'}<br />
+            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
+            {'}'}
+          </div>
+        </section>
       </section>
 
       {/* Slide 6: 예제 3 */}
