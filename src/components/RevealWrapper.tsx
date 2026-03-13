@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import Reveal from 'reveal.js';
 import 'reveal.js/reveal.css';
 import 'reveal.js/theme/simple.css'; // 밝고 심플한 기본 테마로 변경
 
@@ -10,23 +9,33 @@ export default function RevealWrapper({ children }: { children: React.ReactNode 
   const deckInstance = useRef<any>(null);
 
   useEffect(() => {
-    if (deckRef.current && !deckInstance.current) {
-      deckInstance.current = new Reveal(deckRef.current, {
-        hash: true,
-        slideNumber: true,
-        controls: true,
-        progress: true,
-        center: true,
-        width: 1280,
-        height: 720,
-        margin: 0.08,
-        help: false, // 도움말(N 아이콘 등) 숨기기
-      });
+    const initReveal = async () => {
+      if (deckRef.current && !deckInstance.current) {
+        // SSR 대응: 브라우저 환경에서만 동적으로 모듈 로드
+        const Reveal = (await import('reveal.js')).default;
+        // @ts-ignore
+        const RevealNotes = (await import('reveal.js/plugin/notes')).default;
+        // @ts-ignore
+        const RevealZoom = (await import('reveal.js/plugin/zoom')).default;
 
-      if (deckInstance.current) {
-        deckInstance.current.initialize();
+        deckInstance.current = new Reveal(deckRef.current, {
+          hash: true,
+          slideNumber: true,
+          controls: true,
+          progress: true,
+          center: true,
+          width: 1280,
+          height: 720,
+          margin: 0.08,
+          help: false, // 도움말(N 아이콘 등) 숨기기
+          plugins: [RevealNotes, RevealZoom],
+        });
+
+        await deckInstance.current.initialize();
       }
-    }
+    };
+
+    initReveal();
 
     return () => {
       try {
