@@ -54,6 +54,38 @@ export default function RevealWrapper({ children }: { children: React.ReactNode 
       <div className="slides">
         {children}
       </div>
+
+      {/* ── Footer UI (Logo & Copyright) ── */}
+      <div style={{
+        position: 'fixed',
+        bottom: '0.1px',
+        left: '30px',
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '5px',
+        pointerEvents: 'none',
+        opacity: 0.6,
+      }}>
+        <img
+          src="/images/edmfg_logo.png"
+          alt="Company Logo"
+          style={{
+            height: '16px',
+            width: 'auto',
+          }}
+        />
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          fontSize: '0.8rem',
+          color: '#5f796aff', // 'var(--primary-dark)',
+          fontFamily: '"JetBrains Mono", monospace',
+          fontWeight: 600,
+        }}>
+          <span>©2026. Changseon Jo. All rights reserved.</span>
+        </div>
+      </div>
     </div>
   );
 }

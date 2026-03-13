@@ -28,56 +28,292 @@ export default function MicroBlazeSlides() {
       </section>
 
       {/* Slide 2: 교육 목표 및 개요 */}
-      <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.5rem', borderBottom: '3px solid var(--accent)', paddingBottom: '0.5rem', marginBottom: '2rem' }}>교육 개요</h2>
-        <ul className="info-list" style={{ fontSize: '1.8rem' }}>
-          <li><strong>과정 목표</strong> <span>초보자 맞춤형 하드웨어 설계 & 소프트웨어 제어 체감</span></li>
-          <li><strong>교육 방식</strong> <span>이론 최소화, '성공 경험' 초점의 4단계 가이드</span></li>
-          <li><strong>타겟 보드</strong> <span>Arty A7</span></li>
-          <li><strong>핵심 소자</strong> <span>MicroBlaze 소프트 프로세서, Custom Logic</span></li>
-        </ul>
+      <section data-background-color="var(--slide-bg)">
+        {/* Header */}
+        <div className="curriculum-anim" style={{ animationDelay: '0.05s', marginBottom: '0.4rem' }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            background: 'rgba(32,178,170,0.12)', border: '1px solid rgba(32,178,170,0.35)',
+            borderRadius: '999px', padding: '3px 14px',
+            fontSize: '0.85rem', color: 'var(--primary)', letterSpacing: '0.08em', fontWeight: 700,
+          }}>● COURSE OVERVIEW</span>
+        </div>
+        <h2 className="curriculum-anim" style={{
+          animationDelay: '0.15s',
+          color: 'var(--primary-dark)', fontSize: '2.4rem', fontWeight: 800,
+          letterSpacing: '-0.03em', marginBottom: '1.4rem',
+        }}>교육 개요</h2>
+
+        {/* 2x2 Info Card Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          {[
+            {
+              delay: '0.3s', color: '#20b2aa',
+              label: '과정 목표',
+              value: '초보자 맞춤형 하드웨어 설계 & 소프트웨어 제어 체감',
+              icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="12" stroke="#20b2aa" strokeWidth="1.5" fill="rgba(32,178,170,0.1)" />
+                  <circle cx="16" cy="16" r="5" fill="#20b2aa" fillOpacity="0.4" />
+                  <circle cx="16" cy="16" r="2" fill="#20b2aa" />
+                  <path d="M16 4v4M16 24v4M4 16h4M24 16h4" stroke="#20b2aa" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              ),
+            },
+            {
+              delay: '0.45s', color: '#3cb371',
+              label: '교육 방식',
+              value: "이론 최소화, '성공 경험' 초점의 4단계 가이드",
+              icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <rect x="4" y="6" width="24" height="20" rx="3" stroke="#3cb371" strokeWidth="1.5" fill="rgba(60,179,113,0.1)" />
+                  <path d="M10 13h12M10 17h8M10 21h5" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <rect x="10" y="4" width="4" height="4" rx="1" fill="#3cb371" />
+                  <rect x="18" y="4" width="4" height="4" rx="1" fill="#3cb371" />
+                </svg>
+              ),
+            },
+            {
+              delay: '0.6s', color: '#20b2aa',
+              label: '타겟 보드',
+              value: 'Arty A7 (Artix-7 FPGA)',
+              icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <rect x="4" y="8" width="24" height="16" rx="2" stroke="#20b2aa" strokeWidth="1.5" fill="rgba(32,178,170,0.1)" />
+                  <rect x="9" y="12" width="6" height="8" rx="1" fill="#20b2aa" fillOpacity="0.5" />
+                  <rect x="17" y="12" width="2" height="2" rx="0.5" fill="#20b2aa" />
+                  <rect x="21" y="12" width="2" height="2" rx="0.5" fill="#20b2aa" />
+                  <rect x="17" y="16" width="6" height="2" rx="0.5" fill="#20b2aa" fillOpacity="0.5" />
+                  <line x1="8" y1="8" x2="8" y2="5" stroke="#20b2aa" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="13" y1="8" x2="13" y2="5" stroke="#20b2aa" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="18" y1="8" x2="18" y2="5" stroke="#20b2aa" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="23" y1="8" x2="23" y2="5" stroke="#20b2aa" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              ),
+            },
+            {
+              delay: '0.75s', color: '#3cb371',
+              label: '핵심 소자',
+              value: 'MicroBlaze 소프트 프로세서 + Custom Logic',
+              icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <rect x="8" y="8" width="16" height="16" rx="2" stroke="#3cb371" strokeWidth="1.5" fill="rgba(60,179,113,0.1)" />
+                  <rect x="12" y="12" width="8" height="8" rx="1" fill="#3cb371" fillOpacity="0.4" />
+                  <line x1="4" y1="12" x2="8" y2="12" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="4" y1="16" x2="8" y2="16" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="4" y1="20" x2="8" y2="20" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="24" y1="12" x2="28" y2="12" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="24" y1="16" x2="28" y2="16" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="24" y1="20" x2="28" y2="20" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="12" y1="4" x2="12" y2="8" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="16" y1="4" x2="16" y2="8" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="20" y1="4" x2="20" y2="8" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="12" y1="24" x2="12" y2="28" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="16" y1="24" x2="16" y2="28" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="20" y1="24" x2="20" y2="28" stroke="#3cb371" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              ),
+            },
+          ].map((item, idx) => (
+            <div key={idx} className="curriculum-anim" style={{
+              animationDelay: item.delay,
+              display: 'flex', alignItems: 'flex-start', gap: '1rem',
+              background: `linear-gradient(135deg, ${item.color}0d 0%, ${item.color}05 100%)`,
+              border: `1px solid ${item.color}35`,
+              borderRadius: '14px', padding: '1.2rem 1.4rem',
+              position: 'relative', overflow: 'hidden',
+              boxShadow: `0 2px 16px ${item.color}12`,
+            }}>
+              {/* Left accent bar */}
+              <div style={{
+                position: 'absolute', left: 0, top: 0, bottom: 0, width: '3px',
+                background: `linear-gradient(180deg, ${item.color}, ${item.color}44)`,
+                borderRadius: '14px 0 0 14px',
+              }} />
+              {/* Icon */}
+              <div style={{ flexShrink: 0, marginLeft: '4px' }}>{item.icon}</div>
+              {/* Text */}
+              <div>
+                <div style={{
+                  fontSize: '0.72rem', fontFamily: '"JetBrains Mono", monospace',
+                  fontWeight: 700, color: item.color, letterSpacing: '0.1em',
+                  marginBottom: '0.35rem',
+                }}>{item.label.toUpperCase()}</div>
+                <div style={{ fontSize: '1.2rem', color: 'var(--text-main)', fontWeight: 600, lineHeight: 1.45 }}>
+                  {item.value}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom stat strip */}
+        <div className="curriculum-anim" style={{
+          animationDelay: '0.95s',
+          display: 'flex', gap: '1.5rem', marginTop: '1.1rem',
+          padding: '0.7rem 1.2rem',
+          background: 'rgba(32,178,170,0.05)', borderRadius: '10px',
+          border: '1px solid rgba(32,178,170,0.15)',
+          justifyContent: 'space-around',
+        }}>
+          {[
+            { val: '단계적', unit: '실무 중심', desc: '실습 구성' },
+            { val: 'Artix-7', unit: 'FPGA', desc: 'Arty A7 35T' },
+            { val: '100%', unit: '실습', desc: '이론 최소화' },
+            { val: 'MicroBlaze', unit: 'CPU', desc: 'Soft-Core Processor' },
+          ].map((s, i) => (
+            <div key={i} style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '1.3rem', fontWeight: 800, color: i % 2 === 0 ? 'var(--primary)' : 'var(--accent)', lineHeight: 1 }}>
+                {s.val} <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{s.unit}</span>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '3px' }}>{s.desc}</div>
+            </div>
+          ))}
+        </div>
       </section>
 
-      {/* Slide 3: 커리큘럼 요약 */}
+      {/* Slide 3: 커리큘럼 요약 — .present CSS 자동 애니메이션 */}
       <section data-background-color="var(--slide-bg)">
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.5rem', marginBottom: '2rem' }}>교육 커리큘럼 (4단계)</h2>
-        <table style={{ width: '100%', fontSize: '1.4rem', borderCollapse: 'collapse', color: 'var(--text-main)' }}>
-          <thead>
-            <tr style={{ backgroundColor: 'var(--primary)', color: 'white' }}>
-              <th style={{ padding: '15px', border: '1px solid #ddd' }}>단계</th>
-              <th style={{ padding: '15px', border: '1px solid #ddd' }}>제목</th>
-              <th style={{ padding: '15px', border: '1px solid #ddd' }}>핵심 키워드</th>
-              <th style={{ padding: '15px', border: '1px solid #ddd' }}>학습 경험</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style={{ padding: '15px', border: '1px solid #ddd', textAlign: 'center' }}>1</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>MicroBlaze</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>AXI-GPIO</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>CPU 탑재 및 단순 On/Off 제어</td>
-            </tr>
-            <tr style={{ backgroundColor: 'rgba(32, 178, 170, 0.1)' }}>
-              <td style={{ padding: '15px', border: '1px solid #ddd', textAlign: 'center' }}>2</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>Interrupt 제어</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>Interrupt Controller</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>하드웨어 이벤트 실시간 반응</td>
-            </tr>
-            <tr>
-              <td style={{ padding: '15px', border: '1px solid #ddd', textAlign: 'center' }}>3</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>데이터 스트림 처리</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>AXI-Stream / FIFO</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>주소 없는 고속 데이터 제어</td>
-            </tr>
-            <tr style={{ backgroundColor: 'rgba(32, 178, 170, 0.1)' }}>
-              <td style={{ padding: '15px', border: '1px solid #ddd', textAlign: 'center' }}>4</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>메모리 직접 접근(DMA)</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>DDR3 / AXI DMA</td>
-              <td style={{ padding: '15px', border: '1px solid #ddd' }}>대용량 데이터 전송 및 외부 메모리 활용</td>
-            </tr>
-          </tbody>
-        </table>
+        {/* Header */}
+        <div className="curriculum-anim" style={{ animationDelay: '0.05s', marginBottom: '0.5rem' }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            background: 'rgba(32,178,170,0.12)', border: '1px solid rgba(32,178,170,0.35)',
+            borderRadius: '999px', padding: '3px 14px',
+            fontSize: '0.85rem', color: 'var(--primary)', letterSpacing: '0.08em', fontWeight: 700,
+          }}>● LEARNING PATH</span>
+        </div>
+        <h2 className="curriculum-anim" style={{
+          animationDelay: '0.15s',
+          color: 'var(--primary-dark)', fontSize: '2.2rem', fontWeight: 800,
+          letterSpacing: '-0.03em', marginBottom: '0.3rem',
+        }}>
+          교육 커리큘럼
+        </h2>
+        <p className="curriculum-anim" style={{
+          animationDelay: '0.25s',
+          fontSize: '1.1rem', color: '#64748b', marginBottom: '1.4rem',
+        }}>
+          4단계로 배우는 MicroBlaze 임베디드 설계
+        </p>
+
+        {/* Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+          {[
+            {
+              step: '01', color: '#20b2aa', delay: '0.35s',
+              title: 'MicroBlaze GPIO 제어', keyword: 'AXI-GPIO',
+              desc: 'CPU 탑재 및 스위치/LED 직접 제어',
+              bullets: ['Block Design 구성', 'Vitis SDK 연동', 'Polling 루프 제어'],
+              icon: (
+                <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+                  <rect x="2" y="2" width="24" height="24" rx="4" stroke="#20b2aa" strokeWidth="1.5" fill="rgba(32,178,170,0.1)" />
+                  <rect x="7" y="7" width="14" height="14" rx="2" fill="#20b2aa" fillOpacity="0.3" />
+                  <rect x="10" y="10" width="8" height="8" rx="1" fill="#20b2aa" />
+                </svg>
+              ),
+            },
+            {
+              step: '02', color: '#3cb371', delay: '0.5s',
+              title: 'Interrupt 제어', keyword: 'AXI-Interrupt',
+              desc: '타이머 인터럽트로 LED 색상 순환',
+              bullets: ['AXI Timer 연동', 'ISR 핸들러 작성', 'RGB LED 제어'],
+              icon: (
+                <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+                  <circle cx="14" cy="14" r="11" stroke="#3cb371" strokeWidth="1.5" fill="rgba(60,179,113,0.1)" />
+                  <path d="M14 7v7l4 4" stroke="#3cb371" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="14" cy="14" r="2" fill="#3cb371" />
+                </svg>
+              ),
+            },
+            {
+              step: '03', color: '#20b2aa', delay: '0.65s',
+              title: '데이터 스트림 처리', keyword: 'AXI-Stream',
+              desc: '주소 없는 고속 데이터 전송',
+              bullets: ['AXI-Stream / FIFO', '루프백 테스트', 'Throughput 확인'],
+              icon: (
+                <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+                  <rect x="2" y="11" width="8" height="6" rx="2" stroke="#20b2aa" strokeWidth="1.5" fill="rgba(32,178,170,0.1)" />
+                  <rect x="18" y="11" width="8" height="6" rx="2" stroke="#20b2aa" strokeWidth="1.5" fill="rgba(32,178,170,0.1)" />
+                  <path d="M10 14h3l2-3 2 3 2-3 2 3" stroke="#20b2aa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ),
+            },
+            {
+              step: '04', color: '#3cb371', delay: '0.8s',
+              title: '메모리 직접 접근 (DMA)', keyword: 'DDR3 / AXI-DMA',
+              desc: '대용량 데이터 고속 전송',
+              bullets: ['AXI DMA 설정', 'DDR3 메모리 활용', 'Scatter-Gather'],
+              icon: (
+                <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+                  <ellipse cx="14" cy="9" rx="9" ry="4" stroke="#3cb371" strokeWidth="1.5" fill="rgba(60,179,113,0.1)" />
+                  <path d="M5 9v10c0 2.2 4 4 9 4s9-1.8 9-4V9" stroke="#3cb371" strokeWidth="1.5" />
+                  <path d="M5 14c0 2.2 4 4 9 4s9-1.8 9-4" stroke="#3cb371" strokeWidth="1.5" />
+                </svg>
+              ),
+            },
+          ].map((item, idx) => (
+            <div key={idx} className="curriculum-anim" style={{
+              animationDelay: item.delay,
+              background: `linear-gradient(160deg, ${item.color}10 0%, ${item.color}05 100%)`,
+              border: `1px solid ${item.color}40`,
+              borderRadius: '14px', padding: '1.2rem 1rem',
+              position: 'relative', overflow: 'hidden',
+              display: 'flex', flexDirection: 'column', gap: '0.55rem',
+              boxShadow: `0 4px 20px ${item.color}15`,
+            }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: `linear-gradient(90deg, ${item.color}, ${item.color}44)` }} />
+              {/* Header row: badge + keyword chip + spacer + icon */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  width: '30px', height: '30px', borderRadius: '8px',
+                  background: item.color, color: 'white', fontSize: '0.85rem', fontWeight: 800,
+                  flexShrink: 0,
+                  boxShadow: `0 3px 10px ${item.color}50`,
+                }}>{item.step}</div>
+                <div style={{
+                  fontSize: '0.68rem', fontFamily: '"JetBrains Mono", monospace', fontWeight: 600,
+                  color: item.color, background: `${item.color}18`, border: `1px solid ${item.color}40`,
+                  borderRadius: '5px', padding: '2px 7px', whiteSpace: 'nowrap',
+                }}>{item.keyword}</div>
+                <div style={{ flex: 1 }} />
+                <div style={{ opacity: 0.6 }}>{item.icon}</div>
+              </div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.3, whiteSpace: 'pre-line' }}>
+                {item.title}
+              </div>
+              <div style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: 1.5, whiteSpace: 'pre-line' }}>{item.desc}</div>
+              <ul style={{ margin: '2px 0 0', padding: 0, listStyle: 'none', borderTop: `1px solid ${item.color}20`, paddingTop: '0.4rem' }}>
+                {item.bullets.map((b, bi) => (
+                  <li key={bi} style={{ fontSize: '0.78rem', color: '#8898aa', lineHeight: 1.6, display: 'flex', gap: '5px' }}>
+                    <span style={{ color: item.color, flexShrink: 0 }}>›</span>{b}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Progress strip */}
+        <div className="curriculum-anim" style={{
+          animationDelay: '1.0s',
+          display: 'flex', alignItems: 'center', marginTop: '0.9rem',
+          background: 'rgba(32,178,170,0.06)', borderRadius: '8px',
+          padding: '7px 14px', gap: '6px',
+        }}>
+          {['STEP 01 · AXI-GPIO', 'STEP 02 · Interrupt', 'STEP 03 · AXI-Stream', 'STEP 04 · DMA'].map((s, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '4px' }}>
+              <span style={{
+                fontSize: '0.7rem', fontFamily: '"JetBrains Mono", monospace',
+                color: i % 2 === 0 ? 'var(--primary)' : 'var(--accent)', fontWeight: 700, whiteSpace: 'nowrap',
+              }}>{s}</span>
+              {i < 3 && <div style={{ flex: 1, height: '2px', background: 'linear-gradient(90deg, var(--primary), var(--accent))', borderRadius: '1px', opacity: 0.4 }} />}
+            </div>
+          ))}
+        </div>
       </section>
+
 
       {/* Slide 3.5: 워크플로우 다이어그램 */}
       <WorkflowDiagram />

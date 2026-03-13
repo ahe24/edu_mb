@@ -85,6 +85,21 @@ div[data-nextjs-toast-wrapper],
   animation: autoFadeIn 1s ease-in-out forwards;
 }
 
+/* ── Curriculum slide: auto-animate on slide enter ── */
+@keyframes revealSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Elements are invisible until slide becomes .present */
+.curriculum-anim {
+  opacity: 0;
+}
+
+.reveal .slides section.present .curriculum-anim {
+  animation: revealSlideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Reveal.js Base Theme Override */
 .reveal,
 .reveal h1,
