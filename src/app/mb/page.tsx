@@ -3,6 +3,7 @@
 import RevealWrapper from '@/components/RevealWrapper';
 import ImagePlaceholder from '@/components/ImagePlaceholder';
 import WorkflowDiagram from '@/components/mb/WorkflowDiagram';
+import CodeBlock from '@/components/CodeBlock';
 
 export default function MicroBlazeSlides() {
   return (
@@ -309,7 +310,7 @@ export default function MicroBlazeSlides() {
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
           <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 3-2. Vitis 소프트웨어 제어 코드 (C)</h2>
           <p style={{ fontSize: '1.2rem', color: '#475569', marginBottom: '1rem' }}>Application Project 안의 <code>src/main.c</code> 파일을 열거나 새로 생성하고, 아래 코드 작성</p>
-          <div className="code-block" style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.5rem', borderRadius: '8px', fontSize: '1.2rem', overflowX: 'auto', lineHeight: '1.4', boxShadow: '0 4px 6px rgba(0,0,0,0.3)' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.5rem', borderRadius: '8px', fontSize: '1.2rem', overflowX: 'auto', lineHeight: '1.4', boxShadow: '0 4px 6px rgba(0,0,0,0.3)' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <br />
@@ -329,7 +330,7 @@ export default function MicroBlazeSlides() {
             &nbsp;&nbsp;{'}'}<br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
             {'}'}
-          </div>
+          </CodeBlock>
         </section>
 
         {/* Ex1 - Step 4 */}
@@ -380,7 +381,7 @@ export default function MicroBlazeSlides() {
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
           <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>응용 실습: 패턴 테이블 활용 제어 </h2>
           <p style={{ fontSize: '1.2rem', color: '#445569', marginBottom: '0.8rem' }}>LUT(Look-Up Table) 배열을 활용하여 스위치 입력값(0~15)에 매칭되는 다양한 LED 패턴 출력</p>
-          <div className="code-block" style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '70vh' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '70vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <br />
@@ -404,7 +405,7 @@ export default function MicroBlazeSlides() {
             &nbsp;&nbsp;{'}'}<br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
             {'}'}
-          </div>
+          </CodeBlock>
         </section>
       </section>
 
@@ -422,7 +423,7 @@ export default function MicroBlazeSlides() {
             </ul>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', justifyContent: 'center' }}>
               {/* 하드웨어 블록 다이어그램 */}
-              <svg viewBox="0 0 320 340" style={{ width: '100%', maxWidth: '340px', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 320 430" style={{ width: '100%', maxWidth: '340px', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
                 {/* AXI Timer 블록 */}
                 <rect x="70" y="8" width="180" height="44" rx="8" fill="#e0f7f5" stroke="#20b2aa" strokeWidth="2"/>
                 <text x="160" y="27" textAnchor="middle" fill="#006400" fontSize="13" fontWeight="bold">AXI Timer</text>
@@ -456,12 +457,44 @@ export default function MicroBlazeSlides() {
                 <text x="160" y="253" textAnchor="middle" fill="#475569" fontSize="11">색상 인덱스 증가</text>
 
                 {/* 화살표 4 */}
-                <line x1="160" y1="262" x2="160" y2="286" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
+                <line x1="160" y1="262" x2="160" y2="290" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
 
-                {/* RGB LED 블록 */}
-                <rect x="70" y="288" width="180" height="44" rx="8" fill="#dcfce7" stroke="#16a34a" strokeWidth="2"/>
-                <text x="160" y="308" textAnchor="middle" fill="#14532d" fontSize="13" fontWeight="bold">RGB LED</text>
-                <text x="160" y="324" textAnchor="middle" fill="#475569" fontSize="11">🔴 → 🟢 → 🔵 → ... 색상 전환</text>
+                {/* RGB LED 블록 - 보드 동작과 동일한 Chase Light */}
+                <rect x="10" y="294" width="300" height="120" rx="10" fill="#1e1b2e" stroke="#16a34a" strokeWidth="2"/>
+                <text x="160" y="313" textAnchor="middle" fill="#86efac" fontSize="11" fontWeight="bold">RGB LEDs × 4 (LD4–LD7) — Chase Light</text>
+                <text x="160" y="327" textAnchor="middle" fill="#64748b" fontSize="9">같은 색이 4칸 쉬프트 → 다음 색으로 전환</text>
+
+                {/* LD4 — 0~0.5s 구간 ON / fill은 8s 주기로 색상 전환 */}
+                <circle cx="52" cy="360" r="20" fill="#ef4444">
+                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="opacity" values="0.9;0.12;0.12;0.12;0.9" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="r" values="22;16;16;16;22" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                </circle>
+                <text x="52" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD4</text>
+
+                {/* LD5 — 0.5~1.0s 구간 ON */}
+                <circle cx="118" cy="360" r="16" fill="#ef4444">
+                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="opacity" values="0.12;0.9;0.12;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="r" values="16;22;16;16;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                </circle>
+                <text x="118" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD5</text>
+
+                {/* LD6 — 1.0~1.5s 구간 ON */}
+                <circle cx="202" cy="360" r="16" fill="#ef4444">
+                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="opacity" values="0.12;0.12;0.9;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="r" values="16;16;22;16;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                </circle>
+                <text x="202" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD6</text>
+
+                {/* LD7 — 1.5~2.0s 구간 ON */}
+                <circle cx="268" cy="360" r="16" fill="#ef4444">
+                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="opacity" values="0.12;0.12;0.12;0.9;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="r" values="16;16;16;22;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                </circle>
+                <text x="268" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD7</text>
 
                 {/* 화살표 마커 정의 */}
                 <defs>
@@ -470,6 +503,8 @@ export default function MicroBlazeSlides() {
                   </marker>
                 </defs>
               </svg>
+
+
             </div>
 
           </div>
@@ -616,53 +651,57 @@ export default function MicroBlazeSlides() {
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
           <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>Step 3. 인터럽트 제어 코드 (C)</h2>
           <p style={{ fontSize: '1.15rem', color: '#475569', marginBottom: '0.8rem' }}>AXI Timer 인터럽트마다 ISR이 호출되어 RGB LED 색상을 순환 변경</p>
-          <div className="code-block" style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.0rem', overflowX: 'auto', lineHeight: '1.35', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '65vh' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.0rem', overflowX: 'auto', lineHeight: '1.35', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '65vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xtmrctr.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xintc.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <br />
-            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// RGB LED 색상 순환 배열 (R, G, B, RG, RB, GB, RGB, OFF)</span><br />
-            <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#e5c07b' }}>TIMER_PERIOD</span>  <span style={{ color: '#d19a66' }}>500000000</span>  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 0.5초 (100MHz 기준)</span><br />
+            <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#e5c07b' }}>TIMER_PERIOD</span> <span style={{ color: '#d19a66' }}>50000000</span>  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 0.5초 = 50M cycles (100MHz 기준)</span><br />
+            <br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 하나의 LED만 켜고 오른쪽으로 쉬프트 (Chase Light)</span><br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// LD4=bit[2:0], LD5=bit[5:3], LD6=bit[8:6], LD7=bit[11:9]</span><br />
+            <span style={{ color: '#e5c07b' }}>int</span> colors[<span style={{ color: '#d19a66' }}>8</span>] = {'{'} <span style={{ color: '#d19a66' }}>0x1</span>,<span style={{ color: '#d19a66' }}>0x2</span>,<span style={{ color: '#d19a66' }}>0x4</span>,<span style={{ color: '#d19a66' }}>0x3</span>,<span style={{ color: '#d19a66' }}>0x5</span>,<span style={{ color: '#d19a66' }}>0x6</span>,<span style={{ color: '#d19a66' }}>0x7</span>,<span style={{ color: '#d19a66' }}>0x0</span> {'}'};<br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// R    G    B    Y    M    C    W   OFF</span><br />
             <br />
             <span style={{ color: '#e5c07b' }}>XTmrCtr</span> timer_device;<br />
             <span style={{ color: '#e5c07b' }}>XIntc</span>   intc_device;<br />
             <span style={{ color: '#e5c07b' }}>XGpio</span>   rgb_device;<br />
-            <span style={{ color: '#e5c07b' }}>int</span>     color_idx = <span style={{ color: '#d19a66' }}>0</span>;<br />
-            <span style={{ color: '#e5c07b' }}>int</span>     colors[] = {'{'}  <span style={{ color: '#d19a66' }}>0x1</span>, <span style={{ color: '#d19a66' }}>0x2</span>, <span style={{ color: '#d19a66' }}>0x4</span>, <span style={{ color: '#d19a66' }}>0x3</span>, <span style={{ color: '#d19a66' }}>0x5</span>, <span style={{ color: '#d19a66' }}>0x6</span>, <span style={{ color: '#d19a66' }}>0x7</span>, <span style={{ color: '#d19a66' }}>0x0</span> {'}'};<br />
+            <span style={{ color: '#e5c07b' }}>int</span>     led_pos   = <span style={{ color: '#d19a66' }}>0</span>;  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 현재 켜진 LED (0=LD4, 1=LD5, 2=LD6, 3=LD7)</span><br />
+            <span style={{ color: '#e5c07b' }}>int</span>     color_idx = <span style={{ color: '#d19a66' }}>0</span>;  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 현재 색상 인덱스</span><br />
             <br />
-            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: 타이머 인터럽트 발생 시 호출</span><br />
-            <span style={{ color: '#e5c07b' }}>void</span> <span style={{ color: '#61afef' }}>timer_isr</span>(<span style={{ color: '#e5c07b' }}>void</span> *data, <span style={{ color: '#e5c07b' }}>u8</span> timer_num) {'{'}<br />
-            &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;rgb_device, <span style={{ color: '#d19a66' }}>1</span>, colors[color_idx]);<br />
-            &nbsp;&nbsp;color_idx = (color_idx + <span style={{ color: '#d19a66' }}>1</span>) % <span style={{ color: '#d19a66' }}>8</span>;<br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: 하나의 LED만 켜고 오른쪽으로 쉬프트</span><br />
+            <span style={{ color: '#e5c07b' }}>void</span> <span style={{ color: '#61afef' }}>timer_isr</span>(<span style={{ color: '#e5c07b' }}>void</span> *data, <span style={{ color: '#e5c07b' }}>u8</span> n) {'{'}<br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 현재 위치의 LED에만 색상 출력 (나머지는 0)</span><br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> gpio_val = colors[color_idx] &lt;&lt; (<span style={{ color: '#d19a66' }}>3</span> * led_pos);<br />
+            &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;rgb_device, <span style={{ color: '#d19a66' }}>1</span>, gpio_val);<br />
+            &nbsp;&nbsp;led_pos = (led_pos + <span style={{ color: '#d19a66' }}>1</span>) % <span style={{ color: '#d19a66' }}>4</span>;<br />
+            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>if</span> (led_pos == <span style={{ color: '#d19a66' }}>0</span>)  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 4개 다 돌면 다음 색상으로</span><br />
+            &nbsp;&nbsp;&nbsp;&nbsp;color_idx = (color_idx + <span style={{ color: '#d19a66' }}>1</span>) % <span style={{ color: '#d19a66' }}>8</span>;<br />
             {'}'}<br />
             <br />
             <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 1. GPIO 초기화 (RGB LED = 출력)</span><br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// GPIO 초기화 (12비트 전체 출력, 0x000 = all output)</span><br />
             &nbsp;&nbsp;XGpio_Initialize(&amp;rgb_device, XPAR_GPIO_0_DEVICE_ID);<br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_device, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_device, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x000</span>);<br />
             <br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 2. 타이머 초기화 및 ISR 등록</span><br />
             &nbsp;&nbsp;XTmrCtr_Initialize(&amp;timer_device, XPAR_AXI_TIMER_0_DEVICE_ID);<br />
             &nbsp;&nbsp;XTmrCtr_SetHandler(&amp;timer_device, timer_isr, &amp;timer_device);<br />
             &nbsp;&nbsp;XTmrCtr_SetOptions(&amp;timer_device, <span style={{ color: '#d19a66' }}>0</span>, XTC_INT_MODE_OPTION | XTC_AUTO_RELOAD_OPTION);<br />
             &nbsp;&nbsp;XTmrCtr_SetResetValue(&amp;timer_device, <span style={{ color: '#d19a66' }}>0</span>, <span style={{ color: '#d19a66' }}>0xFFFFFFFF</span> - TIMER_PERIOD);<br />
-            <br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 3. 인터럽트 컨트롤러 초기화 및 연결</span><br />
             &nbsp;&nbsp;XIntc_Initialize(&amp;intc_device, XPAR_INTC_0_DEVICE_ID);<br />
             &nbsp;&nbsp;XIntc_Connect(&amp;intc_device, XPAR_INTC_0_TMRCTR_0_VEC_ID,<br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XTmrCtr_InterruptHandler, &amp;timer_device);<br />
             &nbsp;&nbsp;XIntc_Enable(&amp;intc_device, XPAR_INTC_0_TMRCTR_0_VEC_ID);<br />
             &nbsp;&nbsp;XIntc_Start(&amp;intc_device, XIN_REAL_MODE);<br />
-            <br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 4. 타이머 시작 + 전역 인터럽트 활성화</span><br />
             &nbsp;&nbsp;XTmrCtr_Start(&amp;timer_device, <span style={{ color: '#d19a66' }}>0</span>);<br />
             &nbsp;&nbsp;microblaze_enable_interrupts();<br />
             <br />
-            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span>(<span style={{ color: '#d19a66' }}>1</span>) {'{'} {'}'} <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 인터럽트 대기</span><br />
+            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span>(<span style={{ color: '#d19a66' }}>1</span>) {'{'} {'}'}<br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
             {'}'}
-          </div>
+          </CodeBlock>
+
         </section>
 
         {/* Ex2 - 응용: 예제1 + 예제2 병합 코드 */}
@@ -672,13 +711,13 @@ export default function MicroBlazeSlides() {
             Switch→LED 제어(예제1)와 타이머 인터럽트→RGB LED 순환(예제2)을 하나의 소스로 병합&nbsp;
             <span style={{ backgroundColor: 'rgba(32,178,170,0.15)', border: '1px solid var(--accent)', borderRadius: '4px', padding: '2px 8px', fontSize: '0.9rem', color: 'var(--primary-dark)', fontWeight: 'bold' }}>메인 while문 + ISR 동시 구동</span>
           </p>
-          <div className="code-block" style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.1rem', borderRadius: '8px', fontSize: '0.95rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '68vh' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.1rem', borderRadius: '8px', fontSize: '0.95rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '68vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xtmrctr.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xintc.h"</span><br />
             <br />
-            <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#e5c07b' }}>TIMER_PERIOD</span> <span style={{ color: '#d19a66' }}>500000000</span>  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 0.5초 (100MHz 기준)</span><br />
+            <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#e5c07b' }}>TIMER_PERIOD</span> <span style={{ color: '#d19a66' }}>50000000</span>  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 0.5초 = 50M cycles (100MHz 기준)</span><br />
             <br />
             <span style={{ color: '#e5c07b' }}>XGpio</span>   sw_led_gpio;  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 예제1: axi_gpio_0 (2ch: SW + LED)</span><br />
             <span style={{ color: '#e5c07b' }}>XGpio</span>   rgb_gpio;     <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 예제2: axi_gpio_1 (1ch: RGB LED)</span><br />
@@ -688,9 +727,14 @@ export default function MicroBlazeSlides() {
             <span style={{ color: '#e5c07b' }}>int</span> colors[] = {'{'} <span style={{ color: '#d19a66' }}>0x1</span>,<span style={{ color: '#d19a66' }}>0x2</span>,<span style={{ color: '#d19a66' }}>0x4</span>,<span style={{ color: '#d19a66' }}>0x3</span>,<span style={{ color: '#d19a66' }}>0x5</span>,<span style={{ color: '#d19a66' }}>0x6</span>,<span style={{ color: '#d19a66' }}>0x7</span>,<span style={{ color: '#d19a66' }}>0x0</span> {'}'};<br />
             <span style={{ color: '#e5c07b' }}>int</span> sw_lut[] = {'{'} <span style={{ color: '#d19a66' }}>0x0</span>,<span style={{ color: '#d19a66' }}>0xF</span>,<span style={{ color: '#d19a66' }}>0xA</span>,<span style={{ color: '#d19a66' }}>0x5</span>,<span style={{ color: '#d19a66' }}>0x9</span>,<span style={{ color: '#d19a66' }}>0x6</span>,<span style={{ color: '#d19a66' }}>0xC</span>,<span style={{ color: '#d19a66' }}>0x3</span>,<span style={{ color: '#d19a66' }}>0x1</span>,<span style={{ color: '#d19a66' }}>0x2</span>,<span style={{ color: '#d19a66' }}>0x4</span>,<span style={{ color: '#d19a66' }}>0x8</span>,<span style={{ color: '#d19a66' }}>0xE</span>,<span style={{ color: '#d19a66' }}>0xD</span>,<span style={{ color: '#d19a66' }}>0xB</span>,<span style={{ color: '#d19a66' }}>0x7</span> {'}'};<br />
             <br />
-            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: 타이머 인터럽트 → RGB LED 색상 순환</span><br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: 4개 LED 각자 다른 위상으로 12비트 패킹 출력</span><br />
             <span style={{ color: '#e5c07b' }}>void</span> <span style={{ color: '#61afef' }}>timer_isr</span>(<span style={{ color: '#e5c07b' }}>void</span> *p, <span style={{ color: '#e5c07b' }}>u8</span> n) {'{'}<br />
-            &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>1</span>, colors[color_idx]);<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld4 = colors[ color_idx        % <span style={{ color: '#d19a66' }}>8</span>];<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld5 = colors[(color_idx + <span style={{ color: '#d19a66' }}>2</span>) % <span style={{ color: '#d19a66' }}>8</span>];<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld6 = colors[(color_idx + <span style={{ color: '#d19a66' }}>4</span>) % <span style={{ color: '#d19a66' }}>8</span>];<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld7 = colors[(color_idx + <span style={{ color: '#d19a66' }}>6</span>) % <span style={{ color: '#d19a66' }}>8</span>];<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> val = ld4 | (ld5 &lt;&lt; <span style={{ color: '#d19a66' }}>3</span>) | (ld6 &lt;&lt; <span style={{ color: '#d19a66' }}>6</span>) | (ld7 &lt;&lt; <span style={{ color: '#d19a66' }}>9</span>);<br />
+            &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>1</span>, val);<br />
             &nbsp;&nbsp;color_idx = (color_idx + <span style={{ color: '#d19a66' }}>1</span>) % <span style={{ color: '#d19a66' }}>8</span>;<br />
             {'}'}<br />
             <br />
@@ -700,7 +744,7 @@ export default function MicroBlazeSlides() {
             &nbsp;&nbsp;XGpio_SetDataDirection(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch1: LED</span><br />
             &nbsp;&nbsp;XGpio_SetDataDirection(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch2: SW</span><br />
             &nbsp;&nbsp;XGpio_Initialize(&amp;rgb_gpio, XPAR_GPIO_1_DEVICE_ID);<br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x000</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 12비트 전체 출력</span><br />
             <br />
             &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 2. 타이머 + INTC 초기화</span><br />
             &nbsp;&nbsp;XTmrCtr_Initialize(&amp;timer, XPAR_AXI_TIMER_0_DEVICE_ID);<br />
@@ -721,7 +765,7 @@ export default function MicroBlazeSlides() {
             &nbsp;&nbsp;{'}'}<br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
             {'}'}
-          </div>
+          </CodeBlock>
         </section>
       </section>
 
