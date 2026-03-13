@@ -20,6 +20,7 @@ export default function RevealWrapper({ children }: { children: React.ReactNode 
         width: 1280,
         height: 720,
         margin: 0.08,
+        help: false, // 도움말(N 아이콘 등) 숨기기
       });
 
       if (deckInstance.current) {

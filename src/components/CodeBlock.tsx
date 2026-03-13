@@ -104,9 +104,32 @@ export default function CodeBlock({ children, style, language = 'C' }: CodeBlock
         style={{
           borderRadius: 0,
           boxShadow: 'none',
+          overflow: 'auto',
+          maxHeight: style?.maxHeight || '450px',
+          minHeight: '200px', // 너무 낮게 표시되는 것 방지
+          paddingBottom: '20px', // 마지막 줄 여유 공간
           ...style,
         }}
       >
+        <style dangerouslySetInnerHTML={{ __html: `
+          .code-block::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+          }
+          .code-block::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+          }
+          .code-block::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 5px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+          }
+          .code-block::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+            background-clip: content-box;
+          }
+        `}} />
         {children}
       </div>
     </div>

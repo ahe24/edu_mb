@@ -39,6 +39,18 @@ body {
   padding: 0;
 }
 
+/* Next.js 개발 표시기(N 아이콘 등) 및 각종 오버레이 숨기기 */
+#nextjs-portal,
+.__next-dev-indicator,
+div[data-nextjs-toast-wrapper],
+[data-nextjs-route-announcer],
+.nextjs-toast-errors-parent {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 @keyframes autoFadeUp {
   0% {
     opacity: 0;

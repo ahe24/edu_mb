@@ -1,11 +1,21 @@
 'use client';
 
+import { useState } from 'react';
+
 import RevealWrapper from '@/components/RevealWrapper';
 import ImagePlaceholder from '@/components/ImagePlaceholder';
 import WorkflowDiagram from '@/components/mb/WorkflowDiagram';
 import CodeBlock from '@/components/CodeBlock';
 
 export default function MicroBlazeSlides() {
+  const [swState, setSwState] = useState([true, false, true, false]);
+
+  const toggleSwitch = (i: number) => {
+    const next = [...swState];
+    next[i] = !next[i];
+    setSwState(next);
+  };
+
   return (
     <RevealWrapper>
       {/* Slide 1: 타이틀 */}
@@ -77,21 +87,96 @@ export default function MicroBlazeSlides() {
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
           <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.5rem', borderBottom: '3px solid var(--accent)', paddingBottom: '0.5rem', marginBottom: '2rem' }}>예제 1: MicroBlaze & GPIO 제어</h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '42% 58%', gap: '2rem' }}>
             <ul className="info-list" style={{ fontSize: '1.5rem' }}>
-              <li><strong>학습 목표</strong> <span>Vivado Block Design 흐름 및 Vitis C 코딩 기초 습득</span></li>
+              <li><strong>학습 목표</strong> <span>Vivado Block Design 흐름 및 <br />Vitis C 코딩 기초 습득</span></li>
               <li><strong>실습 내용</strong> <span>MicroBlaze 최소 시스템 구성</span></li>
-              <li><strong>동작 확인</strong> <span>보드의 LED와 Switch를 AXI GPIO IP로 제어</span></li>
+              <li><strong>동작 확인</strong> <span>보드의 스위치 ON/OFF → 대응 LED 점멸</span></li>
             </ul>
 
-            <ImagePlaceholder
-              src="/images/ex1_block_design.png"
-              label="예제 1 완성 화면"
-              desc="Vivado Block Design 캡쳐 이미지 (MicroBlaze + AXI GPIO)"
-            />
+            {/* 동작 설명 SVG 다이어그램 */}
+            <svg viewBox="0 0 420 250" style={{ width: '100%', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="arr1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L7,3 z" fill="#20b2aa" />
+                </marker>
+                <marker id="arr2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L7,3 z" fill="#a78bfa" />
+                </marker>
+              </defs>
+
+              {/* ── Switch 4개 ── */}
+              <rect x="21" y="15" width="82" height="110" rx="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
+              <text x="62" y="32" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="bold">Switch</text>
+              {swState.map((on, i) => (
+                <g key={i} onClick={() => toggleSwitch(i)} style={{ cursor: 'pointer' }}>
+                  <rect x="28" y={40 + i * 20} width="30" height="12" rx="4" fill={on ? "#166534" : "#374151"} stroke="#475569" strokeWidth="1" />
+                  <rect x={on ? 46 : 27} y={40 + i * 20} width="12" height="12" rx="3" fill={on ? "#4ade80" : "#6b7280"} style={{ transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                  <text x="62" y={50 + i * 20} fill={on ? "#86efac" : "#64748b"} fontSize="7" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
+                    SW{i} {on ? "ON" : "OFF"}
+                  </text>
+                </g>
+              ))}
+
+              {/* Switch → GPIO 화살표 */}
+              <line x1="104" y1="70" x2="148" y2="70" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
+              <text x="124" y="64" textAnchor="middle" fill="#64748b" fontSize="8">4bit</text>
+
+              {/* ── AXI GPIO ── */}
+              <rect x="150" y="15" width="90" height="110" rx="8" fill="#0f172a" stroke="#20b2aa" strokeWidth="2" />
+              <text x="195" y="33" textAnchor="middle" fill="#5eead4" fontSize="11" fontWeight="bold">AXI GPIO</text>
+              <rect x="158" y="40" width="74" height="24" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+              <text x="195" y="52" textAnchor="middle" fill="#94a3b8" fontSize="10">ch2  IN</text>
+              <text x="195" y="63" textAnchor="middle" fill="#64748b" fontSize="9">Switch 읽기</text>
+              <rect x="158" y="71" width="74" height="24" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+              <text x="195" y="83" textAnchor="middle" fill="#94a3b8" fontSize="10">ch1  OUT</text>
+              <text x="195" y="94" textAnchor="middle" fill="#64748b" fontSize="9">LED 쓰기</text>
+              <text x="195" y="114" textAnchor="middle" fill="#74777aff" fontSize="9">AXI-Lite Bus</text>
+
+              {/* GPIO ↔ MicroBlaze */}
+              <line x1="195" y1="125" x2="195" y2="152" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
+              <line x1="205" y1="152" x2="205" y2="125" stroke="#a78bfa" strokeWidth="1.5" markerEnd="url(#arr2)" />
+
+              {/* GPIO → LED 화살표 */}
+              <line x1="240" y1="70" x2="278" y2="70" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
+              <text x="255" y="64" textAnchor="middle" fill="#64748b" fontSize="8">4bit</text>
+
+              {/* ── LED 4개 (녹색 단색) ── */}
+              <rect x="280" y="15" width="82" height="110" rx="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
+              <text x="321" y="32" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="bold">LED</text>
+              {swState.map((on, i) => (
+                <g key={i}>
+                  <circle cx="297" cy={47 + i * 20} r="9" fill={on ? "#166534" : "#1f2937"} stroke={on ? "#4ade80" : "#374151"} strokeWidth="1.5" style={{ transition: 'all 0.3s' }}>
+                    {on && <animate attributeName="opacity" values="1;0.6;1" dur="1.2s" repeatCount="indefinite" />}
+                  </circle>
+                  {on && <circle cx="297" cy={47 + i * 20} r="5" fill="#4ade80" opacity="0.8" style={{ transition: 'all 0.3s' }} />}
+                  <text x="315" y={51 + i * 20} fill={on ? "#4ade80" : "#6b7280"} fontSize="10" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
+                    LD{i} {on ? "ON" : "OFF"}
+                  </text>
+                </g>
+              ))}
+
+              {/* ── MicroBlaze CPU ── */}
+              <rect x="85" y="155" width="250" height="60" rx="10" fill="#1e1b2e" stroke="#7c3aed" strokeWidth="2.5" />
+              <text x="210" y="174" textAnchor="middle" fill="#c4b5fd" fontSize="12" fontWeight="bold">MicroBlaze CPU</text>
+              <text x="100" y="190" textAnchor="start" fill="#94a3b8" fontSize="10">① XGpio_DiscreteRead( ch2 )  →  SW 값 읽기</text>
+              <text x="100" y="205" textAnchor="start" fill="#94a3b8" fontSize="10">② XGpio_DiscreteWrite( ch1, sw_val )  →  LED 출력</text>
+
+              {/* while(1) 박스 */}
+              <rect x="115" y="230" width="190" height="20" rx="5" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" strokeWidth="1" strokeDasharray="4 2" />
+              <text x="210" y="243" textAnchor="middle" fill="#a78bfa" fontSize="10" fontWeight="bold">while(1) — 폴링 루프 반복</text>
+
+              {/* MicroBlaze → while 화살표 */}
+              <line x1="210" y1="215" x2="210" y2="230" stroke="#7c3aed" strokeWidth="1.5" markerEnd="url(#arr2)" />
+
+              {/* 루프 백 화살표 */}
+              <path d="M115,239 Q60,238 40,195 Q20,160 30,124" fill="none" stroke="#7c3aed" strokeWidth="1" strokeDasharray="4 3" opacity="0.5" />
+              <path d="M305,239 Q400,235 400,180 Q410,80 360,60" fill="none" stroke="#7c3aed" strokeWidth="1" strokeDasharray="4 3" opacity="0.5" />
+            </svg>
           </div>
-          <p style={{ textAlign: 'center', marginTop: '3rem', fontSize: '1.2rem', color: '#64748b' }}>⬇️ 아래 방향키(↓)를 눌러 실습 단계 확인</p>
+          <p style={{ textAlign: 'center', marginTop: '2rem', fontSize: '1.2rem', color: '#64748b' }}>⬇️ 아래 방향키(↓)를 눌러 실습 단계 확인</p>
         </section>
+
 
         {/* Ex1 - Step 1 */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
@@ -310,7 +395,7 @@ export default function MicroBlazeSlides() {
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
           <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 3-2. Vitis 소프트웨어 제어 코드 (C)</h2>
           <p style={{ fontSize: '1.2rem', color: '#475569', marginBottom: '1rem' }}>Application Project 안의 <code>src/main.c</code> 파일을 열거나 새로 생성하고, 아래 코드 작성</p>
-          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.5rem', borderRadius: '8px', fontSize: '1.2rem', overflowX: 'auto', lineHeight: '1.4', boxShadow: '0 4px 6px rgba(0,0,0,0.3)' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '20px', borderRadius: '8px', fontSize: '18px', lineHeight: '1.4', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '420px' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <br />
@@ -425,81 +510,81 @@ export default function MicroBlazeSlides() {
               {/* 하드웨어 블록 다이어그램 */}
               <svg viewBox="0 0 320 430" style={{ width: '100%', maxWidth: '340px', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
                 {/* AXI Timer 블록 */}
-                <rect x="70" y="8" width="180" height="44" rx="8" fill="#e0f7f5" stroke="#20b2aa" strokeWidth="2"/>
+                <rect x="70" y="8" width="180" height="44" rx="8" fill="#e0f7f5" stroke="#20b2aa" strokeWidth="2" />
                 <text x="160" y="27" textAnchor="middle" fill="#006400" fontSize="13" fontWeight="bold">AXI Timer</text>
                 <text x="160" y="43" textAnchor="middle" fill="#475569" fontSize="11">주기 카운트 만료</text>
 
                 {/* 화살표 1 */}
-                <line x1="160" y1="52" x2="160" y2="76" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
+                <line x1="160" y1="52" x2="160" y2="76" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)" />
                 <text x="174" y="68" fill="#dc2626" fontSize="10" fontWeight="bold">interrupt!</text>
 
                 {/* AXI INTC 블록 */}
-                <rect x="70" y="78" width="180" height="44" rx="8" fill="#fef9e7" stroke="#f59e0b" strokeWidth="2"/>
+                <rect x="70" y="78" width="180" height="44" rx="8" fill="#fef9e7" stroke="#f59e0b" strokeWidth="2" />
                 <text x="160" y="97" textAnchor="middle" fill="#92400e" fontSize="13" fontWeight="bold">AXI Interrupt Controller</text>
                 <text x="160" y="113" textAnchor="middle" fill="#475569" fontSize="11">인터럽트 중재 및 전달</text>
 
                 {/* 화살표 2 */}
-                <line x1="160" y1="122" x2="160" y2="146" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
+                <line x1="160" y1="122" x2="160" y2="146" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)" />
                 <text x="174" y="138" fill="#dc2626" fontSize="10" fontWeight="bold">irq</text>
 
                 {/* MicroBlaze 블록 */}
-                <rect x="50" y="148" width="220" height="44" rx="8" fill="#ede9fe" stroke="#7c3aed" strokeWidth="2.5"/>
+                <rect x="50" y="148" width="220" height="44" rx="8" fill="#ede9fe" stroke="#7c3aed" strokeWidth="2.5" />
                 <text x="160" y="167" textAnchor="middle" fill="#4c1d95" fontSize="13" fontWeight="bold">MicroBlaze CPU</text>
                 <text x="160" y="183" textAnchor="middle" fill="#475569" fontSize="11">현재 컨텍스트 저장 → ISR 진입</text>
 
                 {/* 화살표 3 */}
-                <line x1="160" y1="192" x2="160" y2="216" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
+                <line x1="160" y1="192" x2="160" y2="216" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)" />
                 <text x="170" y="208" fill="#475569" fontSize="10">ISR 호출</text>
 
                 {/* ISR 함수 블록 */}
-                <rect x="60" y="218" width="200" height="44" rx="8" fill="#fce7f3" stroke="#db2777" strokeWidth="2"/>
+                <rect x="60" y="218" width="200" height="44" rx="8" fill="#fce7f3" stroke="#db2777" strokeWidth="2" />
                 <text x="160" y="237" textAnchor="middle" fill="#831843" fontSize="13" fontWeight="bold">timer_isr( )</text>
                 <text x="160" y="253" textAnchor="middle" fill="#475569" fontSize="11">색상 인덱스 증가</text>
 
                 {/* 화살표 4 */}
-                <line x1="160" y1="262" x2="160" y2="290" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)"/>
+                <line x1="160" y1="262" x2="160" y2="290" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arrow)" />
 
                 {/* RGB LED 블록 - 보드 동작과 동일한 Chase Light */}
-                <rect x="10" y="294" width="300" height="120" rx="10" fill="#1e1b2e" stroke="#16a34a" strokeWidth="2"/>
+                <rect x="10" y="294" width="300" height="120" rx="10" fill="#1e1b2e" stroke="#16a34a" strokeWidth="2" />
                 <text x="160" y="313" textAnchor="middle" fill="#86efac" fontSize="11" fontWeight="bold">RGB LEDs × 4 (LD4–LD7) — Chase Light</text>
                 <text x="160" y="327" textAnchor="middle" fill="#64748b" fontSize="9">같은 색이 4칸 쉬프트 → 다음 색으로 전환</text>
 
                 {/* LD4 — 0~0.5s 구간 ON / fill은 8s 주기로 색상 전환 */}
                 <circle cx="52" cy="360" r="20" fill="#ef4444">
-                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete"/>
-                  <animate attributeName="opacity" values="0.9;0.12;0.12;0.12;0.9" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
-                  <animate attributeName="r" values="22;16;16;16;22" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
+                  <animate attributeName="opacity" values="0.9;0.12;0.12;0.12;0.9" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  <animate attributeName="r" values="22;16;16;16;22" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
                 </circle>
                 <text x="52" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD4</text>
 
                 {/* LD5 — 0.5~1.0s 구간 ON */}
                 <circle cx="118" cy="360" r="16" fill="#ef4444">
-                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete"/>
-                  <animate attributeName="opacity" values="0.12;0.9;0.12;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
-                  <animate attributeName="r" values="16;22;16;16;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
+                  <animate attributeName="opacity" values="0.12;0.9;0.12;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  <animate attributeName="r" values="16;22;16;16;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
                 </circle>
                 <text x="118" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD5</text>
 
                 {/* LD6 — 1.0~1.5s 구간 ON */}
                 <circle cx="202" cy="360" r="16" fill="#ef4444">
-                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete"/>
-                  <animate attributeName="opacity" values="0.12;0.12;0.9;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
-                  <animate attributeName="r" values="16;16;22;16;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
+                  <animate attributeName="opacity" values="0.12;0.12;0.9;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  <animate attributeName="r" values="16;16;22;16;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
                 </circle>
                 <text x="202" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD6</text>
 
                 {/* LD7 — 1.5~2.0s 구간 ON */}
                 <circle cx="268" cy="360" r="16" fill="#ef4444">
-                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete"/>
-                  <animate attributeName="opacity" values="0.12;0.12;0.12;0.9;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
-                  <animate attributeName="r" values="16;16;16;22;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete"/>
+                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
+                  <animate attributeName="opacity" values="0.12;0.12;0.12;0.9;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  <animate attributeName="r" values="16;16;16;22;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
                 </circle>
                 <text x="268" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD7</text>
 
                 {/* 화살표 마커 정의 */}
                 <defs>
                   <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-                    <path d="M0,0 L0,6 L8,3 z" fill="#20b2aa"/>
+                    <path d="M0,0 L0,6 L8,3 z" fill="#20b2aa" />
                   </marker>
                 </defs>
               </svg>
@@ -651,7 +736,7 @@ export default function MicroBlazeSlides() {
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
           <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>Step 3. 인터럽트 제어 코드 (C)</h2>
           <p style={{ fontSize: '1.15rem', color: '#475569', marginBottom: '0.8rem' }}>AXI Timer 인터럽트마다 ISR이 호출되어 RGB LED 색상을 순환 변경</p>
-          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.0rem', overflowX: 'auto', lineHeight: '1.35', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '65vh' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '18px', borderRadius: '8px', fontSize: '16px', lineHeight: '1.35', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '440px' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xtmrctr.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xintc.h"</span><br />
@@ -711,7 +796,7 @@ export default function MicroBlazeSlides() {
             Switch→LED 제어(예제1)와 타이머 인터럽트→RGB LED 순환(예제2)을 하나의 소스로 병합&nbsp;
             <span style={{ backgroundColor: 'rgba(32,178,170,0.15)', border: '1px solid var(--accent)', borderRadius: '4px', padding: '2px 8px', fontSize: '0.9rem', color: 'var(--primary-dark)', fontWeight: 'bold' }}>메인 while문 + ISR 동시 구동</span>
           </p>
-          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.1rem', borderRadius: '8px', fontSize: '0.95rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '68vh' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '16px', borderRadius: '8px', fontSize: '15px', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '460px' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xtmrctr.h"</span><br />
