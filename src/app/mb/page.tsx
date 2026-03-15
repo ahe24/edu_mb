@@ -5,6 +5,8 @@ import { useState } from 'react';
 import RevealWrapper from '@/components/RevealWrapper';
 import ImagePlaceholder from '@/components/ImagePlaceholder';
 import WorkflowDiagram from '@/components/mb/WorkflowDiagram';
+import Ex3Slides from '@/components/mb/Ex3Slides';
+import Ex4Slides from '@/components/mb/Ex4Slides';
 import CodeBlock from '@/components/CodeBlock';
 
 export default function MicroBlazeSlides() {
@@ -1090,45 +1092,11 @@ export default function MicroBlazeSlides() {
         </section>
       </section>
 
-      {/* Slide 6: 예제 3 */}
-      <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', borderBottom: '3px solid var(--accent)', paddingBottom: '0.5rem', marginBottom: '2rem' }}>예제 3: AXI-Stream & FIFO 실습</h2>
+      {/* Slide 6: 예제 3 (Vertical Slides) */}
+      <Ex3Slides />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-          <ul className="info-list" style={{ fontSize: '1.3rem' }}>
-            <li><strong>배경</strong> <span>대량의 데이터 전송 시 AXI-Lite(레지스터 단위)는 속도 한계 발생</span></li>
-            <li><strong>학습 목표</strong> <span>주소 없는 데이터 스트림 개념 및 버퍼링(FIFO) 필요성 인지</span></li>
-            <li><strong>실습 내용</strong> <span>루프백(Loopback) 시스템 구축</span></li>
-            <li><strong>동작 확인</strong> <span>보드 버튼 클릭 시 대량의 난수 생성 → 버퍼 전송 → UART 결과 출력</span></li>
-          </ul>
-
-          <ImagePlaceholder
-            src="/images/ex3_axis_loopback.png"
-            label="예제 3 이미지 대기중"
-            desc="AXI-Stream FIFO 데이터 루프백 연결 개념도 또는 UART 터미널 출력 결과창"
-          />
-        </div>
-      </section>
-
-      {/* Slide 7: 예제 4 */}
-      <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', borderBottom: '3px solid var(--accent)', paddingBottom: '0.5rem', marginBottom: '2rem' }}>예제 4: 외부 메모리(DDR3)와 DMA 연동</h2>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-          <ul className="info-list" style={{ fontSize: '1.3rem' }}>
-            <li><strong>배경</strong> <span>고성능 SoC 필수 요소인 DMA(Direct Memory Access) 적용</span></li>
-            <li><strong>학습 목표</strong> <span>CPU 점유율 절감 및 외부 메모리 맵 활용 능력 숙지</span></li>
-            <li><strong>실습 내용</strong> <span>Arty A7 내장 256MB DDR3L 메모리 + 컨트롤러(MIG IP) 연동</span></li>
-            <li><strong>동작 원리</strong> <span>MicroBlaze → 메모리 기록 → AXI DMA 스캔 → 시스템 메모리 재기록</span></li>
-          </ul>
-
-          <ImagePlaceholder
-            src="/images/ex4_dma_architecture.png"
-            label="예제 4 이미지 대기중"
-            desc="A7 보드의 MIG IP 연동 화면 또는 전체 DMA 아키텍처 다이어그램"
-          />
-        </div>
-      </section>
+      {/* Slide 7: 예제 4 (Vertical Slides) */}
+      <Ex4Slides />
     </RevealWrapper>
   );
 }

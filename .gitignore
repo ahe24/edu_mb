@@ -43,6 +43,7 @@ next-env.d.ts
 # IDEs
 .vscode/
 .idea/
+.claude/
 
 # Vivado / Xilinx (incase any project files are created here)
 *.log
