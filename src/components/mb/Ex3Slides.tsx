@@ -19,7 +19,7 @@ export default function Ex3Slides() {
           </ul>
 
           {/* AXI-Stream 아키텍처 SVG 다이어그램 */}
-          <svg viewBox="0 0 460 300" style={{ width: '100%', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 460 280" style={{ width: '100%', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
             <defs>
               <marker id="ex3arr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
                 <path d="M0,0 L0,7 L7,3.5 z" fill="#20b2aa" />
@@ -27,63 +27,73 @@ export default function Ex3Slides() {
               <marker id="ex3arr2" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
                 <path d="M0,0 L0,7 L7,3.5 z" fill="#f59e0b" />
               </marker>
+              <marker id="ex3arr3" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+                <path d="M0,0 L0,7 L7,3.5 z" fill="#3cb371" />
+              </marker>
             </defs>
 
-            {/* MicroBlaze CPU */}
-            <rect x="10" y="30" width="100" height="60" rx="8" fill="#1e1b2e" stroke="#7c3aed" strokeWidth="2" />
-            <text x="60" y="55" textAnchor="middle" fill="#c4b5fd" fontSize="11" fontWeight="bold">MicroBlaze</text>
-            <text x="60" y="70" textAnchor="middle" fill="#a78bfa" fontSize="9">CPU</text>
+            {/* ── 데이터 흐름 (U자형, 수평 화살표 정렬) ── */}
+            {/* 핵심 y좌표: TX 라인 y=55, RX 라인 y=145 */}
 
-            {/* Arrow: MB → FIFO TX */}
-            <line x1="110" y1="60" x2="148" y2="60" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#ex3arr)" />
-            <text x="129" y="53" textAnchor="middle" fill="#64748b" fontSize="7">AXI-Lite</text>
+            {/* MicroBlaze CPU (통합 박스) */}
+            <rect x="8" y="8" width="110" height="180" rx="10" fill="#1e1b2e" stroke="#7c3aed" strokeWidth="2" />
+            <text x="63" y="30" textAnchor="middle" fill="#c4b5fd" fontSize="11" fontWeight="bold">MicroBlaze</text>
+            <text x="63" y="43" textAnchor="middle" fill="#a78bfa" fontSize="8">CPU</text>
+            <line x1="18" y1="50" x2="108" y2="50" stroke="#7c3aed" strokeWidth="0.5" strokeOpacity="0.35" />
+            <text x="63" y="68" textAnchor="middle" fill="#c4b5fd" fontSize="8">TX: FIFO Write →</text>
+            <line x1="18" y1="95" x2="108" y2="95" stroke="#7c3aed" strokeWidth="0.5" strokeOpacity="0.35" />
+            <text x="63" y="112" textAnchor="middle" fill="#a78bfa" fontSize="8">검증 + 비교</text>
+            <line x1="18" y1="125" x2="108" y2="125" stroke="#7c3aed" strokeWidth="0.5" strokeOpacity="0.35" />
+            <text x="63" y="148" textAnchor="middle" fill="#c4b5fd" fontSize="8">← RX: FIFO Read</text>
+            <line x1="18" y1="165" x2="108" y2="165" stroke="#7c3aed" strokeWidth="0.5" strokeOpacity="0.35" />
+            <text x="63" y="181" textAnchor="middle" fill="#a78bfa" fontSize="8">UART 출력</text>
 
-            {/* AXI-Stream FIFO TX */}
-            <rect x="150" y="30" width="90" height="60" rx="8" fill="#0f172a" stroke="#20b2aa" strokeWidth="2" />
-            <text x="195" y="52" textAnchor="middle" fill="#5eead4" fontSize="10" fontWeight="bold">AXI-Stream</text>
-            <text x="195" y="65" textAnchor="middle" fill="#5eead4" fontSize="10" fontWeight="bold">FIFO</text>
-            <text x="195" y="78" textAnchor="middle" fill="#94a3b8" fontSize="8">TX Channel</text>
+            {/* Arrow: MB TX → FIFO TX (수평, y=60) */}
+            <line x1="118" y1="68" x2="155" y2="68" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#ex3arr)" />
+            <text x="136" y="53" textAnchor="middle" fill="#64748b" fontSize="7">AXI-Lite</text>
 
-            {/* Arrow: FIFO TX → x2 Multiplier */}
-            <line x1="240" y1="60" x2="278" y2="60" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#ex3arr2)" />
-            <text x="259" y="53" textAnchor="middle" fill="#92400e" fontSize="7">Stream</text>
+            {/* FIFO TX (중심 y=60) */}
+            <rect x="158" y="48" width="85" height="40" rx="7" fill="#0f172a" stroke="#20b2aa" strokeWidth="1.5" />
+            <text x="200" y="66" textAnchor="middle" fill="#5eead4" fontSize="10" fontWeight="bold">FIFO TX</text>
+            <text x="200" y="79" textAnchor="middle" fill="#94a3b8" fontSize="7">AXI-Stream</text>
 
-            {/* x2 Multiplier (Custom IP) */}
-            <rect x="280" y="25" width="90" height="70" rx="8" fill="#fef9e7" stroke="#f59e0b" strokeWidth="2" />
-            <text x="325" y="50" textAnchor="middle" fill="#92400e" fontSize="12" fontWeight="bold">x2</text>
-            <text x="325" y="63" textAnchor="middle" fill="#92400e" fontSize="9">Multiplier</text>
-            <text x="325" y="78" textAnchor="middle" fill="#b45309" fontSize="8">Custom IP</text>
+            {/* Arrow: FIFO TX → x2 (수평, y=60) */}
+            <line x1="243" y1="68" x2="280" y2="68" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#ex3arr2)" />
+            <text x="261" y="53" textAnchor="middle" fill="#92400e" fontSize="7">Stream</text>
 
-            {/* Arrow: x2 → FIFO RX (going down) */}
-            <line x1="325" y1="95" x2="325" y2="135" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#ex3arr2)" />
-            <text x="340" y="118" fill="#92400e" fontSize="7">Stream</text>
+            {/* x2 Multiplier (세로로 TX~RX 구간 커버) */}
+            <rect x="283" y="38" width="90" height="60" rx="8" fill="#fef9e7" stroke="#f59e0b" strokeWidth="2" />
+            <text x="328" y="58" textAnchor="middle" fill="#92400e" fontSize="14" fontWeight="bold">x2</text>
+            <text x="328" y="68" textAnchor="middle" fill="#92400e" fontSize="9">Multiplier</text>
+            <text x="328" y="88" textAnchor="middle" fill="#b45309" fontSize="7">Custom IP</text>
 
-            {/* AXI-Stream FIFO RX */}
-            <rect x="260" y="137" width="90" height="55" rx="8" fill="#0f172a" stroke="#20b2aa" strokeWidth="2" />
-            <text x="305" y="157" textAnchor="middle" fill="#5eead4" fontSize="10" fontWeight="bold">AXI-Stream FIFO</text>
-            <text x="305" y="172" textAnchor="middle" fill="#94a3b8" fontSize="8">RX Channel</text>
+            {/* Arrow: x2 → FIFO RX (아래로) */}
+            <line x1="328" y1="98" x2="328" y2="125" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#ex3arr2)" />
+            <text x="345" y="123" fill="#92400e" fontSize="7">Stream</text>
 
-            {/* Arrow: FIFO RX → MB (going left) */}
-            <line x1="260" y1="165" x2="110" y2="165" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#ex3arr)" />
-            <text x="185" y="158" textAnchor="middle" fill="#64748b" fontSize="7">AXI-Lite (결과 수신)</text>
+            {/* FIFO RX (중심 y=145) */}
+            <rect x="283" y="128" width="85" height="40" rx="7" fill="#0f172a" stroke="#20b2aa" strokeWidth="1.5" />
+            <text x="325" y="146" textAnchor="middle" fill="#5eead4" fontSize="10" fontWeight="bold">FIFO RX</text>
+            <text x="325" y="159" textAnchor="middle" fill="#94a3b8" fontSize="7">AXI-Stream</text>
 
-            {/* MicroBlaze 하단 (결과 수신 표시) */}
-            <rect x="10" y="140" width="100" height="50" rx="8" fill="#1e1b2e" stroke="#7c3aed" strokeWidth="2" />
-            <text x="60" y="160" textAnchor="middle" fill="#c4b5fd" fontSize="10" fontWeight="bold">MicroBlaze</text>
-            <text x="60" y="175" textAnchor="middle" fill="#a78bfa" fontSize="8">결과 검증</text>
+            {/* Arrow: FIFO RX → MB (수평, y=145) */}
+            <line x1="283" y1="145" x2="122" y2="145" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#ex3arr)" />
+            <text x="190" y="139" textAnchor="middle" fill="#64748b" fontSize="7">AXI-Lite</text>
+
+            {/* ── 하단: UART + 속도 비교 ── */}
 
             {/* Arrow: MB → UART */}
-            <line x1="60" y1="190" x2="60" y2="218" stroke="#3cb371" strokeWidth="2" markerEnd="url(#ex3arr)" />
+            <line x1="63" y1="188" x2="63" y2="205" stroke="#3cb371" strokeWidth="2" markerEnd="url(#ex3arr3)" />
 
             {/* UART */}
-            <rect x="15" y="220" width="90" height="35" rx="6" fill="#e0f7f5" stroke="#3cb371" strokeWidth="1.5" />
-            <text x="60" y="240" textAnchor="middle" fill="#166534" fontSize="10" fontWeight="bold">UART 출력</text>
+            <rect x="21" y="208" width="84" height="28" rx="6" fill="#e0f7f5" stroke="#3cb371" strokeWidth="1.5" />
+            <text x="63" y="226" textAnchor="middle" fill="#166534" fontSize="9" fontWeight="bold">UART 출력</text>
 
-            {/* 비교 박스 */}
-            <rect x="140" y="215" width="300" height="70" rx="8" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" strokeWidth="1" strokeDasharray="4,3" />
-            <text x="290" y="237" textAnchor="middle" fill="#92400e" fontSize="10" fontWeight="bold">속도 비교</text>
-            <text x="290" y="255" textAnchor="middle" fill="#b45309" fontSize="9">AXI-Lite: 레지스터 1개씩 읽기/쓰기 (느림)</text>
-            <text x="290" y="270" textAnchor="middle" fill="#166534" fontSize="9" fontWeight="bold">AXI-Stream: 연속 버스트 전송 (빠름)</text>
+            {/* 속도 비교 박스 */}
+            <rect x="150" y="200" width="280" height="55" rx="8" fill="rgba(245,158,11,0.06)" stroke="#f59e0b" strokeWidth="1" strokeDasharray="4,3" />
+            <text x="290" y="216" textAnchor="middle" fill="#92400e" fontSize="9" fontWeight="bold">속도 비교</text>
+            <text x="290" y="230" textAnchor="middle" fill="#b45309" fontSize="8">AXI-Lite: 레지스터 1개씩 읽기/쓰기 (느림)</text>
+            <text x="290" y="244" textAnchor="middle" fill="#166534" fontSize="8" fontWeight="bold">AXI-Stream: 연속 버스트 전송 (빠름)</text>
           </svg>
         </div>
 

@@ -137,10 +137,9 @@ export default function MicroBlazeSlides() {
               {/* Text */}
               <div>
                 <div style={{
-                  fontSize: '0.72rem', fontFamily: '"JetBrains Mono", monospace',
-                  fontWeight: 700, color: item.color, letterSpacing: '0.1em',
-                  marginBottom: '0.35rem',
-                }}>{item.label.toUpperCase()}</div>
+                  fontSize: '0.82rem', fontWeight: 800, color: item.color,
+                  letterSpacing: '0.15em', marginBottom: '0.35rem',
+                }}>{item.label}</div>
                 <div style={{ fontSize: '1.2rem', color: 'var(--text-main)', fontWeight: 600, lineHeight: 1.45 }}>
                   {item.value}
                 </div>

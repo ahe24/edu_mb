@@ -153,10 +153,11 @@ export default function WorkflowDiagram() {
       <div className="curriculum-anim" style={{
         animationDelay: '1.8s',
         marginTop: '1.2rem',
-        fontSize: '0.85rem', color: '#94a3b8',
-        fontFamily: '"JetBrains Mono", monospace', letterSpacing: '0.04em',
+        fontSize: '0.85rem', color: '#64748b', letterSpacing: '0.02em',
       }}>
-        Vivado → Vitis → Board  ·  하드웨어 + 소프트웨어 통합 흐름
+        <span style={{ fontFamily: '"JetBrains Mono", monospace' }}>Vivado → Vitis → Board</span>
+        <span style={{ margin: '0 0.4rem', color: '#cbd5e1' }}>·</span>
+        하드웨어 + 소프트웨어 통합 흐름
       </div>
     </section>
   );
