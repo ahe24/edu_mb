@@ -135,8 +135,8 @@ export default function Ex4Slides() {
               <li>
                 <div className="step-icon">4</div>
                 <div className="step-content">
-                  <span className="step-title">Connection Automation → HDL Wrapper → Export .xsa</span>
-                  <span className="step-desc">AXI-Lite + Memory-Mapped 포트 자동 연결 후 Bitstream 생성</span>
+                  <span className="step-title">Connection Automation</span>
+                  <span className="step-desc">자동 연결을 통해 AXI-Lite 및 Memory-Mapped 포트 버스 연결 실행</span>
                 </div>
               </li>
             </ul>
@@ -217,6 +217,13 @@ export default function Ex4Slides() {
                       <li>DMA의 <code>M_AXI_MM2S/S2MM</code> → Interconnect → BRAM 연결 확인</li>
                     </ul>
                   </span>
+                </div>
+              </li>
+              <li>
+                <div className="step-icon">5</div>
+                <div className="step-content">
+                  <span className="step-title">Generate Bitstream → Export .xsa</span>
+                  <span className="step-desc">최종 설계 연결 및 주소 맵핑 완성 후 Bitstream 생성 및 Vitis용 명세 추출 (.xsa)</span>
                 </div>
               </li>
             </ul>

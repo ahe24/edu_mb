@@ -113,7 +113,12 @@ export default function Ex3Slides() {
                 <div className="step-icon">1</div>
                 <div className="step-content">
                   <span className="step-title">예제 2 기반 시작 + UART 추가</span>
-                  <span className="step-desc">기존 Block Design 유지, Board 탭에서 <code>USB UART</code> 드래그 앤 드롭</span>
+                  <span className="step-desc">
+                    <ul className="step-list-sub">
+                      <li>Board 탭에서 <code>USB UART</code> 드래그 앤 드롭 (Baudrate: 115200)</li>
+                      <li>기존 Slide SW를 <strong>Push Button</strong>으로 대체</li>
+                    </ul>
+                  </span>
                 </div>
               </li>
               <li>
@@ -135,12 +140,7 @@ export default function Ex3Slides() {
                   <span className="step-desc">AXI-Lite 포트를 MicroBlaze 인터커넥트에 자동 연결</span>
                 </div>
               </li>
-              <li>
-                <div className="step-icon">4</div>
-                <div className="step-content">
-                  <span className="step-title">HDL Wrapper → Generate Bitstream → Export .xsa</span>
-                </div>
-              </li>
+              {/* 4단계는 Step 2 완료 후 수행하도록 이동됨 */}
             </ul>
 
             <div style={{ marginTop: '1.0rem', padding: '0.5rem', backgroundColor: 'rgba(56, 189, 248, 0.1)', borderLeft: '4px solid #38bdf8', borderRadius: '2px', fontSize: '0.8rem' }}>
@@ -210,10 +210,17 @@ export default function Ex3Slides() {
                   <span className="step-title">Block Design에 추가 및 연결</span>
                   <span className="step-desc">
                     <ul className="step-list-sub">
-                      <li>FIFO의 AXI-Stream TX → x2 Multiplier의 <code>S_AXIS</code></li>
-                      <li>x2 Multiplier의 <code>M_AXIS</code> → FIFO의 AXI-Stream RX</li>
+                      <li>FIFO의 AXI-Stream TX → Custom Logic의 <code>S_AXIS</code></li>
+                      <li>Custom Logic의 <code>M_AXIS</code> → FIFO의 AXI-Stream RX</li>
                     </ul>
                   </span>
+                </div>
+              </li>
+              <li>
+                <div className="step-icon">5</div>
+                <div className="step-content">
+                  <span className="step-title">Generate Bitstream → Export .xsa</span>
+                  <span className="step-desc">최종 연결 완성 후 Bitstream 생성 및 Vitis용 명세 추출 (.xsa)</span>
                 </div>
               </li>
             </ul>
@@ -255,81 +262,90 @@ export default function Ex3Slides() {
       {/* Step 3: Vitis C 코드 */}
       <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
         <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '0.8rem' }}>Step 3. AXI-Stream FIFO 제어 코드 (C)</h2>
-        <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1rem' }}>FIFO를 통해 난수를 전송하고, x2 곱셈 결과를 수신하여 UART로 출력. AXI-Lite 방식과 속도 비교</p>
+        <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1rem' }}>
+          FIFO 스트림 채널을 이용해 데이터를 전송하고 Custom IP 연산을 수행합니다. 💡 <strong>비동기 파이프라인 흐름 및 단일 Custom IP 연동 구조 이해</strong>
+        </p>
 
-        <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '44vh' }}>
+        <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '35vh' }}>
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xparameters.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xllfifo.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xgpio.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xtmrctr.h&quot;</span><br />
+          <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;platform.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&lt;stdio.h&gt;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&lt;stdlib.h&gt;</span><br />
           <br />
           <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>FIFO_DEV_ID</span>&nbsp;&nbsp;&nbsp;XPAR_AXI_FIFO_0_DEVICE_ID<br />
-          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>BTN_DEV_ID</span>&nbsp;&nbsp;&nbsp;&nbsp;XPAR_GPIO_2_DEVICE_ID<br />
-          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>WORD_CNT</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>256</span> &nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 전송 데이터 수</span><br />
+          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>BTN_DEV_ID</span>&nbsp;&nbsp;&nbsp;&nbsp;XPAR_GPIO_0_DEVICE_ID<br />
+          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>WORD_CNT</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>256</span><br />
           <br />
           <span style={{ color: '#e5c07b' }}>XLlFifo</span> fifo;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>XGpio</span> btn_gpio;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>XTmrCtr</span> timer;<br />
+          <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 🟢 스택 메모리 범람 방지를 위한 Static/Global 선언</span><br />
+          <span style={{ color: '#c678dd' }}>static</span> <span style={{ color: '#e5c07b' }}>u32</span> src[WORD_CNT], dst_lite[WORD_CNT], dst_stream[WORD_CNT];<br />
           <br />
-          <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// AXI-Lite 방식 (CPU가 직접 연산, 느림)</span><br />
-          <span style={{ color: '#e5c07b' }}>u32</span> <span style={{ color: '#61afef' }}>test_axilite</span>(<span style={{ color: '#e5c07b' }}>u32</span> *src, <span style={{ color: '#e5c07b' }}>u32</span> *dst, <span style={{ color: '#e5c07b' }}>int</span> cnt) {'{'}<br />
-          &nbsp;&nbsp;XTmrCtr_Reset(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
-          &nbsp;&nbsp;XTmrCtr_Start(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
-          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; cnt; i++)<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;dst[i] = src[i] * <span style={{ color: '#d19a66' }}>2</span>;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// CPU 직접 연산</span><br />
+          <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// AXI-Lite 방식 (CPU 직접 연산)</span><br />
+          <span style={{ color: '#e5c07b' }}>u32</span> <span style={{ color: '#61afef' }}>test_axilite</span>(<span style={{ color: '#e5c07b' }}>u32</span> *s, <span style={{ color: '#e5c07b' }}>u32</span> *d, <span style={{ color: '#e5c07b' }}>int</span> cnt) {'{'}<br />
+          &nbsp;&nbsp;XTmrCtr_Reset(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>); XTmrCtr_Start(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
+          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; cnt; i++) d[i] = s[i] * <span style={{ color: '#d19a66' }}>2</span>; <br />
           &nbsp;&nbsp;XTmrCtr_Stop(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
           &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> XTmrCtr_GetValue(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
           {'}'}<br />
           <br />
-          <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// AXI-Stream 방식 (FIFO 버스트 전송, 빠름)</span><br />
-          <span style={{ color: '#e5c07b' }}>u32</span> <span style={{ color: '#61afef' }}>test_axistream</span>(<span style={{ color: '#e5c07b' }}>u32</span> *src, <span style={{ color: '#e5c07b' }}>u32</span> *dst, <span style={{ color: '#e5c07b' }}>int</span> cnt) {'{'}<br />
-          &nbsp;&nbsp;XTmrCtr_Reset(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
-          &nbsp;&nbsp;XTmrCtr_Start(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// TX: FIFO에 데이터 연속 삽입</span><br />
-          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; cnt; i++)<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;XLlFifo_TxPutWord(&amp;fifo, src[i]);<br />
+          <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// AXI-Stream 방식 (FIFO 기반 스트림 연동 구조)</span><br />
+          <span style={{ color: '#e5c07b' }}>u32</span> <span style={{ color: '#61afef' }}>test_axistream</span>(<span style={{ color: '#e5c07b' }}>u32</span> *s, <span style={{ color: '#e5c07b' }}>u32</span> *d, <span style={{ color: '#e5c07b' }}>int</span> cnt) {'{'}<br />
+          &nbsp;&nbsp;XTmrCtr_Reset(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>); XTmrCtr_Start(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
+          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; cnt; i++) XLlFifo_TxPutWord(&amp;fifo, s[i]);<br />
           &nbsp;&nbsp;XLlFifo_iTxSetLen(&amp;fifo, cnt * <span style={{ color: '#d19a66' }}>4</span>);<br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// RX: x2 결과 수신 대기</span><br />
           &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (!XLlFifo_iRxOccupancy(&amp;fifo));<br />
-          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; cnt; i++)<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;dst[i] = XLlFifo_RxGetWord(&amp;fifo);<br />
+          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; cnt; i++) d[i] = XLlFifo_RxGetWord(&amp;fifo);<br />
           &nbsp;&nbsp;XTmrCtr_Stop(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
           &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> XTmrCtr_GetValue(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
           {'}'}<br />
           <br />
           <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
-          &nbsp;&nbsp;XLlFifo_Initialize(&amp;fifo, FIFO_DEV_ID);<br />
+          &nbsp;&nbsp;init_platform(); <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 🟢 플랫폼 캐시 초기화</span><br />
+          &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>XLlFifo_Config</span> *Config = XLlFfio_LookupConfig(FIFO_DEV_ID); <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 💡 자이링크 드라이버 정적 로직 오타(Ffio) 대응</span><br />
+          &nbsp;&nbsp;XLlFifo_CfgInitialize(&amp;fifo, Config, Config-&gt;BaseAddress);<br />
           &nbsp;&nbsp;XGpio_Initialize(&amp;btn_gpio, BTN_DEV_ID);<br />
-          &nbsp;&nbsp;XGpio_SetDataDirection(&amp;btn_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0xF</span>);<br />
+          &nbsp;&nbsp;XGpio_SetDataDirection(&amp;btn_gpio, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);<br />
           &nbsp;&nbsp;XTmrCtr_Initialize(&amp;timer, XPAR_AXI_TIMER_0_DEVICE_ID);<br />
           <br />
-          &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>u32</span> src[WORD_CNT], dst_lite[WORD_CNT], dst_stream[WORD_CNT];<br />
-          &nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;=== Ex3: AXI-Stream x2 Demo ===\r\n&quot;</span>);<br />
-          &nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;Press BTN0 to start...\r\n&quot;</span>);<br />
+          &nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;=== Ex3: AXI-Stream x2 Benchmark ===\r\n&quot;</span>);<br />
+          &nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;Press BTN0 to start test...\r\n&quot;</span>);<br />
           <br />
           &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (<span style={{ color: '#d19a66' }}>1</span>) {'{'}<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>if</span> (XGpio_DiscreteRead(&amp;btn_gpio, <span style={{ color: '#d19a66' }}>1</span>) &amp; <span style={{ color: '#d19a66' }}>0x1</span>) {'{'}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>if</span> (XGpio_DiscreteRead(&amp;btn_gpio, <span style={{ color: '#d19a66' }}>2</span>) &amp; <span style={{ color: '#d19a66' }}>0x1</span>) {'{'}<br />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;srand(XTmrCtr_GetValue(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>));<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; WORD_CNT; i++)<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;src[i] = rand() % <span style={{ color: '#d19a66' }}>1000</span>;<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; WORD_CNT; i++) src[i] = rand() % <span style={{ color: '#d19a66' }}>1000</span>;<br />
           <br />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>u32</span> t_lite &nbsp;&nbsp;= test_axilite(src, dst_lite, WORD_CNT);<br />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>u32</span> t_stream = test_axistream(src, dst_stream, WORD_CNT);<br />
           <br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 결과 출력</span><br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;\r\n[%d words]\r\n&quot;</span>, WORD_CNT);<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; <span style={{ color: '#d19a66' }}>8</span>; i++)<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;&nbsp;&nbsp;src[%d]=%d -&gt; x2=%d\r\n&quot;</span>,<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i, src[i], dst_stream[i]);<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;AXI-Lite &nbsp;: %d cycles\r\n&quot;</span>, t_lite);<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;AXI-Stream: %d cycles\r\n&quot;</span>, t_stream);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;\n--- AXI-Stream Result Check (First 5) ---\n\r&quot;</span>);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; <span style={{ color: '#d19a66' }}>5</span>; i++) <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;&nbsp;&nbsp;[%d] Sent:%d | Recv:%d (Exp:%d)\r\n&quot;</span>, i, src[i], dst_stream[i], src[i]*2);<br />
           <br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (XGpio_DiscreteRead(&amp;btn_gpio, <span style={{ color: '#d19a66' }}>1</span>) &amp; <span style={{ color: '#d19a66' }}>0x1</span>); <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 디바운스</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;\n--- Execution Cycles ---\r\n&quot;</span>);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;CPU Compute Time : %d cycles\r\n&quot;</span>, t_lite);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;CPU + FIFO Time  : %d cycles\r\n&quot;</span>, t_stream);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;Tip: Without DMA, CPU-to-FIFO write loop is slower due to AXI overhead.\r\n&quot;</span>);<br />
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (XGpio_DiscreteRead(&amp;btn_gpio, <span style={{ color: '#d19a66' }}>2</span>) &amp; <span style={{ color: '#d19a66' }}>0x1</span>); <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 디바운스</span><br />
           &nbsp;&nbsp;&nbsp;&nbsp;{'}'}<br />
           &nbsp;&nbsp;{'}'}<br />
+          &nbsp;&nbsp;cleanup_platform();<br />
           &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
-          {'}'}
+          {'}'}<br />
         </CodeBlock>
+
+        <div style={{ marginTop: '0.2rem', padding: '0.4rem', backgroundColor: 'rgba(234, 179, 8, 0.1)', borderLeft: '4px solid #eab308', borderRadius: '4px', fontSize: '0.9rem' }}>
+          <p style={{ fontWeight: 'bold', color: '#854d0e', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span>⚠️</span> 벤치마크 결과 해석 가이드
+          </p>
+          <p style={{ color: '#713f12', lineHeight: '1.5', margin: 0 }}>
+            CPU가 <code>XLlFifo_TxPutWord()</code> 루프를 돌면 일반 캐시 메모리 연산보다 느릴 수 있습니다. 이 단원은 <strong>순수하게 Custom IP를 스트림 선로에 장착하는 방법</strong>을 배우는 데 집중하며, 폭발적인 속도의 진가는 다음 장표의 <strong>DMA</strong> 연동에서 발휘됩니다.
+          </p>
+        </div>
       </section>
 
       {/* Step 4: 빌드 및 테스트 */}
@@ -371,8 +387,8 @@ export default function Ex3Slides() {
                   <span className="step-title">UART 터미널 확인 및 결과 검증</span>
                   <span className="step-desc">
                     <ul className="step-list-sub">
-                      <li><code>115200</code> baud 설정, BTN0 누르면 난수 x2 결과 출력</li>
-                      <li><code>dst_stream[i] == src[i]*2</code> 확인 + AXI-Stream 속도 우위 확인</li>
+                      <li><code>115200</code> baud 설정, BTN 누르면 난수 x2 결과 출력</li>
+                      <li><code>dst_stream[i] == src[i]*2</code> 연산 성공 여부 대조 검증</li>
                     </ul>
                   </span>
                 </div>
@@ -381,10 +397,10 @@ export default function Ex3Slides() {
 
             <div style={{ marginTop: '1.0rem', padding: '0.5rem', backgroundColor: 'rgba(56, 189, 248, 0.1)', borderLeft: '4px solid #38bdf8', borderRadius: '2px', fontSize: '0.8rem' }}>
               <p style={{ fontWeight: 'bold', color: '#0369a1', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <span>💡</span> 속도 차이 실험
+                <span>💡</span> 연산 가속 챌린지
               </p>
               <p style={{ color: '#475569', lineHeight: '1.4', margin: 0 }}>
-                <code>WORD_CNT</code>를 64, 256, 1024로 변경해보면 AXI-Stream의 속도 이점이 더 극적으로 나타남
+                현재는 CPU 제어형 FIFO이지만, 다음 <strong>DMA 예제</strong>와 결합하면 수십 배의 비약적인 속도 배가를 비로소 경험할 수 있습니다.
               </p>
             </div>
           </div>
@@ -399,15 +415,7 @@ export default function Ex3Slides() {
               />
               <span style={{ fontSize: '1.0rem', color: '#475569', fontWeight: '600' }}>UART 터미널 출력 결과</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'center' }}>
-              <ImagePlaceholder
-                src="/images/ex3_step4_running.jpg"
-                label="보드 구동 사진"
-                desc="Arty A7 보드에서 예제 3 실행 상태"
-                maxHeight="240px"
-              />
-              <span style={{ fontSize: '1.0rem', color: '#475569', fontWeight: '600' }}>Arty A7 보드 실행 상태</span>
-            </div>
+
           </div>
         </div>
       </section>
