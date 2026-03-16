@@ -14,24 +14,24 @@ export default function Ex4Slides() {
           <ul className="info-list" style={{ fontSize: '1.3rem' }}>
             <li><strong>배경</strong> <span>CPU가 데이터를 직접 복사하면 연산 자원 낭비 → DMA로 하드웨어 자동 전송</span></li>
             <li><strong>학습 목표</strong> <span>DMA(Direct Memory Access) 개념 이해 및<br />BRAM 기반 데이터 처리 파이프라인 구축</span></li>
-            <li><strong>실습 내용</strong> <span>BRAM 데이터를 DMA가 읽어 가속기(+10) 통과 후 재기록</span></li>
+            <li><strong>실습 내용</strong> <span>BRAM 데이터를 DMA가 읽어 Custom logic(+10) 통과 후 재기록</span></li>
             <li><strong>동작 확인</strong> <span>UART로 원본/결과 비교 출력,<br />CPU 개입 없이 DMA 자동 전송 완료</span></li>
           </ul>
 
           {/* DMA 아키텍처 SVG 다이어그램 */}
           <svg viewBox="0 0 480 310" style={{ width: '100%', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <marker id="ex4arr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                <path d="M0,0 L0,7 L7,3.5 z" fill="#20b2aa" />
+              <marker id="ex4arr" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                <path d="M0,0 L0,5 L5,2.5 z" fill="#20b2aa" />
               </marker>
-              <marker id="ex4arr2" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                <path d="M0,0 L0,7 L7,3.5 z" fill="#f59e0b" />
+              <marker id="ex4arr2" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                <path d="M0,0 L0,5 L5,2.5 z" fill="#f59e0b" />
               </marker>
-              <marker id="ex4arr3" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                <path d="M0,0 L0,7 L7,3.5 z" fill="#7c3aed" />
+              <marker id="ex4arr3" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                <path d="M0,0 L0,5 L5,2.5 z" fill="#7c3aed" />
               </marker>
-              <marker id="ex4arr4" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                <path d="M0,0 L0,7 L7,3.5 z" fill="#db2777" />
+              <marker id="ex4arr4" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                <path d="M0,0 L0,5 L5,2.5 z" fill="#db2777" />
               </marker>
             </defs>
 
@@ -41,8 +41,8 @@ export default function Ex4Slides() {
             <text x="65" y="58" textAnchor="middle" fill="#a78bfa" fontSize="9">CPU</text>
 
             {/* Arrow ①: MB → BRAM */}
-            <line x1="120" y1="47" x2="168" y2="47" stroke="#7c3aed" strokeWidth="2" markerEnd="url(#ex4arr3)" />
-            <text x="144" y="40" textAnchor="middle" fill="#7c3aed" fontSize="8" fontWeight="bold">① 기록</text>
+            <line x1="120" y1="36" x2="168" y2="36" stroke="#7c3aed" strokeWidth="1.5" markerEnd="url(#ex4arr3)" />
+            <text x="144" y="30" textAnchor="middle" fill="#7c3aed" fontSize="7" fontWeight="bold">① 기록</text>
 
             {/* BRAM Controller */}
             <rect x="170" y="15" width="120" height="65" rx="8" fill="#e0f7f5" stroke="#20b2aa" strokeWidth="2" />
@@ -51,8 +51,8 @@ export default function Ex4Slides() {
             <text x="230" y="66" textAnchor="middle" fill="#64748b" fontSize="8">Block RAM (64KB)</text>
 
             {/* Arrow ②: BRAM → DMA */}
-            <line x1="230" y1="80" x2="230" y2="118" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#ex4arr2)" />
-            <text x="255" y="102" fill="#92400e" fontSize="8" fontWeight="bold">② DMA Read</text>
+            <line x1="250" y1="80" x2="250" y2="118" stroke="#f59e0b" strokeWidth="1.5" markerEnd="url(#ex4arr2)" />
+            <text x="260" y="107" fill="#92400e" fontSize="8" fontWeight="bold">② DMA Read</text>
 
             {/* AXI DMA */}
             <rect x="160" y="120" width="140" height="60" rx="8" fill="#fef9e7" stroke="#f59e0b" strokeWidth="2" />
@@ -71,16 +71,16 @@ export default function Ex4Slides() {
             <text x="405" y="163" textAnchor="middle" fill="#be185d" fontSize="9">Custom IP</text>
 
             {/* Arrow: Adder → DMA S2MM (return path) */}
-            <path d="M 405 180 L 405 205 L 265 205 L 265 180" fill="none" stroke="#db2777" strokeWidth="2" markerEnd="url(#ex4arr4)" />
+            <path d="M 405 180 L 405 205 L 232 205 L 232 184" fill="none" stroke="#db2777" strokeWidth="2" markerEnd="url(#ex4arr4)" />
             <text x="335" y="200" textAnchor="middle" fill="#db2777" fontSize="7">Stream</text>
 
             {/* Arrow ③: DMA → BRAM (write-back) */}
-            <line x1="195" y1="120" x2="195" y2="87" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#ex4arr)" />
-            <text x="165" y="107" fill="#166534" fontSize="8" fontWeight="bold">③ Write-back</text>
+            <line x1="215" y1="120" x2="215" y2="84" stroke="#20b2aa" strokeWidth="1.5" markerEnd="url(#ex4arr)" />
+            <text x="160" y="107" fill="#166534" fontSize="8" fontWeight="bold">③ Write-back</text>
 
             {/* Arrow ④: BRAM → MB (verify, dashed) */}
-            <line x1="170" y1="35" x2="122" y2="35" stroke="#7c3aed" strokeWidth="1.5" strokeDasharray="4,3" markerEnd="url(#ex4arr3)" />
-            <text x="146" y="28" textAnchor="middle" fill="#7c3aed" fontSize="7">④ 검증</text>
+            <line x1="170" y1="65" x2="122" y2="65" stroke="#7c3aed" strokeWidth="1.5" strokeDasharray="4,3" markerEnd="url(#ex4arr3)" />
+            <text x="146" y="60" textAnchor="middle" fill="#7c3aed" fontSize="7" fontWeight="bold">④ 검증</text>
 
             {/* UART */}
             <rect x="10" y="90" width="90" height="35" rx="6" fill="#e0f7f5" stroke="#3cb371" strokeWidth="1.5" />
@@ -146,7 +146,7 @@ export default function Ex4Slides() {
                 <span>💡</span> BRAM vs DDR3(MIG)
               </p>
               <p style={{ color: '#475569', lineHeight: '1.4', margin: 0 }}>
-                BRAM은 즉시 동작. DDR3(MIG)는 캘리브레이션, 클록 설정 등 복잡한 절차 필요.
+                BRAM은 즉시 동작. DDR3(MIG)는 Calibration, clock 설정 등 복잡한 절차 필요.
               </p>
             </div>
           </div>
@@ -192,7 +192,7 @@ export default function Ex4Slides() {
                 <div className="step-icon">2</div>
                 <div className="step-content">
                   <span className="step-title">Verilog 핵심 로직</span>
-                  <span className="step-desc"><code>assign m_axis_tdata = s_axis_tdata + 32&apos;d10;</code><br />+ tvalid, tready, tlast 패스스루</span>
+                  <span className="step-desc"><code>assign m_axis_tdata = s_axis_tdata + 32&apos;d10;</code><br />tvalid, tready, tlast 신호들은 pass-through</span>
                 </div>
               </li>
               <li>
@@ -257,9 +257,9 @@ export default function Ex4Slides() {
       {/* Step 3: Vitis DMA 코드 */}
       <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
         <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '0.8rem' }}>Step 3. DMA 제어 코드 (C)</h2>
-        <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1rem' }}>CPU가 BRAM에 데이터 기록 → DMA 전송 명령 → 가속기(+10) 처리 후 BRAM 재기록 → 결과 검증</p>
+        <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1rem' }}>CPU가 BRAM에 데이터 기록 → DMA 전송 명령 → Custom Logic(+10) 처리 후 BRAM 재기록 → 결과 검증</p>
 
-        <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '16px', borderRadius: '8px', fontSize: '16px', lineHeight: '1.35', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '460px' }}>
+        <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '44vh' }}>
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xparameters.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xaxidma.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xil_cache.h&quot;</span><br />
@@ -294,10 +294,10 @@ export default function Ex4Slides() {
           &nbsp;&nbsp;Xil_DCacheFlushRange((<span style={{ color: '#e5c07b' }}>UINTPTR</span>)dst, DATA_CNT * <span style={{ color: '#d19a66' }}>4</span>);<br />
           <br />
           &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 3. DMA 전송 시작</span><br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// &nbsp;&nbsp;S2MM: 가속기 출력 → BRAM dst</span><br />
+          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// &nbsp;&nbsp;S2MM: Custom Logic 출력 → BRAM dst</span><br />
           &nbsp;&nbsp;XAxiDma_SimpleTransfer(&amp;dma, (<span style={{ color: '#e5c07b' }}>UINTPTR</span>)dst,<br />
           &nbsp;&nbsp;&nbsp;&nbsp;DATA_CNT * <span style={{ color: '#d19a66' }}>4</span>, XAXIDMA_DEVICE_TO_DMA);<br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// &nbsp;&nbsp;MM2S: BRAM src → 가속기 입력</span><br />
+          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// &nbsp;&nbsp;MM2S: BRAM src → Custom Logic 입력</span><br />
           &nbsp;&nbsp;XAxiDma_SimpleTransfer(&amp;dma, (<span style={{ color: '#e5c07b' }}>UINTPTR</span>)src,<br />
           &nbsp;&nbsp;&nbsp;&nbsp;DATA_CNT * <span style={{ color: '#d19a66' }}>4</span>, XAXIDMA_DMA_TO_DEVICE);<br />
           <br />
@@ -352,7 +352,7 @@ export default function Ex4Slides() {
                   <span className="step-desc">
                     <ul className="step-list-sub">
                       <li><code>115200</code> baud, 자동 실행 → src[i]+10 == dst[i] 확인</li>
-                      <li><code>PASS!</code> 메시지로 DMA + 가속기 전체 경로 검증 완료</li>
+                      <li><code>PASS!</code> 메시지로 DMA + Custom Logic 전체 경로 검증 완료</li>
                     </ul>
                   </span>
                 </div>
@@ -381,7 +381,7 @@ export default function Ex4Slides() {
               <ImagePlaceholder
                 src="/images/ex4_step4_uart.png"
                 label="UART 출력 결과"
-                desc="DMA 전송 + 가속기 +10 결과 검증 화면"
+                desc="DMA 전송 + Custom Logic +10 결과 검증 화면"
                 maxHeight="240px"
               />
               <span style={{ fontSize: '1.0rem', color: '#475569', fontWeight: '600' }}>UART 터미널 출력 결과</span>
@@ -423,7 +423,7 @@ export default function Ex4Slides() {
           <div className="curriculum-anim" style={{ animationDelay: '0.25s', background: 'linear-gradient(135deg, #f59e0b0d 0%, #f59e0b05 100%)', border: '1px solid #f59e0b35', borderRadius: '14px', padding: '1.2rem', borderLeft: '3px solid #f59e0b' }}>
             <p style={{ color: '#f59e0b', fontSize: '0.8rem', fontWeight: 'bold', margin: '0 0 0.3rem 0' }}>예제 3</p>
             <p style={{ color: 'var(--primary-dark)', fontSize: '1.1rem', fontWeight: 'bold', margin: '0 0 0.5rem 0' }}>AXI-Stream</p>
-            <p style={{ color: '#475569', fontSize: '0.85rem', lineHeight: '1.4', margin: 0 }}>스트림 가속기 연동<br />고속 데이터 경로</p>
+            <p style={{ color: '#475569', fontSize: '0.85rem', lineHeight: '1.4', margin: 0 }}>스트림 Custom logic 연동<br />고속 데이터 경로</p>
           </div>
 
           {/* Ex4 Card */}

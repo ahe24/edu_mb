@@ -8,27 +8,27 @@ export default function Ex3Slides() {
     <section>
       {/* 예제 3 Overview */}
       <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.5rem', borderBottom: '3px solid var(--accent)', paddingBottom: '0.5rem', marginBottom: '2rem' }}>예제 3: AXI-Stream FIFO & 커스텀 가속기</h2>
+        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.5rem', borderBottom: '3px solid var(--accent)', paddingBottom: '0.5rem', marginBottom: '2rem' }}>예제 3: AXI-Stream FIFO & Custom Logic</h2>
 
         <div style={{ display: 'grid', gridTemplateColumns: '42% 58%', gap: '2rem' }}>
           <ul className="info-list" style={{ fontSize: '1.3rem' }}>
-            <li><strong>배경</strong> <span>대량 데이터 전송 시 AXI-Lite(레지스터 단위)는 오버헤드가 큼</span></li>
-            <li><strong>학습 목표</strong> <span>AXI-Stream 프로토콜 이해 및<br />Custom IP 연동 기초 습득</span></li>
-            <li><strong>실습 내용</strong> <span>FIFO 루프백 경로에 x2 곱셈 가속기(Custom IP) 삽입</span></li>
+            <li><strong>배경</strong> <span>대량 데이터 전송 시 AXI-Lite(레지스터 단위)는 Overhead가 큼</span></li>
+            <li><strong>학습 목표</strong> <span>AXI-Stream 프로토콜 이해 및<br />Custom Logic 연동 기초 습득</span></li>
+            <li><strong>실습 내용</strong> <span>FIFO 루프백 경로에 x2 곱셈 로직(Custom Logic) 삽입</span></li>
             <li><strong>동작 확인</strong> <span>버튼 → 난수 전송 → x2 결과 UART 출력 + AXI-Lite 대비 속도 비교</span></li>
           </ul>
 
           {/* AXI-Stream 아키텍처 SVG 다이어그램 */}
           <svg viewBox="0 0 460 280" style={{ width: '100%', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <marker id="ex3arr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                <path d="M0,0 L0,7 L7,3.5 z" fill="#20b2aa" />
+              <marker id="ex3arr" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                <path d="M0,0 L0,5 L5,2.5 z" fill="#20b2aa" />
               </marker>
-              <marker id="ex3arr2" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                <path d="M0,0 L0,7 L7,3.5 z" fill="#f59e0b" />
+              <marker id="ex3arr2" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                <path d="M0,0 L0,5 L5,2.5 z" fill="#f59e0b" />
               </marker>
-              <marker id="ex3arr3" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                <path d="M0,0 L0,7 L7,3.5 z" fill="#3cb371" />
+              <marker id="ex3arr3" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                <path d="M0,0 L0,5 L5,2.5 z" fill="#3cb371" />
               </marker>
             </defs>
 
@@ -257,7 +257,7 @@ export default function Ex3Slides() {
         <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '0.8rem' }}>Step 3. AXI-Stream FIFO 제어 코드 (C)</h2>
         <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1rem' }}>FIFO를 통해 난수를 전송하고, x2 곱셈 결과를 수신하여 UART로 출력. AXI-Lite 방식과 속도 비교</p>
 
-        <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '16px', borderRadius: '8px', fontSize: '16px', lineHeight: '1.35', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '460px' }}>
+        <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '44vh' }}>
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xparameters.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xllfifo.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xgpio.h&quot;</span><br />

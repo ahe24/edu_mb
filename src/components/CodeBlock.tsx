@@ -6,9 +6,10 @@ interface CodeBlockProps {
   children: ReactNode;
   style?: React.CSSProperties;
   language?: string;
+  title?: string;
 }
 
-export default function CodeBlock({ children, style, language = 'C' }: CodeBlockProps) {
+export default function CodeBlock({ children, style, language = 'C', title }: CodeBlockProps) {
   const codeRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -34,25 +35,45 @@ export default function CodeBlock({ children, style, language = 'C' }: CodeBlock
   };
 
   return (
-    <div style={{ borderRadius: '10px', overflow: 'hidden', boxShadow: '0 6px 20px rgba(0,0,0,0.4)' }}>
+    <div style={{ borderRadius: '10px', boxShadow: '0 6px 20px rgba(0,0,0,0.4)', position: 'relative' }}>
       {/* ── Header bar (스크롤 영역 밖) ── */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#1e2029',
-        padding: '6px 14px',
+        padding: '8px 14px',
         borderBottom: '1px solid #2d3141',
+        borderTopLeftRadius: '10px',
+        borderTopRightRadius: '10px',
+        position: 'relative',
       }}>
-        {/* 언어 레이블 */}
+        {/* 터미널 윈도우 컨트롤 버튼 (Red, Yellow, Green) */}
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+          <span style={{ width: '11px', height: '11px', borderRadius: '50%', backgroundColor: '#ff5f56', border: '1px solid rgba(0,0,0,0.05)' }}></span>
+          <span style={{ width: '11px', height: '11px', borderRadius: '50%', backgroundColor: '#ffbd2e', border: '1px solid rgba(0,0,0,0.05)' }}></span>
+          <span style={{ width: '11px', height: '11px', borderRadius: '50%', backgroundColor: '#27c93f', border: '1px solid rgba(0,0,0,0.05)' }}></span>
+        </div>
+
+        {/* 중앙 상단: 언어 또는 파일명 레이블 */}
         <span style={{
-          color: '#6b7280',
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          color: '#828bb0',
           fontSize: '0.75rem',
-          fontFamily: '"JetBrains Mono", "Fira Code", monospace',
-          letterSpacing: '0.05em',
-          textTransform: 'uppercase',
+          fontFamily: '"JetBrains Mono", monospace',
+          letterSpacing: '0.04em',
+          fontWeight: '600',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px',
         }}>
-          {language}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+            <polyline points="13 2 13 9 20 9"></polyline>
+          </svg>
+          {title || (language.toUpperCase() === 'C' ? 'main.c' : language.toUpperCase() === 'VERILOG' ? 'design.v' : language)}
         </span>
 
         {/* 복사 버튼 */}
@@ -78,7 +99,6 @@ export default function CodeBlock({ children, style, language = 'C' }: CodeBlock
         >
           {copied ? (
             <>
-              {/* Check icon */}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
@@ -86,7 +106,6 @@ export default function CodeBlock({ children, style, language = 'C' }: CodeBlock
             </>
           ) : (
             <>
-              {/* Clipboard icon */}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="9" y="2" width="6" height="4" rx="1"/>
                 <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"/>
@@ -97,17 +116,18 @@ export default function CodeBlock({ children, style, language = 'C' }: CodeBlock
         </button>
       </div>
 
-      {/* ── 코드 본문 (스크롤 영역) ── */}
       <div
         ref={codeRef}
         className="code-block"
         style={{
-          borderRadius: 0,
+          borderBottomLeftRadius: '10px',
+          borderBottomRightRadius: '10px',
           boxShadow: 'none',
           overflow: 'auto',
           maxHeight: style?.maxHeight || '450px',
           minHeight: '200px', // 너무 낮게 표시되는 것 방지
           paddingBottom: '20px', // 마지막 줄 여유 공간
+          WebkitFontSmoothing: 'antialiased',
           ...style,
         }}
       >

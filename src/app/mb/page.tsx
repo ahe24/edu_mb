@@ -334,11 +334,11 @@ export default function MicroBlazeSlides() {
             {/* 동작 설명 SVG 다이어그램 */}
             <svg viewBox="0 0 420 250" style={{ width: '100%', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <marker id="arr1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
-                  <path d="M0,0 L0,6 L7,3 z" fill="#20b2aa" />
+                <marker id="arr1" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                  <path d="M0,0 L0,5 L5,2.5 z" fill="#20b2aa" />
                 </marker>
-                <marker id="arr2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
-                  <path d="M0,0 L0,6 L7,3 z" fill="#a78bfa" />
+                <marker id="arr2" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                  <path d="M0,0 L0,5 L5,2.5 z" fill="#a78bfa" />
                 </marker>
               </defs>
 
@@ -347,8 +347,8 @@ export default function MicroBlazeSlides() {
               <text x="62" y="32" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="bold">Switch</text>
               {swState.map((on, i) => (
                 <g key={i} onClick={() => toggleSwitch(i)} style={{ cursor: 'pointer' }}>
-                  <rect x="28" y={40 + i * 20} width="30" height="12" rx="4" fill={on ? "#166534" : "#374151"} stroke="#475569" strokeWidth="1" />
-                  <rect x={on ? 46 : 27} y={40 + i * 20} width="12" height="12" rx="3" fill={on ? "#4ade80" : "#6b7280"} style={{ transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                  <rect x="28" y={40 + i * 20} width="24" height="12" rx="4" fill={on ? "#166534" : "#374151"} stroke="#475569" strokeWidth="1" />
+                  <rect x={on ? 40 : 27} y={40 + i * 20} width="12" height="12" rx="3" fill={on ? "#4ade80" : "#6b7280"} style={{ transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                   <text x="62" y={50 + i * 20} fill={on ? "#86efac" : "#64748b"} fontSize="7" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
                     SW{i} {on ? "ON" : "OFF"}
                   </text>
@@ -356,37 +356,37 @@ export default function MicroBlazeSlides() {
               ))}
 
               {/* Switch → GPIO 화살표 */}
-              <line x1="104" y1="70" x2="148" y2="70" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
-              <text x="124" y="64" textAnchor="middle" fill="#64748b" fontSize="8">4bit</text>
+              <line x1="104" y1="55" x2="145" y2="55" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
+              <text x="124" y="50" textAnchor="middle" fill="#64748b" fontSize="8">4bit</text>
 
               {/* ── AXI GPIO ── */}
               <rect x="150" y="15" width="90" height="110" rx="8" fill="#0f172a" stroke="#20b2aa" strokeWidth="2" />
               <text x="195" y="33" textAnchor="middle" fill="#5eead4" fontSize="11" fontWeight="bold">AXI GPIO</text>
-              <rect x="158" y="40" width="74" height="24" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
-              <text x="195" y="52" textAnchor="middle" fill="#94a3b8" fontSize="10">ch2  IN</text>
+              <rect x="158" y="40" width="74" height="27" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+              <text x="195" y="52" textAnchor="middle" fill="#94a3b8" fontSize="10">Ch2  IN</text>
               <text x="195" y="63" textAnchor="middle" fill="#64748b" fontSize="9">Switch 읽기</text>
-              <rect x="158" y="71" width="74" height="24" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
-              <text x="195" y="83" textAnchor="middle" fill="#94a3b8" fontSize="10">ch1  OUT</text>
+              <rect x="158" y="71" width="74" height="27" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+              <text x="195" y="83" textAnchor="middle" fill="#94a3b8" fontSize="10">Ch1  OUT</text>
               <text x="195" y="94" textAnchor="middle" fill="#64748b" fontSize="9">LED 쓰기</text>
               <text x="195" y="114" textAnchor="middle" fill="#74777aff" fontSize="9">AXI-Lite Bus</text>
 
               {/* GPIO ↔ MicroBlaze */}
-              <line x1="195" y1="125" x2="195" y2="152" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
-              <line x1="205" y1="152" x2="205" y2="125" stroke="#a78bfa" strokeWidth="1.5" markerEnd="url(#arr2)" />
+              <line x1="195" y1="125" x2="195" y2="150" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
+              <line x1="205" y1="154" x2="205" y2="128" stroke="#a78bfa" strokeWidth="1.5" markerEnd="url(#arr2)" />
 
               {/* GPIO → LED 화살표 */}
-              <line x1="240" y1="70" x2="278" y2="70" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
-              <text x="255" y="64" textAnchor="middle" fill="#64748b" fontSize="8">4bit</text>
+              <line x1="240" y1="85" x2="274" y2="85" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
+              <text x="255" y="80" textAnchor="middle" fill="#64748b" fontSize="8">4bit</text>
 
               {/* ── LED 4개 (녹색 단색) ── */}
               <rect x="280" y="15" width="82" height="110" rx="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
               <text x="321" y="32" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="bold">LED</text>
               {swState.map((on, i) => (
                 <g key={i}>
-                  <circle cx="297" cy={47 + i * 20} r="9" fill={on ? "#166534" : "#1f2937"} stroke={on ? "#4ade80" : "#374151"} strokeWidth="1.5" style={{ transition: 'all 0.3s' }}>
+                  <circle cx="297" cy={47 + i * 20} r="7" fill={on ? "#166534" : "#1f2937"} stroke={on ? "#4ade80" : "#374151"} strokeWidth="1.5" style={{ transition: 'all 0.3s' }}>
                     {on && <animate attributeName="opacity" values="1;0.6;1" dur="1.2s" repeatCount="indefinite" />}
                   </circle>
-                  {on && <circle cx="297" cy={47 + i * 20} r="5" fill="#4ade80" opacity="0.8" style={{ transition: 'all 0.3s' }} />}
+                  {on && <circle cx="297" cy={47 + i * 20} r="4" fill="#4ade80" opacity="0.8" style={{ transition: 'all 0.3s' }} />}
                   <text x="315" y={51 + i * 20} fill={on ? "#4ade80" : "#6b7280"} fontSize="10" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
                     LD{i} {on ? "ON" : "OFF"}
                   </text>
@@ -404,7 +404,7 @@ export default function MicroBlazeSlides() {
               <text x="210" y="243" textAnchor="middle" fill="#a78bfa" fontSize="10" fontWeight="bold">while(1) — 폴링 루프 반복</text>
 
               {/* MicroBlaze → while 화살표 */}
-              <line x1="210" y1="215" x2="210" y2="230" stroke="#7c3aed" strokeWidth="1.5" markerEnd="url(#arr2)" />
+              <line x1="210" y1="215" x2="210" y2="228" stroke="#7c3aed" strokeWidth="1.5" markerEnd="url(#arr2)" />
 
               {/* 루프 백 화살표 */}
               <path d="M115,239 Q60,238 40,195 Q20,160 30,124" fill="none" stroke="#7c3aed" strokeWidth="1" strokeDasharray="4 3" opacity="0.5" />
@@ -632,7 +632,7 @@ export default function MicroBlazeSlides() {
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
           <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 3-2. Vitis 소프트웨어 제어 코드 (C)</h2>
           <p style={{ fontSize: '1.2rem', color: '#475569', marginBottom: '1rem' }}>Application Project 안의 <code>src/main.c</code> 파일을 열거나 새로 생성하고, 아래 코드 작성</p>
-          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '20px', borderRadius: '8px', fontSize: '18px', lineHeight: '1.4', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '420px' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '52vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <br />
@@ -703,7 +703,7 @@ export default function MicroBlazeSlides() {
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
           <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>응용 실습: 패턴 테이블 활용 제어 </h2>
           <p style={{ fontSize: '1.2rem', color: '#445569', marginBottom: '0.8rem' }}>LUT(Look-Up Table) 배열을 활용하여 스위치 입력값(0~15)에 매칭되는 다양한 LED 패턴 출력</p>
-          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '70vh' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '52vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <br />
@@ -787,40 +787,75 @@ export default function MicroBlazeSlides() {
                 <text x="160" y="327" textAnchor="middle" fill="#64748b" fontSize="9">같은 색이 4칸 쉬프트 → 다음 색으로 전환</text>
 
                 {/* LD4 — 0~0.5s 구간 ON / fill은 8s 주기로 색상 전환 */}
-                <circle cx="52" cy="360" r="20" fill="#ef4444">
-                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
-                  <animate attributeName="opacity" values="0.9;0.12;0.12;0.12;0.9" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
-                  <animate attributeName="r" values="22;16;16;16;22" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
-                </circle>
+                <g>
+                  <rect x="43" y="352" width="18" height="16" rx="2" fill="#2d2b38" stroke="#4a485c" strokeWidth="1" />
+                  <rect x="46" y="355" width="12" height="10" rx="1" fill="#1b1924" />
+                  {/* Glow Aura (Blurred) */}
+                  <circle cx="52" cy="360" r="14" fill="#ef4444" filter="url(#ledGlow)">
+                    <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
+                    <animate attributeName="opacity" values="0.9;0.12;0.12;0.12;0.9" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  </circle>
+                  {/* Dense Center Core (Focus) */}
+                  <circle cx="52" cy="360" r="3.5" fill="#ffffff">
+                    <animate attributeName="opacity" values="1;0.2;0.2;0.2;1" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  </circle>
+                </g>
                 <text x="52" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD4</text>
 
                 {/* LD5 — 0.5~1.0s 구간 ON */}
-                <circle cx="118" cy="360" r="16" fill="#ef4444">
-                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
-                  <animate attributeName="opacity" values="0.12;0.9;0.12;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
-                  <animate attributeName="r" values="16;22;16;16;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
-                </circle>
+                <g>
+                  <rect x="109" y="352" width="18" height="16" rx="2" fill="#2d2b38" stroke="#4a485c" strokeWidth="1" />
+                  <rect x="112" y="355" width="12" height="10" rx="1" fill="#1b1924" />
+                  {/* Glow Aura */}
+                  <circle cx="118" cy="360" r="14" fill="#ef4444" filter="url(#ledGlow)">
+                    <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
+                    <animate attributeName="opacity" values="0.12;0.9;0.12;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  </circle>
+                  {/* Core */}
+                  <circle cx="118" cy="360" r="3.5" fill="#ffffff">
+                    <animate attributeName="opacity" values="0.2;1;0.2;0.2;0.2" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  </circle>
+                </g>
                 <text x="118" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD5</text>
 
                 {/* LD6 — 1.0~1.5s 구간 ON */}
-                <circle cx="202" cy="360" r="16" fill="#ef4444">
-                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
-                  <animate attributeName="opacity" values="0.12;0.12;0.9;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
-                  <animate attributeName="r" values="16;16;22;16;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
-                </circle>
+                <g>
+                  <rect x="193" y="352" width="18" height="16" rx="2" fill="#2d2b38" stroke="#4a485c" strokeWidth="1" />
+                  <rect x="196" y="355" width="12" height="10" rx="1" fill="#1b1924" />
+                  {/* Glow Aura */}
+                  <circle cx="202" cy="360" r="14" fill="#ef4444" filter="url(#ledGlow)">
+                    <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
+                    <animate attributeName="opacity" values="0.12;0.12;0.9;0.12;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  </circle>
+                  {/* Core */}
+                  <circle cx="202" cy="360" r="3.5" fill="#ffffff">
+                    <animate attributeName="opacity" values="0.2;0.2;1;0.2;0.2" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  </circle>
+                </g>
                 <text x="202" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD6</text>
 
                 {/* LD7 — 1.5~2.0s 구간 ON */}
-                <circle cx="268" cy="360" r="16" fill="#ef4444">
-                  <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
-                  <animate attributeName="opacity" values="0.12;0.12;0.12;0.9;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
-                  <animate attributeName="r" values="16;16;16;22;16" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
-                </circle>
+                <g>
+                  <rect x="259" y="352" width="18" height="16" rx="2" fill="#2d2b38" stroke="#4a485c" strokeWidth="1" />
+                  <rect x="262" y="355" width="12" height="10" rx="1" fill="#1b1924" />
+                  {/* Glow Aura */}
+                  <circle cx="268" cy="360" r="14" fill="#ef4444" filter="url(#ledGlow)">
+                    <animate attributeName="fill" values="#ef4444;#22c55e;#3b82f6;#facc15;#ef4444" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" calcMode="discrete" />
+                    <animate attributeName="opacity" values="0.12;0.12;0.12;0.9;0.12" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  </circle>
+                  {/* Core */}
+                  <circle cx="268" cy="360" r="3.5" fill="#ffffff">
+                    <animate attributeName="opacity" values="0.2;0.2;0.2;1;0.2" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
+                  </circle>
+                </g>
                 <text x="268" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD7</text>
 
                 {/* 화살표 마커 정의 */}
                 <defs>
-                  <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <filter id="ledGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                  </filter>
+                  <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
                     <path d="M0,0 L0,6 L8,3 z" fill="#20b2aa" />
                   </marker>
                 </defs>
@@ -973,7 +1008,7 @@ export default function MicroBlazeSlides() {
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
           <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>Step 3. 인터럽트 제어 코드 (C)</h2>
           <p style={{ fontSize: '1.15rem', color: '#475569', marginBottom: '0.8rem' }}>AXI Timer 인터럽트마다 ISR이 호출되어 RGB LED 색상을 순환 변경</p>
-          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '18px', borderRadius: '8px', fontSize: '16px', lineHeight: '1.35', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '440px' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.0rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '44vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xtmrctr.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xintc.h"</span><br />
@@ -1033,7 +1068,7 @@ export default function MicroBlazeSlides() {
             Switch→LED 제어(예제1)와 타이머 인터럽트→RGB LED 순환(예제2)을 하나의 소스로 병합&nbsp;
             <span style={{ backgroundColor: 'rgba(32,178,170,0.15)', border: '1px solid var(--accent)', borderRadius: '4px', padding: '2px 8px', fontSize: '0.9rem', color: 'var(--primary-dark)', fontWeight: 'bold' }}>메인 while문 + ISR 동시 구동</span>
           </p>
-          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '16px', borderRadius: '8px', fontSize: '15px', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '460px' }}>
+          <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.0rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '45vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xtmrctr.h"</span><br />
