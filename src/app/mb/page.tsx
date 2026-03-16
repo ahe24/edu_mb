@@ -340,6 +340,9 @@ export default function MicroBlazeSlides() {
                 <marker id="arr2" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
                   <path d="M0,0 L0,5 L5,2.5 z" fill="#a78bfa" />
                 </marker>
+                <filter id="smdGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                </filter>
               </defs>
 
               {/* ── Switch 4개 ── */}
@@ -383,10 +386,23 @@ export default function MicroBlazeSlides() {
               <text x="321" y="32" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="bold">LED</text>
               {swState.map((on, i) => (
                 <g key={i}>
-                  <circle cx="297" cy={47 + i * 20} r="7" fill={on ? "#166534" : "#1f2937"} stroke={on ? "#4ade80" : "#374151"} strokeWidth="1.5" style={{ transition: 'all 0.3s' }}>
+                  {/* SMD LED Component Body */}
+                  <rect x="290" y={41 + i * 20} width="14" height="12" rx="2" fill="#2d3748" stroke="#4a5568" strokeWidth="1" />
+                  <rect x="292" y={43 + i * 20} width="10" height="8" rx="1" fill="#111827" />
+
+                  {/* Diffuse Light Aura */}
+                  {on && (
+                    <circle cx="297" cy={47 + i * 20} r="9" fill="#4ade80" filter="url(#smdGlow)" opacity="0.6" />
+                  )}
+
+                  {/* Inner Lens / Focus */}
+                  <circle cx="297" cy={47 + i * 20} r="3" fill={on ? "#4ade80" : "#4b5563"} style={{ transition: 'all 0.2s' }}>
                     {on && <animate attributeName="opacity" values="1;0.6;1" dur="1.2s" repeatCount="indefinite" />}
                   </circle>
-                  {on && <circle cx="297" cy={47 + i * 20} r="4" fill="#4ade80" opacity="0.8" style={{ transition: 'all 0.3s' }} />}
+                  {on && (
+                    <circle cx="297" cy={47 + i * 20} r="1" fill="#ffffff" opacity="0.9" style={{ userSelect: 'none' }} />
+                  )}
+
                   <text x="315" y={51 + i * 20} fill={on ? "#4ade80" : "#6b7280"} fontSize="10" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
                     LD{i} {on ? "ON" : "OFF"}
                   </text>
