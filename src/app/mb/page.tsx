@@ -605,12 +605,12 @@ export default function MicroBlazeSlides() {
                   </div>
                 </li>
               </ul>
-              <div style={{ marginTop: '1.0rem', padding: '0.5rem', backgroundColor: 'rgba(56, 189, 248, 0.1)', borderLeft: '4px solid #38bdf8', borderRadius: '2px', fontSize: '0.8rem' }}>
-                <p style={{ fontWeight: 'bold', color: '#0369a1', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <div style={{ marginTop: '0.4rem', padding: '0.3rem 0.5rem', backgroundColor: 'rgba(56, 189, 248, 0.1)', borderLeft: '4px solid #38bdf8', borderRadius: '2px', fontSize: '0.8rem' }}>
+                <p style={{ fontWeight: 'bold', color: '#0369a1', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <span>💡</span> Constraint(XDC) 자동화 알림
                 </p>
-                <p style={{ color: '#475569', lineHeight: '1.4', margin: 0 }}>
-                  <b>Board 탭</b>을 통해 요소를 추가했기 때문에 핀 번호와 전압(IOSTANDARD) 등 물리적 제약 조건이 <u>자동 할당</u>됨. <br />(별도의 <code>.xdc</code> 파일 작성 <b>필요 없음</b>)
+                <p style={{ color: '#475569', lineHeight: '1.3', margin: 0 }}>
+                  <b>Board 탭</b>을 통해 요소를 추가했기 때문에 핀 번호와 전압(IOSTANDARD) 등 물리적 제약 조건이 <u>자동 할당</u>됨. (별도의 <code>.xdc</code> 파일 작성 <b>필요 없음</b>)
                 </p>
               </div>
             </div>

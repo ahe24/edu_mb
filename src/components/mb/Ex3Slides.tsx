@@ -225,9 +225,9 @@ export default function Ex3Slides() {
               </li>
             </ul>
 
-            <div style={{ marginTop: '0.8rem', padding: '0.8rem', backgroundColor: '#282c34', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
-              <p style={{ color: '#5c6370', fontSize: '0.75rem', marginBottom: '0.4rem', fontStyle: 'italic', fontFamily: "'JetBrains Mono', 'D2Coding', 'Consolas', monospace" }}>// Verilog — x2 곱셈기 핵심 로직 (<code style={{ color: '#d19a66' }}>&lt;&lt; 1</code> = 배선만으로 x2, FPGA 리소스 소모 없음)</p>
-              <p style={{ color: '#abb2bf', fontSize: '0.85rem', lineHeight: '1.5', margin: 0, fontFamily: "'JetBrains Mono', 'D2Coding', 'Consolas', monospace" }}>
+            <div style={{ marginTop: '0.3rem', padding: '0.4rem 0.8rem', backgroundColor: '#282c34', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
+              <p style={{ color: '#5c6370', fontSize: '0.7rem', marginBottom: '0.2rem', fontStyle: 'italic', fontFamily: "'JetBrains Mono', 'D2Coding', 'Consolas', monospace" }}>// Verilog — x2 곱셈기 핵심 로직 (<code style={{ color: '#d19a66' }}>&lt;&lt; 1</code> = 배선만으로 x2, FPGA 리소스 소모 없음)</p>
+              <p style={{ color: '#abb2bf', fontSize: '0.8rem', lineHeight: '1.35', margin: 0, fontFamily: "'JetBrains Mono', 'D2Coding', 'Consolas', monospace" }}>
                 <span style={{ color: '#c678dd' }}>assign</span> m_axis_tdata &nbsp;= s_axis_tdata <span style={{ color: '#d19a66' }}>&lt;&lt; 1</span>; <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// x2</span><br />
                 <span style={{ color: '#c678dd' }}>assign</span> m_axis_tvalid = s_axis_tvalid;<br />
                 <span style={{ color: '#c678dd' }}>assign</span> s_axis_tready = m_axis_tready;<br />
