@@ -32,7 +32,9 @@ export default function RevealWrapper({ children }: { children: React.ReactNode 
           center: true,
           width: 1280,
           height: 720,
-          margin: 0.08,
+          margin: 0.02,
+          minScale: 0.2,
+          maxScale: 2.5,
           help: false,
           view: printMode ? 'print' : undefined,
           pdfSeparateFragments: false,
@@ -82,33 +84,29 @@ export default function RevealWrapper({ children }: { children: React.ReactNode 
       {/* ── Footer UI (Logo & Copyright) — 인쇄 모드에서 숨김 ── */}
       <div style={{
         position: 'fixed',
-        bottom: '0.1px',
-        left: '30px',
+        bottom: '6px',
+        right: '100px',
         zIndex: 50,
         display: (mounted && isPrintPDF) ? 'none' : 'flex',
         alignItems: 'center',
         gap: '5px',
         pointerEvents: 'none',
-        opacity: 0.6,
+        opacity: 0.5,
       }}>
         <img
           src="/images/edmfg_logo.png"
           alt="Company Logo"
           style={{
-            height: '16px',
+            height: '14px',
             width: 'auto',
           }}
         />
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          fontSize: '0.8rem',
-          color: '#5f796aff', // 'var(--primary-dark)',
+        <span style={{
+          fontSize: '0.7rem',
+          color: '#5f796aff',
           fontFamily: '"JetBrains Mono", monospace',
           fontWeight: 600,
-        }}>
-          <span>©2026. Changseon Jo. All rights reserved.</span>
-        </div>
+        }}>©2026. Changseon Jo.</span>
       </div>
     </div>
   );

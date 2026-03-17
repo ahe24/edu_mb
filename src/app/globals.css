@@ -119,7 +119,7 @@ div[data-nextjs-toast-wrapper],
 /* Footer 겹침 방지: 슬라이드 하단 여백 확보 */
 .reveal .slides section {
   box-sizing: border-box;
-  padding-bottom: 2.5rem !important;
+  padding-bottom: 1.5rem !important;
 }
 
 .reveal h1,
