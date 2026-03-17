@@ -48,7 +48,7 @@ export default function Ex4Slides() {
             <rect x="170" y="15" width="120" height="65" rx="8" fill="#e0f7f5" stroke="#20b2aa" strokeWidth="2" />
             <text x="230" y="38" textAnchor="middle" fill="#166534" fontSize="11" fontWeight="bold">AXI BRAM</text>
             <text x="230" y="52" textAnchor="middle" fill="#166534" fontSize="10">Controller</text>
-            <text x="230" y="66" textAnchor="middle" fill="#64748b" fontSize="8">Block RAM (64KB)</text>
+            <text x="230" y="66" textAnchor="middle" fill="#64748b" fontSize="8">Block RAM</text>
 
             {/* Arrow ②: BRAM → DMA */}
             <line x1="250" y1="80" x2="250" y2="118" stroke="#f59e0b" strokeWidth="1.5" markerEnd="url(#ex4arr2)" />
@@ -110,14 +110,14 @@ export default function Ex4Slides() {
                 <div className="step-icon">1</div>
                 <div className="step-content">
                   <span className="step-title">예제 3 기반 시작 + BRAM Controller 추가</span>
-                  <span className="step-desc">MicroBlaze + UART 유지, IP Catalog에서 <code>AXI BRAM Controller</code> 추가 (싱글 포트)</span>
+                  <span className="step-desc">MicroBlaze + UART 유지, IP Catalog에서 <code>AXI BRAM Controller</code> 추가 (BRAM Options → <code>Number of BRAM interfaces: 1</code>)</span>
                 </div>
               </li>
               <li>
                 <div className="step-icon">2</div>
                 <div className="step-content">
                   <span className="step-title">Block Memory Generator 연결</span>
-                  <span className="step-desc">Run Block Automation → BRAM Controller에 Block Memory 자동 생성 (64KB)</span>
+                  <span className="step-desc">Run Block Automation → Block Memory 자동 생성 (크기는 BRAM Controller의 <code>Memory Depth</code> × 4B, Address Editor에서 확인)</span>
                 </div>
               </li>
               <li>
@@ -176,9 +176,9 @@ export default function Ex4Slides() {
 
       {/* Step 2: Custom IP + Address Editor */}
       <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex4 | Step 2. +10 Adder IP 생성 및 Address 설정</h2>
+        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.0rem', marginBottom: '0.8rem' }}>Ex4 | Step 2. +10 Adder IP 생성 및 Address 설정</h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '3rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '2rem' }}>
           <div>
             <ul className="step-list">
               <li>
@@ -192,7 +192,12 @@ export default function Ex4Slides() {
                 <div className="step-icon">2</div>
                 <div className="step-content">
                   <span className="step-title">Verilog 핵심 로직</span>
-                  <span className="step-desc"><code>assign m_axis_tdata = s_axis_tdata + 32&apos;d10;</code><br />tvalid, tready, tlast 신호들은 pass-through</span>
+                  <span className="step-desc" style={{ lineHeight: '1.2' }}>
+                    <code style={{ fontSize: '0.85em' }}>assign m_axis_tdata = s_axis_tdata + 32'd10;</code><br />
+                    <code style={{ fontSize: '0.85em' }}>assign m_axis_tvalid = s_axis_tvalid;</code><br />
+                    <code style={{ fontSize: '0.85em' }}>assign s_axis_tready = m_axis_tready;</code><br />
+                    <code style={{ fontSize: '0.85em' }}>assign m_axis_tlast = s_axis_tlast;</code>
+                  </span>
                 </div>
               </li>
               <li>
@@ -213,7 +218,7 @@ export default function Ex4Slides() {
                   <span className="step-title">Address Editor 및 메모리맵 확인</span>
                   <span className="step-desc">
                     <ul className="step-list-sub">
-                      <li>BRAM: <code>0xC000_0000</code> 범위 64K, DMA 제어 주소 자동 할당 확인</li>
+                      <li>BRAM: <code>0xC000_0000</code>, Address Editor에서 크기 및 DMA 주소 확인</li>
                       <li>DMA의 <code>M_AXI_MM2S/S2MM</code> → Interconnect → BRAM 연결 확인</li>
                     </ul>
                   </span>
@@ -228,12 +233,12 @@ export default function Ex4Slides() {
               </li>
             </ul>
 
-            <div style={{ marginTop: '0.8rem', padding: '0.5rem', backgroundColor: 'rgba(56, 189, 248, 0.1)', borderLeft: '4px solid #38bdf8', borderRadius: '2px', fontSize: '0.8rem' }}>
-              <p style={{ fontWeight: 'bold', color: '#0369a1', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <div style={{ marginTop: '0.3rem', padding: '0.3rem 0.5rem', backgroundColor: 'rgba(56, 189, 248, 0.1)', borderLeft: '4px solid #38bdf8', borderRadius: '2px', fontSize: '0.75rem' }}>
+              <p style={{ fontWeight: 'bold', color: '#0369a1', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <span>💡</span> Address Editor 필수 확인
               </p>
-              <p style={{ color: '#475569', lineHeight: '1.4', margin: 0 }}>
-                DMA의 메모리맵 포트가 BRAM 주소 범위를 포함해야 함. 누락 시 DMA 전송 시 <code>Bus Error</code> 발생.
+              <p style={{ color: '#475569', lineHeight: '1.3', margin: 0 }}>
+                DMA의 메모리맵 포트가 BRAM 주소 범위를 포함해야 함. 누락 시 <code>Bus Error</code> 발생.
               </p>
             </div>
           </div>
@@ -264,70 +269,78 @@ export default function Ex4Slides() {
       {/* Step 3: Vitis DMA 코드 */}
       <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
         <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '0.8rem' }}>Ex4 | Step 3. DMA 제어 코드 (C)</h2>
-        <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1rem' }}>CPU가 BRAM에 데이터 기록 → DMA 전송 명령 → Custom Logic(+10) 처리 후 BRAM 재기록 → 결과 검증</p>
+        <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1rem' }}>BTN0 → BRAM 데이터 기록 → DMA 전송 → Custom Logic(+10) → 결과 검증 → LED 표시</p>
 
         <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', overflowY: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '420px' }}>
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xparameters.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xaxidma.h&quot;</span><br />
+          <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xgpio.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xil_cache.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;platform.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&lt;stdio.h&gt;</span><br />
           <br />
           <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>DMA_DEV_ID</span>&nbsp;&nbsp;&nbsp;XPAR_AXIDMA_0_DEVICE_ID<br />
-          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>BRAM_BASE</span>&nbsp;&nbsp;&nbsp;&nbsp;XPAR_BRAM_0_BASEADDR <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// xparameters.h에서 실제 매크로명 확인</span><br />
-          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>DATA_CNT</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>64</span> &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 전송 워드 수</span><br />
+          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>BRAM_BASE</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0xC0000000</span> <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// Address Editor의 BRAM 주소 직접 입력 또는 xparameters.h 매크로</span><br />
+          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>DATA_CNT</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>64</span><br />
           <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>SRC_OFFSET</span>&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x0000</span><br />
-          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>DST_OFFSET</span>&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x4000</span> <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 결과 영역 (16KB 오프셋)</span><br />
+          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>DST_OFFSET</span>&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x1000</span> <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 4KB 오프셋 (BRAM 8KB 범위 내)</span><br />
           <br />
-          <span style={{ color: '#e5c07b' }}>XAxiDma</span> dma;<br />
+          <span style={{ color: '#e5c07b' }}>XAxiDma</span> dma;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>XGpio</span> gpio0;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> run_cnt = <span style={{ color: '#d19a66' }}>0</span>;<br />
           <br />
           <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
           &nbsp;&nbsp;init_platform();<br />
-          &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>XAxiDma_Config</span> *cfg;<br />
           &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>u32</span> *src = (<span style={{ color: '#e5c07b' }}>u32</span> *)(BRAM_BASE + SRC_OFFSET);<br />
           &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>u32</span> *dst = (<span style={{ color: '#e5c07b' }}>u32</span> *)(BRAM_BASE + DST_OFFSET);<br />
           <br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 1. DMA 초기화</span><br />
-          &nbsp;&nbsp;cfg = XAxiDma_LookupConfig(DMA_DEV_ID);<br />
+          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// GPIO 초기화 (gpio0: ch1=녹색LED, ch2=BTN)</span><br />
+          &nbsp;&nbsp;XGpio_Initialize(&amp;gpio0, XPAR_GPIO_0_DEVICE_ID);<br />
+          &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+          &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio0, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);<br />
+          <br />
+          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// DMA 초기화</span><br />
+          &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>XAxiDma_Config</span> *cfg = XAxiDma_LookupConfig(DMA_DEV_ID);<br />
           &nbsp;&nbsp;XAxiDma_CfgInitialize(&amp;dma, cfg);<br />
           &nbsp;&nbsp;XAxiDma_IntrDisable(&amp;dma, XAXIDMA_IRQ_ALL_MASK, XAXIDMA_DEVICE_TO_DMA);<br />
           &nbsp;&nbsp;XAxiDma_IntrDisable(&amp;dma, XAXIDMA_IRQ_ALL_MASK, XAXIDMA_DMA_TO_DEVICE);<br />
           <br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 2. BRAM에 원본 데이터 기록</span><br />
           &nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;=== Ex4: BRAM + DMA Demo ===\r\n&quot;</span>);<br />
-          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; DATA_CNT; i++) {'{'}<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;src[i] = i * <span style={{ color: '#d19a66' }}>10</span>;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 0, 10, 20, 30, ...</span><br />
-          &nbsp;&nbsp;&nbsp;&nbsp;dst[i] = <span style={{ color: '#d19a66' }}>0</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 결과 영역 초기화</span><br />
+          &nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;Press BTN0 to start DMA transfer...\r\n&quot;</span>);<br />
+          <br />
+          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (<span style={{ color: '#d19a66' }}>1</span>) {'{'}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>if</span> (XGpio_DiscreteRead(&amp;gpio0, <span style={{ color: '#d19a66' }}>2</span>) &amp; <span style={{ color: '#d19a66' }}>0x1</span>) {'{'}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x1</span>); <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// LD4 ON — 전송 중</span><br />
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// BRAM 원본 데이터 기록 (매회 다른 시작값)</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> base = run_cnt * <span style={{ color: '#d19a66' }}>100</span>;<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; DATA_CNT; i++) {'{'} src[i] = base + i; dst[i] = <span style={{ color: '#d19a66' }}>0</span>; {'}'}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run_cnt++;<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Xil_DCacheFlushRange((<span style={{ color: '#e5c07b' }}>UINTPTR</span>)src, DATA_CNT*<span style={{ color: '#d19a66' }}>4</span>);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Xil_DCacheFlushRange((<span style={{ color: '#e5c07b' }}>UINTPTR</span>)dst, DATA_CNT*<span style={{ color: '#d19a66' }}>4</span>);<br />
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// DMA 전송: S2MM 먼저, 그 다음 MM2S</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XAxiDma_SimpleTransfer(&amp;dma, (<span style={{ color: '#e5c07b' }}>UINTPTR</span>)dst, DATA_CNT*<span style={{ color: '#d19a66' }}>4</span>, XAXIDMA_DEVICE_TO_DMA);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XAxiDma_SimpleTransfer(&amp;dma, (<span style={{ color: '#e5c07b' }}>UINTPTR</span>)src, DATA_CNT*<span style={{ color: '#d19a66' }}>4</span>, XAXIDMA_DMA_TO_DEVICE);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (XAxiDma_Busy(&amp;dma, XAXIDMA_DMA_TO_DEVICE));<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (XAxiDma_Busy(&amp;dma, XAXIDMA_DEVICE_TO_DMA));<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Xil_DCacheInvalidateRange((<span style={{ color: '#e5c07b' }}>UINTPTR</span>)dst, DATA_CNT*<span style={{ color: '#d19a66' }}>4</span>);<br />
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 결과 검증</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> err = <span style={{ color: '#d19a66' }}>0</span>;<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; DATA_CNT; i++)<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>if</span> (dst[i] != src[i] + <span style={{ color: '#d19a66' }}>10</span>) err++;<br />
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; <span style={{ color: '#d19a66' }}>16</span>; i++)<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot; src[%d]=%d -&gt; +10=%d %s\r\n&quot;</span>,<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i, src[i], dst[i], (dst[i]==src[i]+<span style={{ color: '#d19a66' }}>10</span>) ? <span style={{ color: '#98c379' }}>&quot;OK&quot;</span> : <span style={{ color: '#98c379' }}>&quot;FAIL&quot;</span>);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;Errors: %d/%d  %s\r\n&quot;</span>, err, DATA_CNT,<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;err==<span style={{ color: '#d19a66' }}>0</span> ? <span style={{ color: '#98c379' }}>&quot;PASS!&quot;</span> : <span style={{ color: '#98c379' }}>&quot;FAIL!&quot;</span>);<br />
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// LED 결과 표시: PASS=0xF(전체ON), FAIL=0x0</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, err==<span style={{ color: '#d19a66' }}>0</span> ? <span style={{ color: '#d19a66' }}>0xF</span> : <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (XGpio_DiscreteRead(&amp;gpio0, <span style={{ color: '#d19a66' }}>2</span>) &amp; <span style={{ color: '#d19a66' }}>0x1</span>); <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 버튼 해제 대기</span><br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;{'}'}<br />
           &nbsp;&nbsp;{'}'}<br />
-          &nbsp;&nbsp;Xil_DCacheFlushRange((<span style={{ color: '#e5c07b' }}>UINTPTR</span>)src, DATA_CNT * <span style={{ color: '#d19a66' }}>4</span>);<br />
-          &nbsp;&nbsp;Xil_DCacheFlushRange((<span style={{ color: '#e5c07b' }}>UINTPTR</span>)dst, DATA_CNT * <span style={{ color: '#d19a66' }}>4</span>);<br />
-          <br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 3. DMA 전송 시작</span><br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// &nbsp;&nbsp;S2MM: Custom Logic 출력 → BRAM dst</span><br />
-          &nbsp;&nbsp;XAxiDma_SimpleTransfer(&amp;dma, (<span style={{ color: '#e5c07b' }}>UINTPTR</span>)dst,<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;DATA_CNT * <span style={{ color: '#d19a66' }}>4</span>, XAXIDMA_DEVICE_TO_DMA);<br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// &nbsp;&nbsp;MM2S: BRAM src → Custom Logic 입력</span><br />
-          &nbsp;&nbsp;XAxiDma_SimpleTransfer(&amp;dma, (<span style={{ color: '#e5c07b' }}>UINTPTR</span>)src,<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;DATA_CNT * <span style={{ color: '#d19a66' }}>4</span>, XAXIDMA_DMA_TO_DEVICE);<br />
-          <br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 4. 전송 완료 대기 (폴링)</span><br />
-          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (XAxiDma_Busy(&amp;dma, XAXIDMA_DMA_TO_DEVICE));<br />
-          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span> (XAxiDma_Busy(&amp;dma, XAXIDMA_DEVICE_TO_DMA));<br />
-          &nbsp;&nbsp;Xil_DCacheInvalidateRange((<span style={{ color: '#e5c07b' }}>UINTPTR</span>)dst, DATA_CNT * <span style={{ color: '#d19a66' }}>4</span>);<br />
-          <br />
-          &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 5. 결과 검증 및 UART 출력</span><br />
-          &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> err = <span style={{ color: '#d19a66' }}>0</span>;<br />
-          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; DATA_CNT; i++)<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#c678dd' }}>if</span> (dst[i] != src[i] + <span style={{ color: '#d19a66' }}>10</span>) err++;<br />
-          <br />
-          &nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;\r\n[Result: %d words]\r\n&quot;</span>, DATA_CNT);<br />
-          &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>for</span> (<span style={{ color: '#e5c07b' }}>int</span> i = <span style={{ color: '#d19a66' }}>0</span>; i &lt; <span style={{ color: '#d19a66' }}>8</span>; i++)<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;&nbsp;&nbsp;src[%d]=%d -&gt; +10=%d %s\r\n&quot;</span>,<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i, src[i], dst[i],<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(dst[i] == src[i]+<span style={{ color: '#d19a66' }}>10</span>) ? <span style={{ color: '#98c379' }}>&quot;OK&quot;</span> : <span style={{ color: '#98c379' }}>&quot;FAIL&quot;</span>);<br />
-          &nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;Errors: %d / %d\r\n&quot;</span>, err, DATA_CNT);<br />
-          &nbsp;&nbsp;xil_printf(err == <span style={{ color: '#d19a66' }}>0</span> ? <span style={{ color: '#98c379' }}>&quot;PASS!\r\n&quot;</span> : <span style={{ color: '#98c379' }}>&quot;FAIL!\r\n&quot;</span>);<br />
-          <br />
           &nbsp;&nbsp;cleanup_platform();<br />
           &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
           {'}'}
@@ -361,7 +374,7 @@ export default function Ex4Slides() {
                   <span className="step-title">UART 터미널 확인 및 결과 검증</span>
                   <span className="step-desc">
                     <ul className="step-list-sub">
-                      <li><code>115200</code> baud, 자동 실행 → src[i]+10 == dst[i] 확인</li>
+                      <li><code>115200</code> baud, BTN0 누르면 DMA 전송 → src[i]+10 == dst[i] 검증</li>
                       <li><code>PASS!</code> 메시지로 DMA + Custom Logic 전체 경로 검증 완료</li>
                     </ul>
                   </span>
@@ -386,24 +399,15 @@ export default function Ex4Slides() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'center' }}>
               <ImagePlaceholder
                 src="/images/ex4_step4_uart.png"
                 label="UART 출력 결과"
-                desc="DMA 전송 + Custom Logic +10 결과 검증 화면"
-                maxHeight="240px"
+                desc="BTN0 → DMA 전송 → +10 결과 검증 (16개 표시)"
+                maxHeight="520px"
               />
               <span style={{ fontSize: '1.0rem', color: '#475569', fontWeight: '600' }}>UART 터미널 출력 결과</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'center' }}>
-              <ImagePlaceholder
-                src="/images/ex4_step4_running.jpg"
-                label="보드 구동 사진"
-                desc="Arty A7 보드에서 예제 4 실행 상태"
-                maxHeight="240px"
-              />
-              <span style={{ fontSize: '1.0rem', color: '#475569', fontWeight: '600' }}>Arty A7 보드 실행 상태</span>
             </div>
           </div>
         </div>
