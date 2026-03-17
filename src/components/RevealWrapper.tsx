@@ -1,17 +1,23 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import 'reveal.js/reveal.css';
-import 'reveal.js/theme/simple.css'; // 밝고 심플한 기본 테마로 변경
+import 'reveal.js/theme/simple.css';
 
 export default function RevealWrapper({ children }: { children: React.ReactNode }) {
   const deckRef = useRef<HTMLDivElement>(null);
   const deckInstance = useRef<any>(null);
+  const keyHandler = useRef<((e: KeyboardEvent) => void) | null>(null);
+  const [isPrintPDF, setIsPrintPDF] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    const printMode = window.location.search.includes('print-pdf');
+    setIsPrintPDF(printMode);
+    setMounted(true);
+
     const initReveal = async () => {
       if (deckRef.current && !deckInstance.current) {
-        // SSR 대응: 브라우저 환경에서만 동적으로 모듈 로드
         const Reveal = (await import('reveal.js')).default;
         // @ts-ignore
         const RevealNotes = (await import('reveal.js/plugin/notes')).default;
@@ -19,19 +25,33 @@ export default function RevealWrapper({ children }: { children: React.ReactNode 
         const RevealZoom = (await import('reveal.js/plugin/zoom')).default;
 
         deckInstance.current = new Reveal(deckRef.current, {
-          hash: true,
+          hash: !printMode,
           slideNumber: true,
-          controls: true,
-          progress: true,
+          controls: !printMode,
+          progress: !printMode,
           center: true,
           width: 1280,
           height: 720,
           margin: 0.08,
-          help: false, // 도움말(N 아이콘 등) 숨기기
+          help: false,
+          view: printMode ? 'print' : undefined,
+          pdfSeparateFragments: false,
+          pdfMaxPagesPerSlide: 1,
           plugins: [RevealNotes, RevealZoom],
         });
 
         await deckInstance.current.initialize();
+
+        // Ctrl+E: PDF 내보내기 (새 탭에서 ?print-pdf 모드)
+        if (!printMode) {
+          keyHandler.current = (e: KeyboardEvent) => {
+            if (e.ctrlKey && e.key === 'e') {
+              e.preventDefault();
+              window.open(window.location.pathname + '?print-pdf', '_blank');
+            }
+          };
+          window.addEventListener('keydown', keyHandler.current);
+        }
       }
     };
 
@@ -46,6 +66,10 @@ export default function RevealWrapper({ children }: { children: React.ReactNode 
       } catch (e) {
         console.warn('Reveal.js destroy called on unmounted component', e);
       }
+      if (keyHandler.current) {
+        window.removeEventListener('keydown', keyHandler.current);
+        keyHandler.current = null;
+      }
     };
   }, []);
 
@@ -55,13 +79,13 @@ export default function RevealWrapper({ children }: { children: React.ReactNode 
         {children}
       </div>
 
-      {/* ── Footer UI (Logo & Copyright) ── */}
+      {/* ── Footer UI (Logo & Copyright) — 인쇄 모드에서 숨김 ── */}
       <div style={{
         position: 'fixed',
         bottom: '0.1px',
         left: '30px',
         zIndex: 50,
-        display: 'flex',
+        display: (mounted && isPrintPDF) ? 'none' : 'flex',
         alignItems: 'center',
         gap: '5px',
         pointerEvents: 'none',
