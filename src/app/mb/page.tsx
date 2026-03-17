@@ -11,11 +11,18 @@ import CodeBlock from '@/components/CodeBlock';
 
 export default function MicroBlazeSlides() {
   const [swState, setSwState] = useState([true, false, true, false]);
+  const [btnState, setBtnState] = useState([false, false, false, false]);
 
   const toggleSwitch = (i: number) => {
     const next = [...swState];
     next[i] = !next[i];
     setSwState(next);
+  };
+
+  const toggleButton = (i: number) => {
+    const next = [...btnState];
+    next[i] = !next[i];
+    setBtnState(next);
   };
 
   return (
@@ -327,104 +334,152 @@ export default function MicroBlazeSlides() {
           <div style={{ display: 'grid', gridTemplateColumns: '42% 58%', gap: '2rem' }}>
             <ul className="info-list" style={{ fontSize: '1.5rem' }}>
               <li><strong>학습 목표</strong> <span>Vivado Block Design 흐름 및 <br />Vitis C 코딩 기초 습득</span></li>
-              <li><strong>실습 내용</strong> <span>MicroBlaze 최소 시스템 구성</span></li>
-              <li><strong>동작 확인</strong> <span>보드의 스위치 ON/OFF → 대응 LED 점멸</span></li>
+              <li><strong>실습 내용</strong> <span>MicroBlaze + Dual GPIO 시스템 구성</span></li>
+              <li><strong>동작 확인</strong> <span>Push Button → 녹색 LED, Slide Switch → RGB LED</span></li>
             </ul>
 
             {/* 동작 설명 SVG 다이어그램 */}
-            <svg viewBox="0 0 420 250" style={{ width: '100%', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 480 340" style={{ width: '100%', margin: '0 auto' }} xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <marker id="arr1" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
-                  <path d="M0,0 L0,5 L5,2.5 z" fill="#20b2aa" />
+                {/* gpio_0 경로: BTN → Green LED (녹색) */}
+                <marker id="arrG" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                  <path d="M0,0 L0,5 L5,2.5 z" fill="#4ade80" />
                 </marker>
-                <marker id="arr2" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
-                  <path d="M0,0 L0,5 L5,2.5 z" fill="#a78bfa" />
+                {/* gpio_1 경로: SW → RGB LED (보라) */}
+                <marker id="arrP" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                  <path d="M0,0 L0,5 L5,2.5 z" fill="#c084fc" />
                 </marker>
                 <filter id="smdGlow" x="-50%" y="-50%" width="200%" height="200%">
                   <feGaussianBlur stdDeviation="3" result="blur" />
                 </filter>
               </defs>
 
-              {/* ── Switch 4개 ── */}
-              <rect x="21" y="15" width="82" height="110" rx="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
-              <text x="62" y="32" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="bold">Switch</text>
-              {swState.map((on, i) => (
-                <g key={i} onClick={() => toggleSwitch(i)} style={{ cursor: 'pointer' }}>
-                  <rect x="28" y={40 + i * 20} width="24" height="12" rx="4" fill={on ? "#166534" : "#374151"} stroke="#475569" strokeWidth="1" />
-                  <rect x={on ? 40 : 27} y={40 + i * 20} width="12" height="12" rx="3" fill={on ? "#4ade80" : "#6b7280"} style={{ transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)' }} />
-                  <text x="62" y={50 + i * 20} fill={on ? "#86efac" : "#64748b"} fontSize="7" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
-                    SW{i} {on ? "ON" : "OFF"}
+              {/* ══════ 상단 그룹: Push Button → gpio_0 → Green LED (y: 8~113) ══════ */}
+
+              {/* ── Push Button 4개 ── */}
+              <rect x="8" y="8" width="82" height="105" rx="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
+              <text x="49" y="24" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">Push Button</text>
+              {btnState.map((on, i) => (
+                <g key={`btn${i}`} onClick={() => toggleButton(i)} style={{ cursor: 'pointer' }}>
+                  <circle cx="30" cy={42 + i * 20} r="7" fill={on ? "#7c3aed" : "#374151"} stroke={on ? "#a78bfa" : "#475569"} strokeWidth="1.5" />
+                  <circle cx="30" cy={42 + i * 20} r="3" fill={on ? "#c4b5fd" : "#6b7280"} />
+                  <text x="50" y={46 + i * 20} fill={on ? "#c4b5fd" : "#64748b"} fontSize="7" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
+                    BTN{i}
                   </text>
                 </g>
               ))}
 
-              {/* Switch → GPIO 화살표 */}
-              <line x1="104" y1="55" x2="145" y2="55" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
-              <text x="124" y="50" textAnchor="middle" fill="#64748b" fontSize="8">4bit</text>
+              {/* BTN → gpio_0 */}
+              <line x1="91" y1="55" x2="123" y2="55" stroke="#4ade80" strokeWidth="1.5" markerEnd="url(#arrG)" />
+              <text x="107" y="49" textAnchor="middle" fill="#64748b" fontSize="7">4bit</text>
 
-              {/* ── AXI GPIO ── */}
-              <rect x="150" y="15" width="90" height="110" rx="8" fill="#0f172a" stroke="#20b2aa" strokeWidth="2" />
-              <text x="195" y="33" textAnchor="middle" fill="#5eead4" fontSize="11" fontWeight="bold">AXI GPIO</text>
-              <rect x="158" y="40" width="74" height="27" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
-              <text x="195" y="52" textAnchor="middle" fill="#94a3b8" fontSize="10">Ch2  IN</text>
-              <text x="195" y="63" textAnchor="middle" fill="#64748b" fontSize="9">Switch 읽기</text>
-              <rect x="158" y="71" width="74" height="27" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
-              <text x="195" y="83" textAnchor="middle" fill="#94a3b8" fontSize="10">Ch1  OUT</text>
-              <text x="195" y="94" textAnchor="middle" fill="#64748b" fontSize="9">LED 쓰기</text>
-              <text x="195" y="114" textAnchor="middle" fill="#74777aff" fontSize="9">AXI-Lite Bus</text>
+              {/* ── AXI GPIO 0 (gpio_0) ── */}
+              <rect x="126" y="8" width="100" height="105" rx="8" fill="#0f172a" stroke="#4ade80" strokeWidth="2" />
+              <text x="176" y="24" textAnchor="middle" fill="#4ade80" fontSize="10" fontWeight="bold">AXI GPIO 0</text>
+              <rect x="133" y="32" width="86" height="24" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+              <text x="176" y="48" textAnchor="middle" fill="#94a3b8" fontSize="9">Ch2 IN — BTN</text>
+              <rect x="133" y="60" width="86" height="24" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+              <text x="176" y="76" textAnchor="middle" fill="#94a3b8" fontSize="9">Ch1 OUT — LED</text>
+              <text x="176" y="104" textAnchor="middle" fill="#74777aff" fontSize="8">AXI-Lite</text>
 
-              {/* GPIO ↔ MicroBlaze */}
-              <line x1="195" y1="125" x2="195" y2="150" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
-              <line x1="205" y1="154" x2="205" y2="128" stroke="#a78bfa" strokeWidth="1.5" markerEnd="url(#arr2)" />
+              {/* gpio_0 → Green LED */}
+              <line x1="227" y1="44" x2="275" y2="44" stroke="#4ade80" strokeWidth="1.5" markerEnd="url(#arrG)" />
+              <text x="251" y="38" textAnchor="middle" fill="#64748b" fontSize="7">4bit</text>
 
-              {/* GPIO → LED 화살표 */}
-              <line x1="240" y1="85" x2="274" y2="85" stroke="#20b2aa" strokeWidth="2" markerEnd="url(#arr1)" />
-              <text x="255" y="80" textAnchor="middle" fill="#64748b" fontSize="8">4bit</text>
-
-              {/* ── LED 4개 (녹색 단색) ── */}
-              <rect x="280" y="15" width="82" height="110" rx="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
-              <text x="321" y="32" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="bold">LED</text>
-              {swState.map((on, i) => (
-                <g key={i}>
-                  {/* SMD LED Component Body */}
-                  <rect x="290" y={41 + i * 20} width="14" height="12" rx="2" fill="#2d3748" stroke="#4a5568" strokeWidth="1" />
-                  <rect x="292" y={43 + i * 20} width="10" height="8" rx="1" fill="#111827" />
-
-                  {/* Diffuse Light Aura */}
-                  {on && (
-                    <circle cx="297" cy={47 + i * 20} r="9" fill="#4ade80" filter="url(#smdGlow)" opacity="0.6" />
-                  )}
-
-                  {/* Inner Lens / Focus */}
-                  <circle cx="297" cy={47 + i * 20} r="3" fill={on ? "#4ade80" : "#4b5563"} style={{ transition: 'all 0.2s' }}>
-                    {on && <animate attributeName="opacity" values="1;0.6;1" dur="1.2s" repeatCount="indefinite" />}
-                  </circle>
-                  {on && (
-                    <circle cx="297" cy={47 + i * 20} r="1" fill="#ffffff" opacity="0.9" style={{ userSelect: 'none' }} />
-                  )}
-
-                  <text x="315" y={51 + i * 20} fill={on ? "#4ade80" : "#6b7280"} fontSize="10" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
-                    LD{i} {on ? "ON" : "OFF"}
+              {/* ── Green LED 4개 (LD4-7) ── */}
+              <rect x="278" y="8" width="90" height="105" rx="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
+              <text x="323" y="24" textAnchor="middle" fill="#86efac" fontSize="10" fontWeight="bold">Green LED</text>
+              {btnState.map((on, i) => (
+                <g key={`gled${i}`}>
+                  <rect x="288" y={33 + i * 18} width="12" height="10" rx="2" fill="#2d3748" stroke="#4a5568" strokeWidth="1" />
+                  <rect x="290" y={35 + i * 18} width="8" height="6" rx="1" fill="#111827" />
+                  {on && <circle cx="294" cy={38 + i * 18} r="8" fill="#4ade80" filter="url(#smdGlow)" opacity="0.6" />}
+                  <circle cx="294" cy={38 + i * 18} r="2.5" fill={on ? "#4ade80" : "#4b5563"} style={{ transition: 'all 0.2s' }} />
+                  {on && <circle cx="294" cy={38 + i * 18} r="1" fill="#fff" opacity="0.9" />}
+                  <text x="310" y={42 + i * 18} fill={on ? "#4ade80" : "#6b7280"} fontSize="9" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
+                    LD{i + 4}
                   </text>
                 </g>
               ))}
 
-              {/* ── MicroBlaze CPU ── */}
-              <rect x="85" y="155" width="250" height="60" rx="10" fill="#1e1b2e" stroke="#7c3aed" strokeWidth="2.5" />
-              <text x="210" y="174" textAnchor="middle" fill="#c4b5fd" fontSize="12" fontWeight="bold">MicroBlaze CPU</text>
-              <text x="100" y="190" textAnchor="start" fill="#94a3b8" fontSize="10">① XGpio_DiscreteRead( ch2 )  →  SW 값 읽기</text>
-              <text x="100" y="205" textAnchor="start" fill="#94a3b8" fontSize="10">② XGpio_DiscreteWrite( ch1, sw_val )  →  LED 출력</text>
+              {/* ══════ 중간 통로 (y: 113~175) — AXI-Lite 버스 연결 ══════ */}
 
-              {/* while(1) 박스 */}
-              <rect x="115" y="230" width="190" height="20" rx="5" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" strokeWidth="1" strokeDasharray="4 2" />
-              <text x="210" y="243" textAnchor="middle" fill="#a78bfa" fontSize="10" fontWeight="bold">while(1) — 폴링 루프 반복</text>
+              {/* MicroBlaze CPU (중앙 배치) */}
+              <rect x="385" y="113" width="85" height="62" rx="10" fill="#1e1b2e" stroke="#7c3aed" strokeWidth="2.5" />
+              <text x="428" y="133" textAnchor="middle" fill="#c4b5fd" fontSize="11" fontWeight="bold">MicroBlaze</text>
+              <text x="428" y="148" textAnchor="middle" fill="#a78bfa" fontSize="8">CPU</text>
+              <text x="428" y="165" textAnchor="middle" fill="#a78bfa" fontSize="8" fontStyle="italic">while(1)</text>
 
-              {/* MicroBlaze → while 화살표 */}
-              <line x1="210" y1="215" x2="210" y2="228" stroke="#7c3aed" strokeWidth="1.5" markerEnd="url(#arr2)" />
+              {/* gpio_0 ↔ MicroBlaze (녹색 경로) */}
+              <path d="M176,113 L176,125 L380,125" fill="none" stroke="#4ade80" strokeWidth="1.5" markerEnd="url(#arrG)" />
+              <text x="270" y="121" textAnchor="middle" fill="#4ade80" fontSize="7" fontWeight="bold">gpio_0 AXI-Lite</text>
+              <path d="M385,135 L186,135 L186,116" fill="none" stroke="#4ade80" strokeWidth="1.5" strokeDasharray="4 2" markerEnd="url(#arrG)" />
 
-              {/* 루프 백 화살표 */}
-              <path d="M115,239 Q60,238 40,195 Q20,160 30,124" fill="none" stroke="#7c3aed" strokeWidth="1" strokeDasharray="4 3" opacity="0.5" />
-              <path d="M305,239 Q400,235 400,180 Q410,80 360,60" fill="none" stroke="#7c3aed" strokeWidth="1" strokeDasharray="4 3" opacity="0.5" />
+              {/* gpio_1 ↔ MicroBlaze (보라 경로) */}
+              <path d="M176,175 L176,148 L380,148" fill="none" stroke="#c084fc" strokeWidth="1.5" markerEnd="url(#arrP)" />
+              <text x="270" y="144" textAnchor="middle" fill="#c084fc" fontSize="7" fontWeight="bold">gpio_1 AXI-Lite</text>
+              <path d="M385,158 L186,158 L186,170" fill="none" stroke="#c084fc" strokeWidth="1.5" strokeDasharray="4 2" markerEnd="url(#arrP)" />
+
+              {/* ══════ 하단 그룹: Slide Switch → gpio_1 → RGB LED (y: 175~280) ══════ */}
+
+              {/* ── Slide Switch 4개 ── */}
+              <rect x="8" y="175" width="82" height="105" rx="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
+              <text x="49" y="191" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">Slide Switch</text>
+              {swState.map((on, i) => (
+                <g key={`sw${i}`} onClick={() => toggleSwitch(i)} style={{ cursor: 'pointer' }}>
+                  <rect x="20" y={202 + i * 20} width="24" height="12" rx="4" fill={on ? "#166534" : "#374151"} stroke="#475569" strokeWidth="1" />
+                  <rect x={on ? 32 : 19} y={202 + i * 20} width="12" height="12" rx="3" fill={on ? "#4ade80" : "#6b7280"} style={{ transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                  <text x="54" y={212 + i * 20} fill={on ? "#86efac" : "#64748b"} fontSize="7" fontWeight={on ? "bold" : "normal"} style={{ userSelect: 'none' }}>
+                    SW{i}
+                  </text>
+                </g>
+              ))}
+
+              {/* SW → gpio_1 */}
+              <line x1="91" y1="222" x2="123" y2="222" stroke="#c084fc" strokeWidth="1.5" markerEnd="url(#arrP)" />
+              <text x="107" y="216" textAnchor="middle" fill="#64748b" fontSize="7">4bit</text>
+
+              {/* ── AXI GPIO 1 (gpio_1) ── */}
+              <rect x="126" y="175" width="100" height="105" rx="8" fill="#0f172a" stroke="#c084fc" strokeWidth="2" />
+              <text x="176" y="191" textAnchor="middle" fill="#c084fc" fontSize="10" fontWeight="bold">AXI GPIO 1</text>
+              <rect x="133" y="199" width="86" height="24" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+              <text x="176" y="215" textAnchor="middle" fill="#94a3b8" fontSize="9">Ch2 IN — SW</text>
+              <rect x="133" y="227" width="86" height="24" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1" />
+              <text x="176" y="243" textAnchor="middle" fill="#94a3b8" fontSize="9">Ch1 OUT — RGB</text>
+              <text x="176" y="271" textAnchor="middle" fill="#74777aff" fontSize="8">AXI-Lite</text>
+
+              {/* gpio_1 → RGB LED */}
+              <line x1="227" y1="211" x2="275" y2="211" stroke="#c084fc" strokeWidth="1.5" markerEnd="url(#arrP)" />
+              <text x="251" y="205" textAnchor="middle" fill="#64748b" fontSize="7">12bit</text>
+
+              {/* ── RGB LED 4개 (LD0-3) ── */}
+              <rect x="278" y="175" width="90" height="105" rx="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
+              <text x="323" y="191" textAnchor="middle" fill="#f0abfc" fontSize="10" fontWeight="bold">RGB LED</text>
+              {(() => {
+                const sw3 = swState.slice(0, 3).reduce((v, on, i) => v | (on ? (1 << i) : 0), 0);
+                const rgbColors = ['#000', '#3b82f6', '#22c55e', '#06b6d4', '#ef4444', '#d946ef', '#eab308', '#ffffff'];
+                const color = rgbColors[sw3];
+                return [0, 1, 2, 3].map(i => (
+                  <g key={`rgb${i}`}>
+                    <rect x="288" y={200 + i * 18} width="12" height="10" rx="2" fill="#2d3748" stroke="#4a5568" strokeWidth="1" />
+                    <rect x="290" y={202 + i * 18} width="8" height="6" rx="1" fill="#111827" />
+                    {sw3 > 0 && <circle cx="294" cy={205 + i * 18} r="8" fill={color} filter="url(#smdGlow)" opacity="0.5" />}
+                    <circle cx="294" cy={205 + i * 18} r="2.5" fill={sw3 > 0 ? color : "#4b5563"} style={{ transition: 'all 0.2s' }} />
+                    {sw3 > 0 && <circle cx="294" cy={205 + i * 18} r="1" fill="#fff" opacity="0.7" />}
+                    <text x="310" y={209 + i * 18} fill={sw3 > 0 ? "#e9d5ff" : "#6b7280"} fontSize="9" style={{ userSelect: 'none' }}>
+                      LD{i}
+                    </text>
+                  </g>
+                ));
+              })()}
+
+              {/* ══════ while(1) 박스 ══════ */}
+              <rect x="50" y="300" width="400" height="26" rx="5" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" strokeWidth="1" strokeDasharray="4 2" />
+              <text x="250" y="317" textAnchor="middle" fontSize="10" fontWeight="bold">
+                <tspan fill="#4ade80">■ gpio0: BTN → 녹색LED</tspan>
+                <tspan fill="#94a3b8">&nbsp;&nbsp;&amp;&nbsp;&nbsp;</tspan>
+                <tspan fill="#c084fc">■ gpio1: SW → RGB LED</tspan>
+              </text>
             </svg>
           </div>
           <p style={{ textAlign: 'center', marginTop: '2rem', fontSize: '1.2rem', color: '#64748b' }}>⬇️ 아래 방향키(↓)를 눌러 실습 단계 확인</p>
@@ -433,7 +488,7 @@ export default function MicroBlazeSlides() {
 
         {/* Ex1 - Step 1 */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 1. Vivado 프로젝트 및 MicroBlaze 생성</h2>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex1 | Step 1. Vivado 프로젝트 및 MicroBlaze 생성</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '3rem' }}>
             <div>
               <ul className="step-list">
@@ -503,7 +558,7 @@ export default function MicroBlazeSlides() {
 
         {/* Ex1 - Step 2 */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 2. AXI GPIO 추가 및 보드 연동</h2>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex1 | Step 2. AXI GPIO 추가 및 보드 연동</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '3rem' }}>
             <div>
               <ul className="step-list">
@@ -517,15 +572,15 @@ export default function MicroBlazeSlides() {
                 <li>
                   <div className="step-icon">2</div>
                   <div className="step-content">
-                    <span className="step-title">LED 추가</span>
-                    <span className="step-desc"><code>4 LEDs</code> 를 캔버스로 드래그 앤 드롭 (AXI GPIO 자동 생성)</span>
+                    <span className="step-title">Green LED + Push Button 추가 (gpio_0)</span>
+                    <span className="step-desc"><code>4 LEDs</code>(LD4-7, 녹색 단색) 드래그 → <code>Push Buttons</code> 를 Dual Channel로 추가</span>
                   </div>
                 </li>
                 <li>
                   <div className="step-icon">3</div>
                   <div className="step-content">
-                    <span className="step-title">Switch 추가</span>
-                    <span className="step-desc"><code>4 Switches</code> 를 동일하게 드래그 앤 드롭</span>
+                    <span className="step-title">RGB LED + Slide Switch 추가 (gpio_1)</span>
+                    <span className="step-desc"><code>RGB LEDs</code>(LD0-3, 12비트) 드래그 → <code>4 Switches</code> 를 Dual Channel로 추가</span>
                   </div>
                 </li>
                 <li>
@@ -582,7 +637,7 @@ export default function MicroBlazeSlides() {
 
         {/* Ex1 - Step 3-1 (Vitis Setup) */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 3-1. Vitis IDE 프로젝트 환경 세팅</h2>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex1 | Step 3-1. Vitis IDE 프로젝트 환경 세팅</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '3rem' }}>
             <div>
               <ul className="step-list">
@@ -646,25 +701,34 @@ export default function MicroBlazeSlides() {
 
         {/* Ex1 - Step 3-2 (C code) */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 3-2. Vitis 소프트웨어 제어 코드 (C)</h2>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex1 | Step 3-2. Vitis 소프트웨어 제어 코드 (C)</h2>
           <p style={{ fontSize: '1.2rem', color: '#475569', marginBottom: '1rem' }}>Application Project 안의 <code>src/main.c</code> 파일을 열거나 새로 생성하고, 아래 코드 작성</p>
           <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '52vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <br />
             <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
-            &nbsp;&nbsp;XGpio gpio_device;<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>XGpio</span> gpio0, gpio1;<br />
             <br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 단일 GPIO IP(axi_gpio_0)에 2개 채널(LED, Switch)이 통합된 경우</span><br />
-            &nbsp;&nbsp;XGpio_Initialize(&amp;gpio_device, XPAR_GPIO_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// gpio_0: ch1=녹색 LED(LD4-7), ch2=Push Button</span><br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;gpio0, XPAR_GPIO_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// LED 출력</span><br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio0, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// BTN 입력</span><br />
             <br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 방향 설정 (Channel 1: LED=출력:0, Channel 2: Switch=입력:1)</span><br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio_device, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio_device, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);<br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// gpio_1: ch1=RGB LED(LD0-3, 12bit), ch2=Slide Switch</span><br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;gpio1, XPAR_GPIO_1_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio1, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x000</span>);&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// RGB 출력(12bit)</span><br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio1, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// SW 입력</span><br />
             <br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span>(<span style={{ color: '#d19a66' }}>1</span>) {'{'}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;int sw_data = XGpio_DiscreteRead(&amp;gpio_device, <span style={{ color: '#d19a66' }}>2</span>);<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio_device, <span style={{ color: '#d19a66' }}>1</span>, sw_data);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// Push Button → 녹색 LED (gpio0 내부 처리)</span><br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> btn = XGpio_DiscreteRead(&amp;gpio0, <span style={{ color: '#d19a66' }}>2</span>);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, btn);<br />
+            <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// Slide Switch → RGB LED (gpio1 내부 처리, 하위 3bit=색상)</span><br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> sw = XGpio_DiscreteRead(&amp;gpio1, <span style={{ color: '#d19a66' }}>2</span>) &amp; <span style={{ color: '#d19a66' }}>0x7</span>;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> rgb = sw | (sw &lt;&lt; <span style={{ color: '#d19a66' }}>3</span>) | (sw &lt;&lt; <span style={{ color: '#d19a66' }}>6</span>) | (sw &lt;&lt; <span style={{ color: '#d19a66' }}>9</span>);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio1, <span style={{ color: '#d19a66' }}>1</span>, rgb);<br />
             &nbsp;&nbsp;{'}'}<br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
             {'}'}
@@ -673,7 +737,7 @@ export default function MicroBlazeSlides() {
 
         {/* Ex1 - Step 4 */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 4. 빌드 및 보드 구동 테스트</h2>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex1 | Step 4. 빌드 및 보드 구동 테스트</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '3rem' }}>
             <div>
               <ul className="step-list">
@@ -702,7 +766,7 @@ export default function MicroBlazeSlides() {
                   <div className="step-icon">4</div>
                   <div className="step-content">
                     <span className="step-title">동작 확인</span>
-                    <span className="step-desc">물리적 Arty A7 보드에서 4개의 스위치 조작 시 LED가 연동되어 실시간 점등되는지 테스트 완료 🎉</span>
+                    <span className="step-desc">Push Button → 녹색 LED(LD4-7) 점등, Slide Switch → RGB LED(LD0-3) 색상 변경 동시 확인 🎉</span>
                   </div>
                 </li>
               </ul>
@@ -717,29 +781,37 @@ export default function MicroBlazeSlides() {
 
         {/* Ex1 - Additional Code (Application) */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>응용 실습: 패턴 테이블 활용 제어 </h2>
-          <p style={{ fontSize: '1.2rem', color: '#445569', marginBottom: '0.8rem' }}>LUT(Look-Up Table) 배열을 활용하여 스위치 입력값(0~15)에 매칭되는 다양한 LED 패턴 출력</p>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>Ex1 | 응용 실습: 패턴 테이블 활용 제어</h2>
+          <p style={{ fontSize: '1.2rem', color: '#445569', marginBottom: '0.8rem' }}>LUT 배열로 Slide Switch(0~15) → 녹색 LED 패턴 + RGB LED 색상 동시 제어</p>
           <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '52vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xgpio.h"</span><br />
             <br />
-            <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
-            &nbsp;&nbsp;XGpio gpio_device;<br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 16가지 스위치 입력에 따른 4bit LED 출력 패턴 정의</span><br />
-            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> led_patterns[<span style={{ color: '#d19a66' }}>16</span>] = {'{'}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x0</span>, <span style={{ color: '#d19a66' }}>0xF</span>, <span style={{ color: '#d19a66' }}>0xA</span>, <span style={{ color: '#d19a66' }}>0x5</span>, <span style={{ color: '#d19a66' }}>0x9</span>, <span style={{ color: '#d19a66' }}>0x6</span>, <span style={{ color: '#d19a66' }}>0xC</span>, <span style={{ color: '#d19a66' }}>0x3</span>,<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x1</span>, <span style={{ color: '#d19a66' }}>0x2</span>, <span style={{ color: '#d19a66' }}>0x4</span>, <span style={{ color: '#d19a66' }}>0x8</span>, <span style={{ color: '#d19a66' }}>0xE</span>, <span style={{ color: '#d19a66' }}>0xD</span>, <span style={{ color: '#d19a66' }}>0xB</span>, <span style={{ color: '#d19a66' }}>0x7</span><br />
-            &nbsp;&nbsp;{'}'};<br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 스위치(0~15)에 따른 녹색 LED 패턴</span><br />
+            <span style={{ color: '#e5c07b' }}>int</span> led_lut[<span style={{ color: '#d19a66' }}>16</span>] = {'{'}<br />
+            &nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x0</span>,<span style={{ color: '#d19a66' }}>0xF</span>,<span style={{ color: '#d19a66' }}>0xA</span>,<span style={{ color: '#d19a66' }}>0x5</span>,<span style={{ color: '#d19a66' }}>0x9</span>,<span style={{ color: '#d19a66' }}>0x6</span>,<span style={{ color: '#d19a66' }}>0xC</span>,<span style={{ color: '#d19a66' }}>0x3</span>,<br />
+            &nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x1</span>,<span style={{ color: '#d19a66' }}>0x2</span>,<span style={{ color: '#d19a66' }}>0x4</span>,<span style={{ color: '#d19a66' }}>0x8</span>,<span style={{ color: '#d19a66' }}>0xE</span>,<span style={{ color: '#d19a66' }}>0xD</span>,<span style={{ color: '#d19a66' }}>0xB</span>,<span style={{ color: '#d19a66' }}>0x7</span><br />
+            {'}'};<br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 스위치(0~15)에 따른 RGB 색상 (LD0-3 동일 색)</span><br />
+            <span style={{ color: '#e5c07b' }}>int</span> rgb_lut[<span style={{ color: '#d19a66' }}>16</span>] = {'{'}<br />
+            &nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x000</span>,<span style={{ color: '#d19a66' }}>0x249</span>,<span style={{ color: '#d19a66' }}>0x492</span>,<span style={{ color: '#d19a66' }}>0x924</span>,<span style={{ color: '#d19a66' }}>0x6DB</span>,<span style={{ color: '#d19a66' }}>0xDB6</span>,<span style={{ color: '#d19a66' }}>0xB6D</span>,<span style={{ color: '#d19a66' }}>0xFFF</span>,<br />
+            &nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x124</span>,<span style={{ color: '#d19a66' }}>0x248</span>,<span style={{ color: '#d19a66' }}>0x491</span>,<span style={{ color: '#d19a66' }}>0x922</span>,<span style={{ color: '#d19a66' }}>0xB6D</span>,<span style={{ color: '#d19a66' }}>0x6DB</span>,<span style={{ color: '#d19a66' }}>0x492</span>,<span style={{ color: '#d19a66' }}>0x249</span><br />
+            {'}'};<br />
             <br />
-            &nbsp;&nbsp;XGpio_Initialize(&amp;gpio_device, XPAR_GPIO_0_DEVICE_ID);<br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio_device, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio_device, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);<br />
+            <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>XGpio</span> gpio0, gpio1;<br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;gpio0, XPAR_GPIO_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio0, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);<br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;gpio1, XPAR_GPIO_1_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio1, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x000</span>);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio1, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);<br />
             <br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span>(<span style={{ color: '#d19a66' }}>1</span>) {'{'}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> sw_data = XGpio_DiscreteRead(&amp;gpio_device, <span style={{ color: '#d19a66' }}>2</span>);<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 스위치 값(0~15) 마스킹 후 패턴 테이블 참조</span><br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> led_data = led_patterns[sw_data &amp; <span style={{ color: '#d19a66' }}>0xF</span>];<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio_device, <span style={{ color: '#d19a66' }}>1</span>, led_data);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> btn = XGpio_DiscreteRead(&amp;gpio0, <span style={{ color: '#d19a66' }}>2</span>) &amp; <span style={{ color: '#d19a66' }}>0xF</span>;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, led_lut[btn]);&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// gpio0: BTN→녹색 LED</span><br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> sw = XGpio_DiscreteRead(&amp;gpio1, <span style={{ color: '#d19a66' }}>2</span>) &amp; <span style={{ color: '#d19a66' }}>0xF</span>;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio1, <span style={{ color: '#d19a66' }}>1</span>, rgb_lut[sw]);&nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// gpio1: SW→RGB LED</span><br />
             &nbsp;&nbsp;{'}'}<br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
             {'}'}
@@ -756,7 +828,7 @@ export default function MicroBlazeSlides() {
             <ul className="info-list" style={{ fontSize: '1.5rem' }}>
               <li><strong>학습 목표</strong> <span>하드웨어 인터럽트 개념 이해 및 다중 IP 연동</span></li>
               <li><strong>핵심 IP</strong> <span>AXI Timer, AXI Interrupt Controller, AXI GPIO</span></li>
-              <li><strong>동작 확인</strong> <span>타이머 인터럽트마다 RGB LED 색상 자동 순환</span></li>
+              <li><strong>동작 확인</strong> <span>타이머 인터럽트마다 RGB LED 색상 + 녹색 LED 패턴 자동 순환</span></li>
               <li><strong>핵심 개념</strong> <span>ISR(Interrupt Service Routine) 작성 및 등록</span></li>
             </ul>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem', justifyContent: 'center' }}>
@@ -799,8 +871,8 @@ export default function MicroBlazeSlides() {
 
                 {/* RGB LED 블록 - 보드 동작과 동일한 Chase Light */}
                 <rect x="10" y="294" width="300" height="120" rx="10" fill="#1e1b2e" stroke="#16a34a" strokeWidth="2" />
-                <text x="160" y="313" textAnchor="middle" fill="#86efac" fontSize="11" fontWeight="bold">RGB LEDs × 4 (LD4–LD7) — Chase Light</text>
-                <text x="160" y="327" textAnchor="middle" fill="#64748b" fontSize="9">같은 색이 4칸 쉬프트 → 다음 색으로 전환</text>
+                <text x="160" y="313" textAnchor="middle" fill="#86efac" fontSize="11" fontWeight="bold">RGB LEDs (LD0–LD3) + Green LEDs (LD4–LD7)</text>
+                <text x="160" y="327" textAnchor="middle" fill="#64748b" fontSize="9">RGB: Chase Light 색상 순환 / Green: 시프트 패턴</text>
 
                 {/* LD4 — 0~0.5s 구간 ON / fill은 8s 주기로 색상 전환 */}
                 <g>
@@ -816,7 +888,7 @@ export default function MicroBlazeSlides() {
                     <animate attributeName="opacity" values="1;0.2;0.2;0.2;1" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
                   </circle>
                 </g>
-                <text x="52" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD4</text>
+                <text x="52" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD0</text>
 
                 {/* LD5 — 0.5~1.0s 구간 ON */}
                 <g>
@@ -832,7 +904,7 @@ export default function MicroBlazeSlides() {
                     <animate attributeName="opacity" values="0.2;1;0.2;0.2;0.2" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
                   </circle>
                 </g>
-                <text x="118" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD5</text>
+                <text x="118" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD1</text>
 
                 {/* LD6 — 1.0~1.5s 구간 ON */}
                 <g>
@@ -848,7 +920,7 @@ export default function MicroBlazeSlides() {
                     <animate attributeName="opacity" values="0.2;0.2;1;0.2;0.2" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
                   </circle>
                 </g>
-                <text x="202" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD6</text>
+                <text x="202" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD2</text>
 
                 {/* LD7 — 1.5~2.0s 구간 ON */}
                 <g>
@@ -864,7 +936,7 @@ export default function MicroBlazeSlides() {
                     <animate attributeName="opacity" values="0.2;0.2;0.2;1;0.2" keyTimes="0;0.25;0.5;0.75;1" dur="2s" repeatCount="indefinite" calcMode="discrete" />
                   </circle>
                 </g>
-                <text x="268" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD7</text>
+                <text x="268" y="392" textAnchor="middle" fill="#94a3b8" fontSize="10">LD3</text>
 
                 {/* 화살표 마커 정의 */}
                 <defs>
@@ -886,7 +958,7 @@ export default function MicroBlazeSlides() {
 
         {/* Ex2 - Step 1: Vivado Block Design */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 1. Vivado Block Design 구성</h2>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex2 | Step 1. Vivado Block Design 구성</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '2rem' }}>
             <div>
               <ul className="step-list">
@@ -921,8 +993,8 @@ export default function MicroBlazeSlides() {
                 <li>
                   <div className="step-icon">5</div>
                   <div className="step-content">
-                    <span className="step-title">RGB LED GPIO 추가</span>
-                    <span className="step-desc">Board 탭에서 <code>RGB LEDs</code> 드래그 앤 드롭 (AXI GPIO 자동 생성)</span>
+                    <span className="step-title">기존 GPIO 유지 확인</span>
+                    <span className="step-desc">예제 1의 gpio_0(녹색 LED+BTN), gpio_1(RGB LED+SW) 그대로 활용</span>
                   </div>
                 </li>
                 <li>
@@ -959,7 +1031,7 @@ export default function MicroBlazeSlides() {
 
         {/* Ex2 - Step 2: Vitis Setup */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 2. Vitis 프로젝트 설정</h2>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex2 | Step 2. Vitis 프로젝트 설정</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '2rem' }}>
             <div>
               <ul className="step-list">
@@ -1022,7 +1094,7 @@ export default function MicroBlazeSlides() {
 
         {/* Ex2 - Step 3: C Code */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>Step 3. 인터럽트 제어 코드 (C)</h2>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.2rem' }}>Ex2 | Step 3. 인터럽트 제어 코드 (C)</h2>
           <p style={{ fontSize: '1.15rem', color: '#475569', marginBottom: '0.8rem' }}>AXI Timer 인터럽트마다 ISR이 호출되어 RGB LED 색상을 순환 변경</p>
           <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.0rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '44vh' }}>
             <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>"xparameters.h"</span><br />
@@ -1032,31 +1104,38 @@ export default function MicroBlazeSlides() {
             <br />
             <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#e5c07b' }}>TIMER_PERIOD</span> <span style={{ color: '#d19a66' }}>50000000</span>  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 0.5초 = 50M cycles (100MHz 기준)</span><br />
             <br />
-            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 하나의 LED만 켜고 오른쪽으로 쉬프트 (Chase Light)</span><br />
-            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// LD4=bit[2:0], LD5=bit[5:3], LD6=bit[8:6], LD7=bit[11:9]</span><br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// RGB 색상 테이블: R, G, B, Y, M, C, W, OFF</span><br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// LD0=bit[2:0], LD1=bit[5:3], LD2=bit[8:6], LD3=bit[11:9]</span><br />
             <span style={{ color: '#e5c07b' }}>int</span> colors[<span style={{ color: '#d19a66' }}>8</span>] = {'{'} <span style={{ color: '#d19a66' }}>0x1</span>,<span style={{ color: '#d19a66' }}>0x2</span>,<span style={{ color: '#d19a66' }}>0x4</span>,<span style={{ color: '#d19a66' }}>0x3</span>,<span style={{ color: '#d19a66' }}>0x5</span>,<span style={{ color: '#d19a66' }}>0x6</span>,<span style={{ color: '#d19a66' }}>0x7</span>,<span style={{ color: '#d19a66' }}>0x0</span> {'}'};<br />
-            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// R    G    B    Y    M    C    W   OFF</span><br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// B    G    R    C    M    Y    W   OFF</span><br />
             <br />
             <span style={{ color: '#e5c07b' }}>XTmrCtr</span> timer_device;<br />
             <span style={{ color: '#e5c07b' }}>XIntc</span>   intc_device;<br />
-            <span style={{ color: '#e5c07b' }}>XGpio</span>   rgb_device;<br />
-            <span style={{ color: '#e5c07b' }}>int</span>     led_pos   = <span style={{ color: '#d19a66' }}>0</span>;  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 현재 켜진 LED (0=LD4, 1=LD5, 2=LD6, 3=LD7)</span><br />
+            <span style={{ color: '#e5c07b' }}>XGpio</span>   gpio0, gpio1;<br />
+            <span style={{ color: '#e5c07b' }}>int</span>     led_pos   = <span style={{ color: '#d19a66' }}>0</span>;  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 현재 켜진 RGB LED (0=LD0 ~ 3=LD3)</span><br />
             <span style={{ color: '#e5c07b' }}>int</span>     color_idx = <span style={{ color: '#d19a66' }}>0</span>;  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 현재 색상 인덱스</span><br />
+            <span style={{ color: '#e5c07b' }}>int</span>     green_pat = <span style={{ color: '#d19a66' }}>0x1</span>; <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 녹색 LED 시프트 패턴</span><br />
             <br />
-            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: 하나의 LED만 켜고 오른쪽으로 쉬프트</span><br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: RGB Chase Light + 녹색 LED 시프트</span><br />
             <span style={{ color: '#e5c07b' }}>void</span> <span style={{ color: '#61afef' }}>timer_isr</span>(<span style={{ color: '#e5c07b' }}>void</span> *data, <span style={{ color: '#e5c07b' }}>u8</span> n) {'{'}<br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 현재 위치의 LED에만 색상 출력 (나머지는 0)</span><br />
-            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> gpio_val = colors[color_idx] &lt;&lt; (<span style={{ color: '#d19a66' }}>3</span> * led_pos);<br />
-            &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;rgb_device, <span style={{ color: '#d19a66' }}>1</span>, gpio_val);<br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// RGB: 현재 위치 LED에만 색상 출력</span><br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> rgb_val = colors[color_idx] &lt;&lt; (<span style={{ color: '#d19a66' }}>3</span> * led_pos);<br />
+            &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio1, <span style={{ color: '#d19a66' }}>1</span>, rgb_val);<br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// Green: 1비트씩 시프트 (LD4→LD5→LD6→LD7→LD4...)</span><br />
+            &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, green_pat);<br />
+            &nbsp;&nbsp;green_pat = (green_pat &lt;&lt; <span style={{ color: '#d19a66' }}>1</span>) &amp; <span style={{ color: '#d19a66' }}>0xF</span>;<br />
+            &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>if</span> (!green_pat) green_pat = <span style={{ color: '#d19a66' }}>0x1</span>;<br />
             &nbsp;&nbsp;led_pos = (led_pos + <span style={{ color: '#d19a66' }}>1</span>) % <span style={{ color: '#d19a66' }}>4</span>;<br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>if</span> (led_pos == <span style={{ color: '#d19a66' }}>0</span>)  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 4개 다 돌면 다음 색상으로</span><br />
             &nbsp;&nbsp;&nbsp;&nbsp;color_idx = (color_idx + <span style={{ color: '#d19a66' }}>1</span>) % <span style={{ color: '#d19a66' }}>8</span>;<br />
             {'}'}<br />
             <br />
             <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// GPIO 초기화 (12비트 전체 출력, 0x000 = all output)</span><br />
-            &nbsp;&nbsp;XGpio_Initialize(&amp;rgb_device, XPAR_GPIO_0_DEVICE_ID);<br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_device, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x000</span>);<br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// gpio_0: ch1=녹색LED, ch2=BTN / gpio_1: ch1=RGB LED, ch2=SW</span><br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;gpio0, XPAR_GPIO_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio0, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);<br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;gpio1, XPAR_GPIO_1_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;gpio1, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x000</span>);<br />
             <br />
             &nbsp;&nbsp;XTmrCtr_Initialize(&amp;timer_device, XPAR_AXI_TIMER_0_DEVICE_ID);<br />
             &nbsp;&nbsp;XTmrCtr_SetHandler(&amp;timer_device, timer_isr, &amp;timer_device);<br />
@@ -1079,7 +1158,7 @@ export default function MicroBlazeSlides() {
 
         {/* Ex2 - 응용: 예제1 + 예제2 병합 코드 */}
         <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.0rem', marginBottom: '0.8rem' }}>응용 실습: 예제 1 + 예제 2 통합 제어</h2>
+          <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.0rem', marginBottom: '0.8rem' }}>Ex2 | 응용 실습: 예제 1 + 예제 2 통합 제어</h2>
           <p style={{ fontSize: '1.1rem', color: '#475569', marginBottom: '0.7rem' }}>
             Switch→LED 제어(예제1)와 타이머 인터럽트→RGB LED 순환(예제2)을 하나의 소스로 병합&nbsp;
             <span style={{ backgroundColor: 'rgba(32,178,170,0.15)', border: '1px solid var(--accent)', borderRadius: '4px', padding: '2px 8px', fontSize: '0.9rem', color: 'var(--primary-dark)', fontWeight: 'bold' }}>메인 while문 + ISR 동시 구동</span>
@@ -1092,32 +1171,33 @@ export default function MicroBlazeSlides() {
             <br />
             <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#e5c07b' }}>TIMER_PERIOD</span> <span style={{ color: '#d19a66' }}>50000000</span>  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 0.5초 = 50M cycles (100MHz 기준)</span><br />
             <br />
-            <span style={{ color: '#e5c07b' }}>XGpio</span>   sw_led_gpio;  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 예제1: axi_gpio_0 (2ch: SW + LED)</span><br />
-            <span style={{ color: '#e5c07b' }}>XGpio</span>   rgb_gpio;     <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 예제2: axi_gpio_1 (1ch: RGB LED)</span><br />
+            <span style={{ color: '#e5c07b' }}>XGpio</span>   btn_led_gpio; <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// gpio_0 (ch1: 녹색 LED, ch2: Push BTN)</span><br />
+            <span style={{ color: '#e5c07b' }}>XGpio</span>   rgb_gpio;     <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// gpio_1 (ch1: RGB LED, ch2: Slide SW)</span><br />
             <span style={{ color: '#e5c07b' }}>XTmrCtr</span> timer;<br />
             <span style={{ color: '#e5c07b' }}>XIntc</span>   intc;<br />
             <span style={{ color: '#e5c07b' }}>int</span> color_idx = <span style={{ color: '#d19a66' }}>0</span>;<br />
             <span style={{ color: '#e5c07b' }}>int</span> colors[] = {'{'} <span style={{ color: '#d19a66' }}>0x1</span>,<span style={{ color: '#d19a66' }}>0x2</span>,<span style={{ color: '#d19a66' }}>0x4</span>,<span style={{ color: '#d19a66' }}>0x3</span>,<span style={{ color: '#d19a66' }}>0x5</span>,<span style={{ color: '#d19a66' }}>0x6</span>,<span style={{ color: '#d19a66' }}>0x7</span>,<span style={{ color: '#d19a66' }}>0x0</span> {'}'};<br />
             <span style={{ color: '#e5c07b' }}>int</span> sw_lut[] = {'{'} <span style={{ color: '#d19a66' }}>0x0</span>,<span style={{ color: '#d19a66' }}>0xF</span>,<span style={{ color: '#d19a66' }}>0xA</span>,<span style={{ color: '#d19a66' }}>0x5</span>,<span style={{ color: '#d19a66' }}>0x9</span>,<span style={{ color: '#d19a66' }}>0x6</span>,<span style={{ color: '#d19a66' }}>0xC</span>,<span style={{ color: '#d19a66' }}>0x3</span>,<span style={{ color: '#d19a66' }}>0x1</span>,<span style={{ color: '#d19a66' }}>0x2</span>,<span style={{ color: '#d19a66' }}>0x4</span>,<span style={{ color: '#d19a66' }}>0x8</span>,<span style={{ color: '#d19a66' }}>0xE</span>,<span style={{ color: '#d19a66' }}>0xD</span>,<span style={{ color: '#d19a66' }}>0xB</span>,<span style={{ color: '#d19a66' }}>0x7</span> {'}'};<br />
             <br />
-            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: 4개 LED 각자 다른 위상으로 12비트 패킹 출력</span><br />
+            <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ISR: RGB LED 4개 각자 다른 위상으로 12비트 패킹 출력</span><br />
             <span style={{ color: '#e5c07b' }}>void</span> <span style={{ color: '#61afef' }}>timer_isr</span>(<span style={{ color: '#e5c07b' }}>void</span> *p, <span style={{ color: '#e5c07b' }}>u8</span> n) {'{'}<br />
-            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld4 = colors[ color_idx        % <span style={{ color: '#d19a66' }}>8</span>];<br />
-            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld5 = colors[(color_idx + <span style={{ color: '#d19a66' }}>2</span>) % <span style={{ color: '#d19a66' }}>8</span>];<br />
-            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld6 = colors[(color_idx + <span style={{ color: '#d19a66' }}>4</span>) % <span style={{ color: '#d19a66' }}>8</span>];<br />
-            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld7 = colors[(color_idx + <span style={{ color: '#d19a66' }}>6</span>) % <span style={{ color: '#d19a66' }}>8</span>];<br />
-            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> val = ld4 | (ld5 &lt;&lt; <span style={{ color: '#d19a66' }}>3</span>) | (ld6 &lt;&lt; <span style={{ color: '#d19a66' }}>6</span>) | (ld7 &lt;&lt; <span style={{ color: '#d19a66' }}>9</span>);<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld0 = colors[ color_idx        % <span style={{ color: '#d19a66' }}>8</span>];<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld1 = colors[(color_idx + <span style={{ color: '#d19a66' }}>2</span>) % <span style={{ color: '#d19a66' }}>8</span>];<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld2 = colors[(color_idx + <span style={{ color: '#d19a66' }}>4</span>) % <span style={{ color: '#d19a66' }}>8</span>];<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> ld3 = colors[(color_idx + <span style={{ color: '#d19a66' }}>6</span>) % <span style={{ color: '#d19a66' }}>8</span>];<br />
+            &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> val = ld0 | (ld1 &lt;&lt; <span style={{ color: '#d19a66' }}>3</span>) | (ld2 &lt;&lt; <span style={{ color: '#d19a66' }}>6</span>) | (ld3 &lt;&lt; <span style={{ color: '#d19a66' }}>9</span>);<br />
             &nbsp;&nbsp;XGpio_DiscreteWrite(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>1</span>, val);<br />
             &nbsp;&nbsp;color_idx = (color_idx + <span style={{ color: '#d19a66' }}>1</span>) % <span style={{ color: '#d19a66' }}>8</span>;<br />
             {'}'}<br />
             <br />
             <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
             &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 1. GPIO 초기화</span><br />
-            &nbsp;&nbsp;XGpio_Initialize(&amp;sw_led_gpio, XPAR_GPIO_0_DEVICE_ID);<br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch1: LED</span><br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch2: SW</span><br />
+            &nbsp;&nbsp;XGpio_Initialize(&amp;btn_led_gpio, XPAR_GPIO_0_DEVICE_ID);<br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;btn_led_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x0</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch1: 녹색 LED 출력</span><br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;btn_led_gpio, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch2: Push BTN 입력</span><br />
             &nbsp;&nbsp;XGpio_Initialize(&amp;rgb_gpio, XPAR_GPIO_1_DEVICE_ID);<br />
-            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x000</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 12비트 전체 출력</span><br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>1</span>, <span style={{ color: '#d19a66' }}>0x000</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch1: RGB LED 출력(12bit)</span><br />
+            &nbsp;&nbsp;XGpio_SetDataDirection(&amp;rgb_gpio, <span style={{ color: '#d19a66' }}>2</span>, <span style={{ color: '#d19a66' }}>0xF</span>);  <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// ch2: Slide SW 입력</span><br />
             <br />
             &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 2. 타이머 + INTC 초기화</span><br />
             &nbsp;&nbsp;XTmrCtr_Initialize(&amp;timer, XPAR_AXI_TIMER_0_DEVICE_ID);<br />
@@ -1131,10 +1211,10 @@ export default function MicroBlazeSlides() {
             &nbsp;&nbsp;XTmrCtr_Start(&amp;timer, <span style={{ color: '#d19a66' }}>0</span>);<br />
             &nbsp;&nbsp;microblaze_enable_interrupts();<br />
             <br />
-            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 3. 메인 루프: 스위치→LED (ISR과 독립적으로 계속 실행)</span><br />
+            &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 3. 메인 루프: BTN→녹색LED (ISR과 독립적으로 계속 실행)</span><br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>while</span>(<span style={{ color: '#d19a66' }}>1</span>) {'{'}<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> sw = XGpio_DiscreteRead(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>2</span>);<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;sw_led_gpio, <span style={{ color: '#d19a66' }}>1</span>, sw_lut[sw &amp; <span style={{ color: '#d19a66' }}>0xF</span>]);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>int</span> btn = XGpio_DiscreteRead(&amp;btn_led_gpio, <span style={{ color: '#d19a66' }}>2</span>);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;XGpio_DiscreteWrite(&amp;btn_led_gpio, <span style={{ color: '#d19a66' }}>1</span>, btn);<br />
             &nbsp;&nbsp;{'}'}<br />
             &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
             {'}'}

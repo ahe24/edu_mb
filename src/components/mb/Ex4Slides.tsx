@@ -101,7 +101,7 @@ export default function Ex4Slides() {
 
       {/* Step 1: Vivado Block Design */}
       <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 1. Vivado Block Design 구성</h2>
+        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex4 | Step 1. Vivado Block Design 구성</h2>
 
         <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '3rem' }}>
           <div>
@@ -176,7 +176,7 @@ export default function Ex4Slides() {
 
       {/* Step 2: Custom IP + Address Editor */}
       <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 2. +10 Adder IP 생성 및 Address 설정</h2>
+        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex4 | Step 2. +10 Adder IP 생성 및 Address 설정</h2>
 
         <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '3rem' }}>
           <div>
@@ -263,17 +263,18 @@ export default function Ex4Slides() {
 
       {/* Step 3: Vitis DMA 코드 */}
       <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '0.8rem' }}>Step 3. DMA 제어 코드 (C)</h2>
+        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '0.8rem' }}>Ex4 | Step 3. DMA 제어 코드 (C)</h2>
         <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '1rem' }}>CPU가 BRAM에 데이터 기록 → DMA 전송 명령 → Custom Logic(+10) 처리 후 BRAM 재기록 → 결과 검증</p>
 
         <CodeBlock style={{ backgroundColor: '#282c34', color: '#abb2bf', padding: '1.2rem', borderRadius: '8px', fontSize: '1.05rem', overflowX: 'auto', lineHeight: '1.3', boxShadow: '0 4px 6px rgba(0,0,0,0.3)', maxHeight: '44vh' }}>
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xparameters.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xaxidma.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;xil_cache.h&quot;</span><br />
+          <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&quot;platform.h&quot;</span><br />
           <span style={{ color: '#c678dd' }}>#include</span> <span style={{ color: '#98c379' }}>&lt;stdio.h&gt;</span><br />
           <br />
           <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>DMA_DEV_ID</span>&nbsp;&nbsp;&nbsp;XPAR_AXIDMA_0_DEVICE_ID<br />
-          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>BRAM_BASE</span>&nbsp;&nbsp;&nbsp;&nbsp;XPAR_BRAM_0_BASEADDR<br />
+          <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>BRAM_BASE</span>&nbsp;&nbsp;&nbsp;&nbsp;XPAR_BRAM_0_BASEADDR <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// xparameters.h에서 실제 매크로명 확인</span><br />
           <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>DATA_CNT</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>64</span> &nbsp;&nbsp;<span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 전송 워드 수</span><br />
           <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>SRC_OFFSET</span>&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x0000</span><br />
           <span style={{ color: '#c678dd' }}>#define</span> <span style={{ color: '#d19a66' }}>DST_OFFSET</span>&nbsp;&nbsp;&nbsp;<span style={{ color: '#d19a66' }}>0x4000</span> <span style={{ color: '#5c6370', fontStyle: 'italic' }}>// 결과 영역 (16KB 오프셋)</span><br />
@@ -281,6 +282,7 @@ export default function Ex4Slides() {
           <span style={{ color: '#e5c07b' }}>XAxiDma</span> dma;<br />
           <br />
           <span style={{ color: '#e5c07b' }}>int</span> <span style={{ color: '#61afef' }}>main</span>() {'{'}<br />
+          &nbsp;&nbsp;init_platform();<br />
           &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>XAxiDma_Config</span> *cfg;<br />
           &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>u32</span> *src = (<span style={{ color: '#e5c07b' }}>u32</span> *)(BRAM_BASE + SRC_OFFSET);<br />
           &nbsp;&nbsp;<span style={{ color: '#e5c07b' }}>u32</span> *dst = (<span style={{ color: '#e5c07b' }}>u32</span> *)(BRAM_BASE + DST_OFFSET);<br />
@@ -326,6 +328,7 @@ export default function Ex4Slides() {
           &nbsp;&nbsp;xil_printf(<span style={{ color: '#98c379' }}>&quot;Errors: %d / %d\r\n&quot;</span>, err, DATA_CNT);<br />
           &nbsp;&nbsp;xil_printf(err == <span style={{ color: '#d19a66' }}>0</span> ? <span style={{ color: '#98c379' }}>&quot;PASS!\r\n&quot;</span> : <span style={{ color: '#98c379' }}>&quot;FAIL!\r\n&quot;</span>);<br />
           <br />
+          &nbsp;&nbsp;cleanup_platform();<br />
           &nbsp;&nbsp;<span style={{ color: '#c678dd' }}>return</span> <span style={{ color: '#d19a66' }}>0</span>;<br />
           {'}'}
         </CodeBlock>
@@ -333,7 +336,7 @@ export default function Ex4Slides() {
 
       {/* Step 4: 빌드 및 테스트 */}
       <section data-background-color="var(--slide-bg)" style={{ textAlign: 'left' }}>
-        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Step 4. 빌드 및 보드 구동 테스트</h2>
+        <h2 style={{ color: 'var(--primary-dark)', fontSize: '2.2rem', marginBottom: '1.5rem' }}>Ex4 | Step 4. 빌드 및 보드 구동 테스트</h2>
 
         <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '3rem' }}>
           <div>
