@@ -222,17 +222,18 @@ div[data-nextjs-toast-wrapper],
   color: var(--primary-dark);
   font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.1rem;
 }
 
 .reveal ul.step-list .step-desc {
   color: #475569;
   font-size: 1.15rem;
+  line-height: 1.4;
 }
 
 .reveal ul.step-list-sub {
   list-style-type: disc !important;
-  margin-top: 0.6rem !important;
+  margin-top: 0.2rem !important;
   margin-bottom: 0.2rem !important;
   margin-left: 1.2rem !important;
   padding-left: 0 !important;
