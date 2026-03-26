@@ -190,6 +190,10 @@ div[data-nextjs-toast-wrapper],
   line-height: 1.5;
 }
 
+.reveal ul.step-list.compact>li {
+  margin-bottom: 0.8rem;
+}
+
 .reveal ul.step-list>li>.step-icon {
   flex-shrink: 0;
   display: inline-flex;
@@ -230,7 +234,8 @@ div[data-nextjs-toast-wrapper],
   list-style-type: disc !important;
   margin-top: 0.6rem !important;
   margin-bottom: 0.2rem !important;
-  padding-left: 0.1rem !important;
+  margin-left: 1.2rem !important;
+  padding-left: 0 !important;
   color: #64748b;
   font-size: 1.1rem;
 }

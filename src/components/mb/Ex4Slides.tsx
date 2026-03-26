@@ -180,24 +180,30 @@ export default function Ex4Slides() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '55% 45%', gap: '2rem' }}>
           <div>
-            <ul className="step-list">
+            <ul className="step-list compact">
               <li>
                 <div className="step-icon">1</div>
                 <div className="step-content">
                   <span className="step-title">Custom IP 생성</span>
-                  <span className="step-desc">예제 3과 동일: <code>Tools</code> → <code>Create and Package New IP</code><br />→ AXI4-Stream (Slave + Master)</span>
+                  <span className="step-desc"><code>Tools</code> → <code>Create and Package New IP</code> → AXI4-Stream 선택</span>
                 </div>
               </li>
               <li>
                 <div className="step-icon">2</div>
                 <div className="step-content">
-                  <span className="step-title">Verilog 핵심 로직</span>
-                  <span className="step-desc" style={{ lineHeight: '1.2' }}>
-                    <code style={{ fontSize: '0.85em' }}>assign m_axis_tdata = s_axis_tdata + 32'd10;</code><br />
-                    <code style={{ fontSize: '0.85em' }}>assign m_axis_tvalid = s_axis_tvalid;</code><br />
-                    <code style={{ fontSize: '0.85em' }}>assign s_axis_tready = m_axis_tready;</code><br />
-                    <code style={{ fontSize: '0.85em' }}>assign m_axis_tlast = s_axis_tlast;</code>
+                  <span className="step-title">Verilog 핵심 로직 (예제 3과 동일)</span>
+                  <span className="step-desc">
+                    <ul className="step-list-sub" style={{ fontSize: '1.05rem', marginBottom: '0.2rem' }}>
+                      <li>자동으로 instantiated된 <code>AXI Bus</code> 모듈 주석 처리</li>
+                      <li>아래 <strong>+10 핵심 로직</strong> 삽입 후 <code>Re-Package IP</code> 클릭</li>
+                    </ul>
                   </span>
+                  <div style={{ marginTop: '0.2rem', lineHeight: '1.25', backgroundColor: '#282c34', padding: '0.4rem 0.6rem', borderRadius: '6px', boxShadow: '0 2px 4px rgba(0,0,0,0.3)', fontFamily: "'JetBrains Mono', 'D2Coding', 'Consolas', monospace" }}>
+                    <code style={{ fontSize: '0.75em', color: '#abb2bf', fontFamily: 'inherit' }}><span style={{ color: '#c678dd' }}>assign</span> m_axis_tdata = s_axis_tdata <span style={{ color: '#d19a66' }}>+ 32'd10</span>;</code><br />
+                    <code style={{ fontSize: '0.75em', color: '#abb2bf', fontFamily: 'inherit' }}><span style={{ color: '#c678dd' }}>assign</span> m_axis_tvalid = s_axis_tvalid;</code><br />
+                    <code style={{ fontSize: '0.75em', color: '#abb2bf', fontFamily: 'inherit' }}><span style={{ color: '#c678dd' }}>assign</span> s_axis_tready = m_axis_tready;</code><br />
+                    <code style={{ fontSize: '0.75em', color: '#abb2bf', fontFamily: 'inherit' }}><span style={{ color: '#c678dd' }}>assign</span> m_axis_tlast = s_axis_tlast;</code>
+                  </div>
                 </div>
               </li>
               <li>
@@ -205,7 +211,7 @@ export default function Ex4Slides() {
                 <div className="step-content">
                   <span className="step-title">Block Design 연결</span>
                   <span className="step-desc">
-                    <ul className="step-list-sub">
+                    <ul className="step-list-sub" style={{ fontSize: '1.05rem' }}>
                       <li>DMA의 <code>M_AXIS_MM2S</code> → Adder의 <code>S_AXIS</code></li>
                       <li>Adder의 <code>M_AXIS</code> → DMA의 <code>S_AXIS_S2MM</code></li>
                     </ul>
@@ -215,11 +221,11 @@ export default function Ex4Slides() {
               <li>
                 <div className="step-icon">4</div>
                 <div className="step-content">
-                  <span className="step-title">Address Editor 및 메모리맵 확인</span>
+                  <span className="step-title">Address Editor 확인</span>
                   <span className="step-desc">
-                    <ul className="step-list-sub">
-                      <li>BRAM: <code>0xC000_0000</code>, Address Editor에서 크기 및 DMA 주소 확인</li>
-                      <li>DMA의 <code>M_AXI_MM2S/S2MM</code> → Interconnect → BRAM 연결 확인</li>
+                    <ul className="step-list-sub" style={{ fontSize: '1.05rem' }}>
+                      <li>BRAM: <code>0xC000_0000</code> 등 주소 및 크기 할당 확인</li>
+                      <li>DMA <code>MM2S/S2MM</code> → Interconnect → BRAM 경로 점검</li>
                     </ul>
                   </span>
                 </div>
@@ -227,8 +233,8 @@ export default function Ex4Slides() {
               <li>
                 <div className="step-icon">5</div>
                 <div className="step-content">
-                  <span className="step-title">Generate Bitstream → Export .xsa</span>
-                  <span className="step-desc">최종 설계 연결 및 주소 맵핑 완성 후 Bitstream 생성 및 Vitis용 명세 추출 (.xsa)</span>
+                  <span className="step-title">Generate Bitstream → Export</span>
+                  <span className="step-desc">설계 완성 후 Bitstream 생성 및 <code>.xsa</code> 추출</span>
                 </div>
               </li>
             </ul>

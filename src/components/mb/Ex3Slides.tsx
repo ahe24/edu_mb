@@ -194,14 +194,19 @@ export default function Ex3Slides() {
                 <div className="step-icon">2</div>
                 <div className="step-content">
                   <span className="step-title">인터페이스 설정</span>
-                  <span className="step-desc">Name: <code>axis_x2_multiplier</code>, AXI4-Stream (Slave + Master), AXI-Lite 체크 해제</span>
+                  <span className="step-desc">Name: <code>axis_x2_multiplier</code>, AXI4-Stream (Slave + Master)</span>
                 </div>
               </li>
               <li>
                 <div className="step-icon">3</div>
                 <div className="step-content">
                   <span className="step-title">Verilog 핵심 로직 추가 → Package IP</span>
-                  <span className="step-desc">템플릿에 로직 1줄 추가 후 <code>Re-Package IP</code> 클릭</span>
+                  <span className="step-desc">
+                    <ul className="step-list-sub">
+                      <li>자동으로 instantiated된 <code>AXI Bus Interface</code> 마스터/슬레이브 모듈 주석 처리</li>
+                      <li>하단에 설명된 <strong>x2 곱셈기 핵심 로직(4줄)</strong> 삽입 후 <code>Re-Package IP</code> 클릭</li>
+                    </ul>
+                  </span>
                 </div>
               </li>
               <li>
