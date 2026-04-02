@@ -17,43 +17,43 @@ const courses = [
     items: ['AXI-GPIO', 'Timer / Interrupt', 'DMA Transfer', 'Vitis SDK'],
     icon: (
       <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <rect x="4" y="4" width="28" height="28" rx="4" stroke="#20b2aa" strokeWidth="2" fill="none"/>
-        <rect x="9" y="9" width="18" height="18" rx="2" fill="#20b2aa" fillOpacity="0.15"/>
-        <rect x="13" y="13" width="10" height="10" rx="1" fill="#20b2aa" fillOpacity="0.6"/>
-        <line x1="4" y1="12" x2="0" y2="12" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="4" y1="18" x2="0" y2="18" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="4" y1="24" x2="0" y2="24" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="32" y1="12" x2="36" y2="12" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="32" y1="18" x2="36" y2="18" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="32" y1="24" x2="36" y2="24" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="12" y1="4" x2="12" y2="0" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="18" y1="4" x2="18" y2="0" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="24" y1="4" x2="24" y2="0" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="12" y1="32" x2="12" y2="36" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="18" y1="32" x2="18" y2="36" stroke="#20b2aa" strokeWidth="2"/>
-        <line x1="24" y1="32" x2="24" y2="36" stroke="#20b2aa" strokeWidth="2"/>
+        <rect x="4" y="4" width="28" height="28" rx="4" stroke="#20b2aa" strokeWidth="2" fill="none" />
+        <rect x="9" y="9" width="18" height="18" rx="2" fill="#20b2aa" fillOpacity="0.15" />
+        <rect x="13" y="13" width="10" height="10" rx="1" fill="#20b2aa" fillOpacity="0.6" />
+        <line x1="4" y1="12" x2="0" y2="12" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="4" y1="18" x2="0" y2="18" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="4" y1="24" x2="0" y2="24" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="32" y1="12" x2="36" y2="12" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="32" y1="18" x2="36" y2="18" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="32" y1="24" x2="36" y2="24" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="12" y1="4" x2="12" y2="0" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="18" y1="4" x2="18" y2="0" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="24" y1="4" x2="24" y2="0" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="12" y1="32" x2="12" y2="36" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="18" y1="32" x2="18" y2="36" stroke="#20b2aa" strokeWidth="2" />
+        <line x1="24" y1="32" x2="24" y2="36" stroke="#20b2aa" strokeWidth="2" />
       </svg>
     ),
   },
   {
-    id: 'coming',
-    href: null,
-    tag: 'HDL · Simulation',
-    title: '신규 과정 준비중',
-    subtitle: 'Verilog & Questasim',
-    description: 'RTL 설계 기초부터 기능 시뮬레이션, 타이밍 검증까지 체계적인 학습 과정.',
-    status: 'SOON',
-    color: '#6366f1',
-    colorDark: '#312e81',
-    items: ['Verilog HDL', 'Questasim', 'FSM Design', 'Testbench'],
+    id: 'fpga',
+    href: '/fpga',
+    tag: 'Verification · EDA',
+    title: 'FPGA 설계 검증 교육',
+    subtitle: 'Safety-Critical FPGA V&V Course',
+    description: 'Safety-Critical FPGA 설계 검증 교육. Questa Lint, CDC, Simulation, Coverage, Formal Verification까지 체계적 학습.',
+    status: 'LIVE',
+    color: '#4A6FA5',
+    colorDark: '#2B4570',
+    items: ['Questa Lint', 'CDC', 'QuestaSim', 'Formal', 'V&V Report'],
     icon: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <rect x="2" y="7" width="32" height="22" rx="3" stroke="#6366f1" strokeWidth="2" fill="none"/>
-        <path d="M8 14 L14 18 L8 22" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <line x1="17" y1="22" x2="28" y2="22" stroke="#6366f1" strokeWidth="2" strokeLinecap="round"/>
-        <circle cx="10" cy="32" r="2" fill="#6366f1" fillOpacity="0.5"/>
-        <circle cx="18" cy="32" r="2" fill="#6366f1" fillOpacity="0.5"/>
-        <circle cx="26" cy="32" r="2" fill="#6366f1" fillOpacity="0.5"/>
+      <svg width="40" height="40" viewBox="0 0 36 36" fill="none">
+        <rect x="4" y="4" width="28" height="28" rx="4" stroke="#4A6FA5" strokeWidth="2" fill="none" />
+        <path d="M10 18h4l3-6 4 12 3-6h4" stroke="#4A6FA5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="8" cy="8" r="2" fill="#4A6FA5" fillOpacity="0.4" />
+        <circle cx="28" cy="8" r="2" fill="#4A6FA5" fillOpacity="0.4" />
+        <circle cx="8" cy="28" r="2" fill="#4A6FA5" fillOpacity="0.4" />
+        <circle cx="28" cy="28" r="2" fill="#4A6FA5" fillOpacity="0.4" />
       </svg>
     ),
   },
@@ -91,7 +91,7 @@ export default function Dashboard() {
         borderRadius: '50%', pointerEvents: 'none',
       }} />
       <div style={{
-        position: 'absolute', bottom: '20%', right: '10%', width: '300px', height: '300px',
+        position: 'absolute', bottom: '20%', right: '10%', width: '350px', height: '350px',
         background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)',
         borderRadius: '50%', pointerEvents: 'none',
       }} />
@@ -248,8 +248,8 @@ export default function Dashboard() {
                       transition: 'transform 0.3s',
                     }}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={course.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
                       </svg>
                     </div>
                   </div>
