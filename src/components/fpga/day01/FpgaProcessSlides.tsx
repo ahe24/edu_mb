@@ -532,20 +532,81 @@ export default function FpgaProcessSlides() {
             </InfoCard>
 
             <InfoCard icon="📐" label="도메인별 규제 프레임워크">
-              <p style={{ margin: 0, fontSize: '0.88rem', lineHeight: 2.1 }}>
-                <span style={{ fontWeight: 700, color: FPGA.primary }}>원전</span>{' '}
-                <strong>IEC 62566</strong> — FPGA 개발 수명주기 &nbsp;
-                <strong>IEEE 603</strong> — 안전 계통 설계 기준<br />
-                <span style={{ fontWeight: 700, color: '#5B8C5A' }}>항공</span>{' '}
-                <strong>DO-254</strong> — 항공 전자 하드웨어 설계 보증<br />
-                <span style={{ fontWeight: 700, color: '#8B6FA5' }}>차량</span>{' '}
-                <strong>ISO 26262</strong> — 자동차 기능 안전 (Part 5: 하드웨어)<br />
-                <span style={{ fontWeight: 700, color: FPGA.textLight }}>공통</span>{' '}
-                <strong>IEEE 1012</strong> — V&V 프로세스 &nbsp;
-                <strong>IEC 61508</strong> — 기능 안전 모체 표준
-              </p>
+              {([
+                {
+                  domain: '원전', color: FPGA.primary, bg: FPGA.primaryBg,
+                  standards: ['IEC 62566', 'IEEE 603'],
+                  desc: 'FPGA 개발 수명주기 / 안전 계통 설계 기준',
+                },
+                {
+                  domain: '항공', color: '#5B8C5A', bg: 'rgba(91,140,90,0.08)',
+                  standards: ['DO-254', 'ARP4754A'],
+                  desc: '하드웨어 설계 보증 / 시스템 개발 가이드라인',
+                },
+                {
+                  domain: '차량', color: '#8B6FA5', bg: 'rgba(139,111,165,0.08)',
+                  standards: ['ISO 26262', 'ASPICE'],
+                  desc: '자동차 기능 안전 / 소프트웨어 프로세스 역량',
+                },
+                {
+                  domain: '공통', color: FPGA.textLight, bg: 'rgba(100,116,139,0.08)',
+                  standards: ['IEEE 1012', 'IEC 61508'],
+                  desc: 'V&V 프로세스 / 기능 안전 모체 표준',
+                },
+              ] as const).map(({ domain, color, bg, standards, desc }) => (
+                <div key={domain} style={{
+                  display: 'flex', alignItems: 'center', gap: '0.6rem',
+                  borderLeft: `3px solid ${color}`,
+                  paddingLeft: '0.6rem',
+                  marginBottom: '0.45rem',
+                }}>
+                  <span style={{
+                    fontSize: '0.72rem', fontWeight: 700, color, background: bg,
+                    padding: '1px 7px', borderRadius: '4px',
+                    whiteSpace: 'nowrap', minWidth: '2.8rem', textAlign: 'center',
+                  }}>{domain}</span>
+                  <div style={{ display: 'flex', gap: '4px', flexShrink: 0, width: '9.5rem' }}>
+                    {standards.map(s => (
+                      <span key={s} style={{
+                        fontSize: '0.72rem', fontFamily: '"JetBrains Mono", monospace',
+                        fontWeight: 600, color,
+                        background: bg, border: `1px solid ${color}30`,
+                        padding: '1px 6px', borderRadius: '4px', whiteSpace: 'nowrap',
+                      }}>{s}</span>
+                    ))}
+                  </div>
+                  <span style={{ fontSize: '0.78rem', color: FPGA.text, lineHeight: 1.4 }}>{desc}</span>
+                </div>
+              ))}
             </InfoCard>
           </div>
+
+          <InfoCard icon="📖" label="표준 참고">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.25rem 1.5rem' }}>
+              {([
+                { code: 'IEC 62566', desc: 'Development of HDL-programmed ICs for Nuclear I&C Safety Functions', color: FPGA.primary, bg: FPGA.primaryBg },
+                { code: 'DO-254', desc: 'Design Assurance Guidance for Airborne Electronic Hardware', color: '#5B8C5A', bg: 'rgba(91,140,90,0.08)' },
+                { code: 'IEEE 603', desc: 'Standard Criteria for Safety Systems for Nuclear Power Stations', color: FPGA.primary, bg: FPGA.primaryBg },
+                { code: 'ARP4754A', desc: 'Guidelines for Development of Civil Aircraft and Systems', color: '#5B8C5A', bg: 'rgba(91,140,90,0.08)' },
+                { code: 'ISO 26262', desc: 'Road Vehicles — Functional Safety (Part 5: Hardware)', color: '#8B6FA5', bg: 'rgba(139,111,165,0.08)' },
+                { code: 'IEEE 1012', desc: 'Standard for System, Software, and Hardware Verification and Validation', color: FPGA.textLight, bg: 'rgba(100,116,139,0.08)' },
+                { code: 'ASPICE', desc: 'Automotive Software Process Improvement and Capability Determination', color: '#8B6FA5', bg: 'rgba(139,111,165,0.08)' },
+                { code: 'IEC 61508', desc: 'Functional Safety of E/E/PE Safety-related Systems', color: FPGA.textLight, bg: 'rgba(100,116,139,0.08)' },
+              ] as const).map(({ code, desc, color, bg }) => (
+                <div key={code} style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                  <span style={{
+                    fontSize: '0.68rem', fontFamily: '"JetBrains Mono", monospace',
+                    fontWeight: 700, color,
+                    background: bg, border: `1px solid ${color}30`,
+                    padding: '1px 6px', borderRadius: '4px',
+                    whiteSpace: 'nowrap', flexShrink: 0,
+                    width: '5.4rem', textAlign: 'center',
+                  }}>{code}</span>
+                  <span style={{ fontSize: '0.74rem', color: FPGA.text, lineHeight: 1.4 }}>{desc}</span>
+                </div>
+              ))}
+            </div>
+          </InfoCard>
 
           <div style={{
             width: '100%',
