@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "교육 플랫폼 - ED&C",
-  description: "각종 교육 과정을 위한 웹 플랫폼",
+  title: "기술 컨설팅 플랫폼 - ED&C",
+  description: "전문가 기술 역량 강화 과정을 위한 웹 플랫폼",
 };
 
 export default function RootLayout({

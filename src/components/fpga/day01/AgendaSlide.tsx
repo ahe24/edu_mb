@@ -10,8 +10,8 @@ import SlideHeader from '../SlideHeader';
 const agenda = [
   {
     step: 1,
-    title: '교육 과정 소개',
-    desc: '3개월 커리큘럼 전체 구조와 학습 목표를 이해합니다.',
+    title: '과정 소개',
+    desc: '3개월 커리큘럼 전체 구조와 목표를 이해합니다.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <rect x="3" y="3" width="22" height="22" rx="4" stroke="#4A6FA5" strokeWidth="1.8" fill="rgba(74,111,165,0.08)" />

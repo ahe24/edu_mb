@@ -141,7 +141,7 @@ export default function TitleSlide() {
           marginBottom: '2.5rem',
         }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 600, color: FPGA.textLight, letterSpacing: '0.06em', marginBottom: '2px' }}>교육 기간</div>
+            <div style={{ fontSize: '0.72rem', fontWeight: 600, color: FPGA.textLight, letterSpacing: '0.06em', marginBottom: '2px' }}>과정 기간</div>
             <div style={{ fontSize: '1.05rem', fontWeight: 700, color: FPGA.dark }}>3개월 · 12주</div>
           </div>
           <div style={{ textAlign: 'center' }}>

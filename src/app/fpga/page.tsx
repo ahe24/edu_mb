@@ -12,7 +12,7 @@ const curriculum = [
     color: '#4A6FA5',
     weeks: [
       {
-        week: 1, title: '교육 환경 구축 및 FPGA 검증 개론',
+        week: 1, title: '실습 환경 구축 및 FPGA 검증 개론',
         days: [
           { day: 1, title: 'Safety-Critical FPGA 검증 프레임워크', ready: true },
           { day: 2, title: 'Questa 도구 환경 설정 및 기본 사용법', ready: false },
@@ -151,7 +151,7 @@ export default function FpgaCurriculumPage() {
           color: FPGA.dark, letterSpacing: '-0.03em', lineHeight: 1.2,
           marginBottom: '0.5rem',
         }}>
-          Safety-Critical FPGA 설계 검증 교육
+          Safety-Critical FPGA 설계 검증 과정
         </h1>
         <p style={{ fontSize: '1rem', color: FPGA.textLight, maxWidth: '520px', margin: '0 auto' }}>
           3개월 (12주) · 24회차 · 총 84시간 과정
@@ -172,7 +172,7 @@ export default function FpgaCurriculumPage() {
             boxShadow: `0 2px 8px ${FPGA.primary}30`,
           }}>오리엔테이션</span>
           <span style={{ fontSize: '1.15rem', fontWeight: 700, color: FPGA.dark }}>
-            교육 대상·환경에 따라 별도 운영
+            참여 대상·환경에 따라 별도 운영
           </span>
         </div>
         <Link href="/fpga/orientation" style={{ textDecoration: 'none' }}>
@@ -204,7 +204,7 @@ export default function FpgaCurriculumPage() {
                 }}>READY</span>
               </div>
               <p style={{ margin: 0, fontSize: '0.88rem', color: FPGA.text, fontWeight: 500 }}>
-                교육 과정 소개 · 3개월 로드맵 · EDA 도구 안내 · 실습 환경 확인
+                과정 소개 · 3개월 로드맵 · EDA 도구 안내 · 실습 환경 확인
               </p>
             </div>
             <span style={{ marginLeft: 'auto', color: FPGA.primary, fontSize: '1.1rem' }}>→</span>

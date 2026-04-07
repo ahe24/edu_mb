@@ -15,10 +15,10 @@ export default function CourseOverviewSlides() {
       {/* ── 슬라이드: 교육 개요 ── */}
       <section data-background-color={slideBg}>
         <div className="fpga-content-wrap">
-        <SlideHeader title="교육 과정 개요" subtitle="Course Overview" />
+        <SlideHeader title="과정 개요" subtitle="Course Overview" />
 
         <div style={{ ...styles.grid2, flex: 1, minHeight: 0 }}>
-          <InfoCard icon="🎯" label="교육 목적" variant="highlight">
+          <InfoCard icon="🎯" label="과정 목적" variant="highlight">
             <p style={{ margin: 0 }}>
               협력업체가 설계한 FPGA 로직을<br />
               <strong style={{ color: FPGA.primary }}>독립적으로 검증·평가</strong>하고,<br />
@@ -34,11 +34,11 @@ export default function CourseOverviewSlides() {
             </p>
           </InfoCard>
 
-          <InfoCard icon="👥" label="교육 대상">
+          <InfoCard icon="👥" label="참여 대상">
             <p style={{ margin: 0 }}>원전 · 방산 · 항공우주 분야<br />Safety-Critical FPGA 담당 엔지니어</p>
           </InfoCard>
 
-          <InfoCard icon="⏱" label="교육 일정">
+          <InfoCard icon="⏱" label="운영 일정">
             <p style={{ margin: 0 }}>
               3개월 (12주) · 주 2일<br />
               1일 3.5시간 · 총 24회 (84시간)

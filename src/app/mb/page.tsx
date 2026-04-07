@@ -29,7 +29,7 @@ export default function MicroBlazeSlides() {
     <RevealWrapper>
       {/* Slide 1: 타이틀 */}
       <section data-background-color="var(--slide-bg)">
-        <h1 style={{ color: 'var(--primary)', fontSize: '3.5rem', fontWeight: 'normal' }}>MicroBlaze 실습 교육</h1>
+        <h1 style={{ color: 'var(--primary)', fontSize: '3.5rem', fontWeight: 'normal' }}>MicroBlaze 실습 과정</h1>
         <h3 style={{ color: 'var(--text-main)', fontSize: '2rem', marginTop: '1rem' }}>하드웨어 설계 & 소프트웨어 제어 연동</h3>
         <p style={{ marginTop: '3rem', fontSize: '1.2rem', color: 'gray' }}>
           Arty A7 보드 기반 Step-by-Step 가이드
@@ -51,7 +51,7 @@ export default function MicroBlazeSlides() {
           animationDelay: '0.15s',
           color: 'var(--primary-dark)', fontSize: '2.4rem', fontWeight: 800,
           letterSpacing: '-0.03em', marginBottom: '1.4rem',
-        }}>교육 개요</h2>
+        }}>과정 개요</h2>
 
         {/* 2x2 Info Card Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -71,7 +71,7 @@ export default function MicroBlazeSlides() {
             },
             {
               delay: '0.45s', color: '#3cb371',
-              label: '교육 방식',
+              label: '진행 방식',
               value: "이론 최소화, '성공 경험' 초점의 4단계 가이드",
               icon: (
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -196,7 +196,7 @@ export default function MicroBlazeSlides() {
           color: 'var(--primary-dark)', fontSize: '2.2rem', fontWeight: 800,
           letterSpacing: '-0.03em', marginBottom: '0.3rem',
         }}>
-          교육 커리큘럼
+          커리큘럼
         </h2>
         <p className="curriculum-anim" style={{
           animationDelay: '0.25s',

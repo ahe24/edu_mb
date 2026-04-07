@@ -8,7 +8,7 @@ const courses = [
     id: 'mb',
     href: '/mb',
     tag: 'FPGA · Embedded',
-    title: 'MicroBlaze 실습 교육',
+    title: 'MicroBlaze 실습 과정',
     subtitle: 'Soft-Core Processor Design',
     description: 'Arty A7 보드 기반 하드웨어 설계 & 소프트웨어 제어 기초. AXI-GPIO부터 DMA까지 단계별 실습.',
     status: 'LIVE',
@@ -39,9 +39,9 @@ const courses = [
     id: 'fpga',
     href: '/fpga',
     tag: 'Verification · EDA',
-    title: 'FPGA 설계 검증 교육',
+    title: 'FPGA 설계 검증 과정',
     subtitle: 'Safety-Critical FPGA V&V Course',
-    description: 'Safety-Critical FPGA 설계 검증 교육. Questa Lint, CDC, Simulation, Coverage, Formal Verification까지 체계적 학습.',
+    description: 'Safety-Critical FPGA 설계 검증 마스터링. Questa Lint, CDC, Simulation, Coverage, Formal Verification까지 체계적 기술 향상.',
     status: 'LIVE',
     color: '#4A6FA5',
     colorDark: '#2B4570',
@@ -114,10 +114,10 @@ export default function Dashboard() {
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           letterSpacing: '-0.03em', lineHeight: 1.1,
         }}>
-          교육 플랫폼 대시보드
+          기술 컨설팅 플랫폼
         </h1>
         <p style={{ fontSize: '1.1rem', color: '#94a3b8', maxWidth: '480px', margin: '0 auto', lineHeight: 1.7 }}>
-          학습하실 커리큘럼을 선택하세요
+          참여하실 과정을 선택하세요
         </p>
       </div>
 
