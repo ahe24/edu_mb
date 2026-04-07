@@ -13,9 +13,11 @@ export default function QnASlide() {
     <>
       {/* ── 슬라이드: Day 01 정리 ── */}
       <section data-background-color={slideBg}>
+        <div className="fpga-content-wrap">
         <SlideHeader title="Day 01 핵심 정리" />
 
-        <div style={{ ...styles.grid2, marginBottom: '1.2rem' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+        <div style={{ ...styles.grid2, flex: 1, minHeight: 0 }}>
           <div style={styles.cardHighlight}>
             <div style={{ fontSize: '0.85rem', fontWeight: 700, color: FPGA.primary, marginBottom: '0.6rem' }}>
               오늘 배운 것
@@ -56,6 +58,8 @@ export default function QnASlide() {
           <p style={{ margin: '0.3rem 0 0', fontSize: '0.92rem', color: FPGA.textLight }}>
             질문이 있으시면 자유롭게 말씀해 주세요.
           </p>
+        </div>
+        </div>
         </div>
       </section>
     </>

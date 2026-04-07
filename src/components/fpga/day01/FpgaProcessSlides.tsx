@@ -157,7 +157,7 @@ function SafetyClassificationSlide() {
         subtitle="Safety Classification by Domain — Nuclear / Aerospace / Automotive"
       />
 
-      <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.8rem' }}>
+      <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '1.2rem' }}>
 
         {/* 3 도메인 카드 — 클릭으로 등급 선택 */}
         <div style={styles.grid3}>
@@ -167,15 +167,15 @@ function SafetyClassificationSlide() {
               border: `1px solid ${FPGA.border}`,
               borderTop: `3px solid ${d.color}`,
               borderRadius: '10px',
-              padding: '0.7rem 0.9rem',
+              padding: '1rem 1.1rem',
               boxShadow: shadow.card,
             }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '2px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '4px' }}>
                 <span style={{ fontWeight: 800, fontSize: '0.95rem', color: d.color }}>{d.domain}</span>
                 <span style={{ fontSize: '0.7rem', color: FPGA.textLight, fontFamily: '"JetBrains Mono", monospace' }}>{d.en}</span>
               </div>
-              <div style={{ fontSize: '0.65rem', color: FPGA.textLight, fontFamily: '"JetBrains Mono", monospace', marginBottom: '0.45rem' }}>{d.standard}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+              <div style={{ fontSize: '0.65rem', color: FPGA.textLight, fontFamily: '"JetBrains Mono", monospace', marginBottom: '0.6rem' }}>{d.standard}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                 {d.levels.map(lv => {
                   const isSelected = sel[d.key] === lv.name;
                   return (
@@ -184,7 +184,7 @@ function SafetyClassificationSlide() {
                       onClick={() => setSel(prev => ({ ...prev, [d.key]: lv.name }))}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '6px',
-                        padding: '4px 6px', borderRadius: '5px',
+                        padding: '6px 8px', borderRadius: '5px',
                         cursor: 'pointer',
                         background: isSelected ? `${d.color}18` : 'transparent',
                         border: isSelected ? `1.5px solid ${d.color}50` : '1.5px solid transparent',
@@ -219,9 +219,9 @@ function SafetyClassificationSlide() {
           <table style={{ width: '100%', fontSize: '0.76rem', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                <th style={{ padding: '10px 10px', background: FPGA.dark, color: '#fff', textAlign: 'left', fontWeight: 600, width: '12%' }}>검증 항목</th>
+                <th style={{ padding: '12px 10px', background: FPGA.dark, color: '#fff', textAlign: 'left', fontWeight: 600, width: '12%' }}>검증 항목</th>
                 {DOMAIN_META.map(d => (
-                  <th key={d.key} style={{ padding: '10px 10px', background: d.thColor, color: '#fff', textAlign: 'left', fontWeight: 600, width: '29%' }}>
+                  <th key={d.key} style={{ padding: '12px 10px', background: d.thColor, color: '#fff', textAlign: 'left', fontWeight: 600, width: '29%' }}>
                     {d.domain} <span style={{ fontFamily: '"JetBrains Mono", monospace', fontWeight: 400, opacity: 0.85 }}>{sel[d.key]}</span>
                   </th>
                 ))}
@@ -230,10 +230,10 @@ function SafetyClassificationSlide() {
             <tbody>
               {ROW_KEYS.map(({ key, label }, i) => (
                 <tr key={key}>
-                  <td style={{ padding: '9px 10px', fontWeight: 700, color: FPGA.dark, background: FPGA.bgAlt, borderBottom: `1px solid ${FPGA.border}`, fontSize: '0.73rem' }}>{label}</td>
+                  <td style={{ padding: '11px 10px', fontWeight: 700, color: FPGA.dark, background: FPGA.bgAlt, borderBottom: `1px solid ${FPGA.border}`, fontSize: '0.73rem' }}>{label}</td>
                   {DOMAIN_META.map((d, di) => (
                     <td key={d.key} style={{
-                      padding: '9px 10px', color: FPGA.text, borderBottom: `1px solid ${FPGA.border}`,
+                      padding: '11px 10px', color: FPGA.text, borderBottom: `1px solid ${FPGA.border}`,
                       background: i % 2 === 0 ? FPGA.white : ['#F8FAFF', '#F8FFF8', '#FAF8FF'][di],
                     }}>
                       {VER_LOOKUP[d.key][sel[d.key]][key]}
@@ -379,7 +379,7 @@ function VModelSlide() {
         subtitle="Development & Verification Lifecycle — 카드를 클릭하면 관련 툴을 확인할 수 있습니다"
       />
 
-      <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+      <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
 
         {/* ── SVG V-Model (viewBox 세로 압축) ── */}
         <div style={{ width: '100%' }}>
@@ -466,7 +466,7 @@ function VModelSlide() {
             border: `1px solid ${sel.color}30`, boxShadow: shadow.card,
           }}>
             <div style={{
-              padding: '5px 14px', background: sel.color,
+              padding: '8px 14px', background: sel.color,
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
               <span style={{ color: '#fff', fontWeight: 700, fontSize: '0.8rem' }}>{sel.label} — 관련 툴</span>
@@ -475,7 +475,7 @@ function VModelSlide() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', background: FPGA.white }}>
               {sel.tools.map((t, i) => (
                 <div key={t.name} style={{
-                  padding: '6px 11px',
+                  padding: '9px 11px',
                   borderBottom: i < sel.tools.length - 3 ? `1px solid ${FPGA.border}` : 'none',
                   borderRight: (i + 1) % 3 !== 0 ? `1px solid ${FPGA.border}` : 'none',
                   background: Math.floor(i / 3) % 2 === 0 ? FPGA.white : '#FAFBFD',
@@ -496,7 +496,7 @@ function VModelSlide() {
           </div>
         ) : (
           <div style={{
-            width: '100%', padding: '7px 16px', borderRadius: '8px',
+            width: '100%', padding: '10px 16px', borderRadius: '8px',
             background: FPGA.bgAlt, border: `1px dashed ${FPGA.border}`,
             textAlign: 'center', fontSize: '0.76rem', color: FPGA.textLight,
           }}>
@@ -521,44 +521,45 @@ export default function FpgaProcessSlides() {
           subtitle="Why Safety-Critical FPGA is Different"
         />
 
-        <div style={styles.grid2}>
-          <InfoCard icon="⚛️" label="Safety-Critical System" variant="warning">
-            <p style={{ margin: 0 }}>
-              Safety-Critical FPGA는 <strong style={styles.keyPoint}>안전 등급(Safety Class)</strong>에 따라
-              설계·검증·인허가 요구사항이 결정됩니다.
-              일반 산업용 FPGA와 근본적으로 다른 엄격한 기준이 적용됩니다.
-            </p>
-          </InfoCard>
+        <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '1.5rem' }}>
+          <div style={styles.grid2}>
+            <InfoCard icon="⚛️" label="Safety-Critical System" variant="warning">
+              <p style={{ margin: 0, lineHeight: 1.9 }}>
+                Safety-Critical FPGA는 <strong style={styles.keyPoint}>안전 등급(Safety Class)</strong>에 따라
+                설계·검증·인허가 요구사항이 결정됩니다.
+                일반 산업용 FPGA와 근본적으로 다른 엄격한 기준이 적용됩니다.
+              </p>
+            </InfoCard>
 
-          <InfoCard icon="📐" label="도메인별 규제 프레임워크">
-            <p style={{ margin: 0, fontSize: '0.88rem', lineHeight: 1.9 }}>
-              <span style={{ fontWeight: 700, color: FPGA.primary }}>원전</span>{' '}
-              <strong>IEC 62566</strong> — FPGA 개발 수명주기 &nbsp;
-              <strong>IEEE 603</strong> — 안전 계통 설계 기준<br />
-              <span style={{ fontWeight: 700, color: '#5B8C5A' }}>항공</span>{' '}
-              <strong>DO-254</strong> — 항공 전자 하드웨어 설계 보증<br />
-              <span style={{ fontWeight: 700, color: '#8B6FA5' }}>차량</span>{' '}
-              <strong>ISO 26262</strong> — 자동차 기능 안전 (Part 5: 하드웨어)<br />
-              <span style={{ fontWeight: 700, color: FPGA.textLight }}>공통</span>{' '}
-              <strong>IEEE 1012</strong> — V&V 프로세스 &nbsp;
-              <strong>IEC 61508</strong> — 기능 안전 모체 표준
-            </p>
-          </InfoCard>
-        </div>
+            <InfoCard icon="📐" label="도메인별 규제 프레임워크">
+              <p style={{ margin: 0, fontSize: '0.88rem', lineHeight: 2.1 }}>
+                <span style={{ fontWeight: 700, color: FPGA.primary }}>원전</span>{' '}
+                <strong>IEC 62566</strong> — FPGA 개발 수명주기 &nbsp;
+                <strong>IEEE 603</strong> — 안전 계통 설계 기준<br />
+                <span style={{ fontWeight: 700, color: '#5B8C5A' }}>항공</span>{' '}
+                <strong>DO-254</strong> — 항공 전자 하드웨어 설계 보증<br />
+                <span style={{ fontWeight: 700, color: '#8B6FA5' }}>차량</span>{' '}
+                <strong>ISO 26262</strong> — 자동차 기능 안전 (Part 5: 하드웨어)<br />
+                <span style={{ fontWeight: 700, color: FPGA.textLight }}>공통</span>{' '}
+                <strong>IEEE 1012</strong> — V&V 프로세스 &nbsp;
+                <strong>IEC 61508</strong> — 기능 안전 모체 표준
+              </p>
+            </InfoCard>
+          </div>
 
-        <div style={{
-          marginTop: '1.2rem',
-          width: '100%',
-          background: `linear-gradient(135deg, ${FPGA.dangerBg}, rgba(229, 62, 62, 0.04))`,
-          border: `1px solid ${FPGA.danger}20`,
-          borderRadius: '14px',
-          padding: '1.1rem 1.5rem',
-          boxShadow: shadow.card,
-        }}>
-          <p style={{ margin: 0, fontSize: '0.95rem', color: FPGA.text }}>
-            <strong style={{ color: FPGA.danger }}>핵심:</strong>{' '}
-            "동작하면 된다"가 아니라, <strong>"검증 가능하고 추적 가능해야 한다"</strong>가 Safety-Critical FPGA의 기본 원칙입니다.
-          </p>
+          <div style={{
+            width: '100%',
+            background: `linear-gradient(135deg, ${FPGA.dangerBg}, rgba(229, 62, 62, 0.04))`,
+            border: `1px solid ${FPGA.danger}20`,
+            borderRadius: '14px',
+            padding: '1.4rem 1.8rem',
+            boxShadow: shadow.card,
+          }}>
+            <p style={{ margin: 0, fontSize: '0.98rem', color: FPGA.text, lineHeight: 1.8 }}>
+              <strong style={{ color: FPGA.danger }}>핵심:</strong>{' '}
+              "동작하면 된다"가 아니라, <strong>"검증 가능하고 추적 가능해야 한다"</strong>가 Safety-Critical FPGA의 기본 원칙입니다.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -575,7 +576,7 @@ export default function FpgaProcessSlides() {
           subtitle="IEEE 1012 / DO-254 / ISO 26262 공통 개념"
         />
 
-        <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.8rem' }}>
+        <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '1.2rem' }}>
           <div style={styles.grid2}>
             <div style={{ ...styles.card, borderLeft: `4px solid ${FPGA.primary}` }}>
               <div style={{ fontSize: '0.82rem', fontWeight: 700, color: FPGA.primary, marginBottom: '0.6rem' }}>
@@ -586,7 +587,7 @@ export default function FpgaProcessSlides() {
                 각 단계의 산출물이 해당 단계의 입력 요구사항을 올바르게 충족하는지 확인하는 과정
               </p>
               <div style={{
-                marginTop: '0.7rem', padding: '0.55rem 0.8rem',
+                marginTop: '0.8rem', padding: '0.75rem 0.9rem',
                 background: FPGA.primaryBg, borderRadius: '7px',
                 fontSize: '0.78rem', color: FPGA.text, lineHeight: 1.7,
               }}>
@@ -612,7 +613,7 @@ export default function FpgaProcessSlides() {
                 최종 산출물이 사용자의 원래 요구사항과 의도된 용도에 부합하는지 확인하는 과정
               </p>
               <div style={{
-                marginTop: '0.7rem', padding: '0.55rem 0.8rem',
+                marginTop: '0.8rem', padding: '0.75rem 0.9rem',
                 background: `rgba(232, 145, 58, 0.07)`, borderRadius: '7px',
                 fontSize: '0.78rem', color: FPGA.text, lineHeight: 1.7,
               }}>
@@ -634,7 +635,7 @@ export default function FpgaProcessSlides() {
             background: `linear-gradient(135deg, rgba(74,111,165,0.05), rgba(232,145,58,0.05))`,
             border: `1px solid ${FPGA.border}`,
             borderRadius: '10px',
-            padding: '0.7rem 1.2rem',
+            padding: '1.1rem 1.4rem',
             display: 'flex',
             alignItems: 'center',
             gap: '1.2rem',

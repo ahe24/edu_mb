@@ -14,9 +14,10 @@ export default function CourseOverviewSlides() {
     <>
       {/* ── 슬라이드: 교육 개요 ── */}
       <section data-background-color={slideBg}>
+        <div className="fpga-content-wrap">
         <SlideHeader title="교육 과정 개요" subtitle="Course Overview" />
 
-        <div style={styles.grid2}>
+        <div style={{ ...styles.grid2, flex: 1, minHeight: 0 }}>
           <InfoCard icon="🎯" label="교육 목적" variant="highlight">
             <p style={{ margin: 0 }}>
               협력업체가 설계한 FPGA 로직을<br />
@@ -44,14 +45,16 @@ export default function CourseOverviewSlides() {
             </p>
           </InfoCard>
         </div>
+        </div>
       </section>
 
       {/* ── 슬라이드: 3개월 로드맵 (수평 타임라인) ── */}
       <section data-background-color={slideBg}>
+        <div className="fpga-content-wrap">
         <SlideHeader title="3개월 학습 로드맵" subtitle="Learning Roadmap" />
 
         {/* 타임라인 */}
-        <div style={{ width: '100%', position: 'relative', padding: '0.5rem 0' }}>
+        <div style={{ flex: 1, minHeight: 0, width: '100%', position: 'relative', padding: '0.5rem 0' }}>
           {/* 중앙 수평선 */}
           <div style={{
             position: 'absolute',
@@ -189,13 +192,15 @@ export default function CourseOverviewSlides() {
             ))}
           </div>
         </div>
+        </div>
       </section>
 
       {/* ── 슬라이드: 주요 EDA 도구 (이미지 placeholder 포함) ── */}
       <section data-background-color={slideBg}>
+        <div className="fpga-content-wrap">
         <SlideHeader title="주요 EDA 도구" subtitle="Verification Tool Suite" />
 
-        <div style={styles.grid2}>
+        <div style={{ ...styles.grid2, flex: 1, minHeight: 0 }}>
           {/* Siemens EDA */}
           <div style={{
             ...styles.cardHighlight,
@@ -211,7 +216,7 @@ export default function CourseOverviewSlides() {
                 { name: 'QuestaSim', desc: '기능 시뮬레이션, 커버리지', img: '/images/fpga/tool_questasim.png' },
                 { name: 'Questa Lint', desc: 'RTL 코딩 규칙 검증', img: '/images/fpga/tool_questa_lint.png' },
                 { name: 'Questa CDC', desc: 'Clock Domain Crossing', img: '/images/fpga/tool_questa_cdc.png' },
-                { name: 'Questa Formal', desc: 'Autocheck, Covercheck', img: '/images/fpga/tool_questa_formal.png' },
+                { name: 'Code Coverage', desc: 'Code Coverage', img: '/images/fpga/tool_questa_formal.png' },
               ].map((tool) => (
                 <div key={tool.name} style={{
                   background: FPGA.white,
@@ -222,7 +227,7 @@ export default function CourseOverviewSlides() {
                 }}>
                   {/* 이미지 placeholder */}
                   <div style={{ marginBottom: '0.4rem' }}>
-                    <ToolImage src={tool.img} name={tool.name} width="100%" height="60px" />
+                    <ToolImage src={tool.img} name={tool.name} width="100%" height="120px" />
                   </div>
                   <div style={{ fontSize: '0.8rem', fontWeight: 700, color: FPGA.dark }}>{tool.name}</div>
                   <div style={{ fontSize: '0.7rem', color: FPGA.textLight }}>{tool.desc}</div>
@@ -255,7 +260,7 @@ export default function CourseOverviewSlides() {
                 }}>
                   {/* 이미지 placeholder */}
                   <div style={{ flexShrink: 0 }}>
-                    <ToolImage src={tool.img} name={tool.name} width="90px" height="55px" />
+                    <ToolImage src={tool.img} name={tool.name} width="100%" height="150px" />
                   </div>
                   <div>
                     <div style={{ fontSize: '0.88rem', fontWeight: 700, color: FPGA.dark }}>{tool.name}</div>
@@ -265,6 +270,7 @@ export default function CourseOverviewSlides() {
               ))}
             </div>
           </div>
+        </div>
         </div>
       </section>
     </>

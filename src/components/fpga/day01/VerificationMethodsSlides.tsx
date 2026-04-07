@@ -103,12 +103,14 @@ export default function VerificationMethodsSlides() {
 
       {/* ── 슬라이드: 검증 기법 전체 맵 ── */}
       <section data-background-color={slideBg}>
+        <div className="fpga-content-wrap">
         <SlideHeader
           title="FPGA 검증 기법 전체 맵"
           subtitle="Verification Methodology Landscape"
         />
 
-        <div style={styles.grid3}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ ...styles.grid3, flex: 1, minHeight: 0 }}>
           {[
             {
               phase: '1단계',
@@ -171,19 +173,22 @@ export default function VerificationMethodsSlides() {
           ))}
         </div>
 
-        <p style={{ ...styles.caption, textAlign: 'center', marginTop: '1rem', width: '100%' }}>
+        <p style={{ ...styles.caption, textAlign: 'center', width: '100%' }}>
           각 단계는 독립적이 아닌 <strong style={{ color: FPGA.primary }}>상호 보완적</strong>으로 적용되어야 합니다.
         </p>
+        </div>
+        </div>
       </section>
 
       {/* ── 슬라이드: Shift-Left — 실제 데이터 기반 ── */}
       <section data-background-color={slideBg}>
+        <div className="fpga-content-wrap">
         <SlideHeader
           title="왜 정적 분석을 먼저 하는가?"
           subtitle="Shift-Left Verification Strategy"
         />
 
-        <div style={{ ...styles.grid2, alignItems: 'stretch' }}>
+        <div style={{ ...styles.grid2, flex: 1, minHeight: 0, alignItems: 'stretch' }}>
           {/* 왼쪽: 상대 비용 SVG 차트 (NIST 기반) */}
           <div style={{ ...styles.card, display: 'flex', flexDirection: 'column' }}>
             <div style={{ fontSize: '0.85rem', fontWeight: 700, color: FPGA.dark, marginBottom: '0.3rem' }}>
@@ -311,6 +316,7 @@ export default function VerificationMethodsSlides() {
               • B. Boehm, "Software Engineering Economics", Prentice-Hall (1981)
             </div>
           </div>
+        </div>
         </div>
       </section>
     </>

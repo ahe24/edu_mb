@@ -88,7 +88,7 @@ export default function TitleSlide() {
 
       {/* ── 메인 콘텐츠 ── */}
       <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', width: '100%' }}>
-        <div style={{ marginBottom: '1.5rem' }}>
+        <div style={{ marginBottom: '2.5rem' }}>
           <span style={{
             fontFamily: 'monospace',
             fontSize: '0.9rem',
@@ -112,9 +112,9 @@ export default function TitleSlide() {
           letterSpacing: '-0.03em',
           lineHeight: 1.25,
           textAlign: 'center',
-          margin: '0 0 0.6rem',
+          margin: '0 0 1.2rem',
         }}>
-          교육 오리엔테이션 및<br />
+          전체 과정 소개 및<br />
           <span style={{ color: FPGA.primary }}>Safety-Critical FPGA 검증 프레임워크</span>
         </h1>
 
@@ -123,7 +123,7 @@ export default function TitleSlide() {
           fontSize: '1.5rem',
           fontWeight: 400,
           textAlign: 'center',
-          margin: '0 0 2rem',
+          margin: '0 0 3rem',
           fontFamily: 'monospace',
           letterSpacing: '-0.02em',
         }}>
@@ -138,7 +138,7 @@ export default function TitleSlide() {
           borderRadius: '16px',
           boxShadow: shadow.card,
           border: '1px solid #E2E8F0',
-          marginBottom: '1.5rem',
+          marginBottom: '2.5rem',
         }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '0.72rem', fontWeight: 600, color: FPGA.textLight, letterSpacing: '0.06em', marginBottom: '2px' }}>교육 기간</div>

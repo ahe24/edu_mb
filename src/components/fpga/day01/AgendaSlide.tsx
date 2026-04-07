@@ -63,10 +63,13 @@ const agenda = [
 export default function AgendaSlide() {
   return (
     <section data-background-color={slideBg}>
+      <div className="fpga-content-wrap">
       <SlideHeader title="오늘의 학습 흐름" />
 
       {/* 카드 플로우 */}
       <div style={{
+        flex: 1,
+        minHeight: 0,
         display: 'flex',
         alignItems: 'stretch',
         gap: '0px',
@@ -131,6 +134,7 @@ export default function AgendaSlide() {
             )}
           </div>
         ))}
+      </div>
       </div>
     </section>
   );

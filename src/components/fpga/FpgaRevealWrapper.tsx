@@ -185,6 +185,16 @@ const fpgaThemeCSS = `
     max-width: 1180px;
   }
 
+  /* contentWrap fills the section and lays out children in a column */
+  .fpga-theme .slides section > div.fpga-content-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1180px;
+  }
+
   .fpga-theme .slides section h1,
   .fpga-theme .slides section h2,
   .fpga-theme .slides section h3 {

@@ -10,12 +10,13 @@ import SlideHeader from '../SlideHeader';
 export default function LabEnvSlide() {
   return (
     <section data-background-color={slideBg}>
+      <div className="fpga-content-wrap">
       <SlideHeader
         title="실습 환경 확인"
         subtitle="Lab Environment Check"
       />
 
-      <div style={styles.grid2}>
+      <div style={{ ...styles.grid2, flex: 1, minHeight: 0 }}>
         <div style={styles.card}>
           <div style={{ fontSize: '0.85rem', fontWeight: 700, color: FPGA.primary, marginBottom: '0.8rem' }}>
             확인 항목 체크리스트
@@ -64,6 +65,7 @@ export default function LabEnvSlide() {
             다음 차시(Day 01)의 교육 실습에 무리 없이 진입할 수 있습니다.
           </p>
         </div>
+      </div>
       </div>
     </section>
   );
