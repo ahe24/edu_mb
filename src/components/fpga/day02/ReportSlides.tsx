@@ -196,6 +196,7 @@ function InteractiveCategoryViewer() {
             boxShadow: shadow.card,
             border: `1px solid ${current.color}20`,
             flex: 1,
+            whiteSpace: 'pre',
           }}>
             {current.codeLines.map((line, i) => (
               <div key={i} style={{ position: 'relative' }}>
