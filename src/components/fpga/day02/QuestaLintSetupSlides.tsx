@@ -34,9 +34,6 @@ const flag = (text: string) => (
 const comment = (text: string) => (
   <span style={{ color: '#6B8096', fontStyle: 'italic' }}>{text}</span>
 );
-const string_ = (text: string) => (
-  <span style={{ color: '#A8D8A8' }}>{text}</span>
-);
 const warn = (text: string) => (
   <span style={{ color: '#F6AD55' }}>{text}</span>
 );
@@ -245,10 +242,10 @@ export default function QuestaLintSetupSlides() {
                 <div style={{ paddingLeft: '1.2rem' }}>{keyword('input wire')}{'       '}{warn('Clk')}, {warn('Rst')},</div>
                 <div style={{ paddingLeft: '1.2rem' }}>{keyword('input wire')} [7:0] {warn('D')},</div>
                 <div style={{ paddingLeft: '1.2rem' }}>{keyword('output reg')} [7:0] {warn('Q')});</div>
-                {/* Stylistic violation — active-high reset */}
-                <div style={{ marginTop: '0.25rem', paddingLeft: '1.2rem' }}>{comment('// ❹ Stylistic: active-high async reset -- use negedge rst_n')}</div>
+                {/* Stylistic violation — async active-high reset */}
+                <div style={{ marginTop: '0.25rem', paddingLeft: '1.2rem' }}>{comment('// ❹ Stylistic: async active-high reset -- INFO (polarity OK for FPGA)')}</div>
                 <div style={{ paddingLeft: '1.2rem' }}>{keyword('always')} @({keyword('posedge')} {warn('Clk')} {keyword('or posedge')} {warn('Rst')}) {keyword('begin')}</div>
-                <div style={{ paddingLeft: '2.4rem' }}>{keyword('if')} ({warn('Rst')}){'  '}{warn('Q')} &lt;= 8&apos;h00; {comment('// INFO: active-high')}</div>
+                <div style={{ paddingLeft: '2.4rem' }}>{keyword('if')} ({warn('Rst')}){'  '}{warn('Q')} &lt;= 8&apos;h00; {comment('// INFO: async active-high')}</div>
                 <div style={{ paddingLeft: '2.4rem' }}>{keyword('else')}{'     '}{warn('Q')} &lt;= {warn('D')};</div>
                 <div style={{ paddingLeft: '1.2rem' }}>{keyword('end')}</div>
                 <div>{keyword('endmodule')}</div>
@@ -266,7 +263,7 @@ export default function QuestaLintSetupSlides() {
                   { type: 'Syntactic', rule: 'blocking_assign_in_seq_block', severity: 'ERROR', color: FPGA.danger, file: 'ctrl_logic.v' },
                   { type: 'Semantic', rule: 'var_set_not_read (status)', severity: 'INFO', color: FPGA.accent, file: 'ctrl_logic.v' },
                   { type: 'Structural', rule: 'latch_inferred (busy)', severity: 'WARNING', color: '#8B6FA5', file: 'state_machine.v' },
-                  { type: 'Stylistic', rule: 'async_reset_active_high', severity: 'INFO', color: '#5B8C5A', file: 'reset_flop.v' },
+                  { type: 'Stylistic', rule: 'async_reset_active_low', severity: 'INFO', color: '#5B8C5A', file: 'reset_flop.v' },
                 ].map((item) => (
                   <div key={item.type} style={{
                     display: 'flex', alignItems: 'center', gap: '0.4rem',
