@@ -54,3 +54,6 @@ next-env.d.ts
 .Xil/
 vivado*.log
 vivado*.jou
+
+#lab
+lab/

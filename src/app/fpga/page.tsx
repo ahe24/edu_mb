@@ -15,7 +15,7 @@ const curriculum = [
         week: 1, title: '실습 환경 구축 및 FPGA 검증 개론',
         days: [
           { day: 1, title: 'Safety-Critical FPGA 검증 프레임워크', ready: true },
-          { day: 2, title: 'Questa 도구 환경 설정 및 기본 사용법', ready: false },
+          { day: 2, title: 'Questa 도구 환경 설정 및 기본 사용법', ready: true },
         ],
       },
       {
