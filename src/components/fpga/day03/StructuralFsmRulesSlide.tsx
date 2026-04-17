@@ -36,7 +36,340 @@ interface RuleData {
   solution: string;
   code: { text: string; highlight?: boolean; annotate?: string }[];
   directive?: string;
-  diagram?: 'combo_loop' | 'latch_inferred';
+  diagram?: 'combo_loop' | 'latch_inferred' | 'assign_width_overflow';
+}
+
+function WidthOverflowDiagram() {
+  const [tab, setTab] = useState<'bits' | 'impact'>('bits');
+
+  const err = '#E53E3E';
+  const ok = '#48BB78';
+  const warn = '#E8913A';
+  const text = '#2D3748';
+  const muted = '#718096';
+  const bg = '#F7FAFC';
+
+  // 255 + 1 = 256 (9-bit) → truncated to 0 (8-bit)  — classic wrap-around
+  const a = [1, 1, 1, 1, 1, 1, 1, 1];
+  const b = [0, 0, 0, 0, 0, 0, 0, 1];
+  const sumBits = [1, 0, 0, 0, 0, 0, 0, 0, 0];
+  const resultBits = [0, 0, 0, 0, 0, 0, 0, 0];
+
+  const pitch = 32;
+  const bitW = 28;
+  const bitH = 24;
+  const xStart8 = 120;
+  const xStart9 = xStart8 - pitch;
+
+  const impacts = [
+    {
+      icon: '🔇',
+      color: err,
+      title: 'Silent 데이터 손실',
+      desc: '컴파일·합성 모두 에러 없음. 틀린 값이 조용히 다운스트림 로직으로 전파되어 최종 출력까지 오염.',
+    },
+    {
+      icon: '💥',
+      color: warn,
+      title: '산술 wrap-around',
+      desc: '카운터·타이머·주소 계산에서 최대값 → 0 으로 급격히 점프. 측정값 불연속, 제어 루프 불안정.',
+    },
+    {
+      icon: '🎯',
+      color: err,
+      title: 'Safety-Critical 오동작',
+      desc: '센서 ADC 누적, 고도·압력 계산 등에서 결과가 엉뚱한 값. Safety 로직이 오경보 또는 무경보로 빠짐.',
+    },
+  ];
+
+  const renderBit = (
+    bit: number,
+    i: number,
+    xStart: number,
+    y: number,
+    color: string,
+    opts?: { isCarry?: boolean }
+  ) => {
+    const x = xStart + i * pitch;
+    const isCarry = opts?.isCarry ?? false;
+    const activeColor = isCarry ? err : color;
+    return (
+      <g key={`${y}_${i}`}>
+        <rect
+          className={isCarry ? 'wo-carry' : undefined}
+          x={x}
+          y={y}
+          width={bitW}
+          height={bitH}
+          rx={3}
+          fill={isCarry ? `${err}25` : bit ? `${activeColor}18` : bg}
+          stroke={isCarry ? err : bit ? activeColor : '#CBD5E0'}
+          strokeWidth={isCarry ? 2 : 1.5}
+          strokeDasharray={isCarry ? '3,2' : undefined}
+        />
+        <text
+          x={x + bitW / 2}
+          y={y + 17}
+          fontSize="13"
+          fontWeight="800"
+          textAnchor="middle"
+          fill={isCarry ? err : bit ? activeColor : muted}
+          fontFamily="monospace"
+        >
+          {bit}
+        </text>
+        {isCarry && (
+          <g className="wo-xmark">
+            <line x1={x + 6} y1={y + 6} x2={x + bitW - 6} y2={y + bitH - 6} stroke={err} strokeWidth="2.5" />
+            <line x1={x + bitW - 6} y1={y + 6} x2={x + 6} y2={y + bitH - 6} stroke={err} strokeWidth="2.5" />
+          </g>
+        )}
+      </g>
+    );
+  };
+
+  const tabs: { key: 'bits' | 'impact'; label: string }[] = [
+    { key: 'bits', label: '📊 비트 동작 원리' },
+    { key: 'impact', label: '⚠️ 영향과 실제 사례' },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+      <style>{`
+        @keyframes woPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.35; }
+        }
+        @keyframes woXFlash {
+          0%, 50%, 100% { opacity: 0.35; }
+          25%, 75% { opacity: 1; }
+        }
+        .wo-carry { animation: woPulse 1.8s ease-in-out infinite; transform-origin: center; }
+        .wo-xmark { animation: woXFlash 1.8s ease-in-out infinite; }
+      `}</style>
+
+      {/* Tab bar */}
+      <div style={{ display: 'flex', gap: '4px', borderBottom: '2px solid #E2E8F0', marginBottom: '0.1rem' }}>
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            style={{
+              padding: '0.4rem 1rem',
+              border: 'none',
+              background: tab === t.key ? `linear-gradient(180deg, ${err}08, ${err}18)` : 'transparent',
+              color: tab === t.key ? err : muted,
+              fontSize: '0.74rem',
+              fontWeight: tab === t.key ? 800 : 600,
+              cursor: 'pointer',
+              borderBottom: tab === t.key ? `2.5px solid ${err}` : '2.5px solid transparent',
+              marginBottom: '-2px',
+              transition: 'all 0.15s ease',
+              borderRadius: '6px 6px 0 0',
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab 1: 비트 동작 원리 */}
+      {tab === 'bits' && (
+      <div
+        style={{
+          background: bg,
+          border: '1px solid #E2E8F0',
+          borderRadius: '8px',
+          padding: '0.55rem 0.9rem 0.4rem',
+        }}
+      >
+        <div style={{ fontSize: '0.72rem', fontWeight: 700, color: text, marginBottom: '0.25rem' }}>
+          🔬 비트 수준 시뮬레이션 — <code style={{ fontFamily: 'monospace', background: '#EDF2F7', padding: '1px 5px', borderRadius: '3px', fontSize: '0.66rem' }}>assign result = a + b</code>  &nbsp;  (a·b: 8 bit, result: 8 bit)
+        </div>
+        <svg viewBox="0 0 580 235" style={{ width: '100%', height: 'auto', display: 'block' }}>
+          {/* Row a */}
+          <text x="6" y="37" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">a</text>
+          <text x="20" y="37" fontSize="9" fill={muted}>[7:0]</text>
+          {a.map((bit, i) => renderBit(bit, i, xStart8, 18, ok))}
+          <text x="395" y="37" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">= 255 (최대)</text>
+
+          {/* Row b */}
+          <text x="6" y="77" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">b</text>
+          <text x="20" y="77" fontSize="9" fill={muted}>[7:0]</text>
+          {b.map((bit, i) => renderBit(bit, i, xStart8, 58, ok))}
+          <text x="395" y="77" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">= 1</text>
+
+          {/* Plus + separator */}
+          <text x="82" y="95" fontSize="16" fontWeight="800" fill={text} fontFamily="monospace">+</text>
+          <line x1="80" y1="98" x2="380" y2="98" stroke={text} strokeWidth="1.2" />
+
+          {/* Row sum (9 bits) */}
+          <text x="6" y="127" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">a+b</text>
+          <text x="20" y="138" fontSize="9" fill={muted}>[8:0]</text>
+          {sumBits.map((bit, i) =>
+            renderBit(bit, i, xStart9, 108, ok, { isCarry: i === 0 })
+          )}
+          <text x="395" y="127" fontSize="12" fontWeight="700" fill={ok} fontFamily="monospace">= 256 (정답·9b)</text>
+
+          {/* 캐리 버려짐 */}
+          <text x={xStart9 + bitW / 2} y={151} fontSize="8.5" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">
+            버려짐!
+          </text>
+          <line x1={xStart9 + bitW / 2} y1={135} x2={xStart9 + bitW / 2} y2={144} stroke={err} strokeWidth="1.2" strokeDasharray="2,2" />
+
+          {/* Row result (8 bits, aligned with LSB 8 of sum) */}
+          <text x="6" y="187" fontSize="12" fontWeight="700" fill={err} fontFamily="monospace">result</text>
+          <text x="42" y="187" fontSize="9" fill={muted}>[7:0]</text>
+          {resultBits.map((bit, i) => renderBit(bit, i, xStart8, 170, err))}
+          <text x="395" y="187" fontSize="12" fontWeight="700" fill={err} fontFamily="monospace">= 0 (틀린 값!)</text>
+
+          {/* 오차 강조 */}
+          <rect x="140" y="208" width="300" height="22" rx="4" fill={err} opacity="0.08" />
+          <text x="290" y="223" fontSize="10.5" fontWeight="800" fill={err} textAnchor="middle" fontFamily="monospace">
+            ⚠ 255 + 1 = 0 · 오차 256 (100% 빗나감, wrap-around)
+          </text>
+        </svg>
+        <div style={{ fontSize: '0.62rem', color: muted, textAlign: 'center', marginTop: '0.3rem', lineHeight: 1.5 }}>
+          상위 1-bit (캐리)이 LHS 폭(8-bit)을 초과 → 묵시적으로 잘려나감 · 합성·컴파일 에러 없이 <strong style={{ color: err }}>틀린 값</strong>이 다운스트림으로 전파.
+          <br />
+          <span style={{ color: text, fontWeight: 700 }}>👉 "⚠️ 영향과 실제 사례" 탭에서 이 버그가 현실 시스템에 미치는 피해 확인</span>
+        </div>
+      </div>
+      )}
+
+      {/* Tab 2: 영향과 실제 사례 */}
+      {tab === 'impact' && (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        {/* 3 impact cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.55rem' }}>
+          {impacts.map((p, i) => (
+            <div key={i} style={{
+              background: `linear-gradient(135deg, ${p.color}08, ${p.color}14)`,
+              border: `1.5px solid ${p.color}40`,
+              borderRadius: '9px',
+              padding: '0.75rem 0.85rem',
+              boxShadow: `0 2px 6px ${p.color}10`,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '6px' }}>
+                <span style={{ fontSize: '1.2rem' }}>{p.icon}</span>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: p.color, letterSpacing: '0.02em' }}>
+                  {p.title}
+                </div>
+              </div>
+              <div style={{ fontSize: '0.66rem', color: text, lineHeight: 1.65 }}>
+                {p.desc}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Safety-Critical 사례 — 단계 흐름도 */}
+        <div style={{
+          background: `linear-gradient(135deg, ${warn}0A, ${warn}16)`,
+          border: `1.5px solid ${warn}40`,
+          borderRadius: '9px',
+          padding: '0.7rem 0.9rem 0.65rem',
+        }}>
+          <div style={{ fontWeight: 800, color: warn, marginBottom: '0.55rem', fontSize: '0.74rem' }}>
+            💡 Safety-Critical 사례 — 온도·압력 센서가 overflow 되면 벌어지는 일
+          </div>
+
+          {/* 4-step flow */}
+          <div style={{ display: 'flex', gap: '2px', alignItems: 'stretch', marginBottom: '0.55rem' }}>
+            {[
+              { icon: '📈', color: '#4A5568', title: '1. 값 상승',     desc: '측정값이 8-bit 최대(255)까지 누적' },
+              { icon: '💥', color: err,        title: '2. Overflow',   desc: '+1 증분 → 256 → 8-bit에 0 으로 wrap' },
+              { icon: '🤔', color: warn,       title: '3. 제어 오판',   desc: '0 = "정상 범위"로 해석 · 위험 미인지' },
+              { icon: '🔥', color: err,        title: '4. 사고',        desc: '냉각·감압 지연 → 과열·과압 피해' },
+            ].flatMap((step, i) => {
+              const nodes = [];
+              if (i > 0) {
+                nodes.push(
+                  <div key={`ar-${i}`} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: warn, fontSize: '1rem', fontWeight: 800, padding: '0 2px',
+                  }}>→</div>
+                );
+              }
+              nodes.push(
+                <div key={`st-${i}`} style={{
+                  flex: 1,
+                  background: FPGA.white,
+                  border: `1px solid ${step.color}35`,
+                  borderRadius: '7px',
+                  padding: '0.45rem 0.55rem',
+                  display: 'flex', flexDirection: 'column', gap: '3px',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ fontSize: '0.95rem' }}>{step.icon}</span>
+                    <div style={{ fontSize: '0.62rem', fontWeight: 800, color: step.color }}>
+                      {step.title}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '0.6rem', color: text, lineHeight: 1.5 }}>
+                    {step.desc}
+                  </div>
+                </div>
+              );
+              return nodes;
+            })}
+          </div>
+
+          {/* 적용 도메인 + 해결 */}
+          <div style={{
+            display: 'flex', gap: '8px',
+            fontSize: '0.64rem', color: text, lineHeight: 1.6,
+          }}>
+            <div style={{ flex: 1, background: 'rgba(255,255,255,0.55)', borderRadius: '6px', padding: '0.4rem 0.55rem' }}>
+              <strong style={{ color: warn }}>적용 도메인:</strong> 원전 노심 온도 · 보일러/반응기 압력 · EV 배터리 셀 온도 · 엔진·터빈 제어 등
+            </div>
+            <div style={{ flex: 1, background: 'rgba(255,255,255,0.55)', borderRadius: '6px', padding: '0.4rem 0.55rem' }}>
+              <strong style={{ color: ok }}>해결:</strong> <code style={{ background: '#E2E8F0', padding: '1px 5px', borderRadius: '3px', fontFamily: 'monospace' }}>wire [8:0] sum</code> 로 폭 확장 · 의도적 truncation은 <code style={{ background: '#E2E8F0', padding: '1px 5px', borderRadius: '3px', fontFamily: 'monospace' }}>sum[7:0]</code> 명시
+            </div>
+          </div>
+        </div>
+
+        {/* CP7 관련 체크 — 세로 리스트 */}
+        <div style={{
+          background: `linear-gradient(135deg, ${ok}0C, ${ok}18)`,
+          border: `1.5px solid ${ok}40`,
+          borderRadius: '9px',
+          padding: '0.65rem 0.9rem',
+        }}>
+          <div style={{ fontSize: '0.74rem', fontWeight: 800, color: ok, marginBottom: '0.45rem' }}>
+            ✅ CP7 카테고리 완전 커버 — 함께 활성화 권장 체크
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            {[
+              { name: 'assign_width_underflow',       desc: 'RHS < LHS 비트 폭 (제로 확장)' },
+              { name: 'comparison_width_mismatch',    desc: '비교 연산자 양쪽 비트 폭 불일치' },
+              { name: 'expr_operands_width_mismatch', desc: '산술·논리 피연산자 비트 폭 불일치' },
+            ].map((c, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                fontSize: '0.66rem', color: text,
+                padding: '0.25rem 0',
+              }}>
+                <span style={{ color: ok, fontWeight: 900, fontSize: '0.8rem', lineHeight: 1 }}>▸</span>
+                <code style={{
+                  fontFamily: 'monospace',
+                  background: `${ok}15`, color: '#22674C',
+                  padding: '2px 8px', borderRadius: '4px',
+                  fontSize: '0.64rem', fontWeight: 700,
+                  minWidth: '215px',
+                }}>
+                  {c.name}
+                </code>
+                <span style={{ color: muted }}>{c.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      )}
+    </div>
+  );
 }
 
 function LatchProblemDiagram() {
@@ -490,6 +823,7 @@ const rules: RuleData[] = [
     customizable: false,
     problem: '할당 우변(RHS)의 비트 수가 좌변(LHS)보다 많으면 상위 비트가 묵시적으로 잘립니다(truncation). Safety-Critical 연산에서 데이터 손실이 발생하며, 의도하지 않은 값이 레지스터에 저장됩니다. 관련 체크: assign_width_underflow(CP7) — RHS < LHS (제로 확장), comparison_width_mismatch(CP7) — 비교 연산자 양쪽 비트 폭 불일치, expr_operands_width_mismatch(CP7) — 산술/논리 연산 피연산자 폭 불일치도 함께 검출합니다.',
     solution: '명시적인 비트 선택([n-1:0])이나 캐스팅을 사용해 의도를 표현. 오버플로우가 예상되는 산술 연산은 결과 폭을 충분하게 확보(예: 8비트 + 8비트 → 9비트 결과).',
+    diagram: 'assign_width_overflow',
     code: [
       { text: 'wire [7:0] result;' },
       { text: 'wire [8:0] sum;' },
@@ -821,7 +1155,9 @@ export default function StructuralFsmRulesSlide() {
                         onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'; }}
                       >
-                        {currentRule.diagram === 'combo_loop' ? '🔍 게이트 회로 블록도' : '🔬 래치 문제 시각화'}
+                        {currentRule.diagram === 'combo_loop' && '🔍 게이트 회로 블록도'}
+                        {currentRule.diagram === 'latch_inferred' && '🔬 래치 문제 시각화'}
+                        {currentRule.diagram === 'assign_width_overflow' && '📊 비트 손실 시각화'}
                       </button>
                     )}
                   </div>
@@ -945,12 +1281,14 @@ export default function StructuralFsmRulesSlide() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
               <div>
                 <div style={{ fontSize: '0.65rem', fontWeight: 700, color: catColor, letterSpacing: '0.05em', marginBottom: '3px' }}>
-                  {showDiagram === 'combo_loop' ? 'GATE-LEVEL SCHEMATIC · combo_loop' : 'LATCH SEMANTICS · latch_inferred'}
+                  {showDiagram === 'combo_loop' && 'GATE-LEVEL SCHEMATIC · combo_loop'}
+                  {showDiagram === 'latch_inferred' && 'LATCH SEMANTICS · latch_inferred'}
+                  {showDiagram === 'assign_width_overflow' && 'BIT-WIDTH OVERFLOW · assign_width_overflow'}
                 </div>
                 <div style={{ fontSize: '1rem', fontWeight: 800, color: FPGA.dark }}>
-                  {showDiagram === 'combo_loop'
-                    ? '조합 피드백 루프 — 수정 전 / 후 회로 비교'
-                    : '래치가 왜 문제인가? — 3 가지 근본 원인 + 타이밍 파형'}
+                  {showDiagram === 'combo_loop' && '조합 피드백 루프 — 수정 전 / 후 회로 비교'}
+                  {showDiagram === 'latch_inferred' && '래치가 왜 문제인가? — 3 가지 근본 원인 + 타이밍 파형'}
+                  {showDiagram === 'assign_width_overflow' && '비트 폭 오버플로우 — 어떻게 발생하고 왜 위험한가?'}
                 </div>
               </div>
               <button
@@ -967,6 +1305,7 @@ export default function StructuralFsmRulesSlide() {
             <div style={{ minHeight: 0 }}>
               {showDiagram === 'combo_loop' && <ComboLoopDiagram />}
               {showDiagram === 'latch_inferred' && <LatchProblemDiagram />}
+              {showDiagram === 'assign_width_overflow' && <WidthOverflowDiagram />}
             </div>
             {showDiagram === 'combo_loop' && (
               <div style={{
