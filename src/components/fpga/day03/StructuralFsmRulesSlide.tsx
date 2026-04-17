@@ -36,7 +36,7 @@ interface RuleData {
   solution: string;
   code: { text: string; highlight?: boolean; annotate?: string }[];
   directive?: string;
-  diagram?: 'combo_loop' | 'latch_inferred' | 'assign_width_overflow';
+  diagram?: 'combo_loop' | 'latch_inferred' | 'assign_width_overflow' | 'sensitivity_list';
 }
 
 function WidthOverflowDiagram() {
@@ -704,6 +704,312 @@ function ComboLoopDiagram() {
   );
 }
 
+function SensitivityListDiagram() {
+  const [tab, setTab] = useState<'circuit' | 'wave'>('circuit');
+  const err = '#E53E3E';
+  const ok = '#48BB78';
+  const warn = '#E8913A';
+  const wire = '#4A5568';
+  const text = '#2D3748';
+  const muted = '#718096';
+  const bg = '#F7FAFC';
+
+  const tabs: { key: 'circuit' | 'wave'; label: string }[] = [
+    { key: 'circuit', label: '🔌 회로 비교 — 의도 vs 시뮬 해석' },
+    { key: 'wave',    label: '⏱ 타이밍 파형 — Sim-Synth 불일치' },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+      <style>{`
+        @keyframes slPulse { 0%,100% { opacity: 0.28 } 50% { opacity: 0.55 } }
+        @keyframes slBlink { 0%,45%,100% { opacity: 0.22 } 60%,85% { opacity: 1 } }
+        .sl-mismatch  { animation: slPulse 1.8s ease-in-out infinite; transform-origin: center; }
+        .sl-xmark     { animation: slBlink 2.2s ease-in-out infinite; }
+      `}</style>
+
+      {/* Tab bar */}
+      <div style={{ display: 'flex', gap: '4px', borderBottom: '2px solid #E2E8F0', marginBottom: '0.1rem' }}>
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            style={{
+              padding: '0.4rem 1rem',
+              border: 'none',
+              background: tab === t.key ? `linear-gradient(180deg, ${warn}08, ${warn}20)` : 'transparent',
+              color: tab === t.key ? warn : muted,
+              fontSize: '0.74rem',
+              fontWeight: tab === t.key ? 800 : 600,
+              cursor: 'pointer',
+              borderBottom: tab === t.key ? `2.5px solid ${warn}` : '2.5px solid transparent',
+              marginBottom: '-2px',
+              transition: 'all 0.15s ease',
+              borderRadius: '6px 6px 0 0',
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* TAB 1: Circuit comparison */}
+      {tab === 'circuit' && (
+        <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'stretch' }}>
+          {/* LEFT: Intended / Synthesized */}
+          <div style={{
+            flex: 1,
+            background: 'linear-gradient(135deg, #F0FFF4, #F7FFFA)',
+            border: `1.5px solid ${ok}40`,
+            borderRadius: '8px',
+            padding: '0.5rem 0.7rem 0.35rem',
+            boxShadow: `0 2px 6px ${ok}10`,
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div style={{ fontSize: '0.63rem', fontWeight: 800, color: ok, marginBottom: '2px', letterSpacing: '0.02em' }}>
+              ✅ 의도 / 합성 결과 — 순수 조합 논리
+            </div>
+            <div style={{ fontSize: '0.55rem', color: muted, marginBottom: '3px', fontFamily: 'monospace' }}>
+              always @(*)  또는  always_comb  out = a &amp; b &amp; c;
+            </div>
+            <svg viewBox="0 0 340 170" style={{ width: '100%', height: 'auto', display: 'block' }}>
+              <defs>
+                <filter id="sl_shadow_ok" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="1" dy="1.5" stdDeviation="1" floodColor={ok} floodOpacity="0.28" />
+                </filter>
+              </defs>
+
+              {/* Input labels + wires */}
+              <text x="14" y="68" fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">a</text>
+              <line x1="32" y1="65" x2="160" y2="65" stroke={wire} strokeWidth="1.5" />
+              <text x="14" y="93" fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">b</text>
+              <line x1="32" y1="90" x2="160" y2="90" stroke={wire} strokeWidth="1.5" />
+              <text x="14" y="118" fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">c</text>
+              <line x1="32" y1="115" x2="160" y2="115" stroke={wire} strokeWidth="1.5" />
+
+              {/* AND3 gate */}
+              <rect x="160" y="50" width="55" height="80" rx="3"
+                fill={bg} stroke={ok} strokeWidth="2" filter="url(#sl_shadow_ok)" />
+              <text x="187.5" y="96" fontSize="17" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">&amp;</text>
+              <text x="187.5" y="45" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">AND3</text>
+
+              {/* Input pin dots */}
+              <circle cx="160" cy="65"  r="2.2" fill={ok} />
+              <circle cx="160" cy="90"  r="2.2" fill={ok} />
+              <circle cx="160" cy="115" r="2.2" fill={ok} />
+
+              {/* Output wire */}
+              <line x1="215" y1="90" x2="305" y2="90" stroke={wire} strokeWidth="1.5" />
+              <circle cx="215" cy="90" r="2.2" fill={ok} />
+              <text x="310" y="94" fontSize="11" fontWeight="800" fill={ok} fontFamily="monospace">out</text>
+
+              {/* Caption */}
+              <text x="170" y="155" fontSize="9" fontWeight="700" fill={text} fontFamily="monospace" textAnchor="middle">
+                out  =  a · b · c   (연속 평가)
+              </text>
+            </svg>
+            <div style={{ fontSize: '0.58rem', fontWeight: 700, color: ok, textAlign: 'center', marginTop: '3px' }}>
+              ✓ a · b · c 어느 쪽이든 변하면 즉시 out 재계산 — Sim ≡ Synth
+            </div>
+          </div>
+
+          {/* RIGHT: Simulator view with hidden latch */}
+          <div style={{
+            flex: 1,
+            background: 'linear-gradient(135deg, #FFF5F5, #FFFAFA)',
+            border: `1.5px solid ${err}40`,
+            borderRadius: '8px',
+            padding: '0.5rem 0.7rem 0.35rem',
+            boxShadow: `0 2px 6px ${err}10`,
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div style={{ fontSize: '0.63rem', fontWeight: 800, color: err, marginBottom: '2px', letterSpacing: '0.02em' }}>
+              ❌ RTL 시뮬레이터 해석 — 숨겨진 래치
+            </div>
+            <div style={{ fontSize: '0.55rem', color: muted, marginBottom: '3px', fontFamily: 'monospace' }}>
+              always @(a or b)  out = a &amp; b &amp; c;   ← c 누락
+            </div>
+            <svg viewBox="0 0 440 210" style={{ width: '100%', height: 'auto', display: 'block' }}>
+              <defs>
+                <filter id="sl_shadow_err" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="1" dy="1.5" stdDeviation="1" floodColor={err} floodOpacity="0.24" />
+                </filter>
+                <marker id="sl_arr_en" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+                  <polygon points="0,0 5,2.5 0,5" fill={warn} />
+                </marker>
+              </defs>
+
+              {/* Input labels + wires */}
+              <text x="14" y="68"  fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">a</text>
+              <line x1="32" y1="65"  x2="170" y2="65"  stroke={wire} strokeWidth="1.5" />
+              <text x="14" y="93"  fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">b</text>
+              <line x1="32" y1="90"  x2="170" y2="90"  stroke={wire} strokeWidth="1.5" />
+              <text x="14" y="118" fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">c</text>
+              <line x1="32" y1="115" x2="170" y2="115" stroke={wire} strokeWidth="1.5" />
+
+              {/* AND3 gate */}
+              <rect x="170" y="50" width="55" height="80" rx="3"
+                fill={bg} stroke={err} strokeWidth="2" filter="url(#sl_shadow_err)" />
+              <text x="197.5" y="96" fontSize="17" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">&amp;</text>
+              <text x="197.5" y="45" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">AND3</text>
+
+              {/* Input pin dots */}
+              <circle cx="170" cy="65"  r="2.2" fill={err} />
+              <circle cx="170" cy="90"  r="2.2" fill={err} />
+              <circle cx="170" cy="115" r="2.2" fill={err} />
+
+              {/* Wire: AND out → Latch D */}
+              <line x1="225" y1="90" x2="275" y2="90" stroke={wire} strokeWidth="1.5" />
+
+              {/* LATCH block */}
+              <rect x="275" y="70" width="65" height="45" rx="3"
+                fill={bg} stroke={err} strokeWidth="2" filter="url(#sl_shadow_err)" />
+              <text x="280" y="82" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace">D</text>
+              <text x="335" y="82" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace" textAnchor="end">Q</text>
+              <text x="307.5" y="98" fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">LATCH</text>
+              <text x="307.5" y="110" fontSize="7" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">EN</text>
+
+              {/* Output wire */}
+              <line x1="340" y1="90" x2="410" y2="90" stroke={wire} strokeWidth="1.5" />
+              <circle cx="340" cy="90" r="2.2" fill={err} />
+              <text x="415" y="94" fontSize="11" fontWeight="800" fill={err} fontFamily="monospace">out</text>
+
+              {/* Taps on a and b */}
+              <circle cx="70"  cy="65" r="3" fill={warn} />
+              <circle cx="105" cy="90" r="3" fill={warn} />
+
+              {/* Dashed tap lines going down */}
+              <line x1="70"  y1="65" x2="70"  y2="165" stroke={warn} strokeWidth="1.3" strokeDasharray="3,2" />
+              <line x1="105" y1="90" x2="105" y2="165" stroke={warn} strokeWidth="1.3" strokeDasharray="3,2" />
+
+              {/* Event-detector block */}
+              <rect x="50" y="165" width="175" height="26" rx="4"
+                fill={`${warn}16`} stroke={warn} strokeWidth="1.5" strokeDasharray="3,2" />
+              <text x="137.5" y="183" fontSize="9" fontWeight="800" textAnchor="middle" fill={warn} fontFamily="monospace">
+                ⚡ @(a or b) 이벤트 감시
+              </text>
+
+              {/* Event-detector output → Latch EN */}
+              <polyline points="225,178 307.5,178 307.5,115"
+                fill="none" stroke={warn} strokeWidth="1.5" strokeDasharray="3,2" markerEnd="url(#sl_arr_en)" />
+
+              {/* c tap MISSING — blinking red X at c wire */}
+              <g className="sl-xmark">
+                <circle cx="140" cy="115" r="9" fill="none" stroke={err} strokeWidth="1.8" strokeDasharray="2,2" />
+                <line x1="134" y1="109" x2="146" y2="121" stroke={err} strokeWidth="2.2" />
+                <line x1="146" y1="109" x2="134" y2="121" stroke={err} strokeWidth="2.2" />
+              </g>
+              <text x="152" y="140" fontSize="8.5" fontWeight="800" fill={err} fontFamily="monospace">c 감시 없음!</text>
+
+              {/* Caption */}
+              <text x="220" y="205" fontSize="9" fontWeight="700" fill={text} fontFamily="monospace" textAnchor="middle">
+                out 은 (a or b) 이벤트 때만 갱신 → c 단독 변화 시 이전값 유지
+              </text>
+            </svg>
+            <div style={{ fontSize: '0.58rem', fontWeight: 700, color: err, textAlign: 'center', marginTop: '3px' }}>
+              ✗ c 는 트리거가 없음 · out 업데이트 누락 (Sim ≠ Synth · 숨겨진 버그)
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: Timing waveform */}
+      {tab === 'wave' && (
+        <div style={{
+          background: bg,
+          border: '1px solid #E2E8F0',
+          borderRadius: '8px',
+          padding: '0.55rem 0.85rem 0.45rem',
+        }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: text, marginBottom: '0.2rem' }}>
+            🔬 타이밍 파형 — <code style={{ fontFamily: 'monospace', background: '#EDF2F7', padding: '1px 5px', borderRadius: '3px', fontSize: '0.66rem' }}>always @(a or b) out = a &amp; b &amp; c</code>
+          </div>
+          <svg viewBox="0 0 620 285" style={{ width: '100%', height: 'auto', display: 'block' }}>
+            {/* Mismatch region highlights */}
+            <rect className="sl-mismatch" x="180" y="15" width="100" height="240" fill={err} opacity="0.1" />
+            <rect className="sl-mismatch" x="480" y="15" width="100" height="240" fill={err} opacity="0.1" />
+
+            {/* Event tick markers */}
+            {[
+              { x: 180, label: 'c↑' },
+              { x: 280, label: 'a↓' },
+              { x: 380, label: 'a↑' },
+              { x: 480, label: 'c↓' },
+            ].map((m, i) => (
+              <g key={i}>
+                <line x1={m.x} y1="15" x2={m.x} y2="255" stroke="#CBD5E0" strokeWidth="0.5" strokeDasharray="2,3" />
+                <text x={m.x} y="12" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">{m.label}</text>
+              </g>
+            ))}
+
+            {/* Track labels + baselines */}
+            {[
+              { label: 'a',           y: 40,  color: wire },
+              { label: 'b',           y: 80,  color: wire },
+              { label: 'c',           y: 120, color: wire },
+              { label: 'out (synth)', y: 170, color: ok },
+              { label: 'out (sim)',   y: 220, color: err },
+            ].map((t, i) => (
+              <g key={i}>
+                <text x="4" y={t.y + 15} fontSize="9.5" fontWeight="800" fill={t.color} fontFamily="monospace">{t.label}</text>
+                <line x1="80" y1={t.y + 22} x2="580" y2={t.y + 22} stroke="#E2E8F0" strokeWidth="0.4" strokeDasharray="2,3" />
+              </g>
+            ))}
+
+            {/* Signal a: 1 → 0 at 280 → 1 at 380 */}
+            <polyline points="80,40 280,40 280,62 380,62 380,40 580,40"
+              fill="none" stroke={wire} strokeWidth="1.8" strokeLinejoin="miter" />
+
+            {/* Signal b: constant 1 */}
+            <polyline points="80,80 580,80"
+              fill="none" stroke={wire} strokeWidth="1.8" strokeLinejoin="miter" />
+
+            {/* Signal c: 0 → 1 at 180 → 0 at 480 */}
+            <polyline points="80,142 180,142 180,120 480,120 480,142 580,142"
+              fill="none" stroke={wire} strokeWidth="1.8" strokeLinejoin="miter" />
+
+            {/* out_synth = a & b & c */}
+            <polyline points="80,192 180,192 180,170 280,170 280,192 380,192 380,170 480,170 480,192 580,192"
+              fill="none" stroke={ok} strokeWidth="2.2" strokeLinejoin="miter" />
+
+            {/* out_sim: updates only on a/b events */}
+            <polyline points="80,242 380,242 380,220 580,220"
+              fill="none" stroke={err} strokeWidth="2.2" strokeLinejoin="miter" />
+
+            {/* Sim-evaluate markers (on a/b events) */}
+            <circle cx="280" cy="242" r="3.5" fill={wire} />
+            <circle cx="380" cy="220" r="3.5" fill={wire} />
+            <text x="286" y="238" fontSize="7"   fontWeight="700" fill={wire} fontFamily="monospace">evaluate</text>
+            <text x="386" y="216" fontSize="7"   fontWeight="700" fill={wire} fontFamily="monospace">evaluate</text>
+
+            {/* Mismatch labels */}
+            <text x="230" y="265" fontSize="9"   fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">❌ 불일치 #1</text>
+            <text x="230" y="276" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">c↑ 인데 sim = 0</text>
+            <text x="530" y="265" fontSize="9"   fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">❌ 불일치 #2</text>
+            <text x="530" y="276" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">c↓ 인데 sim = 1</text>
+
+            {/* Time axis */}
+            <line x1="80" y1="255" x2="580" y2="255" stroke="#A0AEC0" strokeWidth="0.5" />
+            <text x="580" y="252" fontSize="8" textAnchor="end" fill={muted} fontFamily="monospace">time →</text>
+          </svg>
+
+          {/* Legend */}
+          <div style={{
+            display: 'flex', gap: '1.4rem', marginTop: '0.35rem',
+            fontSize: '0.62rem', color: text, justifyContent: 'center', flexWrap: 'wrap',
+          }}>
+            <span><span style={{ display: 'inline-block', width: '16px', height: '2.2px', background: ok,  verticalAlign: 'middle', marginRight: '5px' }} /><strong>out (synth)</strong> — 실제 합성 회로 (항상 a · b · c)</span>
+            <span><span style={{ display: 'inline-block', width: '16px', height: '2.2px', background: err, verticalAlign: 'middle', marginRight: '5px' }} /><strong>out (sim)</strong> — 시뮬레이터 (a · b 이벤트 때만 갱신)</span>
+          </div>
+          <div style={{ fontSize: '0.6rem', color: muted, textAlign: 'center', marginTop: '0.3rem', lineHeight: 1.55 }}>
+            ⚠ 빨간 영역: Sim ≠ Synth · Testbench 가 통과해도 실제 FPGA 에는 버그 잠복 — <strong style={{ color: warn }}>always @(*)</strong> 또는 <strong style={{ color: warn }}>always_comb</strong> 로 원천 차단
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const rules: RuleData[] = [
   {
     key: 'combo_loop',
@@ -849,6 +1155,7 @@ const rules: RuleData[] = [
     customizable: false,
     problem: '조합 논리 always 블록의 민감도 리스트(@(...))에 블록 내에서 참조하는 모든 신호가 포함되지 않으면, 시뮬레이션과 합성 결과가 달라집니다. 합성은 모든 입력을 추론하지만 시뮬레이션은 민감도 리스트에 없는 신호의 변화를 무시합니다. 이는 RTL 시뮬레이션에서 숨겨진 버그를 만드는 대표적 원인입니다.',
     solution: '조합 논리 always 블록에는 always @(*)를 사용하거나, SystemVerilog에서는 always_comb를 사용합니다. 명시적으로 나열할 경우 블록에서 읽는 모든 신호를 빠짐없이 포함하고, 신호 추가·제거 시 민감도 리스트도 반드시 동기화합니다.',
+    diagram: 'sensitivity_list',
     code: [
       { text: 'always @(a or b) begin  // c가 민감도 리스트에 없음!' },
       { text: '  out = a & b & c;', highlight: true, annotate: 'W: sensitivity_list_var_missing — c 누락' },
@@ -1158,6 +1465,7 @@ export default function StructuralFsmRulesSlide() {
                         {currentRule.diagram === 'combo_loop' && '🔍 게이트 회로 블록도'}
                         {currentRule.diagram === 'latch_inferred' && '🔬 래치 문제 시각화'}
                         {currentRule.diagram === 'assign_width_overflow' && '📊 비트 손실 시각화'}
+                        {currentRule.diagram === 'sensitivity_list' && '🔌 Sim-Synth 불일치 시각화'}
                       </button>
                     )}
                   </div>
@@ -1284,11 +1592,13 @@ export default function StructuralFsmRulesSlide() {
                   {showDiagram === 'combo_loop' && 'GATE-LEVEL SCHEMATIC · combo_loop'}
                   {showDiagram === 'latch_inferred' && 'LATCH SEMANTICS · latch_inferred'}
                   {showDiagram === 'assign_width_overflow' && 'BIT-WIDTH OVERFLOW · assign_width_overflow'}
+                  {showDiagram === 'sensitivity_list' && 'SIM-SYNTH MISMATCH · sensitivity_list_var_missing'}
                 </div>
                 <div style={{ fontSize: '1rem', fontWeight: 800, color: FPGA.dark }}>
                   {showDiagram === 'combo_loop' && '조합 피드백 루프 — 수정 전 / 후 회로 비교'}
                   {showDiagram === 'latch_inferred' && '래치가 왜 문제인가? — 3 가지 근본 원인 + 타이밍 파형'}
                   {showDiagram === 'assign_width_overflow' && '비트 폭 오버플로우 — 어떻게 발생하고 왜 위험한가?'}
+                  {showDiagram === 'sensitivity_list' && '민감도 리스트 누락 — 의도 회로 vs 시뮬레이션 해석'}
                 </div>
               </div>
               <button
@@ -1306,6 +1616,7 @@ export default function StructuralFsmRulesSlide() {
               {showDiagram === 'combo_loop' && <ComboLoopDiagram />}
               {showDiagram === 'latch_inferred' && <LatchProblemDiagram />}
               {showDiagram === 'assign_width_overflow' && <WidthOverflowDiagram />}
+              {showDiagram === 'sensitivity_list' && <SensitivityListDiagram />}
             </div>
             {showDiagram === 'combo_loop' && (
               <div style={{
