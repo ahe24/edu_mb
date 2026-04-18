@@ -22,6 +22,16 @@ type RuleKey =
   | 'fsm_with_unreachable_state'
   | 'fsm_without_default_state';
 
+type DiagramKey =
+  | 'combo_loop'
+  | 'latch_inferred'
+  | 'assign_width_overflow'
+  | 'sensitivity_list'
+  | 'fsm_without_reset_state'
+  | 'fsm_with_deadend_state'
+  | 'fsm_with_unreachable_state'
+  | 'fsm_without_default_state';
+
 interface RuleData {
   key: RuleKey;
   ruleId: string;
@@ -36,7 +46,7 @@ interface RuleData {
   solution: string;
   code: { text: string; highlight?: boolean; annotate?: string }[];
   directive?: string;
-  diagram?: 'combo_loop' | 'latch_inferred' | 'assign_width_overflow' | 'sensitivity_list';
+  diagram?: DiagramKey;
 }
 
 function WidthOverflowDiagram() {
@@ -1010,6 +1020,1022 @@ function SensitivityListDiagram() {
   );
 }
 
+/* ============================================================================
+   FSM Safety — 4 rule diagrams
+   ============================================================================ */
+
+function FsmNoResetDiagram() {
+  const err = '#E53E3E';
+  const ok = '#48BB78';
+  const warn = '#E8913A';
+  const wire = '#4A5568';
+  const text = '#2D3748';
+  const muted = '#718096';
+
+  const dangers = [
+    {
+      icon: '🔌',
+      color: err,
+      title: '파워업 시 불확정',
+      desc: '전원 인가 직후 FSM state 레지스터는 구현에 따라 X/0/랜덤. 리셋 경로가 없으면 설계자가 의도한 IDLE 상태로 시작한다는 보장이 전혀 없음.',
+    },
+    {
+      icon: '🔁',
+      color: warn,
+      title: '리셋 복구 불가',
+      desc: '시스템이 이상 상태로 진입해도 외부 리셋 신호로 복구할 수 없음. 유일한 복구 수단이 전원 사이클링 — Safety 시스템에서 치명적 결함.',
+    },
+    {
+      icon: '🚨',
+      color: err,
+      title: '인증·규격 위반',
+      desc: 'DO-254 CP6, IEC 61508 모두 FSM의 명시적 초기 상태를 요구. 정의되지 않은 상태 진입은 안전 기능 오경보/무경보로 이어져 인증 실패.',
+    },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+      <style>{`
+        /* slow, calm pulses so they don't distract during explanation */
+        @keyframes nrXFlash { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
+        @keyframes nrIdleFade {
+          0%,10% { opacity: 0; }
+          25%,95% { opacity: 1; }
+          100% { opacity: 0.6; }
+        }
+        @keyframes nrResetPulse {
+          0%,40%,100% { stroke-width: 1.8; filter: none; }
+          55%,75% { stroke-width: 2.8; filter: drop-shadow(0 0 3px #48BB78); }
+        }
+        @keyframes nrBoltBlink { 0%,35%,100% { opacity: 0.3 } 55%,70% { opacity: 1 } }
+        .nr-x         { animation: nrXFlash    2.4s ease-in-out infinite; }
+        .nr-idle      { animation: nrIdleFade  9s   ease-in-out infinite; }
+        .nr-reset     { animation: nrResetPulse 9s  ease-in-out infinite; }
+        .nr-bolt      { animation: nrBoltBlink 3s   ease-in-out infinite; }
+      `}</style>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.45rem' }}>
+        {dangers.map((d, i) => (
+          <div key={i} style={{
+            background: `linear-gradient(135deg, ${d.color}08, ${d.color}14)`,
+            border: `1.5px solid ${d.color}40`,
+            borderRadius: '8px',
+            padding: '0.5rem 0.7rem',
+            boxShadow: `0 2px 6px ${d.color}10`,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+              <span style={{ fontSize: '1.05rem' }}>{d.icon}</span>
+              <div style={{ fontSize: '0.71rem', fontWeight: 800, color: d.color }}>
+                위험 {i + 1} · {d.title}
+              </div>
+            </div>
+            <div style={{ fontSize: '0.63rem', color: text, lineHeight: 1.55 }}>
+              {d.desc}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        {/* BEFORE — 리셋 없음 */}
+        <div style={{
+          flex: 1, background: 'linear-gradient(135deg, #FFF5F5, #FFF8F8)',
+          border: `1.5px solid ${err}40`, borderRadius: '8px',
+          padding: '0.5rem 0.7rem 0.4rem', boxShadow: `0 2px 6px ${err}10`,
+        }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 800, color: err, marginBottom: '2px' }}>
+            ❌ 리셋 경로 없음 — 파워업 후 FSM 영구 X
+          </div>
+          <div style={{ fontSize: '0.54rem', color: muted, fontFamily: 'monospace', marginBottom: '2px' }}>
+            always @(posedge clk) case(state) ... endcase
+          </div>
+          <svg viewBox="0 0 340 170" style={{ width: '100%', height: 'auto', display: 'block' }}>
+            {[
+              { label: 'CLK',    y: 28 },
+              { label: 'rst_n',  y: 72 },
+              { label: 'state',  y: 118 },
+            ].map((t, i) => (
+              <g key={i}>
+                <text x="4" y={t.y + 4} fontSize="8.5" fontWeight="700" fill={wire} fontFamily="monospace">{t.label}</text>
+                <line x1="55" y1={t.y + 4} x2="335" y2={t.y + 4} stroke="#CBD5E0" strokeWidth="0.4" strokeDasharray="2,3" />
+              </g>
+            ))}
+            <polyline points="55,38 75,38 75,18 95,18 95,38 115,38 115,18 135,18 135,38 155,38 155,18 175,18 175,38 195,38 195,18 215,18 215,38 235,38 235,18 255,18 255,38 275,38 275,18 295,18 295,38 335,38"
+              fill="none" stroke={wire} strokeWidth="1.6" />
+            <polyline points="55,82 130,82 130,62 170,62 170,82 335,82"
+              fill="none" stroke={err} strokeWidth="1.8" strokeDasharray="4,3" />
+            <text x="138" y="57" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace">rst_n 무시!</text>
+            <text className="nr-bolt" x="200" y="57" fontSize="11" fill={err}>⚡</text>
+            <rect x="55" y="100" width="280" height="30" fill={err} opacity="0.10" rx="3" />
+            <text className="nr-x" x="195" y="122" fontSize="17" fontWeight="900" textAnchor="middle" fill={err} fontFamily="monospace">X  X  X  X  X  X</text>
+            <line x1="55" y1="148" x2="335" y2="148" stroke="#A0AEC0" strokeWidth="0.5" />
+            <text x="335" y="160" fontSize="8" textAnchor="end" fill={muted} fontFamily="monospace">time →</text>
+            <text x="195" y="163" fontSize="8.5" fontWeight="700" textAnchor="middle" fill={err}>state = X 영구 전파 · FSM 정상 동작 불가</text>
+          </svg>
+        </div>
+
+        {/* AFTER — 리셋 포함 */}
+        <div style={{
+          flex: 1, background: 'linear-gradient(135deg, #F0FFF4, #F7FFFA)',
+          border: `1.5px solid ${ok}40`, borderRadius: '8px',
+          padding: '0.5rem 0.7rem 0.4rem', boxShadow: `0 2px 6px ${ok}10`,
+        }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 800, color: ok, marginBottom: '2px' }}>
+            ✅ 리셋 경로 포함 — 확정적 IDLE 시작
+          </div>
+          <div style={{ fontSize: '0.54rem', color: muted, fontFamily: 'monospace', marginBottom: '2px' }}>
+            if (!rst_n) state &lt;= ST_IDLE; else case(state) ...
+          </div>
+          <svg viewBox="0 0 340 170" style={{ width: '100%', height: 'auto', display: 'block' }}>
+            {[
+              { label: 'CLK',    y: 28 },
+              { label: 'rst_n',  y: 72 },
+              { label: 'state',  y: 118 },
+            ].map((t, i) => (
+              <g key={i}>
+                <text x="4" y={t.y + 4} fontSize="8.5" fontWeight="700" fill={wire} fontFamily="monospace">{t.label}</text>
+                <line x1="55" y1={t.y + 4} x2="335" y2={t.y + 4} stroke="#CBD5E0" strokeWidth="0.4" strokeDasharray="2,3" />
+              </g>
+            ))}
+            <polyline points="55,38 75,38 75,18 95,18 95,38 115,38 115,18 135,18 135,38 155,38 155,18 175,18 175,38 195,38 195,18 215,18 215,38 235,38 235,18 255,18 255,38 275,38 275,18 295,18 295,38 335,38"
+              fill="none" stroke={wire} strokeWidth="1.6" />
+            <polyline className="nr-reset" points="55,82 130,82 130,62 170,62 170,82 335,82"
+              fill="none" stroke={ok} strokeWidth="1.8" />
+            <circle cx="170" cy="82" r="3.2" fill={ok} />
+            <text x="140" y="57" fontSize="8" fontWeight="800" fill={ok} fontFamily="monospace">rst_n 해제 에지</text>
+            <rect x="55" y="100" width="115" height="30" fill={err} opacity="0.10" rx="3" />
+            <text x="112" y="122" fontSize="13" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">X</text>
+            <rect className="nr-idle" x="170" y="100" width="165" height="30" fill={ok} opacity="0.14" rx="3" />
+            <text className="nr-idle" x="252" y="121" fontSize="11" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">ST_IDLE</text>
+            <polygon points="163,105 172,115 163,125" fill={ok} />
+            <line x1="55" y1="148" x2="335" y2="148" stroke="#A0AEC0" strokeWidth="0.5" />
+            <text x="335" y="160" fontSize="8" textAnchor="end" fill={muted} fontFamily="monospace">time →</text>
+            <text x="195" y="163" fontSize="8.5" fontWeight="700" textAnchor="middle" fill={ok}>리셋 해제와 동시에 IDLE 진입 · 이후 정상 전이</text>
+          </svg>
+        </div>
+      </div>
+
+      <div style={{
+        background: `linear-gradient(135deg, ${ok}10, ${ok}18)`,
+        border: `1.5px solid ${ok}40`,
+        borderRadius: '7px',
+        padding: '0.5rem 0.75rem',
+        fontSize: '0.66rem',
+        color: text, lineHeight: 1.55,
+      }}>
+        <strong style={{ color: ok }}>✅ 해결:</strong> FSM 레지스터는 반드시 <strong>async 또는 sync 리셋</strong>을 통해 IDLE(또는 지정된 초기 상태)로 복귀하는 경로를 포함시킬 것. FF 1~2개 추가만으로 영구 X 전파를 원천 차단하며, DO-254 · IEC 61508 요구사항(명시적 초기 상태)을 충족. FPGA 배치 자원 소모는 극히 작지만 <strong>Safety 효과가 가장 높은 FSM 룰</strong>.
+      </div>
+    </div>
+  );
+}
+
+function FsmDeadendDiagram() {
+  const err = '#E53E3E';
+  const ok = '#48BB78';
+  const warn = '#E8913A';
+  const wire = '#4A5568';
+  const text = '#2D3748';
+  const bg = '#F7FAFC';
+
+  // State positions shared by before/after
+  const pos: Record<string, { x: number; y: number }> = {
+    ST0: { x: 55,  y: 110 },
+    ST1: { x: 155, y: 55  },
+    ST2: { x: 155, y: 165 },
+    ST3: { x: 260, y: 110 },
+    ST4: { x: 360, y: 110 },
+  };
+  const R = 22;
+
+  const bubble = (id: string, label: string, color: string, trapped = false) => (
+    <g key={id}>
+      {trapped && (
+        <circle className="de-trap-ring" cx={pos[id].x} cy={pos[id].y} r={R + 6}
+          fill="none" stroke={err} strokeWidth="1.6" strokeDasharray="3,3" opacity="0" />
+      )}
+      <circle cx={pos[id].x} cy={pos[id].y} r={R}
+        fill={trapped ? `${err}18` : `${color}14`}
+        stroke={color} strokeWidth={trapped ? 2.2 : 1.8}
+        filter={trapped ? undefined : `url(#de_sh_${color.slice(1)})`} />
+      <text x={pos[id].x} y={pos[id].y + 4} fontSize="11" fontWeight="800"
+        textAnchor="middle" fill={color} fontFamily="monospace">{label}</text>
+    </g>
+  );
+
+  const arrow = (fromId: string, toId: string, lbl: string, color: string, curveDy = 0) => {
+    const a = pos[fromId], b = pos[toId];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const nx = dx / len, ny = dy / len;
+    const sx = a.x + nx * R, sy = a.y + ny * R;
+    const ex = b.x - nx * (R + 2), ey = b.y - ny * (R + 2);
+    const mx = (sx + ex) / 2, my = (sy + ey) / 2 + curveDy;
+    return (
+      <g key={`${fromId}_${toId}`}>
+        <path d={`M ${sx} ${sy} Q ${mx} ${my} ${ex} ${ey}`}
+          fill="none" stroke={color} strokeWidth="1.8" markerEnd={`url(#de_arr_${color.slice(1)})`} />
+        <text x={mx} y={my - 5} fontSize="8.5" fontWeight="800" textAnchor="middle" fill={color} fontFamily="monospace">
+          {lbl}
+        </text>
+      </g>
+    );
+  };
+
+  const defs = (
+    <defs>
+      {[err, ok, warn, wire].map((c) => (
+        <marker key={c} id={`de_arr_${c.slice(1)}`} markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+          <polygon points="0,0 7,3.5 0,7" fill={c} />
+        </marker>
+      ))}
+      {[err, ok, warn].map((c) => (
+        <filter key={c} id={`de_sh_${c.slice(1)}`} x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="1" dy="1.5" stdDeviation="1" floodColor={c} floodOpacity="0.3" />
+        </filter>
+      ))}
+    </defs>
+  );
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+      <style>{`
+        /* 12s cycle — marker travels slowly, stays stuck at ST4 for a long read pause */
+        @keyframes deMover {
+          0%   { offset-distance: 0%;   opacity: 1; }
+          40%  { offset-distance: 100%; opacity: 1; }
+          90%  { offset-distance: 100%; opacity: 1; }
+          95%  { offset-distance: 100%; opacity: 0.15; }
+          100% { offset-distance: 100%; opacity: 0; }
+        }
+        @keyframes deTrapRing {
+          0%,40%,100% { opacity: 0; transform: scale(1); }
+          50%,85%     { opacity: 0.9; transform: scale(1.1); }
+        }
+        /* 15s cycle for the fix — slow steady loop */
+        @keyframes deMoverOk {
+          0%   { offset-distance: 0%; }
+          100% { offset-distance: 100%; }
+        }
+        .de-trap-ring { animation: deTrapRing 12s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+      `}</style>
+
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        {/* BEFORE — Dead-end */}
+        <div style={{
+          flex: 1,
+          background: 'linear-gradient(135deg, #FFF5F5, #FFF8F8)',
+          border: `1.5px solid ${err}40`, borderRadius: '8px',
+          padding: '0.55rem 0.7rem 0.4rem', boxShadow: `0 2px 6px ${err}10`,
+        }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 800, color: err, marginBottom: '3px' }}>
+            ❌ ST4 Dead-end — 진입 후 영구 갇힘
+          </div>
+          <svg viewBox="0 0 420 220" style={{ width: '100%', height: 'auto', display: 'block' }}>
+            {defs}
+            {/* Edges */}
+            {arrow('ST0', 'ST1', 'a=1', wire, -8)}
+            {arrow('ST0', 'ST2', 'a=0', wire, 8)}
+            {arrow('ST1', 'ST3', '', wire, -8)}
+            {arrow('ST2', 'ST3', '', wire, 8)}
+            {/* ST3 → ST0 back edge (curved below) */}
+            <path d={`M ${pos.ST3.x - 5} ${pos.ST3.y + R} Q ${(pos.ST0.x + pos.ST3.x) / 2} 205 ${pos.ST0.x + 5} ${pos.ST0.y + R}`}
+              fill="none" stroke={wire} strokeWidth="1.6" markerEnd={`url(#de_arr_${wire.slice(1)})`} />
+            <text x="155" y="200" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">b=1</text>
+            {arrow('ST3', 'ST4', 'b=0', err)}
+            {/* ST4 dead-end self label */}
+            <text x={pos.ST4.x} y={pos.ST4.y - R - 8} fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">💀 탈출 전이 없음</text>
+            <text x={pos.ST4.x} y={pos.ST4.y + R + 14} fontSize="8" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">영구 갇힘</text>
+
+            {/* Bubbles */}
+            {bubble('ST0', 'ST0', wire)}
+            {bubble('ST1', 'ST1', wire)}
+            {bubble('ST2', 'ST2', wire)}
+            {bubble('ST3', 'ST3', wire)}
+            {bubble('ST4', 'ST4', err, true)}
+
+            {/* Animated marker: ST0 → ST1 → ST3 → ST4 (trapped) */}
+            <circle r="6" fill={err} stroke="#fff" strokeWidth="1.2" style={{
+              offsetPath: `path("M ${pos.ST0.x} ${pos.ST0.y} L ${pos.ST1.x} ${pos.ST1.y} L ${pos.ST3.x} ${pos.ST3.y} L ${pos.ST4.x} ${pos.ST4.y}")`,
+              animation: 'deMover 12s ease-in-out infinite',
+            }} />
+          </svg>
+        </div>
+
+        {/* AFTER — Fix */}
+        <div style={{
+          flex: 1,
+          background: 'linear-gradient(135deg, #F0FFF4, #F7FFFA)',
+          border: `1.5px solid ${ok}40`, borderRadius: '8px',
+          padding: '0.55rem 0.7rem 0.4rem', boxShadow: `0 2px 6px ${ok}10`,
+        }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 800, color: ok, marginBottom: '3px' }}>
+            ✅ ST4 → ST0 복귀 전이 추가 — 완전 순환
+          </div>
+          <svg viewBox="0 0 420 220" style={{ width: '100%', height: 'auto', display: 'block' }}>
+            {defs}
+            {arrow('ST0', 'ST1', 'a=1', wire, -8)}
+            {arrow('ST0', 'ST2', 'a=0', wire, 8)}
+            {arrow('ST1', 'ST3', '', wire, -8)}
+            {arrow('ST2', 'ST3', '', wire, 8)}
+            <path d={`M ${pos.ST3.x - 5} ${pos.ST3.y + R} Q ${(pos.ST0.x + pos.ST3.x) / 2} 205 ${pos.ST0.x + 5} ${pos.ST0.y + R}`}
+              fill="none" stroke={wire} strokeWidth="1.6" markerEnd={`url(#de_arr_${wire.slice(1)})`} />
+            <text x="155" y="200" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">b=1</text>
+            {arrow('ST3', 'ST4', 'b=0', wire)}
+            {/* NEW ST4 → ST0 back edge (curved above) */}
+            <path d={`M ${pos.ST4.x - 5} ${pos.ST4.y - R} Q ${(pos.ST0.x + pos.ST4.x) / 2} 15 ${pos.ST0.x + 5} ${pos.ST0.y - R}`}
+              fill="none" stroke={ok} strokeWidth="2.2" markerEnd={`url(#de_arr_${ok.slice(1)})`} />
+            <text x={(pos.ST0.x + pos.ST4.x) / 2} y="25" fontSize="9" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">
+              복귀 전이 (신규)
+            </text>
+            <text x={pos.ST4.x} y={pos.ST4.y + R + 14} fontSize="8" fontWeight="700" textAnchor="middle" fill={ok} fontFamily="monospace">안전한 복귀</text>
+
+            {bubble('ST0', 'ST0', wire)}
+            {bubble('ST1', 'ST1', wire)}
+            {bubble('ST2', 'ST2', wire)}
+            {bubble('ST3', 'ST3', wire)}
+            {bubble('ST4', 'ST4', ok)}
+
+            {/* Marker traces full cycle: ST0 → ST1 → ST3 → ST4 → ST0 → ST2 → ST3 → ST4 */}
+            <circle r="6" fill={ok} stroke="#fff" strokeWidth="1.2" style={{
+              offsetPath: `path("M ${pos.ST0.x} ${pos.ST0.y} L ${pos.ST1.x} ${pos.ST1.y} L ${pos.ST3.x} ${pos.ST3.y} L ${pos.ST4.x} ${pos.ST4.y} Q 210 15 ${pos.ST0.x} ${pos.ST0.y} L ${pos.ST2.x} ${pos.ST2.y} L ${pos.ST3.x} ${pos.ST3.y} L ${pos.ST4.x} ${pos.ST4.y}")`,
+              animation: 'deMoverOk 15s linear infinite',
+            }} />
+          </svg>
+        </div>
+      </div>
+
+      <div style={{
+        background: bg, border: '1px solid #E2E8F0', borderRadius: '7px',
+        padding: '0.5rem 0.75rem', fontSize: '0.65rem', color: text, lineHeight: 1.55,
+        display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.7rem',
+      }}>
+        <div>
+          <div style={{ fontWeight: 800, color: err, fontSize: '0.66rem', marginBottom: '2px' }}>🕳 블랙홀 상태</div>
+          나가는 전이가 없는 상태는 FSM 그래프상 블랙홀. 한 번 진입하면 외부 리셋 없이는 절대 빠져나올 수 없음.
+        </div>
+        <div>
+          <div style={{ fontWeight: 800, color: warn, fontSize: '0.66rem', marginBottom: '2px' }}>⏳ 시스템 멈춤</div>
+          ST4 진입 시 이후 사이클의 모든 명령/이벤트가 무시됨. 외부 관점에서는 FPGA 전체가 정지한 것처럼 보임.
+        </div>
+        <div>
+          <div style={{ fontWeight: 800, color: ok, fontSize: '0.66rem', marginBottom: '2px' }}>🛡 필수 탈출 전이</div>
+          모든 FSM 상태에 조건부/무조건 탈출 전이를 정의. 에러 처리 상태도 <strong>ERROR → IDLE</strong> 경로를 반드시 설계.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FsmUnreachableDiagram() {
+  const err = '#E53E3E';
+  const ok = '#48BB78';
+  const warn = '#E8913A';
+  const wire = '#4A5568';
+  const text = '#2D3748';
+
+  const pos: Record<string, { x: number; y: number }> = {
+    IDLE:  { x: 60,  y: 130 },
+    RUN:   { x: 170, y: 130 },
+    DONE:  { x: 280, y: 130 },
+    ERROR: { x: 360, y: 55  },
+  };
+  const R = 24;
+
+  const defs = (
+    <defs>
+      {[err, ok, warn, wire, '#A0AEC0'].map((c) => (
+        <marker key={c} id={`un_arr_${c.slice(1)}`} markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+          <polygon points="0,0 7,3.5 0,7" fill={c} />
+        </marker>
+      ))}
+    </defs>
+  );
+
+  const bubble = (id: keyof typeof pos, label: string, color: string, opts?: { orphan?: boolean }) => {
+    const orphan = opts?.orphan;
+    return (
+      <g key={id}>
+        {orphan && (
+          <circle cx={pos[id].x} cy={pos[id].y} r={R + 10}
+            fill="none" stroke={err} strokeWidth="1.4" strokeDasharray="4,3" opacity="0.7" />
+        )}
+        <circle cx={pos[id].x} cy={pos[id].y} r={R}
+          fill={orphan ? '#EDF2F7' : `${color}14`}
+          stroke={orphan ? '#A0AEC0' : color}
+          strokeWidth={orphan ? 1.6 : 2}
+          strokeDasharray={orphan ? '4,2' : undefined} />
+        <text x={pos[id].x} y={pos[id].y + 4} fontSize="10" fontWeight="800"
+          textAnchor="middle" fill={orphan ? '#A0AEC0' : color} fontFamily="monospace">{label}</text>
+      </g>
+    );
+  };
+
+  const straight = (fromId: keyof typeof pos, toId: keyof typeof pos, lbl: string, color: string, dy = 0) => {
+    const a = pos[fromId], b = pos[toId];
+    const dx = b.x - a.x, dyp = b.y - a.y;
+    const len = Math.sqrt(dx * dx + dyp * dyp);
+    const nx = dx / len, ny = dyp / len;
+    const sx = a.x + nx * R, sy = a.y + ny * R;
+    const ex = b.x - nx * (R + 2), ey = b.y - ny * (R + 2);
+    const mx = (sx + ex) / 2, my = (sy + ey) / 2 + dy;
+    return (
+      <g key={`${fromId}_${toId}`}>
+        <path d={`M ${sx} ${sy} Q ${mx} ${my} ${ex} ${ey}`}
+          fill="none" stroke={color} strokeWidth="1.8" markerEnd={`url(#un_arr_${color.slice(1)})`} />
+        <text x={mx} y={my - 5} fontSize="8.5" fontWeight="800" textAnchor="middle" fill={color} fontFamily="monospace">
+          {lbl}
+        </text>
+      </g>
+    );
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+      <style>{`
+        /* slow cycles so the viewer can read during explanation */
+        @keyframes unCycle   { 0% { offset-distance: 0%; } 100% { offset-distance: 100%; } }
+        @keyframes unOrphanBlink {
+          0%,100% { opacity: 0.45; }
+          50% { opacity: 1; }
+        }
+        @keyframes unDivert { 0% { offset-distance: 0%; } 100% { offset-distance: 100%; } }
+        .un-orphan-label { animation: unOrphanBlink 4s ease-in-out infinite; }
+      `}</style>
+
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        {/* BEFORE */}
+        <div style={{
+          flex: 1,
+          background: 'linear-gradient(135deg, #FFF5F5, #FFF8F8)',
+          border: `1.5px solid ${err}40`, borderRadius: '8px',
+          padding: '0.55rem 0.7rem 0.4rem', boxShadow: `0 2px 6px ${err}10`,
+        }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 800, color: err, marginBottom: '3px' }}>
+            ❌ ERROR 상태로의 진입 경로 없음 — Dead Code
+          </div>
+          <svg viewBox="0 0 420 210" style={{ width: '100%', height: 'auto', display: 'block' }}>
+            {defs}
+            {/* valid edges */}
+            {straight('IDLE', 'RUN', 'start', wire, -10)}
+            <path d={`M ${pos.IDLE.x} ${pos.IDLE.y + R} Q ${(pos.IDLE.x + pos.RUN.x) / 2} 190 ${pos.RUN.x - 3} ${pos.RUN.y + R}`}
+              fill="none" stroke={wire} strokeWidth="1.6" opacity="0.4" />
+            {/* IDLE self-loop (!start) */}
+            <path d={`M ${pos.IDLE.x - 18} ${pos.IDLE.y - 14} A 16 16 0 1 0 ${pos.IDLE.x - 4} ${pos.IDLE.y - 22}`}
+              fill="none" stroke={wire} strokeWidth="1.4" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
+            <text x={pos.IDLE.x - 34} y={pos.IDLE.y - 30} fontSize="7.5" fontWeight="700" fill={wire} fontFamily="monospace">!start</text>
+            {straight('RUN', 'DONE', 'done', wire, -10)}
+            {/* RUN self-loop !done */}
+            <path d={`M ${pos.RUN.x + 18} ${pos.RUN.y + 20} A 16 16 0 1 0 ${pos.RUN.x + 3} ${pos.RUN.y + 26}`}
+              fill="none" stroke={wire} strokeWidth="1.4" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
+            <text x={pos.RUN.x + 16} y={pos.RUN.y + 48} fontSize="7.5" fontWeight="700" fill={wire} fontFamily="monospace">!done</text>
+            {/* DONE → IDLE back edge (curved above) */}
+            <path d={`M ${pos.DONE.x} ${pos.DONE.y - R} Q ${(pos.IDLE.x + pos.DONE.x) / 2} 35 ${pos.IDLE.x} ${pos.IDLE.y - R}`}
+              fill="none" stroke={wire} strokeWidth="1.7" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
+            <text x={(pos.IDLE.x + pos.DONE.x) / 2} y="45" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">
+              unconditional
+            </text>
+
+            {/* ERROR → IDLE (exists but unreachable) */}
+            <path d={`M ${pos.ERROR.x - R} ${pos.ERROR.y + 5} Q 200 90 ${pos.IDLE.x + R} ${pos.IDLE.y - 8}`}
+              fill="none" stroke="#A0AEC0" strokeWidth="1.2" strokeDasharray="3,3"
+              markerEnd={`url(#un_arr_${'#A0AEC0'.slice(1)})`} opacity="0.6" />
+            <text x="230" y="80" fontSize="7.5" fontWeight="700" fill="#A0AEC0" fontFamily="monospace">ERROR→IDLE</text>
+
+            {/* Orphan label */}
+            <text className="un-orphan-label" x={pos.ERROR.x} y={pos.ERROR.y - R - 12}
+              fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">
+              ⛔ 진입 경로 0개 — Dead Code
+            </text>
+
+            {bubble('IDLE',  'IDLE',  wire)}
+            {bubble('RUN',   'RUN',   wire)}
+            {bubble('DONE',  'DONE',  wire)}
+            {bubble('ERROR', 'ERROR', err, { orphan: true })}
+
+            {/* marker cycling IDLE → RUN → DONE → IDLE */}
+            <circle r="6" fill={warn} stroke="#fff" strokeWidth="1.2" style={{
+              offsetPath: `path("M ${pos.IDLE.x} ${pos.IDLE.y} L ${pos.RUN.x} ${pos.RUN.y} L ${pos.DONE.x} ${pos.DONE.y} Q ${(pos.IDLE.x + pos.DONE.x) / 2} 35 ${pos.IDLE.x} ${pos.IDLE.y}")`,
+              animation: 'unCycle 14s linear infinite',
+            }} />
+          </svg>
+        </div>
+
+        {/* AFTER */}
+        <div style={{
+          flex: 1,
+          background: 'linear-gradient(135deg, #F0FFF4, #F7FFFA)',
+          border: `1.5px solid ${ok}40`, borderRadius: '8px',
+          padding: '0.55rem 0.7rem 0.4rem', boxShadow: `0 2px 6px ${ok}10`,
+        }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: 800, color: ok, marginBottom: '3px' }}>
+            ✅ RUN → ERROR 진입 경로 추가 — 완전 도달 가능
+          </div>
+          <svg viewBox="0 0 420 210" style={{ width: '100%', height: 'auto', display: 'block' }}>
+            {defs}
+            {straight('IDLE', 'RUN', 'start', wire, -10)}
+            <path d={`M ${pos.IDLE.x - 18} ${pos.IDLE.y - 14} A 16 16 0 1 0 ${pos.IDLE.x - 4} ${pos.IDLE.y - 22}`}
+              fill="none" stroke={wire} strokeWidth="1.4" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
+            <text x={pos.IDLE.x - 34} y={pos.IDLE.y - 30} fontSize="7.5" fontWeight="700" fill={wire} fontFamily="monospace">!start</text>
+            {straight('RUN', 'DONE', 'done', wire, -10)}
+            {/* NEW RUN → ERROR */}
+            <path d={`M ${pos.RUN.x + 8} ${pos.RUN.y - R + 4} Q 265 60 ${pos.ERROR.x - R + 2} ${pos.ERROR.y + 4}`}
+              fill="none" stroke={ok} strokeWidth="2.2" markerEnd={`url(#un_arr_${ok.slice(1)})`} />
+            <text x="260" y="55" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">
+              err (신규)
+            </text>
+            {/* DONE → IDLE */}
+            <path d={`M ${pos.DONE.x} ${pos.DONE.y - R} Q ${(pos.IDLE.x + pos.DONE.x) / 2} 35 ${pos.IDLE.x} ${pos.IDLE.y - R}`}
+              fill="none" stroke={wire} strokeWidth="1.7" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
+            <text x={(pos.IDLE.x + pos.DONE.x) / 2} y="25" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">
+              unconditional
+            </text>
+            {/* ERROR → IDLE */}
+            <path d={`M ${pos.ERROR.x - R} ${pos.ERROR.y + 5} Q 200 105 ${pos.IDLE.x + R} ${pos.IDLE.y - 6}`}
+              fill="none" stroke={ok} strokeWidth="1.8" markerEnd={`url(#un_arr_${ok.slice(1)})`} />
+            <text x="205" y="110" fontSize="8" fontWeight="800" fill={ok} fontFamily="monospace">복구 경로</text>
+
+            {bubble('IDLE',  'IDLE',  wire)}
+            {bubble('RUN',   'RUN',   wire)}
+            {bubble('DONE',  'DONE',  wire)}
+            {bubble('ERROR', 'ERROR', ok)}
+
+            {/* marker cycling with err diversion */}
+            <circle r="6" fill={ok} stroke="#fff" strokeWidth="1.2" style={{
+              offsetPath: `path("M ${pos.IDLE.x} ${pos.IDLE.y} L ${pos.RUN.x} ${pos.RUN.y} Q 265 60 ${pos.ERROR.x} ${pos.ERROR.y} Q 200 105 ${pos.IDLE.x} ${pos.IDLE.y} L ${pos.RUN.x} ${pos.RUN.y} L ${pos.DONE.x} ${pos.DONE.y} Q ${(pos.IDLE.x + pos.DONE.x) / 2} 35 ${pos.IDLE.x} ${pos.IDLE.y}")`,
+              animation: 'unDivert 18s linear infinite',
+            }} />
+          </svg>
+        </div>
+      </div>
+
+      <div style={{
+        background: '#F7FAFC', border: '1px solid #E2E8F0', borderRadius: '7px',
+        padding: '0.5rem 0.75rem', fontSize: '0.65rem', color: text, lineHeight: 1.55,
+        display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.7rem',
+      }}>
+        <div>
+          <div style={{ fontWeight: 800, color: err, fontSize: '0.66rem', marginBottom: '2px' }}>📦 Dead Code</div>
+          도달 경로가 없는 상태는 실질적으로 죽은 코드. 합성 도구가 최적화로 제거해버릴 수 있어 설계 의도와 구현이 갈림.
+        </div>
+        <div>
+          <div style={{ fontWeight: 800, color: warn, fontSize: '0.66rem', marginBottom: '2px' }}>🔬 TMR/ECC 상호작용</div>
+          <strong>SEU</strong>로 인한 state 레지스터 bit flip은 Unreachable 상태 진입을 유발 가능. 도달 불가라는 가정은 방사선 환경에서 무너짐.
+        </div>
+        <div>
+          <div style={{ fontWeight: 800, color: ok, fontSize: '0.66rem', marginBottom: '2px' }}>🛠 해결</div>
+          스펙에 정의된 상태라면 전이 경로를 추가하거나, 불필요하다면 제거. 방사선 환경에서는 default 절도 반드시 함께 설계.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FsmNoDefaultDiagram() {
+  const err = '#E53E3E';
+  const ok = '#48BB78';
+  const warn = '#E8913A';
+  const text = '#2D3748';
+  const muted = '#718096';
+  const bg = '#F7FAFC';
+
+  const [tab, setTab] = useState<'seu' | 'fix'>('seu');
+
+  const tabs: { key: 'seu' | 'fix'; label: string }[] = [
+    { key: 'seu', label: '☢ SEU 시나리오 — bit flip 발생' },
+    { key: 'fix', label: '🛡 default 절 추가 — 안전 복귀' },
+  ];
+
+  const stateCells = (
+    active: string,
+    poison = false
+  ) => {
+    const rows = [
+      { enc: "2'b00", next: "2'b01", color: ok },
+      { enc: "2'b01", next: "2'b10", color: ok },
+      { enc: "2'b10", next: "2'b00", color: ok },
+      { enc: "2'b11", next: '???',   color: err, missing: true },
+    ];
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '3px',
+          fontSize: '0.58rem', fontWeight: 800, color: muted, padding: '0 6px', letterSpacing: '0.04em' }}>
+          <div>STATE</div><div>NEXT</div>
+        </div>
+        {rows.map((r) => {
+          const isActive = r.enc === active;
+          return (
+            <div key={r.enc} style={{
+              display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '3px',
+              padding: '3px 6px', borderRadius: '4px',
+              background: isActive
+                ? (r.missing ? (poison ? `${err}25` : `${err}15`) : `${r.color}14`)
+                : 'transparent',
+              border: isActive
+                ? `1.5px solid ${r.missing ? err : r.color}`
+                : `1px solid ${r.missing ? err + '35' : '#E2E8F0'}`,
+              boxShadow: isActive ? `0 1px 4px ${r.color}25` : 'none',
+            }}>
+              <code style={{ fontSize: '0.63rem', fontWeight: 700, color: r.missing ? err : text, fontFamily: 'monospace' }}>
+                {r.enc}
+              </code>
+              <code style={{ fontSize: '0.63rem', fontWeight: 700, color: r.missing ? err : r.color, fontFamily: 'monospace' }}>
+                {r.next} {r.missing && '⚠'}
+              </code>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+      <style>{`
+        /* 14s cycle: before(1.5s) → drop(1s) → flip(0.3s) → hold after(10s+) → quick reset */
+        @keyframes ndParticle {
+          0%,10%   { transform: translate(0, -10px); opacity: 0; }
+          12%      { opacity: 1; }
+          20%      { transform: translate(0, 85px); opacity: 1; }
+          23%      { opacity: 0.3; }
+          26%,100% { transform: translate(0, 85px); opacity: 0; }
+        }
+        @keyframes ndBitBox {
+          0%,20%   { fill: #F7FAFC; stroke: #CBD5E0; }
+          23%,100% { fill: #E53E3E22; stroke: #E53E3E; }
+        }
+        @keyframes ndBitBefore {
+          0%,20%   { opacity: 1; transform: scaleY(1); }
+          23%,100% { opacity: 0; transform: scaleY(0); }
+        }
+        @keyframes ndBitAfter {
+          0%,23%   { opacity: 0; transform: scaleY(0); }
+          26%,100% { opacity: 1; transform: scaleY(1); }
+        }
+        @keyframes ndShock {
+          0%,20%,100%  { opacity: 0; transform: scale(0.6); }
+          22%,26%      { opacity: 0.75; transform: scale(1.7); }
+        }
+        @keyframes ndPoisonPulse {
+          0%,22%   { opacity: 0; }
+          26%      { opacity: 1; }
+          30%,100% { opacity: 1; }
+        }
+        @keyframes ndBeforeDim {
+          0%,20%   { opacity: 1; }
+          26%,100% { opacity: 0.25; }
+        }
+        @keyframes ndAfterShow {
+          0%,22%   { opacity: 0; }
+          28%,100% { opacity: 1; }
+        }
+        /* Row animations for the state-transition table */
+        @keyframes ndRowBefore {
+          0%,18%   { background: rgba(72,187,120,0.15); border-color: #48BB78; box-shadow: 0 1px 4px rgba(72,187,120,0.25); }
+          25%,100% { background: transparent;           border-color: #E2E8F0; box-shadow: none; }
+        }
+        @keyframes ndRowAppear {
+          0%,18%   { opacity: 0; max-height: 0; padding: 0 6px; border-width: 0 1px; margin-top: -2px; background: transparent; border-color: transparent; box-shadow: none; }
+          30%,100% { opacity: 1; max-height: 30px; padding: 3px 6px; border-width: 1px; margin-top: 0; background: rgba(229,62,62,0.18); border-color: #E53E3E; box-shadow: 0 1px 4px rgba(229,62,62,0.25); }
+        }
+        @keyframes ndHintFade {
+          0%,20%   { opacity: 1; }
+          25%,100% { opacity: 0; }
+        }
+        @keyframes ndCodeCommentPulse {
+          0%,22%     { background: rgba(255,208,128,0.05); color: #FFD080; }
+          28%,32%    { background: rgba(229,62,62,0.25);   color: #FFB3B3; }
+          40%,100%   { background: rgba(229,62,62,0.18);   color: #FF8080; }
+        }
+        .nd-particle     { animation: ndParticle 14s ease-in infinite; }
+        .nd-bit          { animation: ndBitBox 14s ease-in-out infinite; }
+        .nd-bit-before   { animation: ndBitBefore 14s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+        .nd-bit-after    { animation: ndBitAfter 14s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+        .nd-shock        { animation: ndShock 14s ease-out infinite; transform-origin: center; transform-box: fill-box; }
+        .nd-poison       { animation: ndPoisonPulse 14s ease-in-out infinite; }
+        .nd-before-dim   { animation: ndBeforeDim 14s ease-in-out infinite; }
+        .nd-after-show   { animation: ndAfterShow 14s ease-in-out infinite; }
+        .nd-row-before   { animation: ndRowBefore 14s ease-in-out infinite; }
+        .nd-row-appear   {
+          display: grid;
+          grid-template-columns: 1fr 1.2fr;
+          gap: 3px;
+          border-radius: 4px;
+          border: 1px solid transparent;
+          overflow: hidden;
+          animation: ndRowAppear 14s ease-in-out infinite;
+        }
+        .nd-hint-fade    { animation: ndHintFade 14s ease-in-out infinite; }
+        .nd-code-alert   { animation: ndCodeCommentPulse 14s ease-in-out infinite; }
+      `}</style>
+
+      <div style={{ display: 'flex', gap: '4px', borderBottom: '2px solid #E2E8F0', marginBottom: '0.1rem' }}>
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            style={{
+              padding: '0.4rem 1rem',
+              border: 'none',
+              background: tab === t.key ? `linear-gradient(180deg, ${warn}08, ${warn}20)` : 'transparent',
+              color: tab === t.key ? warn : muted,
+              fontSize: '0.74rem',
+              fontWeight: tab === t.key ? 800 : 600,
+              cursor: 'pointer',
+              borderBottom: tab === t.key ? `2.5px solid ${warn}` : '2.5px solid transparent',
+              marginBottom: '-2px',
+              transition: 'all 0.15s ease',
+              borderRadius: '6px 6px 0 0',
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* TAB 1: SEU scenario */}
+      {tab === 'seu' && (
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'stretch' }}>
+          {/* LEFT: SEU visualization */}
+          <div style={{
+            flex: 1.2,
+            background: bg,
+            border: `1.5px solid ${err}40`,
+            borderRadius: '8px',
+            padding: '0.55rem 0.75rem 0.4rem',
+            boxShadow: `0 2px 6px ${err}10`,
+          }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 800, color: err, marginBottom: '3px' }}>
+              ☢ SEU (Single Event Upset) — 방사선 입자가 state 레지스터 bit flip
+            </div>
+            <svg viewBox="0 0 340 220" style={{ width: '100%', height: 'auto', display: 'block' }}>
+              {/* Sky/space gradient */}
+              <defs>
+                <linearGradient id="nd_sky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#1A2235" />
+                  <stop offset="100%" stopColor="#2D3748" />
+                </linearGradient>
+                <radialGradient id="nd_shock_grad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor={err} stopOpacity="0.8" />
+                  <stop offset="100%" stopColor={err} stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <rect x="0" y="0" width="340" height="50" fill="url(#nd_sky)" rx="4" />
+              <text x="170" y="20" fontSize="9" fontWeight="700" textAnchor="middle" fill="#E2E8F0" fontFamily="monospace">
+                ☁ 우주 방사선 / 중성자 / α 입자
+              </text>
+              <text x="170" y="34" fontSize="7.5" fontWeight="600" textAnchor="middle" fill="#A0AEC0" fontFamily="monospace">
+                우주·항공 시스템 또는 고에너지 환경
+              </text>
+              {/* stars */}
+              {[[30,12],[80,28],[260,16],[300,32],[130,12],[210,30]].map(([x,y], i) => (
+                <circle key={i} cx={x} cy={y} r="0.8" fill="#FEF9E7" />
+              ))}
+
+              {/* Particle trail — lands on bit[0] (right side, x=210) */}
+              <g className="nd-particle">
+                <line x1="210" y1="40" x2="210" y2="60" stroke={err} strokeWidth="1.5" opacity="0.7" />
+                <circle cx="210" cy="60" r="4" fill={err} />
+                <circle cx="210" cy="60" r="7" fill="none" stroke={err} strokeWidth="1" opacity="0.5" />
+                <text x="222" y="64" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace">n⁺</text>
+              </g>
+
+              {/* Chip package */}
+              <rect x="50" y="110" width="240" height="90" rx="6"
+                fill="#E2E8F0" stroke="#718096" strokeWidth="1.5" />
+              <text x="170" y="125" fontSize="8" fontWeight="800" textAnchor="middle" fill="#4A5568" fontFamily="monospace">
+                FPGA · state[1:0] register  (MSB ← → LSB)
+              </text>
+              {/* Chip pins */}
+              {[60, 110, 160, 180, 230, 280].map((x, i) => (
+                <rect key={i} x={x} y="200" width="10" height="5" fill="#718096" />
+              ))}
+
+              {/* state register bits — MSB (bit[1]) on left, LSB (bit[0]) on right */}
+              {/* bit[1] — MSB, unaffected (stays 1) */}
+              <rect x="140" y="140" width="40" height="40" rx="4"
+                fill={`${ok}14`} stroke={ok} strokeWidth="1.5" />
+              <text x="160" y="168" fontSize="22" fontWeight="900"
+                textAnchor="middle" fill={text} fontFamily="monospace">1</text>
+              <text x="160" y="132" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={muted} fontFamily="monospace">bit[1]</text>
+
+              {/* bit[0] — LSB, gets hit · card-flip 0 → 1 */}
+              <rect className="nd-bit" x="190" y="140" width="40" height="40" rx="4"
+                fill="#F7FAFC" stroke="#CBD5E0" strokeWidth="1.5" />
+              {/* two overlaid digits; scaleY flip swaps visibility */}
+              <text className="nd-bit-before" x="210" y="168" fontSize="22" fontWeight="900"
+                textAnchor="middle" fill={text} fontFamily="monospace">0</text>
+              <text className="nd-bit-after" x="210" y="168" fontSize="22" fontWeight="900"
+                textAnchor="middle" fill={err} fontFamily="monospace">1</text>
+              <text x="210" y="132" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={muted} fontFamily="monospace">bit[0]</text>
+              {/* Shock ring at bit[0] */}
+              <circle className="nd-shock" cx="210" cy="160" r="28" fill="url(#nd_shock_grad)" />
+              {/* 0 → 1 flip label */}
+              <text className="nd-after-show" x="210" y="194" fontSize="7.5" fontWeight="800"
+                textAnchor="middle" fill={err} fontFamily="monospace">0 → 1 flip!</text>
+
+              {/* Before/after indicator */}
+              <text className="nd-before-dim" x="80" y="152" fontSize="8" fontWeight="800" fill={text} fontFamily="monospace">before:</text>
+              <text className="nd-before-dim" x="80" y="165" fontSize="12" fontWeight="900" fill={text} fontFamily="monospace">2'b10</text>
+              <text className="nd-before-dim" x="80" y="178" fontSize="7" fontWeight="700" fill={ok} fontFamily="monospace">✓ 정의됨</text>
+
+              <text className="nd-poison" x="244" y="152" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace">after:</text>
+              <text className="nd-poison" x="244" y="165" fontSize="12" fontWeight="900" fill={err} fontFamily="monospace">2'b11</text>
+              <text className="nd-poison" x="244" y="178" fontSize="7" fontWeight="700" fill={err} fontFamily="monospace">⚠ 미정의!</text>
+            </svg>
+          </div>
+
+          {/* RIGHT: State transition table + code */}
+          <div style={{
+            flex: 1,
+            display: 'flex', flexDirection: 'column', gap: '0.4rem',
+          }}>
+            <div style={{
+              background: bg,
+              border: `1.5px solid ${err}40`,
+              borderRadius: '8px',
+              padding: '0.5rem 0.7rem 0.55rem',
+              boxShadow: `0 2px 6px ${err}10`,
+            }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: err, marginBottom: '4px' }}>
+                📋 state case 테이블 — 정의된 3개 인코딩만 존재
+              </div>
+              {(() => {
+                const rowBase: React.CSSProperties = {
+                  display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '3px',
+                  padding: '3px 6px', borderRadius: '4px',
+                  border: '1px solid #E2E8F0',
+                };
+                const codeBase: React.CSSProperties = {
+                  fontSize: '0.63rem', fontWeight: 700, color: text, fontFamily: 'monospace',
+                };
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <div style={{
+                      display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '3px',
+                      fontSize: '0.58rem', fontWeight: 800, color: muted,
+                      padding: '0 6px', letterSpacing: '0.04em',
+                    }}>
+                      <div>STATE</div><div>NEXT</div>
+                    </div>
+                    <div style={rowBase}>
+                      <code style={codeBase}>2'b00</code>
+                      <code style={{ ...codeBase, color: ok }}>2'b01</code>
+                    </div>
+                    <div style={rowBase}>
+                      <code style={codeBase}>2'b01</code>
+                      <code style={{ ...codeBase, color: ok }}>2'b10</code>
+                    </div>
+                    {/* 현재 state (SEU 이전에 강조, 이후 중립으로 전환) */}
+                    <div className="nd-row-before" style={rowBase}>
+                      <code style={codeBase}>2'b10</code>
+                      <code style={{ ...codeBase, color: ok }}>2'b00</code>
+                    </div>
+                    {/* SEU 발생 후 예기치 않게 나타나는 미정의 인코딩 행 */}
+                    <div className="nd-row-appear">
+                      <code style={{ ...codeBase, color: err }}>2'b11</code>
+                      <code style={{ ...codeBase, color: err }}>???  ⚠ 미정의</code>
+                    </div>
+                  </div>
+                );
+              })()}
+              <div className="nd-hint-fade" style={{ fontSize: '0.58rem', color: muted, marginTop: '6px', lineHeight: 1.5 }}>
+                현재 FSM 은 <strong style={{ color: ok }}>2'b00 / 01 / 10</strong> 세 인코딩만 다룸. 2'b11 은 case 문에 존재하지 않는 인코딩.
+              </div>
+              <div className="nd-after-show" style={{ fontSize: '0.58rem', color: err, marginTop: '6px', lineHeight: 1.5 }}>
+                ⚠ SEU 로 <strong>2'b11</strong> 도달! case 에 해당 arm 과 default 모두 없음 → 합성 결과는 <strong>래치 추론</strong> 또는 <strong>영구 2'b11 유지</strong>.
+              </div>
+            </div>
+
+            <div style={{
+              background: '#1A2235',
+              borderRadius: '7px',
+              padding: '0.4rem 0.6rem',
+              fontFamily: 'monospace',
+              fontSize: '0.56rem',
+              lineHeight: 1.55,
+              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+              whiteSpace: 'pre',
+            }}>
+              <div style={{ color: '#A8C0D8' }}>case (state)</div>
+              <div style={{ color: '#A8C0D8' }}>  2'b00: state &lt;= 2'b01;</div>
+              <div style={{ color: '#A8C0D8' }}>  2'b01: state &lt;= 2'b10;</div>
+              <div style={{ color: '#A8C0D8' }}>  2'b10: state &lt;= 2'b00;</div>
+              <div className="nd-code-alert">  {'// 2\'b11 은 ???  ← arm 없음'}</div>
+              <div style={{ color: '#A8C0D8' }}>endcase</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: Fix */}
+      {tab === 'fix' && (
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'stretch' }}>
+          <div style={{
+            flex: 1.2,
+            background: 'linear-gradient(135deg, #F0FFF4, #F7FFFA)',
+            border: `1.5px solid ${ok}40`, borderRadius: '8px',
+            padding: '0.55rem 0.75rem 0.4rem', boxShadow: `0 2px 6px ${ok}10`,
+          }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 800, color: ok, marginBottom: '3px' }}>
+              🛡 default 절 추가 — SEU 후에도 안전 상태로 자동 복귀
+            </div>
+            <svg viewBox="0 0 340 220" style={{ width: '100%', height: 'auto', display: 'block' }}>
+              <defs>
+                <marker id="nd_arr_ok" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+                  <polygon points="0,0 7,3.5 0,7" fill={ok} />
+                </marker>
+              </defs>
+
+              {/* poisoned state */}
+              <circle cx="85" cy="110" r="32" fill={`${err}12`} stroke={err} strokeWidth="2" strokeDasharray="4,3" />
+              <text x="85" y="108" fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">SEU 후</text>
+              <text x="85" y="122" fontSize="11" fontWeight="900" textAnchor="middle" fill={err} fontFamily="monospace">2'b11</text>
+              <text x="85" y="158" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">(미정의 인코딩)</text>
+
+              {/* Arrow: default transition */}
+              <path d="M 120 105 Q 170 45 225 95"
+                fill="none" stroke={ok} strokeWidth="2.2" markerEnd="url(#nd_arr_ok)" />
+              <text x="172" y="62" fontSize="9" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">
+                default:
+              </text>
+              <text x="172" y="75" fontSize="8" fontWeight="700" textAnchor="middle" fill={ok} fontFamily="monospace">
+                state ← 2'b00
+              </text>
+
+              {/* safe state */}
+              <circle cx="250" cy="110" r="36" fill={`${ok}16`} stroke={ok} strokeWidth="2.5" />
+              <text x="250" y="106" fontSize="9" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">안전 복귀</text>
+              <text x="250" y="122" fontSize="12" fontWeight="900" textAnchor="middle" fill={ok} fontFamily="monospace">2'b00</text>
+              <text x="250" y="162" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={ok} fontFamily="monospace">(IDLE 재시작)</text>
+
+              {/* FF clock tick showing recovery */}
+              <rect x="50" y="178" width="240" height="28" rx="4" fill="#fff" stroke="#CBD5E0" strokeWidth="1" />
+              <text x="60" y="196" fontSize="8" fontWeight="800" fill={text} fontFamily="monospace">t:</text>
+              {[
+                { x: 80,  label: '2\'b10', color: ok },
+                { x: 130, label: '2\'b11', color: err },
+                { x: 185, label: '2\'b00', color: ok },
+                { x: 240, label: '2\'b01', color: ok },
+              ].map((c, i) => (
+                <g key={i}>
+                  {i === 1 && <text x={c.x + 13} y="174" fontSize="8" textAnchor="middle" fill={err} fontFamily="monospace">⚡SEU</text>}
+                  {i === 2 && <text x={c.x + 13} y="174" fontSize="8" textAnchor="middle" fill={ok} fontFamily="monospace">default 복귀</text>}
+                  <rect x={c.x} y="184" width="30" height="18" rx="2"
+                    fill={`${c.color}18`} stroke={c.color} strokeWidth="1.2" />
+                  <text x={c.x + 15} y="197" fontSize="9" fontWeight="800" textAnchor="middle" fill={c.color} fontFamily="monospace">
+                    {c.label}
+                  </text>
+                </g>
+              ))}
+              <text x="170" y="217" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={muted} fontFamily="monospace">1 클록 내 정상 상태로 복구</text>
+            </svg>
+          </div>
+
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <div style={{
+              background: bg, border: `1.5px solid ${ok}40`, borderRadius: '8px',
+              padding: '0.5rem 0.7rem 0.55rem', boxShadow: `0 2px 6px ${ok}10`,
+            }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: ok, marginBottom: '4px' }}>
+                📋 default 포함 — 모든 인코딩 커버
+              </div>
+              {stateCells('default')}
+              <div style={{ fontSize: '0.58rem', color: muted, marginTop: '4px', lineHeight: 1.5 }}>
+                default 절은 방사선·noise 등으로 도달 가능한 <strong style={{ color: ok }}>모든 미정의 인코딩</strong>을 IDLE 또는 에러 처리 상태로 강제 복귀시킴.
+              </div>
+            </div>
+
+            <div style={{
+              background: '#1A2235', borderRadius: '7px',
+              padding: '0.4rem 0.6rem',
+              fontFamily: 'monospace', fontSize: '0.56rem', lineHeight: 1.55,
+              boxShadow: '0 2px 6px rgba(0,0,0,0.15)', whiteSpace: 'pre',
+            }}>
+              <div style={{ color: '#A8C0D8' }}>case (state)</div>
+              <div style={{ color: '#A8C0D8' }}>  2'b00: state &lt;= 2'b01;</div>
+              <div style={{ color: '#A8C0D8' }}>  2'b01: state &lt;= 2'b10;</div>
+              <div style={{ color: '#A8C0D8' }}>  2'b10: state &lt;= 2'b00;</div>
+              <div style={{ color: '#80FF9F', background: 'rgba(128,255,159,0.10)' }}>  default: state &lt;= 2'b00;</div>
+              <div style={{ color: '#A8C0D8' }}>endcase</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div style={{
+        background: `linear-gradient(135deg, ${ok}10, ${ok}18)`,
+        border: `1.5px solid ${ok}40`,
+        borderRadius: '7px',
+        padding: '0.5rem 0.75rem',
+        fontSize: '0.66rem',
+        color: text, lineHeight: 1.55,
+      }}>
+        <strong style={{ color: ok }}>✅ 해결:</strong> FSM case 문에는 <strong>반드시 default 절</strong>을 추가하여 정의되지 않은 인코딩으로의 도달(SEU·noise·글리치)에 대비. default 전이는 <strong>IDLE 또는 지정된 에러 처리 상태</strong>로 복귀하도록 설계. 특히 우주·항공·원전처럼 방사선 위협이 있는 환경에서는 <strong>TMR/ECC</strong>와 함께 default 절이 Safety-Critical 방어선의 기본 요건.
+      </div>
+    </div>
+  );
+}
+
 const rules: RuleData[] = [
   {
     key: 'combo_loop',
@@ -1210,6 +2236,7 @@ const rules: RuleData[] = [
     customizable: false,
     problem: 'FSM이 리셋 시 돌아가는 초기 상태가 없으면 파워업 또는 리셋 해제 후 FSM이 불확정 상태에서 시작됩니다. 이는 Safety-Critical 시스템에서 심각한 기능 이상을 유발합니다.',
     solution: 'async 또는 sync 리셋 조건에서 FSM이 명확한 초기 상태(IDLE, RESET 등)로 복귀하도록 코드 작성. 리셋 상태는 시스템이 안전하게 동작을 시작할 수 있는 상태여야 합니다.',
+    diagram: 'fsm_without_reset_state',
     code: [
       { text: 'always @(posedge clk) begin  // 리셋 없음!' },
       { text: '  case (state)', highlight: true, annotate: 'E: fsm_without_reset_state — 리셋 경로 미정의' },
@@ -1236,6 +2263,7 @@ const rules: RuleData[] = [
     customizable: false,
     problem: '나가는 전이(outgoing transition)가 없는 상태는 FSM이 해당 상태에 진입하면 영원히 그 상태에 갇힙니다. 전체 시스템이 멈추는 결과를 초래합니다.',
     solution: '모든 FSM 상태에 조건부 또는 무조건 탈출 전이를 정의. 에러 복구 상태(ERROR → IDLE)와 같이 안전한 상태로 반드시 전이할 수 있도록 설계합니다.',
+    diagram: 'fsm_with_deadend_state',
     code: [
       { text: 'parameter ST0=0, ST1=1, ST2=2, ST3=3, ST4=4;' },
       { text: 'always @(posedge clk) begin' },
@@ -1263,6 +2291,7 @@ const rules: RuleData[] = [
     customizable: false,
     problem: '어떤 전이 경로로도 도달할 수 없는 상태가 존재하면 해당 상태의 로직이 실질적으로 dead code입니다. 설계 의도와 구현 차이를 나타내며 ECC/TMR 같은 안전 메커니즘이 예상치 못한 상태를 유발할 수 있습니다.',
     solution: '불필요한 상태는 제거하거나, 설계 의도에 맞게 전이 경로를 추가. 코드 리뷰를 통해 해당 상태가 설계 스펙에 존재하는지 확인합니다.',
+    diagram: 'fsm_with_unreachable_state',
     code: [
       { text: 'parameter IDLE=0, RUN=1, DONE=2, ERROR=3;' },
       { text: 'always @(posedge clk or negedge rst_n) begin' },
@@ -1289,6 +2318,7 @@ const rules: RuleData[] = [
     customizable: false,
     problem: 'FSM state case 문에 default 절이 없으면 정의되지 않은 인코딩 값(SEU, 방사선 등으로 인한 bit flip)이 발생했을 때 FSM 동작이 불확정합니다. 내방사선(radiation-hardened) 또는 고신뢰성 설계에서 특히 중요합니다.',
     solution: 'FSM state case 문에 항상 default 절을 추가하고, 그 안에서 FSM을 안전한 초기 상태(IDLE 또는 ERROR 처리 상태)로 복귀시키는 전이를 정의합니다.',
+    diagram: 'fsm_without_default_state',
     code: [
       { text: 'always @(posedge clk) begin' },
       { text: '  case (state)       // default 없음!', highlight: true },
@@ -1466,6 +2496,10 @@ export default function StructuralFsmRulesSlide() {
                         {currentRule.diagram === 'latch_inferred' && '🔬 래치 문제 시각화'}
                         {currentRule.diagram === 'assign_width_overflow' && '📊 비트 손실 시각화'}
                         {currentRule.diagram === 'sensitivity_list' && '🔌 Sim-Synth 불일치 시각화'}
+                        {currentRule.diagram === 'fsm_without_reset_state' && '🔌 파워업 시퀀스 시각화'}
+                        {currentRule.diagram === 'fsm_with_deadend_state' && '🕳 Dead-end 상태 그래프'}
+                        {currentRule.diagram === 'fsm_with_unreachable_state' && '📦 도달 불가 상태 그래프'}
+                        {currentRule.diagram === 'fsm_without_default_state' && '☢ SEU bit-flip 시각화'}
                       </button>
                     )}
                   </div>
@@ -1593,12 +2627,20 @@ export default function StructuralFsmRulesSlide() {
                   {showDiagram === 'latch_inferred' && 'LATCH SEMANTICS · latch_inferred'}
                   {showDiagram === 'assign_width_overflow' && 'BIT-WIDTH OVERFLOW · assign_width_overflow'}
                   {showDiagram === 'sensitivity_list' && 'SIM-SYNTH MISMATCH · sensitivity_list_var_missing'}
+                  {showDiagram === 'fsm_without_reset_state' && 'FSM SAFETY · fsm_without_reset_state'}
+                  {showDiagram === 'fsm_with_deadend_state' && 'FSM SAFETY · fsm_with_deadend_state'}
+                  {showDiagram === 'fsm_with_unreachable_state' && 'FSM SAFETY · fsm_with_unreachable_state'}
+                  {showDiagram === 'fsm_without_default_state' && 'FSM SAFETY · fsm_without_default_state'}
                 </div>
                 <div style={{ fontSize: '1rem', fontWeight: 800, color: FPGA.dark }}>
                   {showDiagram === 'combo_loop' && '조합 피드백 루프 — 수정 전 / 후 회로 비교'}
                   {showDiagram === 'latch_inferred' && '래치가 왜 문제인가? — 3 가지 근본 원인 + 타이밍 파형'}
                   {showDiagram === 'assign_width_overflow' && '비트 폭 오버플로우 — 어떻게 발생하고 왜 위험한가?'}
                   {showDiagram === 'sensitivity_list' && '민감도 리스트 누락 — 의도 회로 vs 시뮬레이션 해석'}
+                  {showDiagram === 'fsm_without_reset_state' && '리셋 상태 없는 FSM — 파워업 시 X 전파 메커니즘'}
+                  {showDiagram === 'fsm_with_deadend_state' && 'Dead-end 상태 — 한번 들어가면 못 빠져나오는 블랙홀'}
+                  {showDiagram === 'fsm_with_unreachable_state' && 'Unreachable 상태 — 도달 불가 Dead Code 와 SEU 취약성'}
+                  {showDiagram === 'fsm_without_default_state' && 'default 절 없는 case — SEU 입자로 인한 인코딩 손상'}
                 </div>
               </div>
               <button
@@ -1617,6 +2659,10 @@ export default function StructuralFsmRulesSlide() {
               {showDiagram === 'latch_inferred' && <LatchProblemDiagram />}
               {showDiagram === 'assign_width_overflow' && <WidthOverflowDiagram />}
               {showDiagram === 'sensitivity_list' && <SensitivityListDiagram />}
+              {showDiagram === 'fsm_without_reset_state' && <FsmNoResetDiagram />}
+              {showDiagram === 'fsm_with_deadend_state' && <FsmDeadendDiagram />}
+              {showDiagram === 'fsm_with_unreachable_state' && <FsmUnreachableDiagram />}
+              {showDiagram === 'fsm_without_default_state' && <FsmNoDefaultDiagram />}
             </div>
             {showDiagram === 'combo_loop' && (
               <div style={{
