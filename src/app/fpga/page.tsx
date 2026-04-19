@@ -22,7 +22,7 @@ const curriculum = [
         week: 2, title: 'Questa Lint: 코딩 규칙 및 가이드라인 검증',
         days: [
           { day: 3, title: 'RTL 코딩 규칙 검증 기본', ready: true },
-          { day: 4, title: '커스텀 규칙 설정 및 예외 처리', ready: false },
+          { day: 4, title: '커스텀 규칙 설정 및 예외 처리', ready: true },
         ],
       },
       {
