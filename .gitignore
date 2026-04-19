@@ -57,3 +57,5 @@ vivado*.jou
 
 #lab
 lab/
+
+scratch_*
