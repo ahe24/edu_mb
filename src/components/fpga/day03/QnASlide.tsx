@@ -121,7 +121,7 @@ export default function QnASlide() {
               Q&amp;A
             </p>
             <p style={{ margin: '0.25rem 0 0', fontSize: '0.88rem', color: FPGA.textLight }}>
-              질문이 있으시면 자유롭게 말씀해 주세요.
+              질문 자유롭게.
             </p>
           </div>
         </div>

@@ -7,7 +7,7 @@ const agenda = [
   {
     step: 1,
     title: 'FPGA Methodology Goals',
-    desc: 'Start → Simulation → Release 3단계 체크 강도 진행과 Xilinx / Intel 등 벤더별 Goal 차이를 이해합니다.',
+    desc: 'Start → Simulation → Release 3단계 체크 강도 진행과 Xilinx / Intel 등 벤더별 Goal 차이 이해.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <rect x="3" y="14" width="5" height="10" rx="2" stroke="#4A6FA5" strokeWidth="1.8" fill="rgba(74,111,165,0.10)" />
@@ -21,7 +21,7 @@ const agenda = [
   {
     step: 2,
     title: 'Clock · Assignment 핵심 룰',
-    desc: '클록 게이팅·내부 클록·비동기 리셋 / blocking vs non-blocking 할당 규칙을 코드 예제로 학습합니다.',
+    desc: '클록 게이팅·내부 클록·비동기 리셋 / blocking vs non-blocking 할당 규칙을 코드 예제로 학습.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <circle cx="14" cy="14" r="9" stroke="#E53E3E" strokeWidth="1.8" fill="rgba(229,62,62,0.07)" />
@@ -34,7 +34,7 @@ const agenda = [
   {
     step: 3,
     title: 'Structural · FSM 핵심 룰',
-    desc: '콤보 루프·래치 추론·다중 구동·case default / FSM 리셋·Dead-end·Unreachable 상태 검출을 학습합니다.',
+    desc: '콤보 루프·래치 추론·다중 구동·case default / FSM 리셋·Dead-end·Unreachable 상태 검출 학습.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <rect x="4" y="8" width="8" height="6" rx="2" stroke="#8B6FA5" strokeWidth="1.8" fill="rgba(139,111,165,0.10)" />
@@ -48,7 +48,7 @@ const agenda = [
   {
     step: 4,
     title: 'DO-254 매핑',
-    desc: 'Coding Practices(CP) · Design Reviews(DR) · Safe Synthesis(SS) 카테고리와 Questa Lint 체크 alias 체계를 파악합니다.',
+    desc: 'Coding Practices(CP) · Design Reviews(DR) · Safe Synthesis(SS) 카테고리와 Questa Lint 체크 alias 체계 파악.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <rect x="4" y="4" width="14" height="18" rx="3" stroke="#5B8C5A" strokeWidth="1.8" fill="rgba(91,140,90,0.08)" />
@@ -62,7 +62,7 @@ const agenda = [
   {
     step: 5,
     title: '룰 커스터마이징',
-    desc: 'lint preference · lint off · lint report item 으로 Goal을 프로젝트 요건에 맞게 조정하고 Waiver를 관리합니다.',
+    desc: 'lint preference · lint off · lint report item 으로 Goal을 프로젝트 요건에 맞게 조정·Waiver 관리.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <circle cx="14" cy="14" r="6" stroke="#E8913A" strokeWidth="1.8" fill="rgba(232,145,58,0.08)" />

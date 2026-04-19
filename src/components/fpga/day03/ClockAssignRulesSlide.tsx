@@ -22,11 +22,27 @@ interface RuleData {
   do254: string;
   starc?: string;
   customizable: boolean;
-  problem: string;
-  solution: string;
-  fpgaNote?: string;
+  problem: string | string[];
+  solution: string | string[];
+  fpgaNote?: string | string[];
   code: { text: string; highlight?: boolean; annotate?: string }[];
   directive?: string;
+}
+
+function renderBody(content: string | string[]) {
+  if (Array.isArray(content)) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', lineHeight: 1.35 }}>
+        {content.map((item, i) => (
+          <div key={i} style={{ display: 'flex', gap: '0.3rem', alignItems: 'flex-start' }}>
+            <span style={{ flexShrink: 0, color: FPGA.textLight, fontWeight: 700, marginTop: '1px' }}>·</span>
+            <span style={{ flex: 1 }}>{item}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return content;
 }
 
 const rules: RuleData[] = [
@@ -41,8 +57,14 @@ const rules: RuleData[] = [
     do254: 'SS10_avoid_gated_clocks',
     starc: '3.4.1.1, 1.7.1.1',
     customizable: true,
-    problem: '클록 게이팅 로직(AND gate, MUX 등)이 전용 게이팅 모듈 외부에 존재하면 클록 트리 합성·타이밍 분석이 복잡해지고 글리치(glitch)가 발생할 수 있습니다.',
-    solution: '모든 클록 게이팅 로직을 별도의 clock gating module 내부로 이동. lint preference -clock_gating_module 로 전용 모듈 이름을 등록하면 해당 모듈 내 게이팅은 위반으로 보고하지 않습니다.',
+    problem: [
+      '클록 게이팅 로직(AND gate, MUX 등)이 전용 게이팅 모듈 외부에 존재 시 클록 트리 합성·타이밍 분석 복잡',
+      '글리치(glitch) 발생 가능',
+    ],
+    solution: [
+      '모든 클록 게이팅 로직을 별도의 clock gating module 내부로 이동',
+      'lint preference -clock_gating_module 로 전용 모듈 이름 등록 → 해당 모듈 내 게이팅은 위반 미보고',
+    ],
     code: [
       { text: '// BAD: 조합 로직으로 클록 직접 게이팅' },
       { text: 'assign gated_clk = clk & enable;', highlight: true, annotate: 'W: clock_gated — 클록 게이팅이 전용 모듈 외부' },
@@ -66,8 +88,14 @@ const rules: RuleData[] = [
     do254: 'SS11_avoid_internally_generated_clocks',
     starc: '1.4.1.1, 3.3.1.1',
     customizable: false,
-    problem: 'FF 출력이나 조합 로직으로 파생된 클록은 셋업·홀드 타이밍 분석이 어렵고 STA(Static Timing Analysis) 도구가 제대로 분석하지 못하는 경우가 발생합니다.',
-    solution: '가능한 한 모든 클록은 외부 포트 또는 FPGA 전용 클록 자원(BUFG, MMCM, PLL)에서만 공급. 내부 클록이 불가피한 경우 합성 제약(false path, clock group)을 명시적으로 지정.',
+    problem: [
+      'FF 출력·조합 로직으로 파생된 클록은 셋업·홀드 타이밍 분석 난이도 높음',
+      'STA(Static Timing Analysis) 도구가 제대로 분석하지 못하는 경우 발생',
+    ],
+    solution: [
+      '모든 클록은 외부 포트 또는 FPGA 전용 클록 자원(BUFG, MMCM, PLL)에서만 공급',
+      '내부 클록 불가피 시 합성 제약(false path, clock group) 명시적 지정',
+    ],
     code: [
       { text: 'reg clk_div2;' },
       { text: 'always @(posedge clk) clk_div2 <= ~clk_div2;', highlight: true, annotate: 'W: clock_internal — FF 출력을 클록으로 사용' },
@@ -90,9 +118,17 @@ const rules: RuleData[] = [
     do254: '(STARC 2.3.6.2)',
     starc: '2.3.6.2',
     customizable: true,
-    problem: 'STARC 표준(ASIC 중심)은 비동기 리셋을 active-low로 권장합니다. 파워업 시 전압이 완전히 상승하기 전에 active-high 리셋이 글리치를 일으킬 수 있다는 우려에서입니다.',
+    problem: [
+      'STARC 표준(ASIC 중심): 비동기 리셋을 active-low로 권장',
+      '파워업 시 전압 상승 전 active-high 리셋이 글리치를 일으킬 수 있다는 우려 때문',
+    ],
     solution: '',
-    fpgaNote: '⚠ FPGA(Xilinx) 특이사항: Xilinx 7-Series / UltraScale FPGA는 내부적으로 active-high 리셋 신호를 선호합니다. Xilinx goal(release_xilinx)을 사용하면 이 체크는 자동으로 비활성화되므로 별도 waive 불필요. DO-254 적용 시 active-low 리셋 설계를 유지하거나, Xilinx goal의 자동 조정을 프로젝트 DDP(Design Development Plan)에 명시해야 합니다.',
+    fpgaNote: [
+      '⚠ FPGA(Xilinx) 특이사항',
+      'Xilinx 7-Series / UltraScale FPGA는 내부적으로 active-high 리셋 신호를 선호',
+      'Xilinx goal(release_xilinx) 사용 시 이 체크는 자동 비활성화 → 별도 waive 불필요',
+      'DO-254 적용 시 active-low 리셋 설계 유지, 또는 Xilinx goal의 자동 조정을 프로젝트 DDP(Design Development Plan)에 명시 필요',
+    ],
     code: [
       { text: '// STARC 표준 (ASIC / DO-254): active-low async reset' },
       { text: 'always @(posedge clk or negedge rst_n) begin  // OK' },
@@ -119,8 +155,15 @@ const rules: RuleData[] = [
     do254: 'SS12_avoid_internally_generated_resets',
     starc: '3.3.1.4, 1.3.2.1, 1.3.2.2',
     customizable: false,
-    problem: 'FF 출력이나 조합 논리로 파생된 내부 비동기 리셋/셋 신호는 타이밍 분석이 어렵고, 글리치(glitch)가 리셋 전파 경로에 섞이면 일부 FF만 선택적으로 리셋되는 현상(partial reset)이 발생합니다. Safety-Critical 시스템에서 시스템 전체가 불일치 상태로 진입하는 심각한 결함을 유발합니다.',
-    solution: '비동기 리셋은 반드시 외부 포트에서 공급하거나, 전용 리셋 컨트롤러(Power-on-Reset 회로, 감시 타이머 등)를 통해서만 생성합니다. 내부 리셋이 불가피한 경우 동기 리셋으로 대체하고 합성 제약으로 타이밍을 보장합니다.',
+    problem: [
+      'FF 출력·조합 논리로 파생된 내부 비동기 리셋/셋 신호는 타이밍 분석 난이도 높음',
+      '글리치(glitch)가 리셋 전파 경로에 섞이면 일부 FF만 선택 리셋(partial reset) 발생',
+      'Safety-Critical 시스템에서 전체 불일치 상태 진입 → 심각한 결함 유발',
+    ],
+    solution: [
+      '비동기 리셋은 외부 포트 공급, 또는 전용 리셋 컨트롤러(POR 회로·감시 타이머 등)로만 생성',
+      '내부 리셋 불가피 시 동기 리셋으로 대체 + 합성 제약으로 타이밍 보장',
+    ],
     code: [
       { text: 'reg [7:0] cnt;' },
       { text: 'wire internal_rst = (cnt == 8\'hFF);  // 조합 논리로 리셋 생성!', highlight: true, annotate: 'W: async_control_is_internal — 내부 생성 비동기 리셋' },
@@ -148,8 +191,14 @@ const rules: RuleData[] = [
     do254: 'CP17_assignment_style_verilog_sequential_blocks',
     starc: '2.3.1.1',
     customizable: false,
-    problem: 'clk 엣지 민감도 리스트를 가진 always 블록(sequential)에서 blocking 할당(=)을 사용하면 동일 delta 사이클 내 신호 전파 순서에 따라 시뮬레이션 결과가 달라집니다. 합성 후 회로는 non-blocking 동작을 수행하므로 Pre/Post 시뮬레이션 불일치가 발생합니다.',
-    solution: 'Sequential always 블록 내 모든 할당을 non-blocking(<=)으로 변경. Combinational always 블록에서는 반드시 blocking(=)을 사용.',
+    problem: [
+      'clk 엣지 민감도 리스트를 가진 always 블록(sequential)에서 blocking(=) 사용 시, 동일 delta 사이클 내 신호 전파 순서에 따라 시뮬레이션 결과 비결정적',
+      '합성 후 회로는 non-blocking 동작 수행 → Pre/Post 시뮬레이션 불일치 발생',
+    ],
+    solution: [
+      'Sequential always 블록 내 모든 할당을 non-blocking(<=)으로 변경',
+      'Combinational always 블록에서는 반드시 blocking(=) 사용',
+    ],
     code: [
       { text: 'always @(posedge clk or negedge rst_n) begin' },
       { text: '  if (!rst_n) begin' },
@@ -175,8 +224,14 @@ const rules: RuleData[] = [
     do254: 'CP18_mixed_blocking_nonblocking',
     starc: '2.2.3.1, 2.3.2.2',
     customizable: false,
-    problem: '동일한 신호(변수)에 blocking(=)과 non-blocking(<=)이 혼용되면, 어느 할당이 더 나중에 적용될지 시뮬레이터마다 다르게 해석될 수 있습니다. 합성 결과와 시뮬레이션 결과가 반드시 일치하지 않습니다.',
-    solution: '한 신호에 대한 모든 할당을 동일한 스타일(blocking 또는 non-blocking)로 통일. Sequential 신호 → 항상 <=, Combinational 로컬 변수 → 항상 =.',
+    problem: [
+      '동일 신호(변수)에 blocking(=)과 non-blocking(<=) 혼용 시, 적용 순서가 시뮬레이터마다 다르게 해석 가능',
+      '합성 결과와 시뮬레이션 결과 불일치 발생',
+    ],
+    solution: [
+      '한 신호의 모든 할당을 동일 스타일(blocking 또는 non-blocking)로 통일',
+      'Sequential 신호 → 항상 <=, Combinational 로컬 변수 → 항상 =',
+    ],
     code: [
       { text: 'always @(*) begin' },
       { text: '  out[1] =  in[0];   // blocking', highlight: true },
@@ -200,8 +255,14 @@ const rules: RuleData[] = [
     title: 'Combinational 블록에서 non-blocking(<=) 금지',
     do254: 'CP15_nonblocking_assign_combo_block',
     customizable: false,
-    problem: '조합 논리(always @(*) 또는 always_comb)에서 non-blocking 할당(<=)을 사용하면, 해당 사이클의 입력 변화가 같은 delta 사이클 내 출력에 반영되지 않아 무한 루프나 의도치 않은 레지스터가 생성될 수 있습니다.',
-    solution: 'Combinational always 블록에서는 반드시 blocking(=)을 사용. 경계가 모호하다면 always_comb / always_ff 키워드(SystemVerilog)로 명시적으로 구분.',
+    problem: [
+      '조합 논리(always @(*) / always_comb)에서 non-blocking(<=) 사용 시, 해당 사이클 입력 변화가 같은 delta 사이클 내 출력에 미반영',
+      '무한 루프 또는 의도치 않은 레지스터 생성 위험',
+    ],
+    solution: [
+      'Combinational always 블록에서는 반드시 blocking(=) 사용',
+      '경계가 모호하면 always_comb / always_ff 키워드(SystemVerilog)로 명시적 구분',
+    ],
     code: [
       { text: 'always @(*) begin  // Combinational' },
       { text: '  if (sel)' },
@@ -394,7 +455,7 @@ export default function ClockAssignRulesSlide() {
               <div style={{ flexShrink: 0 }}>
                 <div style={{ fontSize: '0.63rem', fontWeight: 700, color: '#E53E3E', marginBottom: '2px', letterSpacing: '0.05em' }}>PROBLEM</div>
                 <div style={{ fontSize: '0.66rem', color: FPGA.text, lineHeight: 1.5, background: '#FFF5F5', border: '1px solid #E53E3E18', borderRadius: '6px', padding: '0.32rem 0.55rem' }}>
-                  {currentRule.problem}
+                  {renderBody(currentRule.problem)}
                 </div>
               </div>
 
@@ -405,7 +466,7 @@ export default function ClockAssignRulesSlide() {
                   background: 'rgba(232,145,58,0.08)', border: '1px solid rgba(232,145,58,0.35)',
                   borderRadius: '6px', padding: '0.32rem 0.55rem',
                 }}>
-                  {currentRule.fpgaNote}
+                  {renderBody(currentRule.fpgaNote)}
                 </div>
               )}
 
@@ -414,7 +475,7 @@ export default function ClockAssignRulesSlide() {
                 <div style={{ flexShrink: 0 }}>
                   <div style={{ fontSize: '0.63rem', fontWeight: 700, color: '#48BB78', marginBottom: '2px', letterSpacing: '0.05em' }}>SOLUTION</div>
                   <div style={{ fontSize: '0.66rem', color: FPGA.text, lineHeight: 1.5, background: '#F0FFF4', border: '1px solid #48BB7820', borderRadius: '6px', padding: '0.32rem 0.55rem' }}>
-                    {currentRule.solution}
+                    {renderBody(currentRule.solution)}
                   </div>
                 </div>
               )}

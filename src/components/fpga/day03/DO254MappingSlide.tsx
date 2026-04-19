@@ -108,11 +108,11 @@ export default function DO254MappingSlide() {
               letterSpacing: '0.06em',
             }}>DO-254</div>
             <div>
-              DO-254 goal을 활성화하면 <strong>체크 이름 대신 alias(CP·DR·SS 코드)</strong>로 위반을 관리할 수 있으며, 표준이 규정하는 심각도로 자동 오버라이드됩니다.
+              DO-254 goal을 활성화하면 <strong>체크 이름 대신 alias(CP·DR·SS 코드)</strong>로 위반 관리 가능. 표준이 규정하는 심각도로 자동 오버라이드됨.
               <code style={{ fontFamily: 'monospace', fontSize: '0.68rem', background: '#1A2235', color: '#A8D8A8', padding: '1px 7px', borderRadius: '4px', marginLeft: '6px' }}>
                 lint methodology fpga -goal release
               </code>
-              설정 후 별도로 DO-254 checks를 추가 적용합니다.
+              설정 후 별도로 DO-254 checks 추가 적용.
             </div>
           </div>
 

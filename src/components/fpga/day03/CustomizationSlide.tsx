@@ -24,7 +24,7 @@ const directives: {
     cmd: 'lint methodology fpga',
     label: 'Goal 선택',
     color: '#4A6FA5',
-    desc: 'FPGA Methodology를 활성화하고 분석 단계에 맞는 Goal을 지정합니다.',
+    desc: 'FPGA Methodology를 활성화하고 분석 단계에 맞는 Goal 지정.',
     examples: [
       {
         code: 'lint methodology fpga -goal release_xilinx',
@@ -41,7 +41,7 @@ const directives: {
     cmd: 'lint preference',
     label: '체크 동작 세부 설정',
     color: '#E8913A',
-    desc: '개별 체크의 동작 방식을 프로젝트 요건에 맞게 조정합니다. ⚙ 표시된 룰에서 사용 가능.',
+    desc: '개별 체크의 동작 방식을 프로젝트 요건에 맞게 조정. ⚙ 표시된 룰에서 사용 가능.',
     examples: [
       {
         code: 'lint preference -clock_gating_module clk_gate_cell',
@@ -66,7 +66,7 @@ const directives: {
     cmd: 'lint off',
     label: '특정 체크 비활성화',
     color: '#E53E3E',
-    desc: '특정 체크를 전체 또는 조건부로 비활성화합니다. DO-254 적용 시 비활성화 사유를 DDP에 반드시 문서화해야 합니다.',
+    desc: '특정 체크를 전체 또는 조건부로 비활성화. DO-254 적용 시 비활성화 사유를 DDP에 반드시 문서화 필요.',
     examples: [
       {
         code: 'lint off unsynth_initial_stmt',
@@ -83,7 +83,7 @@ const directives: {
     cmd: 'lint report check -severity',
     label: '심각도 변경',
     color: '#8B6FA5',
-    desc: '특정 체크의 보고 심각도를 프로젝트 정책에 맞게 변경합니다.',
+    desc: '특정 체크의 보고 심각도를 프로젝트 정책에 맞게 변경.',
     examples: [
       {
         code: 'lint report check -severity warning flop_output_in_initial',
@@ -96,7 +96,7 @@ const directives: {
     cmd: 'lint report item -status',
     label: 'Waiver 관리',
     color: '#48BB78',
-    desc: '개별 위반 항목의 상태를 변경합니다. Safety-Critical 프로젝트에서 waiver는 반드시 근거를 함께 기록하고 감사(audit) 가능해야 합니다.',
+    desc: '개별 위반 항목의 상태 변경. Safety-Critical 프로젝트에서 waiver는 반드시 근거를 함께 기록하고 감사(audit) 가능해야 함.',
     examples: [
       {
         code: 'lint report item -status waived\n  -check async_reset_active_high -arg reset=rst\n  # REASON: Xilinx FPGA active-high reset convention',
@@ -309,7 +309,7 @@ export default function CustomizationSlide() {
                 ⚠ DO-254 Waiver 주의사항
               </div>
               <div style={{ fontSize: '0.7rem', color: FPGA.text, lineHeight: 1.5 }}>
-                체크 비활성화(lint off) 또는 위반 면제(waived)는 반드시 <strong>Design Development Plan(DDP)</strong> 또는 <strong>Verification Plan</strong>에 해당 근거를 명시해야 합니다. 감사(audit) 시 추적 가능해야 합니다.
+                체크 비활성화(lint off) 또는 위반 면제(waived)는 반드시 <strong>Design Development Plan(DDP)</strong> 또는 <strong>Verification Plan</strong>에 해당 근거를 명시 필요. 감사(audit) 시 추적 가능해야 함.
               </div>
             </div>
           </div>

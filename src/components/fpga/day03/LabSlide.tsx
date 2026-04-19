@@ -192,7 +192,7 @@ export default function LabSlide() {
               <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#48BB78' }}>실습 완료 조건: </span>
               <span style={{ fontSize: '0.74rem', color: FPGA.text }}>
                 Release Goal 적용 후 FSM 관련 위반(fsm_without_reset_state, fsm_with_deadend_state) 2건 이상 검출 및 수정 완료,
-                async_reset_active_high 위반 1건에 Waiver 처리(근거 주석 포함)를 확인합니다.
+                async_reset_active_high 위반 1건에 Waiver 처리(근거 주석 포함) 확인.
               </span>
             </div>
           </div>

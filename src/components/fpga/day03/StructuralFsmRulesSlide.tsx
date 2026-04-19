@@ -43,11 +43,27 @@ interface RuleData {
   do254: string;
   starc?: string;
   customizable: boolean;
-  problem: string;
-  solution: string;
+  problem: string | string[];
+  solution: string | string[];
   code: { text: string; highlight?: boolean; annotate?: string }[];
   directive?: string;
   diagram?: DiagramKey;
+}
+
+function renderBody(content: string | string[]) {
+  if (Array.isArray(content)) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', lineHeight: 1.35 }}>
+        {content.map((item, i) => (
+          <div key={i} style={{ display: 'flex', gap: '0.3rem', alignItems: 'flex-start' }}>
+            <span style={{ flexShrink: 0, color: FPGA.textLight, fontWeight: 700, marginTop: '1px' }}>·</span>
+            <span style={{ flex: 1 }}>{item}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return content;
 }
 
 function WidthOverflowDiagram() {
@@ -2075,8 +2091,15 @@ const rules: RuleData[] = [
     do254: 'SS3_avoid_combinational_feedback',
     starc: '1.2.1.3',
     customizable: false,
-    problem: '조합 논리 경로에 피드백 루프(출력이 자신의 입력으로 직접 연결)가 존재하면 발진(oscillation) 또는 불안정 동작이 발생합니다. 시뮬레이션에서는 무한 루프로 시뮬레이터가 멈추거나 예측 불가능한 결과를 냅니다. 관련 체크: combo_loop_with_latch(SS3) — 래치를 포함한 피드백 루프도 함께 검출합니다.',
-    solution: '조합 루프를 끊기 위해 레지스터(FF)를 삽입하거나 로직 구조를 재설계합니다. Questa Lint는 위반 경로의 모식도(schematic)를 제공하므로 이를 참고해 루프 위치를 확인합니다.',
+    problem: [
+      '조합 논리 경로에 피드백 루프(출력→자신의 입력) 존재 시 발진(oscillation) 또는 불안정 동작 발생',
+      '시뮬레이션에서는 무한 루프로 시뮬레이터가 멈추거나 예측 불가능한 결과 발생',
+      '관련 체크: combo_loop_with_latch(SS3) — 래치 포함 피드백 루프도 함께 검출',
+    ],
+    solution: [
+      '조합 루프를 끊기 위해 레지스터(FF) 삽입 또는 로직 구조 재설계',
+      'Questa Lint는 위반 경로의 모식도(schematic)를 제공 → 루프 위치 확인 활용',
+    ],
     diagram: 'combo_loop',
     code: [
       { text: 'wire a, b;' },
@@ -2099,8 +2122,16 @@ const rules: RuleData[] = [
     do254: 'SS4_avoid_latch_inference',
     starc: '2.4.1.1, 2.2.1.1',
     customizable: true,
-    problem: 'if 문에 else가 없거나, case 문에 모든 경우를 커버하지 않으면 출력 신호가 이전 값을 유지하는 래치가 합성됩니다. 래치는 레벨 민감도를 가지며 타이밍 분석이 어렵고 Safety-Critical 설계에서는 금지되는 경우가 많습니다.',
-    solution: 'if 문에는 반드시 else 절을 추가. case 문에는 default 절 추가. 또는 always 블록 시작 시 목표 신호에 기본값(default assignment)을 blocking 할당으로 먼저 지정.',
+    problem: [
+      'if문에 else 없거나, case문에 모든 경우 미커버 시 출력 신호가 이전 값 유지하는 래치 합성됨',
+      '래치는 레벨 민감도 → 타이밍 분석 난이도 높음',
+      'Safety-Critical 설계에서는 금지되는 경우 많음',
+    ],
+    solution: [
+      'if문에는 반드시 else 절 추가',
+      'case문에는 default 절 추가',
+      '또는 always 블록 시작 시 목표 신호에 기본값(default assignment)을 blocking 할당으로 먼저 지정',
+    ],
     diagram: 'latch_inferred',
     code: [
       { text: 'always @(*) begin' },
@@ -2129,8 +2160,16 @@ const rules: RuleData[] = [
     do254: 'SS2_ensure_proper_case_statement_specification',
     starc: '2.8.1.4',
     customizable: true,
-    problem: 'case 문이 모든 가능한 값을 커버하지 않고 default 절도 없으면 누락된 조건에서 신호가 이전 값을 유지(래치 생성)하거나 X 전파가 발생합니다. 2비트 셀렉터라면 2\'b11 케이스를 빠뜨리는 것이 대표적인 실수입니다. 관련 체크: case_item_duplicate(SS2) — 동일한 값이 여러 branch에 중복 정의, case_with_x_z(SS2) — x/z 리터럴 포함 case 항목도 검출합니다.',
-    solution: '모든 case 문에 default 절을 추가합니다. Safety-Critical 설계에서는 default: 절에 의미 있는 값이나 에러 상태 처리를 명시합니다.',
+    problem: [
+      'case문이 모든 값 미커버 + default 절 없음 → 누락된 조건에서 신호가 이전 값 유지(래치) 또는 X 전파 발생',
+      '2비트 셀렉터에서 2\'b11 케이스 누락이 대표적인 실수',
+      '관련 체크: case_item_duplicate(SS2) — 동일 값이 여러 branch에 중복 정의',
+      '관련 체크: case_with_x_z(SS2) — x/z 리터럴 포함 case 항목도 함께 검출',
+    ],
+    solution: [
+      '모든 case문에 default 절 추가',
+      'Safety-Critical 설계에서는 default 절에 의미 있는 값 또는 에러 상태 처리 명시',
+    ],
     code: [
       { text: 'always @(*) begin' },
       { text: '  case (sel)      // 2\'b11 케이스 없음!' },
@@ -2157,8 +2196,15 @@ const rules: RuleData[] = [
     title: '신호 중복 구동 (Multiple Drivers)',
     do254: 'SS6_avoid_multiple_drivers',
     customizable: false,
-    problem: '동일한 신호(net)를 여러 드라이버가 동시에 구동하면 합성 후 결과가 불확정입니다. 시뮬레이션에서는 X 값이 전파되며, FPGA에서는 라우팅 에러 또는 의도치 않은 논리 결합이 발생합니다.',
-    solution: '하나의 신호는 반드시 하나의 드라이버(하나의 always 블록 또는 하나의 assign 문)만 가지도록 로직을 재구성. 버스 구조에서 3-state가 필요한 경우 FPGA 전용 3-state primitive를 사용.',
+    problem: [
+      '동일 신호(net)를 여러 드라이버가 동시에 구동 시 합성 후 결과 불확정',
+      '시뮬레이션: X 값 전파',
+      'FPGA: 라우팅 에러 또는 의도치 않은 논리 결합 발생',
+    ],
+    solution: [
+      '하나의 신호는 하나의 드라이버(하나의 always 블록 또는 하나의 assign 문)만 가지도록 로직 재구성',
+      '버스 구조에서 3-state 필요 시 FPGA 전용 3-state primitive 사용',
+    ],
     code: [
       { text: 'wire out;' },
       { text: 'assign out = a & b;', highlight: true, annotate: 'E: multi_driven_signal — out을 두 곳에서 구동' },
@@ -2181,8 +2227,17 @@ const rules: RuleData[] = [
     do254: 'CP7_avoid_mismatching_ranges',
     starc: '2.10.3.3, 2.10.6.1',
     customizable: false,
-    problem: '할당 우변(RHS)의 비트 수가 좌변(LHS)보다 많으면 상위 비트가 묵시적으로 잘립니다(truncation). Safety-Critical 연산에서 데이터 손실이 발생하며, 의도하지 않은 값이 레지스터에 저장됩니다. 관련 체크: assign_width_underflow(CP7) — RHS < LHS (제로 확장), comparison_width_mismatch(CP7) — 비교 연산자 양쪽 비트 폭 불일치, expr_operands_width_mismatch(CP7) — 산술/논리 연산 피연산자 폭 불일치도 함께 검출합니다.',
-    solution: '명시적인 비트 선택([n-1:0])이나 캐스팅을 사용해 의도를 표현. 오버플로우가 예상되는 산술 연산은 결과 폭을 충분하게 확보(예: 8비트 + 8비트 → 9비트 결과).',
+    problem: [
+      '할당 우변(RHS) 비트 수 > 좌변(LHS) 시 상위 비트 묵시적 절단(truncation)',
+      'Safety-Critical 연산에서 데이터 손실 발생, 의도하지 않은 값이 레지스터에 저장됨',
+      '관련 체크: assign_width_underflow(CP7) — RHS < LHS (제로 확장)',
+      '관련 체크: comparison_width_mismatch(CP7) — 비교 연산자 양쪽 비트 폭 불일치',
+      '관련 체크: expr_operands_width_mismatch(CP7) — 산술/논리 연산 피연산자 폭 불일치',
+    ],
+    solution: [
+      '명시적 비트 선택([n-1:0]) 또는 캐스팅으로 의도 표현',
+      '오버플로우 예상 시 결과 폭 충분히 확보 (예: 8비트 + 8비트 → 9비트 결과)',
+    ],
     diagram: 'assign_width_overflow',
     code: [
       { text: 'wire [7:0] result;' },
@@ -2207,8 +2262,16 @@ const rules: RuleData[] = [
     do254: 'CP8_ensure_complete_sensitivity_list',
     starc: '2.3.1.1, 2.3.1.2',
     customizable: false,
-    problem: '조합 논리 always 블록의 민감도 리스트(@(...))에 블록 내에서 참조하는 모든 신호가 포함되지 않으면, 시뮬레이션과 합성 결과가 달라집니다. 합성은 모든 입력을 추론하지만 시뮬레이션은 민감도 리스트에 없는 신호의 변화를 무시합니다. 이는 RTL 시뮬레이션에서 숨겨진 버그를 만드는 대표적 원인입니다.',
-    solution: '조합 논리 always 블록에는 always @(*)를 사용하거나, SystemVerilog에서는 always_comb를 사용합니다. 명시적으로 나열할 경우 블록에서 읽는 모든 신호를 빠짐없이 포함하고, 신호 추가·제거 시 민감도 리스트도 반드시 동기화합니다.',
+    problem: [
+      '조합 논리 always 블록의 민감도 리스트(@(...))에 블록 내 참조 신호 누락 시, 시뮬-합성 결과 불일치',
+      '합성은 모든 입력 추론, 시뮬레이션은 민감도 리스트 외 신호 변화 무시',
+      'RTL 시뮬레이션에서 숨겨진 버그의 대표 원인',
+    ],
+    solution: [
+      '조합 논리 always 블록에는 always @(*) 또는 SystemVerilog의 always_comb 사용',
+      '명시적 나열 시 블록 내 읽는 모든 신호 빠짐없이 포함',
+      '신호 추가·제거 시 민감도 리스트 동기화 필수',
+    ],
     diagram: 'sensitivity_list',
     code: [
       { text: 'always @(a or b) begin  // c가 민감도 리스트에 없음!' },
@@ -2237,8 +2300,18 @@ const rules: RuleData[] = [
     do254: 'SS17_no_undriven_signals',
     starc: '1.3.6.1',
     customizable: false,
-    problem: '구동되지 않는 신호(undriven_signal: wire가 선언되었으나 어디서도 구동 안 됨), 데이터 입력이 없는 레지스터(undriven_reg_data: 클록·리셋만 연결), 연결되지 않은 인스턴스 포트(unconnected_inst)는 시뮬레이션에서 X 전파를 유발하고 합성에서 예기치 않은 최적화 결과를 만듭니다. Safety-Critical 설계에서 X 전파는 기능 오류의 핵심 원인입니다.',
-    solution: '사용하지 않는 신호는 삭제하거나 의도적으로 구동 값을 할당합니다. 모듈 인스턴스의 모든 포트를 명시적으로 연결하고, 미사용 출력 포트는 .port_name() 형태로 명시적 개방 표기합니다.',
+    problem: [
+      'undriven_signal: wire 선언되었으나 어디서도 구동 안 됨',
+      'undriven_reg_data: 데이터 입력 없는 레지스터(클록·리셋만 연결)',
+      'unconnected_inst: 연결되지 않은 인스턴스 포트',
+      '시뮬레이션에서 X 전파 유발, 합성에서 예기치 않은 최적화 결과 발생',
+      'Safety-Critical 설계에서 X 전파는 기능 오류의 핵심 원인',
+    ],
+    solution: [
+      '사용하지 않는 신호는 삭제, 또는 의도적으로 구동 값 할당',
+      '모듈 인스턴스의 모든 포트 명시적 연결',
+      '미사용 출력 포트는 .port_name() 형태로 명시적 개방 표기',
+    ],
     code: [
       { text: 'wire unused_sig;              // 어디서도 구동 안 됨', highlight: true, annotate: 'E: undriven_signal' },
       { text: '' },
@@ -2262,8 +2335,14 @@ const rules: RuleData[] = [
     title: 'FSM에 리셋 상태 없음',
     do254: 'CP6_ensure_safe_fsm_transitions',
     customizable: false,
-    problem: 'FSM이 리셋 시 돌아가는 초기 상태가 없으면 파워업 또는 리셋 해제 후 FSM이 불확정 상태에서 시작됩니다. 이는 Safety-Critical 시스템에서 심각한 기능 이상을 유발합니다.',
-    solution: 'async 또는 sync 리셋 조건에서 FSM이 명확한 초기 상태(IDLE, RESET 등)로 복귀하도록 코드 작성. 리셋 상태는 시스템이 안전하게 동작을 시작할 수 있는 상태여야 합니다.',
+    problem: [
+      'FSM이 리셋 시 돌아가는 초기 상태 없음 → 파워업/리셋 해제 후 FSM이 불확정 상태에서 시작',
+      'Safety-Critical 시스템에서 심각한 기능 이상 유발',
+    ],
+    solution: [
+      'async/sync 리셋 조건에서 FSM이 명확한 초기 상태(IDLE, RESET 등)로 복귀하도록 코드 작성',
+      '리셋 상태는 시스템이 안전하게 동작을 시작할 수 있는 상태여야 함',
+    ],
     diagram: 'fsm_without_reset_state',
     code: [
       { text: 'always @(posedge clk) begin  // 리셋 없음!' },
@@ -2289,8 +2368,14 @@ const rules: RuleData[] = [
     title: 'FSM Dead-end 상태 (탈출 불가)',
     do254: 'CP6_ensure_safe_fsm_transitions',
     customizable: false,
-    problem: '나가는 전이(outgoing transition)가 없는 상태는 FSM이 해당 상태에 진입하면 영원히 그 상태에 갇힙니다. 전체 시스템이 멈추는 결과를 초래합니다.',
-    solution: '모든 FSM 상태에 조건부 또는 무조건 탈출 전이를 정의. 에러 복구 상태(ERROR → IDLE)와 같이 안전한 상태로 반드시 전이할 수 있도록 설계합니다.',
+    problem: [
+      '나가는 전이(outgoing transition) 없는 상태 → FSM이 진입 시 영원히 그 상태에 갇힘(dead-end)',
+      '전체 시스템 정지 결과 초래',
+    ],
+    solution: [
+      '모든 FSM 상태에 조건부 또는 무조건 탈출 전이 정의',
+      '에러 복구 상태(ERROR → IDLE)와 같이 안전한 상태로 반드시 전이 가능하도록 설계',
+    ],
     diagram: 'fsm_with_deadend_state',
     code: [
       { text: 'parameter ST0=0, ST1=1, ST2=2, ST3=3, ST4=4;' },
@@ -2317,8 +2402,15 @@ const rules: RuleData[] = [
     title: 'FSM Unreachable 상태 (도달 불가)',
     do254: 'CP6_ensure_safe_fsm_transitions',
     customizable: false,
-    problem: '어떤 전이 경로로도 도달할 수 없는 상태가 존재하면 해당 상태의 로직이 실질적으로 dead code입니다. 설계 의도와 구현 차이를 나타내며 ECC/TMR 같은 안전 메커니즘이 예상치 못한 상태를 유발할 수 있습니다.',
-    solution: '불필요한 상태는 제거하거나, 설계 의도에 맞게 전이 경로를 추가. 코드 리뷰를 통해 해당 상태가 설계 스펙에 존재하는지 확인합니다.',
+    problem: [
+      '어떤 전이 경로로도 도달할 수 없는 상태 존재 시, 해당 상태 로직은 실질적 dead code',
+      '설계 의도와 구현 차이 노출',
+      'ECC/TMR 같은 안전 메커니즘이 예상치 못한 상태 유발 가능',
+    ],
+    solution: [
+      '불필요한 상태 제거, 또는 설계 의도에 맞게 전이 경로 추가',
+      '코드 리뷰를 통해 해당 상태가 설계 스펙에 존재하는지 확인',
+    ],
     diagram: 'fsm_with_unreachable_state',
     code: [
       { text: 'parameter IDLE=0, RUN=1, DONE=2, ERROR=3;' },
@@ -2344,8 +2436,14 @@ const rules: RuleData[] = [
     title: 'FSM case에 default 절 없음',
     do254: 'CP6_ensure_safe_fsm_transitions',
     customizable: false,
-    problem: 'FSM state case 문에 default 절이 없으면 정의되지 않은 인코딩 값(SEU, 방사선 등으로 인한 bit flip)이 발생했을 때 FSM 동작이 불확정합니다. 내방사선(radiation-hardened) 또는 고신뢰성 설계에서 특히 중요합니다.',
-    solution: 'FSM state case 문에 항상 default 절을 추가하고, 그 안에서 FSM을 안전한 초기 상태(IDLE 또는 ERROR 처리 상태)로 복귀시키는 전이를 정의합니다.',
+    problem: [
+      'FSM state case문에 default 절 없음 → SEU·방사선 등으로 인한 bit flip으로 정의되지 않은 인코딩 값 발생 시 FSM 동작 불확정',
+      '내방사선(radiation-hardened) 또는 고신뢰성 설계에서 특히 중요',
+    ],
+    solution: [
+      'FSM state case문에 항상 default 절 추가',
+      'default 절에서 FSM을 안전한 초기 상태(IDLE 또는 ERROR 처리 상태)로 복귀시키는 전이 정의',
+    ],
     diagram: 'fsm_without_default_state',
     code: [
       { text: 'always @(posedge clk) begin' },
@@ -2550,7 +2648,7 @@ export default function StructuralFsmRulesSlide() {
               <div style={{ flexShrink: 0 }}>
                 <div style={{ fontSize: '0.63rem', fontWeight: 700, color: '#E53E3E', marginBottom: '2px', letterSpacing: '0.05em' }}>PROBLEM</div>
                 <div style={{ fontSize: '0.66rem', color: FPGA.text, lineHeight: 1.5, background: '#FFF5F5', border: '1px solid #E53E3E18', borderRadius: '6px', padding: '0.32rem 0.55rem' }}>
-                  {currentRule.problem}
+                  {renderBody(currentRule.problem)}
                 </div>
               </div>
 
@@ -2558,7 +2656,7 @@ export default function StructuralFsmRulesSlide() {
               <div style={{ flexShrink: 0 }}>
                 <div style={{ fontSize: '0.63rem', fontWeight: 700, color: '#48BB78', marginBottom: '2px', letterSpacing: '0.05em' }}>SOLUTION</div>
                 <div style={{ fontSize: '0.66rem', color: FPGA.text, lineHeight: 1.5, background: '#F0FFF4', border: '1px solid #48BB7820', borderRadius: '6px', padding: '0.32rem 0.55rem' }}>
-                  {currentRule.solution}
+                  {renderBody(currentRule.solution)}
                 </div>
               </div>
 
