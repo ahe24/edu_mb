@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FPGA } from './FpgaSlideStyles';
+import SlideModal from './SlideModal';
 
 interface ToolImageProps {
   src: string;
@@ -49,46 +50,41 @@ export default function ToolImage({ src, name, width = '100%', height = '60px' }
         )}
       </div>
 
-      {lightbox && (
-        <div
-          onClick={() => setLightbox(false)}
+      <SlideModal
+        open={lightbox}
+        onClose={() => setLightbox(false)}
+        backdropStyle={{
+          background: 'rgba(0,0,0,0.80)',
+          backdropFilter: 'none',
+          WebkitBackdropFilter: 'none',
+          cursor: 'zoom-out',
+          padding: 0,
+        }}
+        contentStyle={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}
+      >
+        <img
+          src={src}
+          alt={name}
           style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 9999,
-            background: 'rgba(0,0,0,0.80)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'zoom-out',
+            maxWidth: '90vw',
+            maxHeight: '90vh',
+            objectFit: 'contain',
+            borderRadius: '8px',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
           }}
-        >
-          <div style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
-            <img
-              src={src}
-              alt={name}
-              style={{
-                maxWidth: '90vw',
-                maxHeight: '90vh',
-                objectFit: 'contain',
-                borderRadius: '8px',
-                boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
-              }}
-            />
-            <div style={{
-              position: 'absolute',
-              bottom: '-2rem',
-              left: 0,
-              right: 0,
-              textAlign: 'center',
-              color: 'rgba(255,255,255,0.7)',
-              fontSize: '0.8rem',
-            }}>
-              {name} — 클릭하면 닫힘
-            </div>
-          </div>
+        />
+        <div style={{
+          position: 'absolute',
+          bottom: '-2rem',
+          left: 0,
+          right: 0,
+          textAlign: 'center',
+          color: 'rgba(255,255,255,0.7)',
+          fontSize: '0.8rem',
+        }}>
+          {name} — 클릭하면 닫힘
         </div>
-      )}
+      </SlideModal>
     </>
   );
 }
