@@ -67,62 +67,62 @@ export default function PolicyArchitectureSlide() {
           subtitle="기준선 → 프로젝트 → 모듈 — 하향식 오버라이드"
         />
 
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: '0.9rem' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: '0.8rem' }}>
           {/* 좌: 3계층 스택 */}
-          <div style={{ flex: '1.15', display: 'flex', flexDirection: 'column', gap: '0.55rem', minWidth: 0 }}>
+          <div style={{ flex: '1.15', display: 'flex', flexDirection: 'column', gap: '0.4rem', minWidth: 0 }}>
             {layers.map((L, i) => (
               <div key={L.level} style={{
                 background: FPGA.white,
                 border: `1px solid ${L.color}25`,
                 borderLeft: `4px solid ${L.color}`,
-                borderRadius: '10px',
-                padding: '0.6rem 0.85rem',
+                borderRadius: '9px',
+                padding: '0.45rem 0.75rem',
                 boxShadow: shadow.card,
                 position: 'relative',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.35rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.25rem' }}>
                   <span style={{
                     fontFamily: '"JetBrains Mono", monospace',
-                    fontSize: '0.7rem', fontWeight: 800,
+                    fontSize: '0.66rem', fontWeight: 800,
                     color: '#fff', background: L.color,
-                    padding: '2px 8px', borderRadius: '4px',
+                    padding: '1px 7px', borderRadius: '4px',
                     letterSpacing: '0.08em',
                   }}>{L.level}</span>
-                  <span style={{ fontSize: '0.88rem', fontWeight: 800, color: FPGA.dark }}>{L.title}</span>
-                  <span style={{ fontSize: '0.68rem', color: FPGA.textLight, fontStyle: 'italic' }}>{L.sub}</span>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 800, color: FPGA.dark }}>{L.title}</span>
+                  <span style={{ fontSize: '0.64rem', color: FPGA.textLight, fontStyle: 'italic' }}>{L.sub}</span>
                 </div>
                 <pre style={{
-                  margin: '0 0 0.4rem',
+                  margin: '0 0 0.3rem',
                   fontFamily: '"JetBrains Mono", monospace',
-                  fontSize: '0.66rem',
+                  fontSize: '0.62rem',
                   color: '#A8D8A8',
                   background: '#1A2235',
                   borderRadius: '5px',
-                  padding: '0.3rem 0.55rem',
-                  lineHeight: 1.5,
+                  padding: '0.25rem 0.5rem',
+                  lineHeight: 1.45,
                   whiteSpace: 'pre-wrap',
                 }}>{L.cmd}</pre>
-                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.25rem', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
                   <span style={{
-                    fontSize: '0.62rem', fontWeight: 700,
+                    fontSize: '0.58rem', fontWeight: 700,
                     color: L.color, background: `${L.color}10`,
-                    padding: '1px 7px', borderRadius: '3px',
+                    padding: '1px 6px', borderRadius: '3px',
                     border: `1px solid ${L.color}20`,
                   }}>범위: {L.scope}</span>
                   <span style={{
-                    fontSize: '0.62rem', fontWeight: 700,
+                    fontSize: '0.58rem', fontWeight: 700,
                     color: FPGA.textLight, background: '#F7FAFC',
-                    padding: '1px 7px', borderRadius: '3px',
+                    padding: '1px 6px', borderRadius: '3px',
                     border: `1px solid ${FPGA.border}`,
                   }}>담당: {L.owner}</span>
-                </div>
-                <div style={{ fontSize: '0.7rem', color: FPGA.textLight, lineHeight: 1.5 }}>
-                  {L.desc}
+                  <span style={{ fontSize: '0.63rem', color: FPGA.textLight, lineHeight: 1.4, flex: 1, minWidth: '200px' }}>
+                    {L.desc}
+                  </span>
                 </div>
                 {i < layers.length - 1 && (
                   <div style={{
-                    position: 'absolute', bottom: '-15px', left: '18px',
-                    width: '2px', height: '12px',
+                    position: 'absolute', bottom: '-12px', left: '18px',
+                    width: '2px', height: '10px',
                     background: `linear-gradient(to bottom, ${L.color}, ${layers[i + 1].color})`,
                     zIndex: 1,
                   }} />
@@ -134,46 +134,45 @@ export default function PolicyArchitectureSlide() {
             <div style={{
               background: `linear-gradient(135deg, rgba(74,111,165,0.06), rgba(74,111,165,0.12))`,
               border: `1px solid ${FPGA.primary}20`,
-              borderRadius: '10px',
-              padding: '0.55rem 0.8rem',
-              marginTop: '0.15rem',
+              borderRadius: '9px',
+              padding: '0.4rem 0.7rem',
+              marginTop: '0.1rem',
+              display: 'flex', alignItems: 'center', gap: '0.6rem',
             }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: FPGA.primary, marginBottom: '0.2rem' }}>
+              <span style={{ fontSize: '0.66rem', fontWeight: 700, color: FPGA.primary, whiteSpace: 'nowrap' }}>
                 오버라이드 원칙
-              </div>
-              <div style={{ fontSize: '0.68rem', color: FPGA.text, lineHeight: 1.55 }}>
-                뒤에 로드되는 명령이 앞의 설정을 덮어씀. L1→L2→L3 순서 준수, 로딩 순서가 바뀌면 정책 무효화 가능.
-              </div>
+              </span>
+              <span style={{ fontSize: '0.62rem', color: FPGA.text, lineHeight: 1.45 }}>
+                뒤에 로드되는 명령이 앞의 설정을 덮어씀. L1→L2→L3 순서 준수 — 로딩 순서가 바뀌면 정책 무효화 가능.
+              </span>
             </div>
           </div>
 
           {/* 우: 파일 트리 + 로딩 순서 */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.6rem', minWidth: 0 }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.45rem', minWidth: 0 }}>
             <div style={{
               background: FPGA.white,
               border: `1px solid ${FPGA.border}`,
-              borderRadius: '12px',
-              padding: '0.7rem 0.85rem',
+              borderRadius: '11px',
+              padding: '0.55rem 0.75rem',
               boxShadow: shadow.card,
-              flex: 1,
-              minHeight: 0,
             }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: FPGA.dark, marginBottom: '0.5rem' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: FPGA.dark, marginBottom: '0.35rem' }}>
                 권장 파일 레이아웃
               </div>
-              <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '0.68rem', lineHeight: 1.65 }}>
+              <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '0.62rem', lineHeight: 1.45 }}>
                 {fileTree.map((f, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', paddingLeft: `${f.indent * 14}px` }}>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', paddingLeft: `${f.indent * 12}px` }}>
                     <span style={{
                       color: f.type === 'folder' ? FPGA.primary : FPGA.text,
                       fontWeight: f.type === 'folder' ? 700 : 500,
-                      minWidth: '155px',
+                      minWidth: '140px',
                     }}>
                       {f.type === 'folder' ? '📁 ' : '  '}{f.name}
                     </span>
                     {f.note && (
                       <span style={{
-                        fontSize: '0.62rem',
+                        fontSize: '0.58rem',
                         color: FPGA.textLight,
                         fontFamily: '"Pretendard", sans-serif',
                         marginLeft: '6px',
@@ -188,13 +187,17 @@ export default function PolicyArchitectureSlide() {
             <div style={{
               background: '#1A2235',
               border: `1px solid #2D3748`,
-              borderRadius: '10px',
-              padding: '0.6rem 0.8rem',
+              borderRadius: '9px',
+              padding: '0.5rem 0.7rem',
               boxShadow: shadow.card,
+              flex: 1,
+              minHeight: 0,
+              display: 'flex',
+              flexDirection: 'column',
             }}>
               <div style={{
-                fontSize: '0.66rem', fontWeight: 700, color: '#6B8CC7',
-                marginBottom: '0.35rem',
+                fontSize: '0.62rem', fontWeight: 700, color: '#6B8CC7',
+                marginBottom: '0.25rem',
                 fontFamily: '"JetBrains Mono", monospace',
                 letterSpacing: '0.06em',
               }}>
@@ -203,22 +206,23 @@ export default function PolicyArchitectureSlide() {
               <pre style={{
                 margin: 0,
                 fontFamily: '"JetBrains Mono", monospace',
-                fontSize: '0.65rem',
+                fontSize: '0.6rem',
                 color: '#E8E8E8',
-                lineHeight: 1.7,
+                lineHeight: 1.5,
                 whiteSpace: 'pre-wrap',
+                flex: 1,
               }}>
-<span style={{ color: '#718096' }}># L1 — 기준선 Goal</span>{'\n'}
-<span style={{ color: '#A8D8A8' }}>do</span> policy/base_goal.tcl{'\n'}{'\n'}
-<span style={{ color: '#718096' }}># L2 — 프로젝트 정책 (벤더 조건부)</span>{'\n'}
+<span style={{ color: '#718096' }}># L1 — 기준선</span>{'\n'}
+<span style={{ color: '#A8D8A8' }}>do</span> policy/base_goal.tcl{'\n'}
+<span style={{ color: '#718096' }}># L2 — 프로젝트 정책</span>{'\n'}
 <span style={{ color: '#A8D8A8' }}>do</span> policy/project_prefs.tcl{'\n'}
-<span style={{ color: '#A8D8A8' }}>do</span> policy/vendor_xilinx.tcl{'\n'}{'\n'}
+<span style={{ color: '#A8D8A8' }}>do</span> policy/vendor_xilinx.tcl{'\n'}
 <span style={{ color: '#718096' }}># 컴파일</span>{'\n'}
 vlib work; vmap work work{'\n'}
-vlog -f scripts/filelist.f{'\n'}{'\n'}
+vlog -f scripts/filelist.f{'\n'}
 <span style={{ color: '#718096' }}># L3 — 모듈별 waiver</span>{'\n'}
 <span style={{ color: '#A8D8A8' }}>do</span> waivers/global_waivers.tcl{'\n'}
-<span style={{ color: '#A8D8A8' }}>do</span> waivers/alu_core.tcl{'\n'}{'\n'}
+<span style={{ color: '#A8D8A8' }}>do</span> waivers/alu_core.tcl{'\n'}
 <span style={{ color: '#A8D8A8' }}>lint run</span> -d top_module{'\n'}
 <span style={{ color: '#A8D8A8' }}>lint generate report</span>
               </pre>

@@ -110,24 +110,18 @@ endcase`,
     cat: 'case',
     cmd: '// FSM state에 enum + unique case 결합',
     purpose: 'enum + unique — 정적 exhaustiveness 보증',
-    codeBefore: `// 숫자 리터럴 case — 타입 안정성 약함
+    codeBefore: `// 숫자 리터럴 — 타입 안정성 약함
 reg [1:0] state;
 case (state)
-  2'b00: ...
-  2'b01: ...
-  // 2'b10, 2'b11 누락해도
-  // 컴파일 에러 없음
+  2'b00: ...   2'b01: ...
+  // 2'b10/11 누락해도 에러 없음
 endcase`,
     codeAfter: `typedef enum logic [1:0] {
-  S_IDLE, S_RUN, S_WAIT, S_DONE
-} state_t;
+  S_IDLE, S_RUN, S_WAIT, S_DONE} state_t;
 state_t state;
-
 unique case (state)
-  S_IDLE: ...
-  S_RUN : ...
-  S_WAIT: ...
-  S_DONE: ...
+  S_IDLE: ...   S_RUN : ...
+  S_WAIT: ...   S_DONE: ...
 endcase`,
     note: 'enum 누락 시 컴파일 단계에서 warning, unique가 런타임 보증. FSM safety 체크와도 호환 — safety-critical 최적 패턴.',
   },
@@ -182,9 +176,9 @@ export default function PreferenceDeepDiveSlide() {
           subtitle="카테고리별 핵심 옵션 · Before / After 코드 대비"
         />
 
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
           {/* 카테고리 탭 */}
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
+          <div style={{ display: 'flex', gap: '0.35rem' }}>
             {categories.map(c => {
               const on = c.key === active;
               return (
@@ -193,20 +187,20 @@ export default function PreferenceDeepDiveSlide() {
                   border: on ? `1.5px solid ${c.color}` : `1px solid ${FPGA.border}`,
                   borderBottom: on ? `3px solid ${c.color}` : `1px solid ${FPGA.border}`,
                   background: on ? `${c.color}10` : FPGA.white,
-                  borderRadius: '8px 8px 6px 6px',
-                  padding: '0.4rem 0.6rem',
+                  borderRadius: '7px 7px 5px 5px',
+                  padding: '0.3rem 0.55rem',
                   boxShadow: on ? `0 2px 8px ${c.color}22` : '0 1px 3px rgba(0,0,0,0.04)',
                   transform: on ? 'translateY(-1px)' : 'none',
                   transition: 'all 0.15s ease',
                   textAlign: 'center',
                 }}>
                   <div style={{
-                    fontSize: '0.82rem', fontWeight: 800,
-                    color: on ? c.color : FPGA.dark, lineHeight: 1.2,
+                    fontSize: '0.76rem', fontWeight: 800,
+                    color: on ? c.color : FPGA.dark, lineHeight: 1.15,
                   }}>{c.label}</div>
                   <div style={{
-                    fontSize: '0.6rem', color: on ? c.color : FPGA.textLight,
-                    opacity: 0.75, marginTop: '2px',
+                    fontSize: '0.56rem', color: on ? c.color : FPGA.textLight,
+                    opacity: 0.75, marginTop: '1px',
                     fontFamily: '"JetBrains Mono", monospace',
                   }}>
                     {c.count} {c.count === 1 ? 'rule' : 'rules'}
@@ -217,7 +211,7 @@ export default function PreferenceDeepDiveSlide() {
           </div>
 
           {/* 예제 카드들 */}
-          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             {visible.map((p, i) => {
               const color = categories.find(c => c.key === p.cat)!.color;
               return (
@@ -225,76 +219,79 @@ export default function PreferenceDeepDiveSlide() {
                   background: FPGA.white,
                   border: `1px solid ${color}22`,
                   borderLeft: `3px solid ${color}`,
-                  borderRadius: '10px',
-                  padding: '0.55rem 0.7rem',
+                  borderRadius: '9px',
+                  padding: '0.4rem 0.6rem',
                   boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-                  display: 'flex', gap: '0.7rem',
+                  display: 'flex', gap: '0.55rem',
+                  flex: 1, minHeight: 0,
                 }}>
                   {/* 좌: 명령 + 목적 */}
-                  <div style={{ flex: '0 0 250px', minWidth: 0 }}>
+                  <div style={{ flex: '0 0 230px', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
                     <pre style={{
-                      margin: '0 0 0.3rem',
+                      margin: '0 0 0.25rem',
                       fontFamily: '"JetBrains Mono", monospace',
-                      fontSize: '0.62rem',
+                      fontSize: '0.56rem',
                       color: '#A8D8A8',
                       background: '#1A2235',
-                      borderRadius: '5px',
-                      padding: '0.35rem 0.5rem',
-                      lineHeight: 1.5,
+                      borderRadius: '4px',
+                      padding: '0.28rem 0.45rem',
+                      lineHeight: 1.4,
                       whiteSpace: 'pre-wrap',
                       wordBreak: 'break-word',
                     }}>{p.cmd}</pre>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: FPGA.dark, lineHeight: 1.4 }}>
+                    <div style={{ fontSize: '0.62rem', fontWeight: 700, color: FPGA.dark, lineHeight: 1.35 }}>
                       {p.purpose}
                     </div>
-                    <div style={{ fontSize: '0.62rem', color: FPGA.textLight, marginTop: '0.2rem', lineHeight: 1.5 }}>
+                    <div style={{ fontSize: '0.56rem', color: FPGA.textLight, marginTop: '0.15rem', lineHeight: 1.4 }}>
                       {p.note}
                     </div>
                   </div>
 
                   {/* 중: before */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
                     <div style={{
-                      fontSize: '0.6rem', fontWeight: 700,
-                      color: '#E53E3E', marginBottom: '0.2rem',
+                      fontSize: '0.56rem', fontWeight: 700,
+                      color: '#E53E3E', marginBottom: '0.15rem',
                       fontFamily: '"JetBrains Mono", monospace',
                       letterSpacing: '0.06em',
                     }}>✗ BEFORE</div>
                     <pre style={{
                       margin: 0,
                       fontFamily: '"JetBrains Mono", monospace',
-                      fontSize: '0.62rem',
+                      fontSize: '0.56rem',
                       color: '#2D3748',
                       background: 'rgba(229,62,62,0.06)',
                       border: '1px solid rgba(229,62,62,0.18)',
-                      borderRadius: '5px',
-                      padding: '0.35rem 0.5rem',
-                      lineHeight: 1.55,
+                      borderRadius: '4px',
+                      padding: '0.28rem 0.45rem',
+                      lineHeight: 1.4,
                       whiteSpace: 'pre-wrap',
                       wordBreak: 'break-word',
+                      flex: 1,
                     }}>{p.codeBefore}</pre>
                   </div>
 
                   {/* 우: after */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
                     <div style={{
-                      fontSize: '0.6rem', fontWeight: 700,
-                      color: '#48BB78', marginBottom: '0.2rem',
+                      fontSize: '0.56rem', fontWeight: 700,
+                      color: '#48BB78', marginBottom: '0.15rem',
                       fontFamily: '"JetBrains Mono", monospace',
                       letterSpacing: '0.06em',
                     }}>✓ AFTER</div>
                     <pre style={{
                       margin: 0,
                       fontFamily: '"JetBrains Mono", monospace',
-                      fontSize: '0.62rem',
+                      fontSize: '0.56rem',
                       color: '#2D3748',
                       background: 'rgba(72,187,120,0.06)',
                       border: '1px solid rgba(72,187,120,0.20)',
-                      borderRadius: '5px',
-                      padding: '0.35rem 0.5rem',
-                      lineHeight: 1.55,
+                      borderRadius: '4px',
+                      padding: '0.28rem 0.45rem',
+                      lineHeight: 1.4,
                       whiteSpace: 'pre-wrap',
                       wordBreak: 'break-word',
+                      flex: 1,
                     }}>{p.codeAfter}</pre>
                   </div>
                 </div>

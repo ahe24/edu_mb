@@ -189,6 +189,8 @@ const fpgaThemeCSS = `
   .fpga-theme .slides section > div.fpga-content-wrap {
     flex: 1;
     min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     width: 100%;
