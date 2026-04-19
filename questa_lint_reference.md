@@ -139,7 +139,7 @@ lint load db            # 데이터베이스 로드
 lint merge db           # 데이터베이스 병합
 lint status update      # Violation 상태 업데이트
 lint suppress           # Violation 억제
-lint diff               # Lint 결과 비교
+lint diff <current_db> -refdb <reference_db>   # Incremental 비교 → lint_incremental.rpt 생성 (User Guide p.277)
 lint copy check         # 체크 복사
 lint configure reference # 레퍼런스 설정
 ```
@@ -368,6 +368,41 @@ vlog changed_file.v
 lint run -d top_module -incr
 ```
 
+### `lint diff` — DB 간 Incremental 비교 (User Guide p.277)
+
+**공식 문법**:
+
+```tcl
+lint diff <current_db> -refdb <reference_db>
+```
+
+**중요**: 두 번째 인자는 positional이 아니라 `-refdb` 플래그로 지정해야 함. `lint diff a.db b.db` 같은 호출은 에러.
+
+**출력**: `lint_incremental.rpt` (New Results / Fixed Results / Pre-existing Results 3개 섹션)
+
+**전형적 배치 플로우**:
+
+```bash
+# 1) Friday baseline 실행
+qverify -od friday_run -c -do " \
+  lint methodology ip -goal release; \
+  vlog dut.v; \
+  lint run -d dut; \
+  exit"
+
+# 2) Monday 변경 후 실행
+qverify -od monday_run -c -do " \
+  lint methodology ip -goal release; \
+  vlog dut.v; \
+  lint run -d dut; \
+  exit"
+
+# 3) Incremental diff — 결과는 -od로 지정한 monday_run에 저장
+qverify -od monday_run -c -do "lint diff monday_run/lint.db -refdb friday_run/lint.db; exit"
+```
+
+**제약**: 두 DB는 동일 Questa Lint 릴리스로 생성되어야 함 (버전 혼용 불가).
+
 ---
 
 ## 12. Waiver 및 Suppression
@@ -380,11 +415,117 @@ lint run -d top_module -incr
 // lint_checking <check_name> on
 ```
 
-### Tcl 기반 Waiver
+### Tcl 기반 Waiver (`lint suppress` — pre-run 억제)
+
+**공식 문법** (User Guide p.495-496):
 
 ```tcl
-lint suppress <check_name> -module <module_name>
+lint suppress [-check check_pattern1 check_pattern2...]
+              [-alias alias_name...]
+              [-category category]
+              [-arg {argname=value | argname~=value}...]
+              [-owner owner]
+              [-comment comment]
+              [-reviewer reviewer]
 ```
+
+**중요**: `-module` 같은 전용 옵션은 **존재하지 않음**. 모듈 단위 억제는 `-arg module=<value>` 형식.
+
+**주요 옵션**:
+
+| 옵션 | 용도 |
+|------|------|
+| `-check` | 억제할 체크명 (와일드카드 가능, 복수 지정 가능) |
+| `-alias` | 체크 alias로 지정 |
+| `-category` | 카테고리로 지정 (예: `rtl_design_style`) |
+| `-arg argname=value` | 특정 argument 값으로 필터 (`module=`, `signal=`, `file=` 등, argname은 `lint.rpt`의 Check Details 참조). `~=` 접미사로 제외 매칭 |
+| `-owner` | 억제를 추가한 사람 (감사 근거) |
+| `-comment` | 억제 사유 (감사 근거 — 공백·특수문자 포함 시 `{}`로 감쌀 것). **ASCII 전용** — 리포트 렌더링이 CP949라 한글은 mojibake됨 (예: `외` → `ì쇅`). 한글 상세는 별도 Waiver Rationale 문서로 분리 |
+| `-reviewer` | 억제를 리뷰·승인한 사람 (감사 근거) |
+
+**예제**:
+
+```tcl
+# 특정 violation 억제 (argname=value 조합)
+lint suppress -check func_input_unused \
+  -arg function=func -arg signal=in -arg module=dut -arg file=dut.sv
+
+# 외부 IP 모듈의 combo_loop/latch_inferred 억제 + 감사 근거
+lint suppress -check combo_loop latch_inferred \
+  -arg module=external_dsp_ip \
+  -owner alice -reviewer lead \
+  -comment {3rd-party BB, out of V&V scope (DR-207)}
+
+# 제외 매칭: lightsRoadA 신호만 빼고 모두 억제
+lint suppress -check data_type_not_recommended -arg signal~=lightsRoadA
+```
+
+**제약**:
+- 동일 `-arg argname=...`을 여러 번 쓰면 **마지막 값만** 적용됨 (`-arg module=a -arg module=b` → `b`만)
+- 동일 argname에 복수 값 나열 불가 (전체 문자열을 하나의 value로 해석)
+- Pre-run 억제이므로 `lint_status_history.rpt`에 개별 violation 상태 이력이 남지 않음 → 감사 추적이 필요하면 `lint report item -status waived` 사용
+
+### Post-run Waiver (`lint report item` — 개별 violation 상태 변경)
+
+**공식 문법** (User Guide p.476):
+
+```tcl
+lint report item -status {uninspected | pending | waived | bug | fixed | verified}
+                 [-severity {error | warning | info}]
+                 [-check check_pattern1 check_pattern2 ...]
+                 [-alias alias_pattern1 alias_pattern2 ...]
+                 [-category category]
+                 [-rtl_id rtl_id1 rtl_id2 ...]
+                 [-owner owner]
+                 [-comment comment]
+                 [-reviewer name]
+                 [{-arg {argname=value}} ...]
+```
+
+**`lint suppress`와의 차이**:
+
+| 항목 | `lint suppress` | `lint report item` |
+|------|-----------------|--------------------|
+| 시점 | pre-run (분석 전 필터) | post-run (분석 후 상태 변경) |
+| 대상 | 매칭되는 violation 전체 | 개별 violation (RTL ID로 특정 가능) |
+| 상태 이력 | 기록 안 됨 | `lint_status_history.rpt`에 기록 |
+| 리포트 노출 | 리포트에서 숨김 | `[waived]` 등 상태 태그로 남아 있음 |
+| 감사 적합성 | C | A (safety-critical 권장) |
+
+**식별 방법** (하나 이상 조합):
+- `-rtl_id <ID>` — **리팩토링에 가장 강함** (라인 변경/이름 변경에 무관)
+- `-check <name>` + `-arg argname=value` — 메시지 템플릿의 placeholder 기반 (예: `async_reset_active_high` → `-arg reset=rst -arg module=<M>`)
+- `-check <name>` + `-category <cat>` + `-severity <lvl>`
+
+**argname 확인**: `lint.rpt`의 Check Details 섹션 또는 check 메시지 템플릿 참조.
+예: `Asynchronous reset is active high. Reset '<reset>', Module '<module>', File '<file>', Line '<line>'.` → 사용 가능한 argname은 `reset`, `module`, `file`, `line`.
+
+**예제**:
+
+```tcl
+# RTL ID 기반 waiver (권장 — 리팩토링에 강함)
+lint report item -status waived \
+  -check async_reset_active_high \
+  -rtl_id c8c123e5_00300 \
+  -owner alice -reviewer lead \
+  -comment {Xilinx convention, DR-112 (2026-04-15)}
+
+# argname 기반 waiver (RTL ID가 불안정한 경우)
+lint report item -status waived \
+  -check async_reset_active_high \
+  -arg reset=rst -arg module=reset_flop \
+  -owner alice -reviewer lead \
+  -comment {Xilinx convention, DR-112}
+
+# 벌크 상태 변경 — 카테고리 전체를 pending으로
+lint report item -status pending -category clock \
+  -owner bob -comment {Under review for DR-118}
+```
+
+**주의**:
+- `-comment`는 **ASCII 전용** (CP949 렌더링으로 한글 mojibake — `lint suppress`와 동일 제약)
+- 상태 값은 6종: `uninspected` / `pending` / `waived` / `bug` / `fixed` / `verified`
+- RTL ID는 `lint.rpt`나 GUI의 Lint Checks 창에서 확인 가능 (예: `[RTL ID:c8c123e5_00300]`)
 
 ---
 
@@ -402,6 +543,11 @@ lint suppress <check_name> -module <module_name>
 | `lint -batch` | `qverify -c` | Batch 모드 |
 | `lint report` | `lint generate report` | 리포트 생성 |
 | `lint open` | `qverify lint.db` | GUI 열기 |
+| `lint suppress X -module M` | `lint suppress -check X -arg module=M` | `-module` 전용 옵션 없음 |
+| `lint suppress ... -reason "..."` | `lint suppress ... -comment "..."` | 근거 필드는 `-comment` |
+| `lint diff a.db b.db` | `lint diff a.db -refdb b.db` | 두 번째 인자는 `-refdb` 플래그 필수 |
+| `lint report item ... \` <br> `# REASON: ...` (줄연결 뒤 주석) | `lint report item ... -comment {REASON}` | Tcl `\` 뒤의 `#`는 주석 아님 — 공식 `-comment` 필드 사용 |
+| `-arg foo=bar` (체크에 없는 argname) | 체크의 메시지 템플릿 placeholder만 허용 | argname은 `lint.rpt` Check Details 참조 (예: `async_reset_active_high`는 `reset`/`module`/`file`/`line`) |
 
 ---
 

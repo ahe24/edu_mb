@@ -72,7 +72,7 @@ const labTasks: {
     title: 'Waiver 4가지 방법 동시 적용',
     items: [
       <>Pragma: 특정 블록 1개에 <C>// lint_checking X off</C> 적용</>,
-      <>lint suppress: 레거시 모듈 1개에 모듈 단위 waive</>,
+      <>lint suppress: 레거시 모듈에 <C>-arg module=</C> + <C>-comment</C> 근거</>,
       <>lint report item: 위반 1건에 <C>-status waived</C> + 4필드 근거</>,
       <>lint off: 정당한 벤더 관례 1건만 (예: <C>unsynth_initial_stmt</C>)</>,
     ],
@@ -85,11 +85,11 @@ const labTasks: {
     title: '기준선 · Status History 확인',
     items: [
       <>현재 <C>lint.db</C>를 <C>baseline/lint.db</C>로 복사</>,
-      <>RTL 한 곳 수정 후 재분석 → <C>lint diff</C>로 차이 확인</>,
+      <>RTL 한 곳 수정 후 재분석 → <C>lint diff</C>로 <C>lint_incremental.rpt</C> 생성</>,
       <><C>lint_status_history.rpt</C>에서 개별 위반 이력 확인</>,
     ],
     color: '#E53E3E',
-    cmd: 'lint diff baseline/lint.db output/lint.db',
+    cmd: 'lint diff output/lint.db -refdb baseline/lint.db',
     shell: 'qverify',
   },
   {

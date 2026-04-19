@@ -64,27 +64,27 @@ lint off unsynth_initial_stmt
   },
   {
     key: 'suppress',
-    name: 'lint suppress (모듈)',
+    name: 'lint suppress (pre-run)',
     color: '#E8913A',
-    scope: '모듈 단위',
-    persistence: '정책 파일 또는 waiver 파일',
+    scope: '`-arg argname=value` (module·signal·file 등)',
+    persistence: '정책·waiver Tcl 파일',
     audit: 'C',
     pros: [
-      '영향 범위가 모듈로 한정됨',
-      '3rd-party IP 블록에 깔끔',
-      '전역 off보다 안전',
+      '`-comment`/`-owner`/`-reviewer` 근거 필드 내장',
+      '범위 유연: check·alias·category·arg 조합',
+      '3rd-party IP·레거시 블록에 깔끔',
     ],
     cons: [
-      '모듈 내부 모든 violation 숨김',
-      '신호별 선택 불가',
-      'IP 교체 시 잊기 쉬움',
+      '상태 이력 자동 기록 X (pre-run 억제)',
+      '와일드카드 과사용 시 진짜 버그 숨김',
+      'RTL ID 기반 개별 추적은 불가',
     ],
-    example: `# 외부 IP 내부 위반은 검토 대상 아님
-lint suppress combo_loop \\
-  -module external_dsp_ip
-lint suppress latch_inferred \\
-  -module legacy_interface`,
-    when: '검증 대상 아닌 외부 IP, 레거시 블록, 블랙박스 모듈.',
+    example: `# SUPPRESS-001  external_dsp_ip (DR-207)
+lint suppress -check combo_loop latch_inferred \\
+  -arg module=external_dsp_ip \\
+  -owner alice -reviewer lead \\
+  -comment {3rd-party BB, out of V&V scope (DR-207)}`,
+    when: '외부 IP·레거시·블랙박스, 체크+argument 패턴 벌크 억제. -comment는 ASCII 전용 (리포트 CP949 mojibake 회피).',
   },
   {
     key: 'item',
@@ -104,11 +104,12 @@ lint suppress latch_inferred \\
       'RTL 리팩토링 시 ID 변경 가능',
       '설계 초기엔 비효율',
     ],
-    example: `lint report item -status waived \\
+    example: `# WAIVER-042 (DR-112)  Xilinx active-high async reset
+lint report item -status waived \\
   -check async_reset_active_high \\
-  -arg reset=rst \\
-  # REASON: Xilinx convention (DR-112)
-  # REVIEWER: alice@team, 2026-04-15`,
+  -rtl_id c8c123e5_00300 \\
+  -owner alice -reviewer lead \\
+  -comment {Xilinx convention, DR-112 (2026-04-15)}`,
     when: '기본 waiver 방식. 감사 대응이 필요한 모든 safety-critical 프로젝트.',
   },
 ];

@@ -11,7 +11,7 @@ import SlideHeader from '../SlideHeader';
 const historyRows = [
   { ts: '2026-04-01 09:15', user: 'alice', from: 'uninspected', to: 'pending', reason: 'under review' },
   { ts: '2026-04-03 14:22', user: 'alice', from: 'pending', to: 'waived', reason: 'Xilinx convention DR-112' },
-  { ts: '2026-04-07 11:40', user: 'bob',   from: 'waived', to: 'pending', reason: 'DAL-A 재검토' },
+  { ts: '2026-04-07 11:40', user: 'bob',   from: 'waived', to: 'pending', reason: 'DAL-A re-review requested' },
   { ts: '2026-04-09 16:05', user: 'bob',   from: 'pending', to: 'bug',    reason: 'actual race detected' },
   { ts: '2026-04-12 10:00', user: 'alice', from: 'bug',     to: 'fixed',  reason: 'PR #447 merged' },
   { ts: '2026-04-15 15:30', user: 'carol', from: 'fixed',   to: 'verified', reason: 'sim + formal pass' },
@@ -27,10 +27,10 @@ const statusColor: Record<string, string> = {
 };
 
 const do254Req = [
-  { label: 'REASON', desc: '기술적 근거 — 왜 설계상 문제 아님 또는 수용 가능한가' },
-  { label: 'REVIEWER', desc: '리뷰 책임자 — 엔지니어 + 독립 검증자 이름' },
-  { label: 'DATE', desc: '리뷰 완료 일자 — 프로젝트 일정에 연결' },
-  { label: 'TRACE', desc: '관련 요구사항·설계문서 ID (DR-xxx, SSS-xxx)' },
+  { label: 'REASON', desc: '기술적 근거 → -comment 필드 (ASCII 전용)' },
+  { label: 'REVIEWER', desc: '엔지니어·독립 검증자 → -owner · -reviewer 필드' },
+  { label: 'DATE', desc: '리뷰 일자 → lint_status_history.rpt에 자동 기록' },
+  { label: 'TRACE', desc: '요구사항·설계문서 ID (DR-xxx, SSS-xxx) → -comment에 포함' },
 ];
 
 export default function AuditTrailSlide() {
@@ -211,13 +211,13 @@ export default function AuditTrailSlide() {
                 lineHeight: 1.7,
                 whiteSpace: 'pre-wrap',
               }}>
+<span style={{ color: '#718096' }}># WAIVER-042 · DATE: 2026-04-03 (lint_status_history에 자동 기록)</span>{'\n'}
 <span style={{ color: '#A8D8A8' }}>lint report item</span> -status waived <span style={{ color: '#F6AD55' }}>\</span>{'\n'}
   -check async_reset_active_high <span style={{ color: '#F6AD55' }}>\</span>{'\n'}
-  -rtl_id 2471cf09_00300{'\n'}
-<span style={{ color: '#718096' }}># REASON: Xilinx FPGA active-high</span>{'\n'}
-<span style={{ color: '#718096' }}># REVIEWER: alice@team / indep: dan@qa</span>{'\n'}
-<span style={{ color: '#718096' }}># DATE: 2026-04-03</span>{'\n'}
-<span style={{ color: '#718096' }}># TRACE: DR-112, SSS-045</span>
+  -rtl_id 2471cf09_00300 <span style={{ color: '#F6AD55' }}>\</span>{'\n'}
+  -owner alice <span style={{ color: '#F6AD55' }}>\</span>{'\n'}
+  -reviewer dan <span style={{ color: '#F6AD55' }}>\</span>{'\n'}
+  -comment <span style={{ color: '#FCD5A0' }}>{'{Xilinx FPGA active-high reset; DR-112, SSS-045}'}</span>
               </pre>
             </div>
 
@@ -237,7 +237,7 @@ export default function AuditTrailSlide() {
                 {[
                   { step: '1', text: '기준 commit에서 lint.rpt 생성 → baseline.rpt 보관', color: '#4A6FA5' },
                   { step: '2', text: 'PR commit에서 lint.rpt 생성', color: '#5B8C5A' },
-                  { step: '3', text: 'lint diff baseline.db current.db → 새 위반만 필터', color: '#E8913A' },
+                  { step: '3', text: 'lint diff current.db -refdb baseline.db → lint_incremental.rpt', color: '#E8913A' },
                   { step: '4', text: '신규 위반 0건 + waiver 증감 검토 시 merge 허용', color: '#48BB78' },
                 ].map(w => (
                   <div key={w.step} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
