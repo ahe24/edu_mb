@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { FPGA, slideBg, shadow } from '../FpgaSlideStyles';
 import SlideHeader from '../SlideHeader';
+import SlideModal from '../SlideModal';
 
 /**
  * Structural · FSM 핵심 룰 탐색기
@@ -1449,6 +1450,38 @@ function FsmUnreachableDiagram() {
     );
   };
 
+  // Proper teardrop self-loop: start/end on circle boundary, bulge outward in `dirDeg` direction.
+  const selfLoop = (id: keyof typeof pos, dirDeg: number, lbl: string, color: string,
+                    opts?: { extent?: number; spread?: number; labelDx?: number; labelDy?: number }) => {
+    const { x: cx, y: cy } = pos[id];
+    const extent = opts?.extent ?? 28;
+    const spread = opts?.spread ?? 24;
+    const toRad = (d: number) => (d * Math.PI) / 180;
+    const t1 = toRad(dirDeg - spread);
+    const t2 = toRad(dirDeg + spread);
+    const td = toRad(dirDeg);
+    const sx = cx + R * Math.cos(t1);
+    const sy = cy - R * Math.sin(t1);
+    const ex = cx + R * Math.cos(t2);
+    const ey = cy - R * Math.sin(t2);
+    const cp1x = cx + (R + extent) * Math.cos(t1);
+    const cp1y = cy - (R + extent) * Math.sin(t1);
+    const cp2x = cx + (R + extent) * Math.cos(t2);
+    const cp2y = cy - (R + extent) * Math.sin(t2);
+    const tipX = cx + (R + extent * 0.95) * Math.cos(td);
+    const tipY = cy - (R + extent * 0.95) * Math.sin(td);
+    return (
+      <g key={`loop_${id}_${dirDeg}`}>
+        <path d={`M ${sx.toFixed(2)} ${sy.toFixed(2)} C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)} ${cp2x.toFixed(2)} ${cp2y.toFixed(2)} ${ex.toFixed(2)} ${ey.toFixed(2)}`}
+          fill="none" stroke={color} strokeWidth="1.5" markerEnd={`url(#un_arr_${color.slice(1)})`} />
+        <text x={tipX + (opts?.labelDx ?? 0)} y={tipY + (opts?.labelDy ?? -4)}
+          fontSize="7.5" fontWeight="700" fill={color} fontFamily="monospace" textAnchor="middle">
+          {lbl}
+        </text>
+      </g>
+    );
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
       <style>{`
@@ -1479,15 +1512,11 @@ function FsmUnreachableDiagram() {
             {straight('IDLE', 'RUN', 'start', wire, -10)}
             <path d={`M ${pos.IDLE.x} ${pos.IDLE.y + R} Q ${(pos.IDLE.x + pos.RUN.x) / 2} 190 ${pos.RUN.x - 3} ${pos.RUN.y + R}`}
               fill="none" stroke={wire} strokeWidth="1.6" opacity="0.4" />
-            {/* IDLE self-loop (!start) */}
-            <path d={`M ${pos.IDLE.x - 18} ${pos.IDLE.y - 14} A 16 16 0 1 0 ${pos.IDLE.x - 4} ${pos.IDLE.y - 22}`}
-              fill="none" stroke={wire} strokeWidth="1.4" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
-            <text x={pos.IDLE.x - 34} y={pos.IDLE.y - 30} fontSize="7.5" fontWeight="700" fill={wire} fontFamily="monospace">!start</text>
+            {/* IDLE self-loop (!start) — upper-left teardrop */}
+            {selfLoop('IDLE', 140, '!start', wire, { labelDy: -6 })}
             {straight('RUN', 'DONE', 'done', wire, -10)}
-            {/* RUN self-loop !done */}
-            <path d={`M ${pos.RUN.x + 18} ${pos.RUN.y + 20} A 16 16 0 1 0 ${pos.RUN.x + 3} ${pos.RUN.y + 26}`}
-              fill="none" stroke={wire} strokeWidth="1.4" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
-            <text x={pos.RUN.x + 16} y={pos.RUN.y + 48} fontSize="7.5" fontWeight="700" fill={wire} fontFamily="monospace">!done</text>
+            {/* RUN self-loop (!done) — downward teardrop */}
+            {selfLoop('RUN', -90, '!done', wire, { labelDy: 10 })}
             {/* DONE → IDLE back edge (curved above) */}
             <path d={`M ${pos.DONE.x} ${pos.DONE.y - R} Q ${(pos.IDLE.x + pos.DONE.x) / 2} 35 ${pos.IDLE.x} ${pos.IDLE.y - R}`}
               fill="none" stroke={wire} strokeWidth="1.7" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
@@ -1533,14 +1562,13 @@ function FsmUnreachableDiagram() {
           <svg viewBox="0 0 420 210" style={{ width: '100%', height: 'auto', display: 'block' }}>
             {defs}
             {straight('IDLE', 'RUN', 'start', wire, -10)}
-            <path d={`M ${pos.IDLE.x - 18} ${pos.IDLE.y - 14} A 16 16 0 1 0 ${pos.IDLE.x - 4} ${pos.IDLE.y - 22}`}
-              fill="none" stroke={wire} strokeWidth="1.4" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
-            <text x={pos.IDLE.x - 34} y={pos.IDLE.y - 30} fontSize="7.5" fontWeight="700" fill={wire} fontFamily="monospace">!start</text>
+            {/* IDLE self-loop (!start) — upper-left teardrop */}
+            {selfLoop('IDLE', 140, '!start', wire, { labelDy: -6 })}
             {straight('RUN', 'DONE', 'done', wire, -10)}
-            {/* NEW RUN → ERROR */}
-            <path d={`M ${pos.RUN.x + 8} ${pos.RUN.y - R + 4} Q 265 60 ${pos.ERROR.x - R + 2} ${pos.ERROR.y + 4}`}
+            {/* NEW RUN → ERROR — exits top-right of RUN, enters lower-left of ERROR */}
+            <path d={`M 182 109.22 Q 265 45 343.03 71.97`}
               fill="none" stroke={ok} strokeWidth="2.2" markerEnd={`url(#un_arr_${ok.slice(1)})`} />
-            <text x="260" y="55" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">
+            <text x="265" y="40" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">
               err (신규)
             </text>
             {/* DONE → IDLE */}
@@ -1549,10 +1577,10 @@ function FsmUnreachableDiagram() {
             <text x={(pos.IDLE.x + pos.DONE.x) / 2} y="25" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">
               unconditional
             </text>
-            {/* ERROR → IDLE */}
-            <path d={`M ${pos.ERROR.x - R} ${pos.ERROR.y + 5} Q 200 105 ${pos.IDLE.x + R} ${pos.IDLE.y - 6}`}
+            {/* ERROR → IDLE — recovery path routed below via wide downward arc */}
+            <path d={`M 351.79 77.55 Q 210 225 82.55 121.79`}
               fill="none" stroke={ok} strokeWidth="1.8" markerEnd={`url(#un_arr_${ok.slice(1)})`} />
-            <text x="205" y="110" fontSize="8" fontWeight="800" fill={ok} fontFamily="monospace">복구 경로</text>
+            <text x="215" y="187" fontSize="8" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">복구 경로</text>
 
             {bubble('IDLE',  'IDLE',  wire)}
             {bubble('RUN',   'RUN',   wire)}
@@ -1561,7 +1589,7 @@ function FsmUnreachableDiagram() {
 
             {/* marker cycling with err diversion */}
             <circle r="6" fill={ok} stroke="#fff" strokeWidth="1.2" style={{
-              offsetPath: `path("M ${pos.IDLE.x} ${pos.IDLE.y} L ${pos.RUN.x} ${pos.RUN.y} Q 265 60 ${pos.ERROR.x} ${pos.ERROR.y} Q 200 105 ${pos.IDLE.x} ${pos.IDLE.y} L ${pos.RUN.x} ${pos.RUN.y} L ${pos.DONE.x} ${pos.DONE.y} Q ${(pos.IDLE.x + pos.DONE.x) / 2} 35 ${pos.IDLE.x} ${pos.IDLE.y}")`,
+              offsetPath: `path("M ${pos.IDLE.x} ${pos.IDLE.y} L ${pos.RUN.x} ${pos.RUN.y} Q 265 45 ${pos.ERROR.x} ${pos.ERROR.y} Q 210 225 ${pos.IDLE.x} ${pos.IDLE.y} L ${pos.RUN.x} ${pos.RUN.y} L ${pos.DONE.x} ${pos.DONE.y} Q ${(pos.IDLE.x + pos.DONE.x) / 2} 35 ${pos.IDLE.x} ${pos.IDLE.y}")`,
               animation: 'unDivert 18s linear infinite',
             }} />
           </svg>
@@ -2588,38 +2616,23 @@ export default function StructuralFsmRulesSlide() {
       </div>
 
       {/* 시각화 모달 */}
-      {showDiagram && (
-        <div
-          onClick={() => setShowDiagram(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(15, 23, 42, 0.65)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999,
-            padding: '2rem',
-            animation: 'fadeIn 0.2s ease',
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: FPGA.white,
-              borderRadius: '14px',
-              padding: '1.1rem 1.3rem 1rem',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.35)',
-              maxWidth: '1050px',
-              width: '100%',
-              maxHeight: '88vh',
-              overflow: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.7rem',
-            }}
-          >
+      <SlideModal
+        open={!!showDiagram}
+        onClose={() => setShowDiagram(null)}
+        contentStyle={{
+          background: FPGA.white,
+          borderRadius: '14px',
+          padding: '1.1rem 1.3rem 1rem',
+          boxShadow: '0 20px 50px rgba(0,0,0,0.35)',
+          maxWidth: '1050px',
+          width: '100%',
+          maxHeight: '88vh',
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.7rem',
+        }}
+      >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
               <div>
                 <div style={{ fontSize: '0.65rem', fontWeight: 700, color: catColor, letterSpacing: '0.05em', marginBottom: '3px' }}>
@@ -2682,9 +2695,7 @@ export default function StructuralFsmRulesSlide() {
             <div style={{ fontSize: '0.6rem', color: FPGA.textLight, textAlign: 'center', marginTop: '-4px' }}>
               배경 클릭 또는 × 버튼으로 닫기
             </div>
-          </div>
-        </div>
-      )}
+      </SlideModal>
     </section>
   );
 }
