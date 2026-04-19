@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { FPGA, slideBg, shadow } from '../FpgaSlideStyles';
 import SlideHeader from '../SlideHeader';
 
@@ -8,8 +9,18 @@ import SlideHeader from '../SlideHeader';
  * lint methodology / lint preference / lint off / lint report item 사용법
  */
 
-const directives = [
+type TabKey = 'setup' | 'control' | 'waiver';
+
+const directives: {
+  tab: TabKey;
+  cmd: string;
+  label: string;
+  color: string;
+  desc: string;
+  examples: { code: string; note: string }[];
+}[] = [
   {
+    tab: 'setup',
     cmd: 'lint methodology fpga',
     label: 'Goal 선택',
     color: '#4A6FA5',
@@ -26,6 +37,7 @@ const directives = [
     ],
   },
   {
+    tab: 'setup',
     cmd: 'lint preference',
     label: '체크 동작 세부 설정',
     color: '#E8913A',
@@ -50,6 +62,7 @@ const directives = [
     ],
   },
   {
+    tab: 'control',
     cmd: 'lint off',
     label: '특정 체크 비활성화',
     color: '#E53E3E',
@@ -66,6 +79,7 @@ const directives = [
     ],
   },
   {
+    tab: 'control',
     cmd: 'lint report check -severity',
     label: '심각도 변경',
     color: '#8B6FA5',
@@ -78,6 +92,7 @@ const directives = [
     ],
   },
   {
+    tab: 'waiver',
     cmd: 'lint report item -status',
     label: 'Waiver 관리',
     color: '#48BB78',
@@ -99,6 +114,12 @@ const directives = [
   },
 ];
 
+const tabs: { key: TabKey; label: string; sub: string; color: string }[] = [
+  { key: 'setup',   label: '체크 설정',   sub: 'methodology · preference',       color: '#4A6FA5' },
+  { key: 'control', label: '체크 제어',   sub: 'lint off · severity',            color: '#E53E3E' },
+  { key: 'waiver',  label: 'Waiver 관리', sub: 'lint report item -status',       color: '#48BB78' },
+];
+
 const statusTable = [
   { status: 'uninspected', color: '#718096', desc: '분석 후 아직 검토되지 않은 초기 상태' },
   { status: 'pending', color: '#E8913A', desc: '검토 중 / 수정 진행 중' },
@@ -109,6 +130,9 @@ const statusTable = [
 ];
 
 export default function CustomizationSlide() {
+  const [activeTab, setActiveTab] = useState<TabKey>('setup');
+  const visible = directives.filter((d) => d.tab === activeTab);
+
   return (
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
@@ -118,9 +142,45 @@ export default function CustomizationSlide() {
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: '0.9rem' }}>
-          {/* 좌측: 디렉티브 목록 */}
+          {/* 좌측: 탭 + 디렉티브 목록 */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.55rem', minWidth: 0 }}>
-            {directives.map((d) => (
+            {/* Tab strip */}
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
+              {tabs.map((t) => {
+                const active = t.key === activeTab;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setActiveTab(t.key)}
+                    style={{
+                      flex: 1,
+                      cursor: 'pointer',
+                      border: active ? `1.5px solid ${t.color}` : `1px solid ${FPGA.border}`,
+                      borderBottom: active ? `3px solid ${t.color}` : `1px solid ${FPGA.border}`,
+                      background: active ? `${t.color}10` : FPGA.white,
+                      borderRadius: '8px 8px 6px 6px',
+                      padding: '0.4rem 0.6rem',
+                      textAlign: 'left',
+                      boxShadow: active ? `0 2px 8px ${t.color}22` : '0 1px 3px rgba(0,0,0,0.04)',
+                      transform: active ? 'translateY(-1px)' : 'none',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <div style={{
+                      fontSize: '0.82rem', fontWeight: 800,
+                      color: active ? t.color : FPGA.dark, lineHeight: 1.2,
+                    }}>{t.label}</div>
+                    <div style={{
+                      fontFamily: '"JetBrains Mono", monospace',
+                      fontSize: '0.62rem',
+                      color: active ? t.color : FPGA.textLight,
+                      opacity: active ? 0.85 : 0.7, marginTop: '3px',
+                    }}>{t.sub}</div>
+                  </button>
+                );
+              })}
+            </div>
+            {visible.map((d) => (
               <div key={d.cmd} style={{
                 background: FPGA.white,
                 border: `1px solid ${d.color}20`,
@@ -129,40 +189,44 @@ export default function CustomizationSlide() {
                 padding: '0.6rem 0.8rem',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.3rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.35rem' }}>
                   <code style={{
                     fontFamily: '"JetBrains Mono", monospace',
-                    fontSize: '0.68rem', fontWeight: 700,
+                    fontSize: '0.75rem', fontWeight: 700,
                     color: d.color,
                     background: `${d.color}12`,
                     border: `1px solid ${d.color}25`,
                     padding: '2px 8px', borderRadius: '4px',
                   }}>{d.cmd}</code>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 700, color: FPGA.dark }}>{d.label}</span>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 700, color: FPGA.dark }}>{d.label}</span>
                 </div>
-                <div style={{ fontSize: '0.68rem', color: FPGA.textLight, marginBottom: '0.4rem', lineHeight: 1.5 }}>
+                <div style={{ fontSize: '0.72rem', color: FPGA.textLight, marginBottom: '0.45rem', lineHeight: 1.55 }}>
                   {d.desc}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   {d.examples.map((ex, i) => (
                     <div key={i} style={{
-                      display: 'flex', gap: '0.6rem', alignItems: 'flex-start',
-                      background: '#F8FAFC', borderRadius: '6px', padding: '0.35rem 0.5rem',
+                      display: 'flex', gap: '0.7rem', alignItems: 'flex-start',
+                      background: '#F8FAFC', borderRadius: '6px', padding: '0.4rem 0.55rem',
                     }}>
                       <pre style={{
                         margin: 0,
                         fontFamily: '"JetBrains Mono", monospace',
-                        fontSize: '0.6rem',
+                        fontSize: '0.68rem',
                         color: '#A8D8A8',
-                        lineHeight: 1.6,
+                        lineHeight: 1.55,
                         whiteSpace: 'pre-wrap',
                         wordBreak: 'break-all',
-                        flex: 1,
+                        flex: '1 1 60%',
+                        minWidth: 0,
                         background: '#1A2235',
                         borderRadius: '5px',
-                        padding: '0.3rem 0.5rem',
+                        padding: '0.35rem 0.55rem',
                       }}>{ex.code}</pre>
-                      <div style={{ fontSize: '0.6rem', color: FPGA.textLight, lineHeight: 1.5, maxWidth: '200px', flexShrink: 0 }}>
+                      <div style={{
+                        fontSize: '0.7rem', color: FPGA.textLight, lineHeight: 1.5,
+                        flex: '1 1 40%', minWidth: 0,
+                      }}>
                         {ex.note}
                       </div>
                     </div>
@@ -173,32 +237,32 @@ export default function CustomizationSlide() {
           </div>
 
           {/* 우측: 위반 상태 테이블 + 워크플로우 */}
-          <div style={{ width: '240px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+          <div style={{ width: '290px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
             {/* 위반 상태 */}
             <div style={{
               background: FPGA.white,
               border: `1px solid ${FPGA.border}`,
               borderRadius: '12px',
-              padding: '0.7rem 0.8rem',
+              padding: '0.75rem 0.85rem',
               boxShadow: shadow.card,
             }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: FPGA.dark, marginBottom: '0.5rem' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: FPGA.dark, marginBottom: '0.55rem' }}>
                 위반 항목 상태 체계
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 {statusTable.map((s) => (
-                  <div key={s.status} style={{ display: 'flex', alignItems: 'flex-start', gap: '7px' }}>
+                  <div key={s.status} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                     <code style={{
                       fontFamily: '"JetBrains Mono", monospace',
-                      fontSize: '0.6rem', fontWeight: 700,
+                      fontSize: '0.66rem', fontWeight: 700,
                       color: s.color,
                       background: `${s.color}12`,
                       border: `1px solid ${s.color}28`,
-                      padding: '1px 6px', borderRadius: '3px',
-                      flexShrink: 0, minWidth: '74px',
+                      padding: '2px 7px', borderRadius: '3px',
+                      flexShrink: 0, minWidth: '80px',
                       textAlign: 'center',
                     }}>{s.status}</code>
-                    <span style={{ fontSize: '0.62rem', color: FPGA.textLight, lineHeight: 1.4 }}>{s.desc}</span>
+                    <span style={{ fontSize: '0.7rem', color: FPGA.textLight, lineHeight: 1.45 }}>{s.desc}</span>
                   </div>
                 ))}
               </div>
@@ -209,10 +273,10 @@ export default function CustomizationSlide() {
               background: `linear-gradient(135deg, rgba(74,111,165,0.06), rgba(74,111,165,0.12))`,
               border: `1px solid ${FPGA.primary}20`,
               borderRadius: '12px',
-              padding: '0.7rem 0.8rem',
+              padding: '0.75rem 0.85rem',
               boxShadow: shadow.card,
             }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: FPGA.primary, marginBottom: '0.5rem' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: FPGA.primary, marginBottom: '0.55rem' }}>
                 커스터마이징 워크플로우
               </div>
               {[
@@ -222,14 +286,14 @@ export default function CustomizationSlide() {
                 { step: '4', text: '위반 검토 후 waived / bug / pending 상태 지정', color: '#8B6FA5' },
                 { step: '5', text: 'DO-254: 모든 waiver에 근거(REASON) 주석 필수', color: '#E53E3E' },
               ].map((w) => (
-                <div key={w.step} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '0.35rem' }}>
+                <div key={w.step} style={{ display: 'flex', alignItems: 'flex-start', gap: '9px', marginBottom: '0.4rem' }}>
                   <div style={{
-                    width: '18px', height: '18px', borderRadius: '50%',
+                    width: '20px', height: '20px', borderRadius: '50%',
                     background: `${w.color}18`, border: `1.5px solid ${w.color}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '0.58rem', fontWeight: 800, color: w.color, flexShrink: 0,
+                    fontSize: '0.64rem', fontWeight: 800, color: w.color, flexShrink: 0,
                   }}>{w.step}</div>
-                  <span style={{ fontSize: '0.62rem', color: FPGA.text, lineHeight: 1.5 }}>{w.text}</span>
+                  <span style={{ fontSize: '0.7rem', color: FPGA.text, lineHeight: 1.5 }}>{w.text}</span>
                 </div>
               ))}
             </div>
@@ -239,12 +303,12 @@ export default function CustomizationSlide() {
               background: 'rgba(229,62,62,0.06)',
               border: '1.5px solid rgba(229,62,62,0.30)',
               borderRadius: '10px',
-              padding: '0.6rem 0.75rem',
+              padding: '0.65rem 0.8rem',
             }}>
-              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#E53E3E', marginBottom: '0.3rem' }}>
+              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#E53E3E', marginBottom: '0.35rem' }}>
                 ⚠ DO-254 Waiver 주의사항
               </div>
-              <div style={{ fontSize: '0.62rem', color: FPGA.text, lineHeight: 1.5 }}>
+              <div style={{ fontSize: '0.7rem', color: FPGA.text, lineHeight: 1.5 }}>
                 체크 비활성화(lint off) 또는 위반 면제(waived)는 반드시 <strong>Design Development Plan(DDP)</strong> 또는 <strong>Verification Plan</strong>에 해당 근거를 명시해야 합니다. 감사(audit) 시 추적 가능해야 합니다.
               </div>
             </div>
