@@ -155,17 +155,43 @@ always_ff @(posedge clk)
   },
 ];
 
-const categories: { key: CatKey; label: string; color: string; count: number }[] = [
-  { key: 'name',  label: 'Naming',  color: '#4A6FA5', count: items.filter(x => x.cat === 'name').length },
-  { key: 'reset', label: 'Reset',   color: '#E8913A', count: items.filter(x => x.cat === 'reset').length },
-  { key: 'clock', label: 'Clock',   color: '#E53E3E', count: items.filter(x => x.cat === 'clock').length },
-  { key: 'case',  label: 'Case/FSM', color: '#8B6FA5', count: items.filter(x => x.cat === 'case').length },
-  { key: 'flop',  label: 'Flop/Combo', color: '#5B8C5A', count: items.filter(x => x.cat === 'flop').length },
+const categories: { key: CatKey; label: string; color: string; count: number; audit: string; apply: string }[] = [
+  {
+    key: 'name', label: 'Naming', color: '#4A6FA5',
+    count: items.filter(x => x.cat === 'name').length,
+    audit: '감사 관점: 네이밍 일관성은 추적성(traceability) 직접 영향 — DR↔RTL 매핑 자동화 전제.',
+    apply: '적용 포인트: 프로젝트 kick-off 시 고정. 후반 도입은 대규모 리네임 PR 발생.',
+  },
+  {
+    key: 'reset', label: 'Reset', color: '#E8913A',
+    count: items.filter(x => x.cat === 'reset').length,
+    audit: '감사 관점: reset 전략 일관성은 power-up 안전성 증빙 핵심 — DAL-A는 모든 FF 검토 필수.',
+    apply: '적용 포인트: Xilinx는 initial 허용·ASIC은 금지. SoC라면 모듈별 분리 정책.',
+  },
+  {
+    key: 'clock', label: 'Clock', color: '#E53E3E',
+    count: items.filter(x => x.cat === 'clock').length,
+    audit: '감사 관점: 게이팅·도메인 교차는 metastability 위험 → CDC 검증과 페어로 증빙.',
+    apply: '적용 포인트: 게이팅 전용 셀 캡슐화 후 모듈명 등록. 벤더 셀 다수 시 일괄 등록.',
+  },
+  {
+    key: 'case', label: 'Case/FSM', color: '#8B6FA5',
+    count: items.filter(x => x.cat === 'case').length,
+    audit: '감사 관점: case 완전성 누락 → latch 추론 → 정의되지 않은 상태 도달 가능. FSM safety 직결.',
+    apply: '적용 포인트: enum + unique 우선. 방어 default는 coverage 제외 + REASON 필수.',
+  },
+  {
+    key: 'flop', label: 'Flop/Combo', color: '#5B8C5A',
+    count: items.filter(x => x.cat === 'flop').length,
+    audit: '감사 관점: 의도하지 않은 latch·조합 루프는 timing 미수렴 + 합성 결과 불일치 위험.',
+    apply: '적용 포인트: always_ff/_latch 명시화. 계층 경계 루프 검출은 top-level lint 필수.',
+  },
 ];
 
 export default function PreferenceDeepDiveSlide() {
   const [active, setActive] = useState<CatKey>('name');
   const visible = items.filter(x => x.cat === active);
+  const activeCat = categories.find(c => c.key === active)!;
 
   return (
     <section data-background-color={slideBg}>
@@ -211,7 +237,7 @@ export default function PreferenceDeepDiveSlide() {
           </div>
 
           {/* 예제 카드들 */}
-          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem', alignItems: 'stretch' }}>
             {visible.map((p, i) => {
               const color = categories.find(c => c.key === p.cat)!.color;
               return (
@@ -297,6 +323,49 @@ export default function PreferenceDeepDiveSlide() {
                 </div>
               );
             })}
+          </div>
+
+          {/* 카테고리별 감사 관점 / 적용 포인트 */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '0.4rem',
+            flexShrink: 0,
+          }}>
+            <div style={{
+              background: `linear-gradient(135deg, ${activeCat.color}08, ${activeCat.color}14)`,
+              border: `1px solid ${activeCat.color}30`,
+              borderLeft: `3px solid ${activeCat.color}`,
+              borderRadius: '8px',
+              padding: '0.4rem 0.7rem',
+            }}>
+              <div style={{
+                fontSize: '0.6rem', fontWeight: 800,
+                color: activeCat.color, letterSpacing: '0.06em',
+                fontFamily: '"JetBrains Mono", monospace',
+                marginBottom: '0.15rem',
+              }}>▸ AUDIT</div>
+              <div style={{ fontSize: '0.66rem', color: FPGA.text, lineHeight: 1.45 }}>
+                {activeCat.audit}
+              </div>
+            </div>
+            <div style={{
+              background: 'rgba(74,111,165,0.05)',
+              border: `1px solid ${FPGA.border}`,
+              borderLeft: `3px solid ${FPGA.primary}`,
+              borderRadius: '8px',
+              padding: '0.4rem 0.7rem',
+            }}>
+              <div style={{
+                fontSize: '0.6rem', fontWeight: 800,
+                color: FPGA.primary, letterSpacing: '0.06em',
+                fontFamily: '"JetBrains Mono", monospace',
+                marginBottom: '0.15rem',
+              }}>▸ APPLY</div>
+              <div style={{ fontSize: '0.66rem', color: FPGA.text, lineHeight: 1.45 }}>
+                {activeCat.apply}
+              </div>
+            </div>
           </div>
         </div>
       </div>

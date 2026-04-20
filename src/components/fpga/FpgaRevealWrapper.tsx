@@ -36,9 +36,11 @@ export default function FpgaRevealWrapper({ children, header }: { children: Reac
           controls: !printMode,
           progress: !printMode,
           center: true,
+          // 16:9.5 — 일반적인 노트북/외부 모니터 (1440×900, 1920×1080, 1366×768) 의
+          // 가용 영역 비율과 유사하게 맞춰 letterboxing 최소화
           width: 1280,
-          height: 720,
-          margin: 0.02,
+          height: 760,
+          margin: 0.015,
           minScale: 0.2,
           maxScale: 2.5,
           help: false,
@@ -106,31 +108,39 @@ export default function FpgaRevealWrapper({ children, header }: { children: Reac
             pointerEvents: 'none',
           }}>
             <span style={{
-              fontSize: '0.72rem',
+              fontSize: '0.78rem',
               fontWeight: 700,
-              color: '#4A6FA5',
+              color: '#2B4570',
               fontFamily: '"JetBrains Mono", monospace',
               letterSpacing: '0.06em',
-              opacity: 0.75,
+              opacity: 0.92,
             }}>{header}</span>
           </div>
         )}
 
         {/* 뒤로가기 버튼 */}
         {mounted && !isPrintPDF && (
-          <Link href="/fpga" style={{
-            position: 'fixed',
-            bottom: '8px',
-            left: '12px',
-            zIndex: 50,
-            fontSize: '0.65rem',
-            color: '#4A6FA5',
-            fontFamily: '"JetBrains Mono", monospace',
-            fontWeight: 600,
-            textDecoration: 'none',
-            opacity: 0.5,
-            letterSpacing: '0.02em',
-          }}>← 커리큘럼</Link>
+          <Link
+            href="/fpga"
+            aria-label="FPGA 커리큘럼 페이지로 돌아가기"
+            style={{
+              position: 'fixed',
+              bottom: '8px',
+              left: '12px',
+              zIndex: 50,
+              fontSize: '0.72rem',
+              color: '#2B4570',
+              fontFamily: '"JetBrains Mono", monospace',
+              fontWeight: 700,
+              textDecoration: 'none',
+              opacity: 0.85,
+              letterSpacing: '0.02em',
+              background: 'rgba(255,255,255,0.85)',
+              border: '1px solid rgba(74,111,165,0.30)',
+              padding: '2px 8px',
+              borderRadius: '4px',
+            }}
+          >← 커리큘럼</Link>
         )}
 
         {/* Footer (인쇄 모드에서 숨김) */}
@@ -266,13 +276,52 @@ const fpgaThemeCSS = `
   .fpga-theme .controls .navigate-up,
   .fpga-theme .controls .navigate-down {
     color: #4A6FA5 !important;
+    opacity: 0.85 !important;
+  }
+  .fpga-theme .controls button:hover,
+  .fpga-theme .controls button:focus {
+    opacity: 1 !important;
+    outline: 2px solid #4A6FA5 !important;
+    outline-offset: 2px !important;
+    border-radius: 4px;
   }
   .fpga-theme .progress span {
     background: #4A6FA5 !important;
   }
   .fpga-theme .slide-number {
-    color: #FFFFFF !important;
+    color: #2B4570 !important;
+    background: rgba(255,255,255,0.85) !important;
+    border: 1px solid rgba(74,111,165,0.30) !important;
+    border-radius: 4px !important;
+    padding: 2px 7px !important;
     font-family: "JetBrains Mono", monospace !important;
-    font-size: 0.75rem !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    bottom: 6px !important;
+    right: 8px !important;
+  }
+
+  /* ── 키보드 포커스 표시 (접근성) ── */
+  .fpga-theme .slides section button:focus-visible {
+    outline: 2px solid #4A6FA5 !important;
+    outline-offset: 2px !important;
+  }
+  .fpga-theme .slides section input[type="checkbox"]:focus-visible {
+    outline: 2px solid #4A6FA5 !important;
+    outline-offset: 2px !important;
+  }
+
+  /* ── 인쇄(PDF) 모드 — 그림자/그라데이션 단순화 ── */
+  @media print {
+    .fpga-theme .slides section,
+    .fpga-theme .slides section * {
+      box-shadow: none !important;
+      text-shadow: none !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .fpga-theme .slides section table {
+      box-shadow: none !important;
+    }
   }
 `;

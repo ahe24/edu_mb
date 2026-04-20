@@ -1,8 +1,11 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { FPGA, slideBg, shadow } from '../FpgaSlideStyles';
 import SlideHeader from '../SlideHeader';
+
+const LS_KEY = 'fpga-day04-lab-checks';
 
 /**
  * Day 04 실습 체크리스트
@@ -113,6 +116,29 @@ const promptFor = (shell: Shell) => {
 };
 
 export default function LabSlide() {
+  const [checked, setChecked] = useState<Record<string, boolean>>({});
+
+  // localStorage 복원 — 강의 중/후 이어서 체크 가능
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (raw) setChecked(JSON.parse(raw));
+    } catch {}
+  }, []);
+
+  const toggle = (id: string) => {
+    setChecked(prev => {
+      const next = { ...prev, [id]: !prev[id] };
+      try { localStorage.setItem(LS_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+
+  const resetAll = () => {
+    setChecked({});
+    try { localStorage.removeItem(LS_KEY); } catch {}
+  };
+
   return (
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
@@ -154,14 +180,39 @@ export default function LabSlide() {
                     {task.title}
                   </div>
                   <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-                    {task.items.map((item, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.66rem', color: FPGA.text }}>
-                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style={{ flexShrink: 0 }}>
-                          <rect x="0.75" y="0.75" width="9.5" height="9.5" rx="2" stroke={task.color} strokeWidth="1" fill={`${task.color}08`} />
-                        </svg>
-                        {item}
-                      </div>
-                    ))}
+                    {task.items.map((item, idx) => {
+                      const id = `${task.num}-${idx}`;
+                      const on = !!checked[id];
+                      return (
+                        <label
+                          key={idx}
+                          htmlFor={`lab-chk-${id}`}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '5px',
+                            fontSize: '0.66rem',
+                            color: on ? FPGA.textLight : FPGA.text,
+                            textDecoration: on ? 'line-through' : 'none',
+                            cursor: 'pointer', userSelect: 'none',
+                          }}
+                        >
+                          <input
+                            id={`lab-chk-${id}`}
+                            type="checkbox"
+                            checked={on}
+                            onChange={() => toggle(id)}
+                            aria-label={`task ${task.num} item ${idx + 1}`}
+                            style={{
+                              width: '12px', height: '12px',
+                              accentColor: task.color,
+                              cursor: 'pointer',
+                              flexShrink: 0,
+                              margin: 0,
+                            }}
+                          />
+                          {item}
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
                 {(() => {
@@ -189,26 +240,52 @@ export default function LabSlide() {
           ))}
 
           {/* 실습 완료 조건 배너 */}
-          <div style={{
-            background: `linear-gradient(135deg, rgba(72,187,120,0.06), rgba(72,187,120,0.12))`,
-            border: '1px solid rgba(72,187,120,0.30)',
-            borderRadius: '10px',
-            padding: '0.5rem 0.9rem',
-            display: 'flex', alignItems: 'center', gap: '0.6rem',
-            boxShadow: shadow.card,
-            marginTop: '0.2rem',
-          }}>
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
-              <circle cx="10" cy="10" r="8.5" stroke="#48BB78" strokeWidth="1.5" />
-              <path d="M6 10l3 3 5-6" stroke="#48BB78" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <div>
-              <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#48BB78' }}>실습 완료 조건: </span>
-              <span style={{ fontSize: '0.68rem', color: FPGA.text }}>
-                Custom Goal 1개 생성, 4가지 waiver 방식 각 1건 이상 적용, REASON 4필드 완비된 waiver 1건, <code style={{ ...codeStyle, fontSize: '0.62rem' }}>lint diff</code> 결과로 RTL 변경이 정확히 탐지됨.
-              </span>
-            </div>
-          </div>
+          {(() => {
+            const totalItems = labTasks.reduce((s, t) => s + t.items.length, 0);
+            const doneItems = Object.values(checked).filter(Boolean).length;
+            const pct = totalItems ? Math.round((doneItems / totalItems) * 100) : 0;
+            return (
+              <div style={{
+                background: `linear-gradient(135deg, rgba(72,187,120,0.06), rgba(72,187,120,0.12))`,
+                border: '1px solid rgba(72,187,120,0.30)',
+                borderRadius: '10px',
+                padding: '0.5rem 0.9rem',
+                display: 'flex', alignItems: 'center', gap: '0.6rem',
+                boxShadow: shadow.card,
+                marginTop: '0.2rem',
+              }}>
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0 }}>
+                  <circle cx="10" cy="10" r="8.5" stroke="#48BB78" strokeWidth="1.5" />
+                  <path d="M6 10l3 3 5-6" stroke="#48BB78" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <div style={{ flex: 1 }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#48BB78' }}>실습 완료 조건: </span>
+                  <span style={{ fontSize: '0.68rem', color: FPGA.text }}>
+                    Custom Goal 1개 생성, 4가지 waiver 방식 각 1건 이상 적용, REASON 4필드 완비된 waiver 1건, <code style={{ ...codeStyle, fontSize: '0.62rem' }}>lint diff</code> 결과로 RTL 변경이 정확히 탐지됨.
+                  </span>
+                </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  flexShrink: 0,
+                  fontFamily: '"JetBrains Mono", monospace',
+                }}>
+                  <span style={{ fontSize: '0.66rem', color: FPGA.textLight }}>
+                    {doneItems}/{totalItems} ({pct}%)
+                  </span>
+                  <button
+                    onClick={resetAll}
+                    style={{
+                      fontSize: '0.6rem', fontWeight: 600,
+                      color: FPGA.textLight, background: 'transparent',
+                      border: `1px solid ${FPGA.border}`,
+                      borderRadius: '4px', padding: '2px 7px',
+                      cursor: 'pointer',
+                    }}
+                  >reset</button>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </section>

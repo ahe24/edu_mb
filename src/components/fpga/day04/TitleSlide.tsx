@@ -23,8 +23,8 @@ export default function TitleSlide() {
           <rect width="100%" height="100%" fill="url(#policyGrid4)" />
         </svg>
 
-        {/* 좌상단 — 필터 / 정책 아이콘 */}
-        <svg style={{ position: 'absolute', top: '40px', left: '48px', opacity: 0.10 }} width="230" height="200" viewBox="0 0 230 200">
+        {/* 좌상단 — 필터 / 정책 아이콘 (순수 장식) */}
+        <svg style={{ position: 'absolute', top: '40px', left: '48px', opacity: 0.06 }} width="230" height="200" viewBox="0 0 230 200">
           {/* 깔때기(필터) */}
           <path d="M15 25 L95 25 L70 70 L70 130 L55 145 L55 70 Z" stroke="#4A6FA5" strokeWidth="2.5" fill="rgba(74,111,165,0.06)" />
           {/* 위반 도트 들어가기 */}
@@ -35,18 +35,17 @@ export default function TitleSlide() {
           {/* 필터 아래 체크 */}
           <circle cx="62" cy="170" r="18" stroke="#48BB78" strokeWidth="2" fill="rgba(72,187,120,0.08)" />
           <path d="M54 170l6 6 12-12" stroke="#48BB78" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          {/* 오른쪽 waiver 티켓 */}
+          {/* 오른쪽 waiver 티켓 (텍스트 제거 — 순수 장식) */}
           <rect x="130" y="40" width="90" height="24" rx="4" stroke="#E8913A" strokeWidth="2" fill="rgba(232,145,58,0.06)" />
           <line x1="140" y1="52" x2="210" y2="52" stroke="#E8913A" strokeWidth="1.2" strokeDasharray="3 2" />
-          <text x="175" y="58" textAnchor="middle" fill="#E8913A" fontSize="9" fontFamily="monospace" fontWeight="700">WAIVED</text>
           <rect x="130" y="75" width="90" height="24" rx="4" stroke="#8B6FA5" strokeWidth="2" fill="rgba(139,111,165,0.06)" />
-          <text x="175" y="92" textAnchor="middle" fill="#8B6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">PENDING</text>
+          <line x1="140" y1="87" x2="210" y2="87" stroke="#8B6FA5" strokeWidth="1.2" strokeDasharray="3 2" />
           <rect x="130" y="110" width="90" height="24" rx="4" stroke="#48BB78" strokeWidth="2" fill="rgba(72,187,120,0.06)" />
-          <text x="175" y="127" textAnchor="middle" fill="#48BB78" fontSize="9" fontFamily="monospace" fontWeight="700">FIXED</text>
+          <line x1="140" y1="122" x2="210" y2="122" stroke="#48BB78" strokeWidth="1.2" strokeDasharray="3 2" />
         </svg>
 
-        {/* 우하단 — Layered Goals */}
-        <svg style={{ position: 'absolute', bottom: '50px', right: '45px', opacity: 0.10 }} width="360" height="110" viewBox="0 0 360 110">
+        {/* 우하단 — Layered Goals (장식, 카드와 겹치지 않도록 위치/투명도 조정) */}
+        <svg style={{ position: 'absolute', bottom: '24px', right: '45px', opacity: 0.05 }} width="320" height="98" viewBox="0 0 360 110">
           <rect x="0" y="25" width="100" height="36" rx="7" stroke="#4A6FA5" strokeWidth="2" fill="rgba(74,111,165,0.08)" />
           <text x="50" y="38" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">Base Goal</text>
           <text x="50" y="53" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">release</text>

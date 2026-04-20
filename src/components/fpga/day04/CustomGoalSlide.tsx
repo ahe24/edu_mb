@@ -108,6 +108,7 @@ export default function CustomGoalSlide() {
                 padding: '0.6rem 0.8rem',
                 boxShadow: shadow.card,
                 flex: 1,
+                display: 'flex', flexDirection: 'column',
               }}>
                 <div style={{
                   fontSize: '0.62rem', fontWeight: 700, color: '#6B8CC7',
@@ -121,10 +122,15 @@ export default function CustomGoalSlide() {
                   color: '#E8E8E8',
                   lineHeight: 1.7,
                   whiteSpace: 'pre-wrap',
+                  flex: 1,
                 }}>
 <span style={{ color: '#F6AD55' }}>qverify&gt;</span> lint methodology fpga{'\n'}
           -goal release -review{'\n'}
-<span style={{ color: '#718096' }}># → ./fpga/release.tcl 생성</span>
+<span style={{ color: '#718096' }}># → ./fpga/release.tcl 생성{'\n'}# 파일 head 확인 ↓</span>{'\n'}
+<span style={{ color: '#4A5568' }}>$</span> head -n 6 fpga/release.tcl{'\n'}
+<span style={{ color: '#A8D8A8' }}>lint on</span> async_reset_active_high{'\n'}
+<span style={{ color: '#A8D8A8' }}>lint on</span> case_default_missing{'\n'}
+<span style={{ color: '#A8D8A8' }}>lint on</span> latch_inferred <span style={{ color: '#718096' }}>...</span>
                 </pre>
               </div>
 
@@ -135,6 +141,7 @@ export default function CustomGoalSlide() {
                 padding: '0.6rem 0.8rem',
                 boxShadow: shadow.card,
                 flex: 1,
+                display: 'flex', flexDirection: 'column',
               }}>
                 <div style={{
                   fontSize: '0.62rem', fontWeight: 700, color: '#6B8CC7',
@@ -167,6 +174,7 @@ export default function CustomGoalSlide() {
                 padding: '0.6rem 0.8rem',
                 boxShadow: shadow.card,
                 flex: 1,
+                display: 'flex', flexDirection: 'column',
               }}>
                 <div style={{
                   fontSize: '0.62rem', fontWeight: 700, color: '#6B8CC7',

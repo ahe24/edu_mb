@@ -13,7 +13,7 @@ type MethodKey = 'pragma' | 'off' | 'suppress' | 'item';
 
 const methods: {
   key: MethodKey; name: string; color: string;
-  scope: string; persistence: string; audit: 'A' | 'B' | 'C' | 'D';
+  scopeShort: string; scope: string; persistence: string; audit: 'A' | 'B' | 'C' | 'D';
   pros: string[]; cons: string[];
   example: string; when: string;
 }[] = [
@@ -21,6 +21,7 @@ const methods: {
     key: 'pragma',
     name: 'Inline Pragma',
     color: '#4A6FA5',
+    scopeShort: '코드 블록',
     scope: '코드 블록 (라인 범위)',
     persistence: 'RTL 소스와 동행',
     audit: 'B',
@@ -44,6 +45,7 @@ always @(*)
     key: 'off',
     name: 'lint off (check 전역)',
     color: '#E53E3E',
+    scopeShort: '디자인 전체',
     scope: '디자인 전체',
     persistence: '정책 파일에 상주',
     audit: 'D',
@@ -66,7 +68,8 @@ lint off unsynth_initial_stmt
     key: 'suppress',
     name: 'lint suppress (pre-run)',
     color: '#E8913A',
-    scope: '`-arg argname=value` (module·signal·file 등)',
+    scopeShort: '모듈·신호·파일',
+    scope: '-arg argname=value (module · signal · file 등)',
     persistence: '정책·waiver Tcl 파일',
     audit: 'C',
     pros: [
@@ -90,6 +93,7 @@ lint suppress -check combo_loop latch_inferred \\
     key: 'item',
     name: 'lint report item -status',
     color: '#48BB78',
+    scopeShort: '개별 위반 (RTL ID)',
     scope: '개별 위반 (RTL ID)',
     persistence: 'lint.db + waiver 파일',
     audit: 'A',
@@ -107,7 +111,7 @@ lint suppress -check combo_loop latch_inferred \\
     example: `# WAIVER-042 (DR-112)  Xilinx active-high async reset
 lint report item -status waived \\
   -check async_reset_active_high \\
-  -rtl_id c8c123e5_00300 \\
+  -rtl_id 2471cf09_00300 \\
   -owner alice -reviewer lead \\
   -comment {Xilinx convention, DR-112 (2026-04-15)}`,
     when: '기본 waiver 방식. 감사 대응이 필요한 모든 safety-critical 프로젝트.',
@@ -136,37 +140,63 @@ export default function WaiverMethodsSlide() {
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-          {/* 상단: 비교 매트릭스 (4개 카드) */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.45rem' }}>
+          {/* 상단: 비교 매트릭스 (4개 카드 — 균일 높이) */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '0.45rem',
+            alignItems: 'stretch',
+          }}>
             {methods.map(x => {
               const on = x.key === active;
               const aRank = auditLabel[x.audit];
               return (
-                <button key={x.key} onClick={() => setActive(x.key)} style={{
-                  cursor: 'pointer',
-                  background: on ? `linear-gradient(135deg, ${x.color}0d, ${x.color}1a)` : FPGA.white,
-                  border: on ? `2px solid ${x.color}` : `1px solid ${FPGA.border}`,
-                  borderRadius: '10px',
-                  padding: '0.5rem 0.65rem',
-                  boxShadow: on ? `0 4px 14px ${x.color}30` : '0 1px 3px rgba(0,0,0,0.04)',
-                  transform: on ? 'translateY(-2px)' : 'none',
-                  transition: 'all 0.15s ease',
-                  textAlign: 'left',
-                }}>
+                <button key={x.key} onClick={() => setActive(x.key)}
+                  aria-pressed={on}
+                  style={{
+                    cursor: 'pointer',
+                    background: on ? `linear-gradient(135deg, ${x.color}0d, ${x.color}1a)` : FPGA.white,
+                    border: on ? `2px solid ${x.color}` : `1px solid ${FPGA.border}`,
+                    borderRadius: '10px',
+                    padding: '0.5rem 0.65rem',
+                    boxShadow: on ? `0 4px 14px ${x.color}40` : '0 1px 3px rgba(0,0,0,0.04)',
+                    transform: on ? 'translateY(-2px)' : 'none',
+                    transition: 'all 0.15s ease',
+                    textAlign: 'left',
+                    display: 'flex', flexDirection: 'column',
+                    minHeight: '74px',
+                    position: 'relative',
+                  }}
+                >
+                  {/* 선택 표시 */}
+                  {on && (
+                    <span style={{
+                      position: 'absolute', top: '6px', right: '8px',
+                      width: '14px', height: '14px', borderRadius: '50%',
+                      background: x.color, color: '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '0.55rem', fontWeight: 800,
+                    }}>✓</span>
+                  )}
                   <div style={{
-                    fontSize: '0.78rem', fontWeight: 800,
+                    fontSize: '0.76rem', fontWeight: 800,
                     color: on ? x.color : FPGA.dark,
-                    marginBottom: '0.25rem', lineHeight: 1.2,
+                    marginBottom: '0.3rem', lineHeight: 1.2,
+                    paddingRight: on ? '20px' : 0,
                   }}>{x.name}</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    <div style={{ fontSize: '0.6rem', color: FPGA.textLight }}>
-                      범위: <strong style={{ color: FPGA.text }}>{x.scope}</strong>
+                  <div style={{
+                    display: 'flex', flexDirection: 'column', gap: '3px',
+                    marginTop: 'auto',
+                  }}>
+                    <div style={{ fontSize: '0.6rem', color: FPGA.textLight, lineHeight: 1.35 }}>
+                      범위 <strong style={{ color: FPGA.text }}>{x.scopeShort}</strong>
                     </div>
-                    <div style={{ fontSize: '0.6rem', color: FPGA.textLight }}>
-                      감사 적합:{' '}
+                    <div style={{ fontSize: '0.6rem', color: FPGA.textLight, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      감사
                       <span style={{
                         fontWeight: 700, color: aRank.color,
-                        background: `${aRank.color}15`,
+                        background: `${aRank.color}1f`,
+                        border: `1px solid ${aRank.color}55`,
                         padding: '0 5px', borderRadius: '3px',
                       }}>{aRank.label}</span>
                     </div>
@@ -188,8 +218,19 @@ export default function WaiverMethodsSlide() {
                 padding: '0.6rem 0.8rem',
                 boxShadow: shadow.card,
               }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: m.color, marginBottom: '0.3rem' }}>
-                  상세 특성
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  marginBottom: '0.3rem',
+                }}>
+                  <span style={{
+                    fontSize: '0.55rem', fontWeight: 700,
+                    color: FPGA.textLight, letterSpacing: '0.08em',
+                    fontFamily: '"JetBrains Mono", monospace',
+                    background: `${m.color}10`, padding: '1px 6px', borderRadius: '3px',
+                  }}>현재 선택</span>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: m.color }}>
+                    {m.name}
+                  </span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '4px 10px', fontSize: '0.68rem' }}>
                   <span style={{ color: FPGA.textLight }}>적용 범위</span>

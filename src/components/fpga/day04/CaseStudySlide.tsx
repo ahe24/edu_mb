@@ -163,13 +163,34 @@ export default function CaseStudySlide() {
                   </div>
                 </div>
 
-                {i < stages.length - 1 && (
-                  <div style={{ display: 'flex', alignItems: 'center', padding: '0 2px' }}>
-                    <svg width="14" height="14" viewBox="0 0 14 14">
-                      <path d="M2 7h8M8 3l4 4-4 4" stroke={FPGA.textLight} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" />
-                    </svg>
-                  </div>
-                )}
+                {i < stages.length - 1 && (() => {
+                  const delta = stages[i + 1].count - s.count;
+                  const sign = delta > 0 ? '+' : '';
+                  const isZero = delta === 0;
+                  const dColor = isZero ? FPGA.textLight : delta < 0 ? '#48BB78' : '#E53E3E';
+                  return (
+                    <div style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '0 4px', gap: '2px',
+                      flexShrink: 0,
+                    }}>
+                      <span style={{
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: '0.6rem', fontWeight: 800,
+                        color: dColor,
+                        background: `${dColor}15`,
+                        border: `1px solid ${dColor}40`,
+                        padding: '0 5px', borderRadius: '3px',
+                        letterSpacing: '-0.02em',
+                        lineHeight: 1.3,
+                      }}>{isZero ? '±0' : `${sign}${delta}`}</span>
+                      <svg width="16" height="10" viewBox="0 0 16 10">
+                        <path d="M2 5h10M10 2l4 3-4 3" stroke={dColor} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.75" fill="none" />
+                      </svg>
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </div>
@@ -207,6 +228,12 @@ export default function CaseStudySlide() {
                 <div style={{ fontSize: '0.62rem', color: FPGA.textLight, letterSpacing: '0.1em' }}></div>
                 <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#8B6FA5', lineHeight: 1 }}>4</div>
                 <div style={{ fontSize: '0.56rem', color: FPGA.textLight }}>설계 변경</div>
+              </div>
+              <div style={{ fontSize: '0.95rem', color: FPGA.textLight, fontWeight: 700 }}>=</div>
+              <div style={{ fontFamily: '"JetBrains Mono", monospace', textAlign: 'center', flexShrink: 0 }}>
+                <div style={{ fontSize: '0.62rem', color: FPGA.textLight, letterSpacing: '0.1em' }}>합계</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 800, color: FPGA.dark, lineHeight: 1 }}>42</div>
+                <div style={{ fontSize: '0.56rem', color: FPGA.textLight }}>final 42</div>
               </div>
               <div style={{ flex: 1, fontSize: '0.7rem', color: FPGA.text, lineHeight: 1.55, paddingLeft: '0.3rem' }}>
                 <strong style={{ color: FPGA.dark }}>92% 감소</strong> — 이 중 감사 증빙 필요한 것은 <strong style={{ color: '#48BB78' }}>26 waived</strong>뿐.

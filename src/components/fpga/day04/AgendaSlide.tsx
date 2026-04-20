@@ -58,7 +58,7 @@ const agenda = [
   {
     step: 5,
     title: '감사 추적 & 실습',
-    desc: 'RTL ID 기반 status history, CI 기준선 diff, 500건 위반 triage 실습까지.',
+    desc: 'RTL ID 기반 status history, CI 기준선 diff, 512건 위반 triage 실습까지.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <path d="M4 7h20M4 14h20M4 21h14" stroke="#E53E3E" strokeWidth="1.6" strokeLinecap="round" />

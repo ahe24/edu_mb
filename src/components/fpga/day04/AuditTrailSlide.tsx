@@ -17,13 +17,20 @@ const historyRows = [
   { ts: '2026-04-15 15:30', user: 'carol', from: 'fixed',   to: 'verified', reason: 'sim + formal pass' },
 ];
 
+// 상태별 색상 — 감사 흐름의 의미가 한눈에 들어오도록 분명히 구분
+//   uninspected: 회색 (미검토)
+//   pending:     앰버  (검토 중)
+//   waived:      그린  (정당한 예외로 승인)
+//   bug:         레드  (실제 결함 확인)
+//   fixed:       블루  (코드 수정 완료, 미검증)
+//   verified:    다크그린 (검증까지 완료)
 const statusColor: Record<string, string> = {
   uninspected: '#718096',
   pending: '#E8913A',
-  waived: '#4A6FA5',
+  waived: '#48BB78',
   bug: '#E53E3E',
-  fixed: '#48BB78',
-  verified: '#48BB78',
+  fixed: '#4A6FA5',
+  verified: '#2F7A4F',
 };
 
 const do254Req = [
@@ -136,7 +143,8 @@ export default function AuditTrailSlide() {
                     <span style={{ color: FPGA.text, fontWeight: 600 }}>{r.user}</span>
                     <span style={{
                       color: statusColor[r.from], fontWeight: 700,
-                      background: `${statusColor[r.from]}14`,
+                      background: `${statusColor[r.from]}22`,
+                      border: `1px solid ${statusColor[r.from]}55`,
                       padding: '0 5px', borderRadius: '3px',
                       fontSize: '0.58rem',
                     }}>{r.from}</span>
@@ -144,7 +152,8 @@ export default function AuditTrailSlide() {
                     <span>
                       <span style={{
                         color: statusColor[r.to], fontWeight: 700,
-                        background: `${statusColor[r.to]}14`,
+                        background: `${statusColor[r.to]}22`,
+                        border: `1px solid ${statusColor[r.to]}55`,
                         padding: '0 5px', borderRadius: '3px',
                         fontSize: '0.58rem', marginRight: '5px',
                       }}>{r.to}</span>
