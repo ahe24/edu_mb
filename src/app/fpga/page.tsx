@@ -28,8 +28,8 @@ const curriculum = [
       {
         week: 3, title: '정적 분석: 논리 구조 및 설계 결함 추출',
         days: [
-          { day: 5, title: '합성 불가 구문 및 시뮬레이션-합성 불일치 검출', ready: false },
-          { day: 6, title: '잠재적 설계 오류 식별', ready: false },
+          { day: 5, title: '합성 불가 구문 및 시뮬레이션-합성 불일치 검출', ready: true },
+          { day: 6, title: '잠재적 설계 오류 식별', ready: true },
         ],
       },
       {

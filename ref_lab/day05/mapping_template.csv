@@ -1,0 +1,13 @@
+defect_id,module,line,do254_alias,questa_check,slide_tag,severity,fix_description,status
+1,fifo_ctrl,22,CP17,blocking_assign_in_seq_block,Slide 5-P1,Error,,
+2,fifo_ctrl,31,CP15,nonblocking_assign_in_combo_block,Slide 5-P2,Error,,
+3,fifo_ctrl,40,CP18,assigns_mixed,Slide 5-P4,Warning,,
+4,decoder_badsens,18,CP8,sensitivity_list_var_missing,Slide 6-R1,Warning,,
+5,mux_multidrv,14,SS6,multi_driven_signal,Slide 5-P3 / 6-R3,Error,,
+6,feedback_loop,12,SS3,combo_loop,Slide 6-R4,Error,,
+7,init_block,10,(unsynth),unsynth_initial_stmt,Slide 4-A,Error,,
+8,delay_block,9,CP15,nonblocking_assign_and_delay_in_always,Slide 4-B,Error,,
+9,display_leak,8,(unsynth),unsynth_display_task,Slide 4-C,Error,,
+10,force_bad,11,SS6,unsynth_force_release,Slide 4-D,Error,,
+11,undriven,6,SS17,undriven_signal,Slide 4 부차,Error,,
+12,flop_no_ctrl,15,SS18,flop_without_control,Slide 4 부차,Warning->Error(DAL-A/B),,
