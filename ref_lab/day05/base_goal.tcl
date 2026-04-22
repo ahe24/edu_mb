@@ -10,18 +10,20 @@
 lint methodology standard -goal DO-254
 
 # ── 2. 프로젝트 preference ──
-# unsynthesizable 구문은 testbench 전용 제외 원칙 — RTL 적용 시 금지
-lint preference -unsynth testbench_only
+# Reset 정책 — async reset 금지 (FPGA safety-critical: Xilinx sync 권장)
+lint preference -disallow_reset_style async
 
-# reset/clock 내부 구동 금지 (FPGA safety-critical 기본)
-lint preference -reset -active_low sync_reset async_reset
+# flop_without_control 허용 제어 타입 — async_reset/sync_reset/initial_value 중 하나 필요
+lint preference -check flop_without_control \
+                -valid_flop_controls async_reset sync_reset initial_value
 
-# naming 표준 (원전·방산·항공·우주 공통)
+# naming 표준 (원전·방산·항공·우주 공통) — 인스턴스 이름 대소문자 혼용 금지
 lint preference name -check inst_name_not_standard -disallow_mix_case
 
 # ── 3. DAL-A/B 상향 오버라이드 (safety-critical) ──
+# Severity 변경은 lint report check 사용 (lint preference 아님)
 # SS18 (flop_without_control) 기본 severity=Warning → DAL-A/B에서 Error 상향
-lint preference severity -check flop_without_control -severity error
+lint report check -severity error flop_without_control
 
 # ── 4. 컴파일 & 분석 ──
 vlog -sv broken_rtl.v

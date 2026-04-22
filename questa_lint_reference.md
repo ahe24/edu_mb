@@ -122,12 +122,149 @@ lint run -d <top_module>               # 디자인 탑 모듈에 대해 lint 분
 
 > **중요**: `lint run`은 반드시 컴파일(vlog/vcom) **이후에** 실행해야 합니다.
 
-### Preference 설정
+### Preference 설정 (User Guide p.336-340, p.462-466)
+
+`lint preference`는 check 동작을 정밀 조정하는 directive로, 공식 문법은 다음과 같습니다:
 
 ```tcl
-lint preference -generate_elaborated_report      # Elaborated report 생성
-lint preference -generate_design_summary_report  # Design summary report 생성
-lint preference name -check inst_name_not_standard -disallow_mix_case  # 네이밍 규칙
+lint preference {
+    [-check <check_name> <preference> <value>]   # 특정 체크에만 적용
+    [-<flag_option>] ...                         # 전역 preference 플래그 (200여 개)
+    | [-remove <preference>]                     # preference 제거
+}
+```
+
+**중요**: `lint preference`는 **severity를 변경하지 않습니다**. Severity 변경은 `lint report check -severity <level> <check_name>` 또는 `lint on <check> -severity <level>`을 사용.
+
+#### 자주 쓰는 전역 플래그
+
+```tcl
+# Reporting
+lint preference -generate_elaborated_report        # Elaborated design report
+lint preference -generate_design_summary_report    # Design summary report
+lint preference -include_compile_logs              # compile log 병합
+
+# Reset / Flop 정책
+lint preference -disallow_reset_style {sync | async}          # 해당 style 금지
+lint preference -reset_name_scope {async | sync | async sync} # naming scope
+lint preference -report_active_low_types <type1> <type2> ...  # active-low 보고 타입
+lint preference -valid_flop_controls <ctrl1> <ctrl2> ...      # flop_without_control 허용 제어
+
+# Clock
+lint preference -clock_gating_module <module_name>            # 전용 게이팅 모듈
+lint preference -clock_gen_module <module_name>               # 전용 클록 생성 모듈
+
+# Case / Width
+lint preference -missing_others_or_default                    # default 강제 보고
+lint preference -calc_width_using_expr_range                  # width 계산 정밀 모드
+
+# Preference 제거 (default로 복원)
+lint preference -remove -disallow_empty_loops
+```
+
+#### Check-specific preference (`-check` 서브옵션)
+
+특정 체크에만 preference를 적용할 때:
+
+```tcl
+# signal_name_not_standard만 특정 scope으로 한정
+lint preference -check signal_name_not_standard -signal_name_vhdl_scope signal
+
+# reg_name_not_standard violation에서 output register 제외
+lint preference -check reg_name_not_standard -exclude_object_types output
+
+# latch_inferred 체크에서 always_latch 블록도 위반으로 보고
+lint preference -check latch_inferred -report_latches_in_always_latch_blocks
+
+# flop_without_control 체크의 허용 제어 타입 지정
+lint preference -check flop_without_control \
+                -valid_flop_controls async_reset sync_reset initial_value
+```
+
+#### `lint preference name` — Naming check 전용 서브커맨드
+
+`*_name_not_standard` 형태의 naming check는 **별도의 `lint preference name`** 서브커맨드로 설정합니다 (User Guide p.462-466):
+
+```tcl
+lint preference name -check <name_check> {
+    [-allowed_case_styles {all_lower|all_upper|first_initial_upper|all_initials_upper} ...]
+    [-disallow_consecutive_underscores]
+    [-disallow_end_with_underscore]
+    [-disallow_lower_case]
+    [-disallow_mix_case]
+    [-disallow_prefix <pfx1> <pfx2> ...]
+    [-disallow_special_character]
+    [-disallow_suffix <sfx1> <sfx2> ...]
+    [-disallow_underscore]
+    [-disallow_upper_case]
+    [-max_length <N>]
+    [-min_length <N>]
+    [-prefix <pfx1> <pfx2> ...]
+    [-prefix_or_suffix <str1> <str2> ...]
+    [-regexp {<pattern>}]
+    [-report_name_length]
+    [-suffix <sfx1> <sfx2> ...]
+    | [-remove <preference>]
+}
+```
+
+**실례**:
+
+```tcl
+# 인스턴스 이름 — 대소문자 혼용 금지
+lint preference name -check inst_name_not_standard -disallow_mix_case
+
+# 시그널 이름 — sig_ 접두사 강제 (정규식)
+lint preference name -check signal_name_not_standard -regexp {sig_.*}
+
+# 클록 이름 — ck_ 또는 clk_ 접두사 중 하나
+lint preference name -check clock_name_not_standard -prefix ck_ clk_
+
+# 데이터타입 이름 — 대문자만, 최대 40자
+lint preference name -check data_type_name_not_standard \
+                     -max_length 40 -disallow_lower_case
+
+# 파라미터 이름 — PARAM 접두사, 최대 15자, 소문자 금지
+lint preference name -check parameter_name_not_standard \
+                     -prefix {PARAM} -max_length 15 -disallow_lower_case
+
+# preference 제거 (default로 복원)
+lint preference name -check file_name_not_standard -remove max_length
+```
+
+**제약**:
+- `-max_length`와 `-min_length`에 모순된 값 → lint-61 경고, directive 무시
+- `-disallow_prefix`와 `-prefix` 동시 지정 시 `-disallow_prefix`가 우선
+- **존재하지 않는 플래그**: `-disallow_leading_underscore` (있는 것: `-disallow_end_with_underscore`, `-disallow_consecutive_underscores`, `-disallow_underscore`)
+
+### Severity 변경 — `lint report check`
+
+Check의 severity는 `lint preference`가 아니라 `lint report check`로 변경합니다:
+
+```tcl
+lint report check -severity {error | warning | info} <check_name>
+```
+
+**실례**:
+
+```tcl
+# DAL-A/B 상향: flop_without_control을 error로
+lint report check -severity error flop_without_control
+
+# Width mismatch 계열을 전부 error로 상향
+lint report check -severity error assign_width_overflow
+lint report check -severity error assign_width_underflow
+lint report check -severity error case_width_mismatch
+
+# 와일드카드 — module_로 시작하는 모든 체크
+lint report check -severity error module_*
+```
+
+또는 `lint on <check> -severity <level>`도 동일 효과 (체크 활성화 + severity 설정):
+
+```tcl
+lint on *_name_not_standard -severity info
+lint on * -severity error -du dut       # dut 디자인의 모든 error 체크 활성화
 ```
 
 ### 기타 명령어
@@ -548,6 +685,11 @@ lint report item -status pending -category clock \
 | `lint diff a.db b.db` | `lint diff a.db -refdb b.db` | 두 번째 인자는 `-refdb` 플래그 필수 |
 | `lint report item ... \` <br> `# REASON: ...` (줄연결 뒤 주석) | `lint report item ... -comment {REASON}` | Tcl `\` 뒤의 `#`는 주석 아님 — 공식 `-comment` 필드 사용 |
 | `-arg foo=bar` (체크에 없는 argname) | 체크의 메시지 템플릿 placeholder만 허용 | argname은 `lint.rpt` Check Details 참조 (예: `async_reset_active_high`는 `reset`/`module`/`file`/`line`) |
+| `lint preference severity -check X -severity error` | `lint report check -severity error X` | **`lint preference`에 `severity` 서브커맨드 없음**. Severity는 `lint report check` 또는 `lint on ... -severity`로 변경 |
+| `lint preference -unsynth testbench_only` | (해당 플래그 없음) | `-unsynth`는 preference가 아님. `unsynth_*`는 check 이름. testbench 제외는 `lint off unsynth_* -du <tb>` 또는 파일별 필터로 |
+| `lint preference -reset -active_low ...` | `-disallow_reset_style sync\|async`, `-reset_name_scope`, `-report_active_low_types` | `-reset`, `-active_low` 플래그는 없음. 의도에 맞춰 구체적인 기존 플래그 사용 |
+| `lint preference name ... -disallow_leading_underscore` | `-disallow_end_with_underscore` / `-disallow_consecutive_underscores` / `-disallow_underscore` | `-disallow_leading_underscore`는 존재하지 않음. 선두 `_` 금지는 `-regexp {^[^_].*}` 패턴으로 |
+| `lint preference -check combo_loop -report_combo_loop_across_hierarchy` | `-combo_loop_bit_wise` 또는 `-combo_loop_nodes <N>` | cross-hierarchy 전용 플래그는 없음. combo_loop은 기본적으로 계층 경계 넘어 검출됨 |
 
 ---
 

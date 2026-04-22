@@ -29,7 +29,7 @@ const subs: Sub[] = [
     title: '`casex` / `casez` don\'t-care',
     syntax: 'casex (sel)\n  2\'b?0: y = a;  // x/z 해석',
     risk: 'sim/synth 해석 상이 · safety-critical 도메인 사용 금지 권고',
-    check: ['case_with_x_z', 'casex_used'],
+    check: ['case_with_x_z', 'casex', 'casez'],
     sev: 'W',
   },
   {

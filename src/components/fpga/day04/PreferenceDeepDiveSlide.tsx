@@ -23,7 +23,7 @@ type PrefItem = {
 const items: PrefItem[] = [
   {
     cat: 'name',
-    cmd: 'lint preference name\n  -check inst_name_not_standard\n  -disallow_mix_case\n  -disallow_leading_underscore',
+    cmd: 'lint preference name\n  -check inst_name_not_standard\n  -disallow_mix_case\n  -regexp {^[^_].*}',
     purpose: '인스턴스 이름 규칙 — 대소문자 혼용·앞 _ 금지',
     codeBefore: `// 위반 후보
 ALU u_Alu_0 (...);
@@ -141,17 +141,18 @@ always_ff @(posedge clk)
   },
   {
     cat: 'flop',
-    cmd: 'lint preference\n  -check combo_loop\n  -report_combo_loop_across_hierarchy',
-    purpose: '계층 경계 넘는 조합 루프도 검출',
-    codeBefore: `// 모듈 A: y = f(x, b_in)
-// 모듈 B: b_out = g(y)
-// top: A.b_in = B.b_out
-// → 모듈 내부만 보면 루프 안 보임`,
-    codeAfter: `// 계층을 가로지르는 루프 탐지
-// → FF 삽입 또는 구조 분리
+    cmd: 'lint preference\n  -combo_loop_bit_wise\n  -combo_loop_nodes 64',
+    purpose: '비트 단위 루프 검출 + 리포트 노드 상한 확장',
+    codeBefore: `// 벡터 일부 비트만 루프 — 기본 모드는 놓침
+assign y[3:0] = a[3:0];
+assign y[7:4] = y[3:0] | b[7:4];
+// → y[7:4]만 루프, 기본 분석은 감지 실패 가능`,
+    codeAfter: `// -combo_loop_bit_wise → 비트별 분해 분석
+// -combo_loop_nodes 64 → 리포트 경로 노드 상한
+// 필요 시 FF 삽입으로 분리
 always_ff @(posedge clk)
-  y_reg <= f(x, b_in);`,
-    note: '대형 프로젝트 필수. 없으면 계층 간 조합 루프 놓침.',
+  y_reg[7:4] <= y_reg[3:0] | b[7:4];`,
+    note: '계층 전반의 루프는 기본 분석으로도 검출됨. 비트별 정밀도와 리포트 상한 조정이 실질적인 튜닝 포인트.',
   },
 ];
 

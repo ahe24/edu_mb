@@ -334,7 +334,7 @@
   - **ST1 · SS2-a** — plain `case` + default 누락 → latch (SS4 동반 발생)
     - Questa check: `case_default_missing`
   - **ST2 · SS2-b** — `casex`/`casez` 의 don't-care 해석 차이 → 합성 경고
-    - Questa check: `case_with_x_z`, `casex_used`
+    - Questa check: `case_with_x_z`, `casex`, `casez`
   - **ST3 · SS2-c** — `unique case` 중복 매칭 · sim 런타임 error · synth 무시
     - Questa check: `case_item_duplicate`
   - **ST4 · (SS2 외)** — `priority case` 우선순위 회로 자원 폭증 · severity 정보성
