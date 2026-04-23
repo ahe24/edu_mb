@@ -270,7 +270,10 @@ lint on * -severity error -du dut       # dut 디자인의 모든 error 체크 �
 ### 기타 명령어
 
 ```tcl
-lint generate report    # 리포트 생성
+lint generate report <name>                    # 텍스트 리포트 생성 (첫 인자는 리포트 경로/이름)
+lint generate report <name> -html \
+    -show_code_snippet \
+    -lines_count_before_violation 5            # HTML 리포트 (코드 스니펫 · violation 전 5줄 컨텍스트)
 lint generate goal      # Custom goal 생성
 lint load db            # 데이터베이스 로드
 lint merge db           # 데이터베이스 병합
@@ -280,6 +283,10 @@ lint diff <current_db> -refdb <reference_db>   # Incremental 비교 → lint_inc
 lint copy check         # 체크 복사
 lint configure reference # 레퍼런스 설정
 ```
+
+> **주의 — 출력 디렉토리 지정**: `lint run` 및 `lint generate report`에는 `-output_directory` / `-od` 같은 **출력 경로 옵션이 없습니다**. 출력물(`lint.db`, `lint.rpt`, HTML 리포트 등) 저장 위치는 **`qverify -od <dir>`** (qverify 실행 시 플래그)로 일괄 지정합니다. `lint generate report`의 첫 번째 인자는 리포트 파일/디렉토리 이름이며, 이 이름은 qverify -od로 지정된 디렉토리 내부에 생성됩니다.
+
+> **HTML 리포트 실제 출력 경로** (Questa 2025.3 확인): `qverify -od lint_output` + `lint generate report lint_report -html` → **`lint_output/html/lint_report.htm`** 생성 (확장자 `.htm` 3자, `html/` 서브디렉토리). 후속 스크립트에서 glob 으로 찾을 때 `*.html` 패턴은 `.htm` 을 일치시키지 못하므로 주의.
 
 ---
 
@@ -679,6 +686,8 @@ lint report item -status pending -category clock \
 | `lint set methodology` | `lint methodology ip` | methodology 설정 |
 | `lint -batch` | `qverify -c` | Batch 모드 |
 | `lint report` | `lint generate report` | 리포트 생성 |
+| `lint run -d <top> -output_directory <dir>` | `qverify -od <dir> -c -do "... lint run -d <top> ..."` | **`lint run`에 `-output_directory` 옵션 없음**. 출력 디렉토리는 qverify 실행 시 `-od`로 지정 |
+| `lint generate report -output_directory <dir> -html` | `lint generate report <name> -html -show_code_snippet -lines_count_before_violation N` | **`lint generate report`의 첫 인자가 리포트 경로**(옵션 아님). `-output_directory` 플래그는 존재하지 않음 |
 | `lint open` | `qverify lint.db` | GUI 열기 |
 | `lint suppress X -module M` | `lint suppress -check X -arg module=M` | `-module` 전용 옵션 없음 |
 | `lint suppress ... -reason "..."` | `lint suppress ... -comment "..."` | 근거 필드는 `-comment` |

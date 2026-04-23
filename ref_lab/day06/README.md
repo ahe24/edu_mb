@@ -30,25 +30,39 @@ DO-254 goal 활성 상태에서 `latent_bug.v` 프로젝트의 **잠재 설계 �
 
 ## 실행 순서
 
+단일 `qverify -c -do` 세션에서 `compile.tcl → base_goal.tcl → lint run → HTML 리포트` 까지 일괄 실행.
+Vivado 합성 교차 검증은 별도 타겟으로 분리 (`synth`).
+`vlib` / `vmap` / `vlog -f filelist.f` 은 `compile.tcl` · lint 설정(methodology · severity · FSM check) 은 `base_goal.tcl` 에 분리.
+
+### Linux (Makefile)
+
 ```bash
-# 1. 컴파일 (error 0 · warning 다수 기대)
-vlog -sv latent_bug.v
-
-# 2. DO-254 goal 기반 lint 실행
-qverify -c -do "do base_goal.tcl; lint run -d latent_bug; exit"
-
-# 3. GUI · alias 필터 탐색
-qverify lint_output/lint.db
-
-# 4. 수정 후 재실행 → alias 위반 0 달성
-qverify -c -do "do base_goal.tcl; lint run -d latent_bug; exit"
-
-# 5. Vivado 합성 교차 검증 (latch count 0 확인)
-vivado -mode batch -source synth_crosscheck.tcl
-
-# 6. 감사 리포트
-qverify -c -do "do base_goal.tcl; lint run -d latent_bug; lint generate report -full -html; exit"
+make            # = make lint
+make lint       # compile → DO-254 lint (DAL-A/B override) → HTML 리포트
+make gui        # qverify GUI 로 lint_output/lint.db 오픈
+make synth      # Vivado batch 합성 교차 검증 (latch count / cell 수)
+make all        # lint + synth 순차 실행
+make clean      # work/ · lint_output/ · 로그 · synth 산출물 정리
 ```
+
+### Windows (배치 파일)
+
+```batch
+run_lint.bat            :: = run_lint.bat lint
+run_lint.bat lint       :: compile → lint → HTML 리포트
+run_lint.bat gui        :: qverify GUI 오픈
+run_lint.bat synth      :: Vivado batch 합성 교차 검증
+run_lint.bat all        :: lint + synth 순차 실행
+run_lint.bat clean      :: work\ · lint_output\ · 로그 · synth 산출물 정리
+```
+
+### 수정-재실행 사이클
+
+1. `mapping_template.csv` 기반 15건 violation 분류 (alias · severity · 모듈)
+2. `latent_bug.v` 수정 (참조용: `latent_bug_fixed.v`)
+3. `make lint` (Windows: `run_lint.bat`) → alias 위반 0 확인
+4. `make synth` — Vivado 합성 로그에서 **latch count = 0** · cell 수 감소 확인
+5. 감사 리포트 `latent_bug_<YYYYMMDD>_do254_lint.html` · `synth_crosscheck.md` 자동 생성
 
 ## 완료 기준
 
@@ -62,7 +76,10 @@ qverify -c -do "do base_goal.tcl; lint run -d latent_bug; lint generate report -
 
 - `latent_bug.v` — 결함 15건 주입된 RTL
 - `latent_bug_fixed.v` — 수정본 참조 (강사용)
-- `base_goal.tcl` — DO-254 methodology + DAL-A/B 상향 override
+- `filelist.f` — `vlog -f` 입력 소스 목록 (다중 파일 대응)
+- `compile.tcl` — `vlib` / `vmap` / `vlog -f filelist.f` (컴파일 전용)
+- `base_goal.tcl` — DO-254 methodology + DAL-A/B severity override + FSM check (lint 설정 전용)
 - `synth_crosscheck.tcl` — Vivado 합성 교차 검증 스크립트
-- `run_lint.sh` — 배치 실행 스크립트
+- `Makefile` — Linux 배치 실행 (`make lint|gui|synth|all|clean`)
+- `run_lint.bat` — Windows 배치 실행 (`run_lint.bat [lint|gui|synth|all|clean]`)
 - `mapping_template.csv` — 매핑표 제출 양식

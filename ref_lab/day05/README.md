@@ -24,22 +24,33 @@ DO-254 goal (`lint methodology standard -goal DO-254`) 활성 상태에서
 
 ## 실행 순서
 
+단일 `qverify -c -do` 세션에서 `compile.tcl → base_goal.tcl → lint run → HTML 리포트` 까지 일괄 실행.
+`vlib` / `vmap` / `vlog -f filelist.f` 은 `compile.tcl` 에 분리 · lint 설정(methodology · preference · severity) 은 `base_goal.tcl` 에 분리.
+
+### Linux (Makefile)
+
 ```bash
-# 1. 컴파일
-vlog -sv broken_rtl.v
-
-# 2. DO-254 goal 기반 lint 실행
-qverify -c -do "do base_goal.tcl; lint run -d broken_rtl; exit"
-
-# 3. GUI 디버깅 (alias 탐색)
-qverify lint_output/lint.db
-
-# 4. 수정 후 재실행 → Error 0 달성
-qverify -c -do "do base_goal.tcl; lint run -d broken_rtl; exit"
-
-# 5. 감사 리포트
-qverify -c -do "do base_goal.tcl; lint run -d broken_rtl; lint generate report -full -html; exit"
+make            # = make lint
+make lint       # compile → DO-254 lint 실행 → HTML 리포트 생성
+make gui        # qverify GUI 로 lint_output/lint.db 오픈
+make clean      # work/ · lint_output/ · 로그 · 리포트 정리
 ```
+
+### Windows (배치 파일)
+
+```batch
+run_lint.bat           :: = run_lint.bat lint
+run_lint.bat lint      :: compile → lint → HTML 리포트
+run_lint.bat gui       :: qverify GUI 오픈
+run_lint.bat clean     :: work\ · lint_output\ · 로그 정리
+```
+
+### 수정-재실행 사이클
+
+1. `mapping_template.csv` 기반 violation 분류
+2. `broken_rtl.v` 수정 (또는 참조용 `broken_rtl_fixed.v` 대조)
+3. `make lint` (Windows: `run_lint.bat`) 재실행 → Error severity 0 확인
+4. 감사 리포트 `broken_rtl_<YYYYMMDD>_do254_lint.html` 자동 생성
 
 ## 완료 기준
 
@@ -52,6 +63,9 @@ qverify -c -do "do base_goal.tcl; lint run -d broken_rtl; lint generate report -
 
 - `broken_rtl.v` — 결함 12건 주입된 RTL
 - `broken_rtl_fixed.v` — 수정본 참조 (강사용)
-- `base_goal.tcl` — DO-254 methodology 설정 스크립트
-- `run_lint.sh` — 배치 실행 스크립트
+- `filelist.f` — `vlog -f` 입력 소스 목록 (다중 파일 대응)
+- `compile.tcl` — `vlib` / `vmap` / `vlog -f filelist.f` (컴파일 전용)
+- `base_goal.tcl` — DO-254 methodology · preference · severity override (lint 설정 전용)
+- `Makefile` — Linux 배치 실행 (`make lint` / `make gui` / `make clean`)
+- `run_lint.bat` — Windows 배치 실행 (`run_lint.bat [lint|gui|clean]`)
 - `mapping_template.csv` — 매핑표 제출 양식

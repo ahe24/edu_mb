@@ -1,7 +1,8 @@
 # =============================================================================
 # Day 05 Lab — base_goal.tcl
-# DO-254 methodology 설정 (standard + goal DO-254)
-# 실행: qverify -c -do "do base_goal.tcl; lint run -d broken_rtl; exit"
+# DO-254 methodology · preference · severity override (lint 설정 전용)
+# 실행: qverify -c -do "do compile.tcl; do base_goal.tcl; lint run -d broken_rtl; exit"
+# 주의: 컴파일(vlib/vmap/vlog)은 compile.tcl 에서 수행 — 이 파일은 lint 설정만
 # =============================================================================
 
 # ── 1. methodology: DO-254 goal 활성 ──
@@ -25,10 +26,7 @@ lint preference name -check inst_name_not_standard -disallow_mix_case
 # SS18 (flop_without_control) 기본 severity=Warning → DAL-A/B에서 Error 상향
 lint report check -severity error flop_without_control
 
-# ── 4. 컴파일 & 분석 ──
-vlog -sv broken_rtl.v
-
-# lint run은 호출 측에서 수행 — 이 파일은 preferences 만 로드
+# ── 4. 로드 확인 메시지 ──
 puts "========================================================="
 puts " base_goal.tcl loaded: methodology=standard, goal=DO-254 "
 puts "========================================================="
