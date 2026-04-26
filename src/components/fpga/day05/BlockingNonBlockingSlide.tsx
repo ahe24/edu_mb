@@ -46,7 +46,7 @@ end`,
     alias: 'CP15',
     title: 'Combo 블록에서 `<=` 금지',
     block: 'always @(*) · always_comb',
-    problem: '불필요 NB 지연 → synth는 즉시 전파로 해석 · sim 타이밍 상이',
+    problem: 'NB 는 NBA region 갱신 → seq sample 과 race · sim scheduler 의존 비결정성',
     bad:
 `always @(*) begin
   y <= a & b;       // NB in combo
