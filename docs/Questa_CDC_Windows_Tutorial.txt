@@ -1,0 +1,2153 @@
+         SIEMENS EDA
+
+ Questa® CDC Tutorial
+ Guide
+
+   For use with Windows
+
+Software Version 2023.3
+Unpublished work. © 2023 Siemens
+
+This Documentation contains trade secrets or otherwise confidential information owned by Siemens Industry
+Software Inc. or its affiliates (collectively, "Siemens"), or its licensors. Access to and use of this Documentation is
+strictly limited as set forth in Customer's applicable agreement(s) with Siemens. This Documentation may not be
+copied, distributed, or otherwise disclosed by Customer without the express written permission of Siemens, and may
+not be used in any way not expressly authorized by Siemens.
+
+This Documentation is for information and instruction purposes. Siemens reserves the right to make changes in
+specifications and other information contained in this Documentation without prior notice, and the reader should, in
+all cases, consult Siemens to determine whether any changes have been made.
+
+No representation or other affirmation of fact contained in this Documentation shall be deemed to be a warranty or
+give rise to any liability of Siemens whatsoever.
+
+If you have a signed license agreement with Siemens for the product with which this Documentation will be used,
+your use of this Documentation is subject to the scope of license and the software protection and security provisions
+of that agreement. If you do not have such a signed license agreement, your use is subject to the Siemens Universal
+Customer Agreement, which may be viewed at https://www.sw.siemens.com/en-US/sw-terms/base/uca/, as
+supplemented by the product specific terms which may be viewed at https://www.sw.siemens.com/en-US/sw-
+terms/supplements/.
+
+SIEMENS MAKES NO WARRANTY OF ANY KIND WITH REGARD TO THIS DOCUMENTATION INCLUDING,
+BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, AND NON-INFRINGEMENT OF INTELLECTUAL PROPERTY. SIEMENS SHALL NOT BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, LOST DATA OR
+PROFITS, EVEN IF SUCH DAMAGES WERE FORESEEABLE, ARISING OUT OF OR RELATED TO THIS
+DOCUMENTATION OR THE INFORMATION CONTAINED IN IT, EVEN IF SIEMENS HAS BEEN ADVISED OF
+THE POSSIBILITY OF SUCH DAMAGES.
+
+TRADEMARKS: The trademarks, logos, and service marks (collectively, "Marks") used herein are the property of
+Siemens or other parties. No one is permitted to use these Marks without the prior written consent of Siemens or the
+owner of the Marks, as applicable. The use herein of third party Marks is not an attempt to indicate Siemens as a
+source of a product, but is intended to indicate a product from, or associated with, a particular third party. A list of
+Siemens' Marks may be viewed at: www.plm.automation.siemens.com/global/en/legal/trademarks.html. The
+registered trademark Linux® is used pursuant to a sublicense from LMI, the exclusive licensee of Linus Torvalds,
+owner of the mark on a world-wide basis.
+
+About Siemens Digital Industries Software
+
+Siemens Digital Industries Software is a leading global provider of product life cycle management (PLM) software
+and services with 7 million licensed seats and 71,000 customers worldwide. Headquartered in Plano, Texas,
+Siemens Digital Industries Software works collaboratively with companies to deliver open solutions that help them
+turn more ideas into successful products. For more information on Siemens Digital Industries Software products and
+services, visit www.siemens.com/plm.
+
+Support Center: support.sw.siemens.com
+Send Feedback on Documentation: support.sw.siemens.com/doc_feedback_form
+                                                  Chapter 1
+                                               Introduction
+
+  This document contains getting-started tutorials for the Design Solution tools. The tutorial
+  exercises introduce you to each of the analysis tools, the Visualizer interface, and the debug
+  environment. Each tutorial uses scripts with the Questa Verify batch processing interface.
+  This document contains tutorials for these analysis tools:
+
+       · Questa CDC for clock domain crossing analysis.
+  For more information on getting help and on the Visualizer interface and environment, see these
+  documents:
+
+       · VisualizerTM Debug Environment User's Manual
+       · Questa Formal Technology Command Reference
+
+Required Setup to Run a Tutorial
+
+  To run the tutorials provided in this document, you must set up your environment to run the
+  appropriate tools and get a copy of the tutorial data from the software install directory.
+
+Prerequisites
+
+       · Depending on the tutorial, the following software tools are installed:
+           o Questa CDC
+
+  For more information on the installation and setup of the Questa Functional Verification tools,
+  see the Questa Functional Verification Installation Instructions.
+
+Procedure
+
+       1. Create a tutorials directory. For example:
+
+                   C:\tutorial
+
+Questa® CDC Windows Tutorial v2023.3
+Introduction
+Required Setup to Run a Tutorial
+
+       2. Retrieve a copy of the tutorial data from the tool install directory. For example:
+
+                   C:\install_dir\questa_static_formal\win64\examples\design_solutions
+                   \tutorials\cdc_static
+
+                           to
+                   C:\tutorial\cdc_static
+
+Results
+
+  The tutorial data is set up, and you are ready to run a tutorial. For more
+  information and to get started, refer to the target tutorial chapter in this document.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                  Chapter 2
+                                                 CDC Static
+
+  The CDC static tutorials are based on the following demo circuit. This design is an interface
+  block between a media access controller (MAC) and a custom core, both controlled by a CPU
+  interface.
+
+                                         Figure 2-1. Demo Circuit
+
+  The demo design has three clock domains: CORE_CLK, CPU_CLK, and MAC_CLK. Mode
+  status bits are exchanged across clock domain boundaries and the circuit has several types of
+  synchronization schemes, such as 2-DFF, data MUX, and FIFO.
+  The tutorials reside in the following installation directory:
+
+        install_dir\win64\examples\design_solutions\tutorials\cdc_static
+
+  To run these tutorials, make a working copy and make the supporting files writable:
+       For example: tutorial_dir_name\cdc_static
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+
+  The examples/design_solutions/tutorials/cdc directory contains these CDC tutorials:
+       · cdc_static -- static CDC analysis
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                                         Static Analysis
+
+Static Analysis
+
+  Questa CDC static analysis performs the following structural verification tasks:
+       · Identifies the design's clock structure: clock domains, clock gating, dividers, and so on.
+       · Identifies the design's clock domain crossing signals.
+       · Identifies the synchronization schemes on clock domain crossings.
+       · Checks synchronization schemes' structures.
+
+  Fine-tune CDC analysis to achieve better analysis by providing additional information that
+  guides the analyzer. For example, supply information on clock groups, preferred
+  synchronization types, exceptions, and other options. Following analysis, use the GUI
+  debugging environment to debug problems found by CDC analysis.
+  After you set up CDC analysis to perform properly, run CDC analysis, and then review the CDC
+  analysis results. For each reported CDC issue (caution or violation), either set Status to waive or
+  otherwise group issues (indicating the issues were reviewed and appropriately categorized for
+  your development and verification processes), or modify the design to fix bugs.
+  This tutorial (\examples\design_solutions\tutorials\cdc_static) runs Questa CDC static analysis
+  (Figure 2-2) on the demo design.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Static Analysis
+
+                       Figure 2-2. Static CDC Method
+
+Table 2-1 shows the cdc_static directory structure.
+                             Table 2-1. cdc_static Directory Structure
+
+Directory        File                      Description
+
+scripts          directives.tcl            Directives file for the analysis.
+
+                 filelist_vh               VHDL file list.
+
+                 filelist_vl               Verilog filelist.
+
+                 run_batch.bat             Batch file.
+
+tb.vhd           src/vhdl                  VHDL source files relevant to the tutorial.
+                 demo_top.vhd
+                 dpmem2clk.vhd
+                 generic_fifo_dc_gray.vhd
+
+src/vlog         tb.v                      Verilog source files relevant to the tutorial.
+                 demo_top.v
+                 dpmem2clk.v
+                 generic_fifo_dc_gray.v
+                 dff2_sync.v
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                CDC Static
+                                                                          Static Analysis
+
+The cdc_static directory includes the run_batch.bat shown in Figure 2-3.
+
+              Figure 2-3. cdc_static run_batch.bat
+
+@ECHO OFF
+
+REM
+
+########################################################################
+
+#
+
+REM #         Siemens Digital Industries Software
+
+REM #
+
+REM #         THIS SOFTWARE AND RELATED DOCUMENTATION
+
+REM #         ARE PROPRIETARY AND CONFIDENTIAL TO SIEMENS.
+
+REM #                                 © 2022 Siemens
+
+REM
+
+########################################################################
+
+#
+
+REM
+
+########################################################################
+
+##
+
+REM #
+
+REM # Usage:  Help/usage ............... run_batch.bat usage
+
+REM #         Run CDC Verilog .......... run_batch.bat run_vl
+
+REM #         Run CDC VHDL ........... run_batch.bat run_vh
+
+REM #         Clean directory .......... run_batch.bat clean
+
+REM #
+
+REM
+
+########################################################################
+
+##
+
+REM
+
+REM ### Following line makes set commands take effect immiately inside
+
+an IF
+
+setlocal EnableDelayedExpansion
+
+REM # For double-click, call this file with usage argument
+IF "%1"=="" (
+
+       cmd /K "%0 usage"
+)
+
+IF "%1"=="clean" (
+       call :clean
+
+) ELSE IF "%1"=="compile_vh" (
+       call :compile_vh
+
+) ELSE IF "%1"=="compile_vl" (
+       call :compile_vl
+
+) ELSE IF "%1"=="setup" (
+       call :setup
+
+) ELSE IF "%1"=="cdc" (
+       call :cdc
+
+) ELSE IF "%1"=="debug" (
+       call :debug
+
+) ELSE IF "%1"=="run_vl" (
+       call :clean
+       call :compile_vl
+       call :cdc
+       call :debug
+
+) ELSE IF "%1"=="run_vh" (
+       call :clean
+       call :compile_vh
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                  CDC Static
+                                                            Static Analysis
+
+       call :cdc
+       call :debug
+) ELSE (
+       call :usage
+)
+exit /b
+
+:compile_vh
+          qverify -c -od Output_Results -do ^" ^
+                     vcom -f qs_files/filelist_vh; ^
+                     exit^"
+          exit /b
+
+:compile_vl
+          qverify -c -od Output_Results -do ^" ^
+                     vlog -f qs_files/filelist_vl; ^
+                     exit^"
+          exit /b
+
+:setup
+          ECHO ###
+          ECHO ### NOTE: Run CDC
+          ECHO ###
+          qverify -c -od Output_Results -do ^" ^
+                     do qs_files/directives.tcl; ^
+                     cdc setup -d demo_top; ^
+                     cdc generate report cdc_detail.rpt; ^
+                     exit^"
+          exit /b
+
+:cdc
+
+      ECHO ###
+      ECHO ### NOTE: Run CDC
+      ECHO ###
+      qverify -c -od Output_Results -do ^" ^
+
+                do qs_files/directives.tcl; ^
+                cdc run -d demo_top; ^
+                cdc generate report cdc_detail.rpt; ^
+                exit^"
+      exit /b
+
+:debug
+          ECHO ###
+          ECHO ### NOTE: Debug CDC
+          ECHO ###
+          qverify Output_Results/cdc.db
+          exit /b
+
+:clean
+          ECHO ###
+          ECHO ### NOTE: Clean the folder
+          ECHO ###
+          qverify_clean
+          RMDIR /S /Q work Output_Results .qverify
+          del /S /Q demo_top.zpf .qverify*
+          del /S /Q modelsim.ini *.wlf *.log replay* transcript *.db
+          exit /b
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                     CDC Static
+                                                               Static Analysis
+
+:usage
+          ECHO ### Help/usage .......... run_batch.bat usage
+          ECHO ### Run CDC Verilog ..... run_batch.bat run_vl
+          ECHO ### Run CDC VHDL ...... run_batch.bat run_vh
+          ECHO ### Clean directory ..... run_batch.bat clean
+          exit /b
+
+:end
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Static Analysis
+
+  In this tutorial, you do these tasks:
+       1. Set up the environment and run static CDC analysis.
+       2. Run the qverify GUI and view results.
+       3. Review CDC results and fix a synchronization error.
+       4. View various synchronization schemes.
+       5. Manage results by creating filters and setting Status.
+
+  After you create your working copy of the tutorial, perform the tasks in these sections in the
+  order in which they are presented.
+
+          Note
+        The tutorial is a progression of tasks. In many cases, one section is the foundation for the
+       next section. Therefore, work through the tutorial sections in the order in which they are
+  presented until you become familiar with the tasks presented.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                    Set Up the CDC Environment
+
+Set Up the CDC Environment
+
+  CDC analysis setup uses Questa Formal-based Technology Tcl directives to configure the
+  environment. CDC analysis performs many configuration steps automatically. For example,
+  CDC analysis automatically infers clock and reset domains. Fine-tuning the configuration is
+  typically needed to set up the entire environment correctly.
+  Use Tcl directives to set preferential attributes for the CDC analysis run. Typically, use Tcl
+  directives for these tasks:
+
+       · Define clock domains.
+       · Group synchronous clocks (or clocks related by gating logic) in one domain.
+
+       · Change the clock groups inferred for particular ports.
+
+       · Set selected test signals and configuration registers to constant values for the analysis.
+  The file qs_files/directives.tcl (Figure 2-4) specifies such directives for this tutorial:
+
+                                       Figure 2-4. Tcl Directives File
+
+        # Define clocks
+        netlist clock cpu_clk_in -period 50
+        netlist clock core_clk_in -period 60
+        netlist clock mac_clk_in -period 50
+
+        # Define constants
+        netlist constant scan_mode 1'b0
+
+        # Add CDC constraints
+        cdc scheme on -fifo -handshake
+
+        #Uncomment to enable reconvergence
+        # cdc reconvergence on
+        # cdc preference reconvergence -depth 1 -divergence_depth 1
+        cdc scheme on -fifo -handshake
+
+  For the initial setup, the directives file contains these directives:
+
+       · netlist clock
+           Specifies clocks with their characteristics; redefines the clock domains and sets clock
+           groups. You must specify a clock signal pattern that matches at least one clock signal.
+           Conflicting netlist clock directives obey the last-one-wins rule. The -period value option
+           specifies the clock period in time units (used to calculate parameters for promoted
+           protocol assertions).
+
+       · netlist constant
+           Keeps the given variable at the specified constant value for CDC analysis. This netlist
+           constant directive sets the scan_mode input signal to 0, which disables the scan mode
+           logic.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Generate a Clock Report
+
+       · cdc scheme on
+           Turn on CDC analysis schemes. The -fifo option turns on detailed analysis of FIFO
+           synchronization schemes. The -handshake option identifies HANDSHAKE
+           synchronization schemes.
+
+       · cdc reconvergence on
+           Turn on reconvergence checking for all clock domains.
+
+       · cdc preference reconvergence
+           Sets analysis parameters for reconvergence schemes.
+           The -depth depth option is the maximum sequential reconvergence depth for reporting
+           reconvergence and single-source reconvergence CDC schemes. The default
+           reconvergence depth is 0, which corresponds to combinational reconvergence. This
+           tutorial uses a reconvergence depth of 1. In this case, CDC analysis only detects
+           reconverging values if they reconverge within one cycle from the cycle in which the
+           values are received.
+           The -divergence_depth depth enables single-source reconvergence reporting and sets the
+           divergence depth. By default, single-source reconvergence schemes are reported only as
+           reconvergence schemes.
+
+       · cdc scheme on
+           Turn on complex CDC scheme checks.
+           The -fifo option is to identify fifo crossings. Default: fifo schemes are reported as
+           fifo_memory if the FIFO memory is valid. Otherwise, memory_sync or multi_bits
+           scheme is reported.
+           The -handshake enables identifying handshake crossings. Default: handshake schemes are
+           reported as dmux or multi_bits schemes.
+
+  Environment setup typically includes creating directives as described above. With the directives
+  included, begin the tutorial by generating a clock report and then fine-tune the environment
+  setup.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                 CDC Static
+                                                          Run CDC Setup
+
+Run CDC Setup
+
+CDC setup is the starting point when preparing your design for CDC analysis. The command
+analyzes the design data and reports clocks, resets, and port domain information. It generates a
+CDC setup report (cdc.rpt) and CDC database (cdc.db) that includes the setup information. You
+can use the report or view the database in the GUI mode to review the CDC setup information.
+
+Procedure
+
+    1. Compile the HDL design source code.
+
+                      prompt> cd C:\tutorials\cdc_static
+                      prompt> run_batch compile_vl
+
+The compile_vl makefile target compiles the design by running this command sequence:
+
+vlib work                              Done implicitly
+
+vmap work work                         Done implicitly
+
+vlog -f qs_files/filelist_vl
+
+    The vlib command creates an initial design library and sets access to design units in the
+    library. The default working design library is: work. The vmap command creates a
+    logical-to-physical mapping for the design library. The vlog command compiles the
+    Verilog source code into the design library. Subsequent vlog invocations (without the
+    vlib step) incrementally compile the Verilog portion of the design. In this tutorial, you
+    must recompile the entire design whenever adjustments are made. Arguments are case
+    sensitive.
+
+2. Run the CDC analyzer and clock report generation.
+
+                prompt> run_batch setup
+
+The clock run_batch.bat target runs a CDC analyzer batch session (qverify -c -do):
+
+                qverify -od Output_Results -c -do ^" ^
+                     do qs_files/directives.tcl; ^
+                     cdc setup -d demo_top; ^
+                     cdc generate report cdc_detail.rpt; ^
+                     exit^"
+
+The -od option sets the initial output directory for the session; the -c argument selects
+batch mode, and the -do argument specifies the script to execute.
+
+The batch script starts by interpreting the directives.tcl file directives. The do Questa
+Formal-based Technology Tcl command is similar to the standard source Tcl command,
+with some enhancements. Next, the cdc setup executable Tcl command compiles the
+design and infers clock domain information along with potential constraints for CDC
+analysis.
+
+Unless overridden by a -work argument to cdc setup, the CDC analyzer assumes the work
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Run CDC Setup
+
+       library contains compiled versions of all design units. If not, the analyzer issues an error
+       message and exits.
+       3. Check the output reports generated.
+
+           Check Output_Results, the output directory, for the analysis session output:
+           · cdc.db -- CDC non-text database file (to be passed to qverify in GUI mode).
+           · cdc_design.rpt -- CDC design report.
+           · cdc_detail.rpt -- Detailed clock domain crossing report.
+           · cdc.rpt -- Clock domain crossing report (including the clock summary).
+           · cdc_run.log -- Transcript of the session.
+           · cdc_setting.rpt -- Setting report shows CDC analysis preferences and the results of
+
+                processing Tcl directives.
+           · qverify_cmds.tcl -- Sequence of executed Questa Formal Technology Tcl
+
+                commands.
+           · qverify.log -- CDC analysis run log file (copy of the standard output).
+           Review the text reports in the output directory. All CDC analysis runs produce the above
+           files and directories. However, running a clock report generation is a truncated CDC
+           session resulting in files with less information than these files will contain in subsequent
+           full CDC analysis runs.
+       4. Check that clock groups are OK.
+           Validate clock grouping and other clock tree characteristics by examining the clock
+           information (Figure 2-5) in the clock domain crossing report (cdc.rpt). Ensure the report
+           depicts appropriate clock characteristics and grouping:
+           · Asynchronous clocks are listed and there are no unintended clocks.
+           · Clocking intent is captured correctly. For example, when two clocks are related (i.e.,
+
+                indirectly synchronous) they should be in the same clock group.
+
+                               Figure 2-5. Clock Information in cdc.rpt
+
+Questa® CDC Windows Tutorial v2023.3
+                                                   CDC Static
+                                            Run CDC Setup
+
+Section 1 : Clock Information
+================================================================
+
+Clock Group Summary for 'demo_top'
+
+==================================
+
+Total Number of Clock Groups          :3
+
+1. User-Specified                     :(3)
+
+2. Inferred                           :(0)
+
+2.1 Primary                           :0
+
+2.2 Undriven                          :0
+
+2.3 Blackbox                          :0
+
+2.4 Gated Mux                         :0
+
+2.5 Gated Combo                       :0
+
+3. Ignored                            :(0)
+
+================================================================
+
+1. User-Specified (3)
+
+================================================================
+
+Group  0(35 Register Bits, 0 Latch Bits)
+
+-----------
+
+cpu_clk_in
+
+Group  1(119 Register Bits, 0 Latch Bits)
+
+-----------
+
+core_clk_in
+
+Group  2(148 Register Bits, 0 Latch Bits)
+
+-----------
+
+mac_clk_in
+
+================================================================
+2. Inferred (0)
+================================================================
+2.1 Primary (0)
+----------------------------------------------------------------
+None
+
+2.2 Blackbox (0)
+----------------------------------------------------------------
+None
+
+2.3 Undriven (0)
+----------------------------------------------------------------
+None
+
+2.4 Gated Mux (0)
+----------------------------------------------------------------
+None
+
+2.5 Gated Combo (0)
+----------------------------------------------------------------
+None
+
+================================================================
+3. Ignored(0)
+================================================================
+None
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Run CDC Setup
+
+                        To see detailed clock information, use Tcl command "cdc generate
+                        tree -clock"
+
+       5. Modify clock information, if needed.
+           The CDC setup run detected three (asynchronous) clock groups: cpu_clk_in,
+           core_clk_in, and mac_clk_in. This result is expected because the netlist clock directives
+           were used to define them. In this case, these three clocks pass through a scan_mode
+           MUX. Since scan_mode is set to constant 0, these clocks pass through and drive
+           cpu_clk, core_clk, and mac_clk respectively.
+           No fine-tuning of the clock specifications is needed for this tutorial. However, you
+           sometimes need to make the following adjustments:
+           · Turn off unintended clocks (using cdc clock attribute -group clk_group -remove).
+           · Group indirectly synchronous clocks missed by clock detection (using netlist clock).
+
+       6. Modify port domain information if needed.
+           Verify primary ports and their assigned clock domains by examining the port domain
+           information (Figure 2-6) in the clock domain crossing report (cdc.rpt). CDC analysis is
+           not performed on any port that is in more than one clock domain.
+                          Figure 2-6. Port Domain Information in cdc.rpt
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                             CDC Static
+                                                                      Run CDC Setup
+
+Section 10 : Port Domain Information
+
+==========================================================================
+
+Port          Direction Constraints             Clock Domain          Type
+
+--------------------------------------------------------------------------
+
+mac_clk_in    input                   Clock     { mac_clk_in }        User
+
+core_clk_in   input                   Clock     { core_clk_in }       User
+
+cpu_clk_in    input                   Clock     { cpu_clk_in }        User
+
+rst           input                   Reset { cpu_clk_in core_clk_in
+
+                                                mac_clk_in}           Questa CDC
+
+clr           input                   Reset { core_clk_in mac_clk_in } Questa CDC
+
+din           input                             { core_clk_in }       Questa CDC
+
+we            input                             { core_clk_in }       Questa CDC
+
+we_1          input                             { core_clk_in }       Questa CDC
+
+cpu_addr      input                             { cpu_clk_in }        Questa CDC
+
+cs            input                             { cpu_clk_in }        Questa CDC
+
+cpu_data      input                             { cpu_clk_in }        Questa CDC
+
+init_done_in  input                             { cpu_clk_in }        Questa CDC
+
+hdrin         input                             { core_clk_in }       Questa CDC
+
+scan_mode     input                   Constant  { <undef> }           Questa CDC
+
+scan_clk      input                             { <undef> }           Questa CDC
+
+full          output                            { core_clk_in }       Questa CDC
+
+full_1        output                            { core_clk_in }       Questa CDC
+
+pass          output                            { mac_clk_in }        Questa CDC
+
+pass_valid    output                            { mac_clk_in }        Questa CDC
+
+crc_16        output                            { mac_clk_in }        Questa CDC
+
+rx_payload_en output                            { mac_clk_in }        Questa CDC
+
+rx_masked_data output                           { mac_clk_in }        Questa CDC
+
+rx_mask_en    output                            { mac_clk_in }        Questa CDC
+
+rx_pass       output                            { mac_clk_in }        Questa CDC
+
+rx_check      output                            { mac_clk_in }        Questa CDC
+
+    Port and Direction identify the port name and direction (input, output, or inout).
+    Constraint indicates clock, reset, and constant ports. Clock Domain shows the detected
+    clock or clocks for the port; each clock entry is the primary clock associated with a clock
+    domain. A single clock (e.g., {core_clk_in}) indicates one clock domain. Multiple
+    clocks (e.g., {core_clk_in mac_clk_in}) indicate the port domain is ambiguous. A value
+    of async indicates the port is user-defined as asynchronous (using netlist port domain).
+    Type shows how the port domain is determined: User (set by netlist port domain) or
+    Questa CDC (inferred by CDC analysis).
+
+    Ports with <undef> clock domains have undefined clock domains. Their domains
+    cannot be inferred for one of these reasons:
+
+    · A netlist constant directive is specified for the port or the signals driven
+        combinationaly by the port.
+
+    · No register is in the fanout (for input ports) or fanin (for output ports), so CDC
+        analysis cannot infer the clock domain.
+
+    · The port is identified as stable (with cdc signal).
+
+    No fine-tuning of the port domain specifications is needed for this tutorial.
+
+7. Check design information.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Modify CDC Constraints
+
+Verify CDC analysis' perception of the design by examining the design information
+(Figure 2-7) in the clock domain crossing report (cdc.rpt).
+
+                  Figure 2-7. Design Information in cdc.rpt
+
+Section 9 : Design Information
+=================================================================
+
+Design Information                    = 819
+--------------------------            =0
+Design Complexity Number              =0
+Number of CDC Signals                 = 302
+Number of blackboxes                  =0
+Number of Registers                   =2
+Number of Latches                     =0
+Number of RAMs                        =0
+Number of Empty Modules               =0
+Number of Unresolved Modules          = 17
+Number of Gate-Level Modules          =0
+Number of Dead-end Registers          =0
+Number of Unclocked Registers
+Number of Unlocked Latches
+
+Modify CDC Constraints
+
+  In addition to adjusting clock tree attributes, Questa Formal-based Technology Tcl directives
+  provide a way to fine-tune CDC analysis by adjusting other nonclock related attributes.
+
+   Here are some examples of nonclock related attributes you can use to fine-tune CDC analysis:
+
+      · Use netlist blackbox to force CDC analysis to treat a module as a black box.
+
+           CDC only understands synthesizable RTL code, so it infers unsynthesizable elements
+           (and blocks for which no RTL is available) as black boxes. Sometimes you want to mark
+           some design units--such as parent modules of unsynthesizable code--to be considered
+           as user-defined black boxes. For example, you might identify as a user-defined black
+           box a behavioral memory for which you do not want to perform clock analysis. Ports of
+           an (inferred or user-defined) black box must be assigned port domains with the netlist
+           port domain directive.
+
+      · Use cdc custom sync to identify a synchronizer circuit model with custom logic.
+           Some instances of synchronizer cells are not automatically recognized as proper
+           synchronizers by CDC analysis. But if a synchronizer's cell model is identified as a
+           custom synchronizer, CDC analysis reports that the signals driving the synchronizer's
+           asynchronous input ports are synchronized properly. Like a black box module, ports of a
+           custom synchronizer model must be assigned port domains with the netlist port domain
+           directive.
+
+      · Use cdc signal to change inferred signal types.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                                    Run CDC Analysis
+
+           CDC analysis classifies each CDC signal to identify the type of synchronization scheme
+           it needs. For example, data signals typically require different synchronization than
+           control signals; stable signals do not require synchronization, and so on. By overriding
+           the signal type, you can control its proper synchronization scenarios.
+
+Run CDC Analysis
+
+  With the CDC analysis environment properly set up--clock and port domains are properly
+  identified and additional constraints are specified, run a full CDC analysis session.
+
+Procedure
+
+       1. Compile the HDL design source code.
+
+                        prompt> run_batch compile_vl
+
+            Compiling the HDL source code is required only if you made modifications since you
+           ran the clock report generation.
+       2. Run CDC analysis.
+
+                        prompt> run_batch cdc
+
+           The cdc run_batch.bat target runs a CDC analyzer batch session (qverify -c -do):
+
+                                   qverify -c -od Output_Results -do ^" ^
+                                        do qs_files/directives.tcl; ^
+                                        cdc run -d demo_top; ^
+                                        cdc generate report cdc_detail.rpt; ^
+                                        exit^"
+
+       3. Check the CDC analysis results.
+            The last part of the session output--and cdc.rpt shows a summary of the CDC analysis
+           results (Figure 2-8). The summary lists these result categories:
+           · Violations -- Must-fix synchronization problems.
+           · Cautions -- Proper complex synchronization structures that require further analysis.
+           · Evaluations -- Properly synchronized crossings.
+           · Waived -- Crossings considered reviewed and OK (at least temporarily).
+           · Proven -- Crossings for which the associated protocol assertions are proven.
+           The summary shows no waived or filtered crossings. These result categories show
+           crossings marked as such during the debug phase of the static CDC method (shown in
+           the CDC GUI).
+                                        Figure 2-8. CDC Summary
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Run CDC Analysis
+
+CDC Results
+
+=================================================================
+
+Violations (6)
+
+-----------------------------------------------------------------
+
+Single-bit signal does not have proper synchronizer.                  (3)
+
+Combinational logic before synchronizer.                              (2)
+
+Multiple-bit signal across clock domain boundary.                     (1)
+
+Cautions (2)
+
+-----------------------------------------------------------------
+
+DMUX synchronization.                                                 (2)
+
+Evaluations (8)
+
+-----------------------------------------------------------------
+
+Single-bit signal synchronized by DFF synchronizer.                   (2)
+
+Multiple-bit signal synchronized by DFF synchronizer.                 (4)
+
+FIFO synchronization.                                                 (2)
+
+Resolved - Waived or Verified Status (0)
+-----------------------------------------------------------------
+<None>
+
+Proven (4)
+
+-----------------------------------------------------------------
+
+Single-bit signal synchronized by DFF synchronizer.                   (3)
+
+Pulse Synchronization.                                                (1)
+
+Filtered (0)
+-----------------------------------------------------------------
+<None>
+
+4. Check the CDC analysis run. Review the Message Summary.
+
+    The last part of the session output--and cdc_run.log shows the CDC analysis run
+    Message Summary (Figure 2-9).
+
+                          Figure 2-9. CDC Message Summary
+
+Message Summary
+
+---------------------------------------------------------------
+
+Count Type                Message ID Summary
+
+---------------------------------------------------------------
+
+                  2 Error hdl-41      Primary port connects to multiple
+
+                                      clock domains.
+
+                  1 Warning hdl-238   Inferred reset present.
+
+                  1 Warning hdl-271   Reconvergence is not enabled.
+
+                  2 Warning hdl-289   Missing clock domain for reset
+
+                                      port.
+
+                  9 Warning hdl-51    Missing port domain assignment
+
+                                      for bits of port.
+
+                  1 Warning netlist-82 Found internal reset signals.
+
+                  1 Info  cdc-44      Clock processing done.
+
+                  1 Info  hdl-222     Possible dead end CDC paths not
+
+                                      reported.
+
+                  1 Info  reset-4     Reset detection done.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                                    Run CDC Analysis
+
+           Fix all errors and verify no warnings are unexpected.
+
+           This tutorial has the following expected errors:
+
+           · Error hdl-41 Primary port connects to multiple clock domains.
+
+                This error is significant because CDC checking is not performed for primary ports
+                that drive logic in multiple clock domains. By reviewing the Port Domain
+                Information table (Figure 2-6), you can expect these errors for the rst and clr
+                primary inputs. Check this:
+
+                        Search "hdl-41" in cdc_run.log
+                        Error : Primary port connects to multiple clock domains.
+
+                                              Pin 'rst'. [hdl-41]
+                        Error : Primary port connects to multiple clock domains.
+
+                                              Pin 'clr'. [hdl-41]
+
+           · Some hdl-41 errors might not be innocuous. You can assign single-clock port
+                domains using the netlist port domain directive, for example:
+
+                        netlist port domain a b -clock U1.clk_a
+
+           This tutorial has the following expected warnings:
+
+           · Warning hdl-238 Inferred reset present.
+
+                CDC analyzer infers the signal as the root of a reset tree. Processing continues unless
+                terminated because of the configure error -inferred reset. Use netlist reset to identify
+                the signal tree as a user-specified reset group. Reference Inferred Clock Trees in the
+                Questa CDC User Guide or netlist reset in the Questa Functional Verification
+                Command Reference for more details.
+
+           · Warning hdl-271 Reconvergence is not enabled.
+
+                Reconvergence analysis is not turned on by default to improve overall performance
+                of CDC analysis. Without reconvergence, CDC analysis continues, but does not
+                create a reconvergence model or report reconvergence crossings. To include
+                reconvergence analysis, use both the cdc reconvergence on directive to turn on
+                reconvergence analysis for selected clock domains and the cdc preference
+                reconvergence directive to control reconvergence analysis parameters. Reference
+                these commands in the TCL Commands section of the Questa Functional
+                Verification Command Reference.
+
+           · Warning hdl-289 Missing clock domain for reset port.
+
+                 Clock domain is not specified for the reset port. By default, a port is associated with
+                the clock domain of the register to which it directly connects. Use netlist port
+                domain to explicitly specify the clock domain for the reset port.
+
+           · Warning hdl-51 Missing port domain assignment for bits of port.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Run CDC GUI
+
+                The port domain of a primary port that has no netlist port domain assignment; it is
+                inferred by including all clock domains of the registers directly connected to the
+                port. To assign a different clock domain to the port, use netlist port domain to
+                identify it as an asynchronous port:
+
+                        netlist port domain in -async
+
+           · Warning netlist-82 Found internal reset signals.
+
+                The reset port of an internal instance is not driven by a primary port, so the design's
+                environment cannot control how the instance is reset. By default, CDC analysis
+                assumes such internal resets are not actual resets. To override this behavior, use cdc
+                preference to force CDC analysis to consider internal resets as proper resets:
+
+                        cdc preference -enable_internal_resets
+
+                   Note
+                If, as a result of handling errors and warnings, you either modify the design code or
+                the environment setup, you must rerun CDC analysis. With a "clean" analysis run,
+           you can advance to the GUI debug phase of the static CDC method.
+
+Run CDC GUI
+
+  Questa CDC automatically detects all clock domain crossing logic and checks its
+  synchronization structures. For the static CDC analysis method, use the GUI to review CDC
+  violations and cautions.
+
+       · Using the GUI debug tools, the schematic viewer, and source code browser, determine
+           the causes of improper synchronization. Being tightly linked to the analysis result views,
+           these tools facilitate and simplify the process of determining the causes of issues and
+           expedite fixing issues.
+
+       · Using the GUI waiver process, mark individual crossings and groups of crossings as
+           Waived. A waived clock domain crossing is understood to have good synchronization or
+           that it is currently innocuous and you prefer that it not be displayed.
+
+  Next, run the CDC GUI and load the database generated by the last CDC analysis session.
+
+Procedure
+
+       1. Run the CDC GUI with the database created by CDC analysis.
+
+                        prompt> run_batch debug
+
+           The debug makefile target runs a CDC analyzer GUI session (qverify <database>). The
+           cdc.db file is the database created by running batch mode CDC analysis.
+
+                              qverify Output_Results/cdc.db
+
+Questa® CDC Windows Tutorial v2023.3
+                                         CDC Static
+                                     Run CDC GUI
+
+Figure 2-10. CDC GUI - Initial View
+
+       2. Examine the entries in the results window, accessible by clicking the CDC Checks tab.
+           Expand the entries for Violations and Cautions.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Run CDC GUI
+
+             Figure 2-11. CDC Checks: Violations and Cautions
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                            Review Synchronization Violations
+
+Review Synchronization Violations
+
+  Synchronizer violations on clock domain crossing signals are must-fix violations. Synchronizer
+  violations can occur for various reasons. A bug can cause improper synchronization of the
+  signal. Add proper synchronization logic to the crossing to resolve bugs.
+  Another undetected synchronizer violation can occur when the synchronization logic follows a
+  FIFO scheme. Specify cdc scheme on -fifo to enable detection of the synchronizer.
+  Sometimes, a signal can be properly synchronized, but was not detected by CDC analysis
+  because a custom synchronizer synchronizes the signal. Specify the cdc synchronizer custom
+  directive to fix such synchronization issues.
+  Some CDC signals are intrinsically synchronized. You can waive these missing synchronizer
+  violations as explained in "Waive CDC Results" on page 00. For specific synchronizer issues,
+  reference the Questa CDC User Guide.
+
+Single-Bit Signal Does Not Have Proper Synchronization
+
+  This section shows you how to use the GUI to review the source code and schematic view to
+  determine the cause of the issue for a Single-Bit Signal Does Not have Proper Synchronizer
+  violation.
+  Displaying the source code lets you trace the error. Looking at the schematic view, you
+  graphically see where the missing logic is needed. You can then correct this violation by adding
+  a 2-DFF synchronizer to init_done before the combinational logic.
+
+Procedure
+
+       1. Review the violation: Single-bit signal does not have proper synchronizer.
+           Select the last Single-bit signal does not have proper synchronizer violation (the
+           crossing from init_done to tx_state[0]). With the cursor on the violation, right-click to
+           display the options menu, then choose Show > Source > TX Signal.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Review Synchronization Violations
+
+                                   Figure 2-12. CDC Checks Window
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                            Review Synchronization Violations
+
+       2. Examine the source code for the missing synchronizer violation.
+
+           The source code browser loads the demo_top.v file, scrolls to the declaration for the Tx
+           signal (init_done), and marks its position with an arrow. The init_done signal drives a
+           configuration FSM.
+       3. Examine the schematic for the missing synchronizer logic.
+           Select the violation from the CDC Checks window, right-click the violation and choose
+           Show > Schematic > Path (or just double-click the selected violation).
+
+                   Tip
+                 Adjust the shape of a window by hovering over its border (the cursor arrow points
+                towards the border of the window), then click and drag.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Review Synchronization Violations
+
+   Figure 2-13. Schematic Showing the Missing Synchronizer Logic for init_done
+
+                   Tip
+                Hover over a signal or other schematic element to pop up information about that
+                element.
+           The Tx signal (init_done) is in the cpu_clk_in domain and the rx signal (tx_state) is in
+           the core_clk_in domain, but the clock domain crossing between them has no
+           synchronizer. Single-bit synchronization is needed. Correct this violation by adding a
+           2-DFF synchronizer to init_done before the combinational logic.
+        4. Until you verify in the next CDC analysis session that the corrections you have made
+           have fixed this issue, set the Status of this violation to Pending as described in "Set
+           Status".
+       5. Export Status to propagate it in future CDC analysis sessions as outlined in "Set Status"
+           .
+        6. After you rerun analysis and check your results, based on the results, you may want to
+           modify the Status to Fixed.
+
+Multiple-Bit Signal Across Clock Domain Boundary
+
+  This violation, Multiple-Bit Signal Across Clock Domain Boundary, occurs when a multiple-bit
+  signal crosses a clock domain boundary. Review the source code and schematic view as you did in
+  the previous section to determine where this error occurs and determine what is needed to correct
+  this violation.
+
+  Procedure
+
+        1. Select and hover over the Multiple-bit signal across clock domain boundary violation.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                            Review Synchronization Violations
+
+       2. Double-click the violation to display the schematic.
+
+           Notice the expression across the clock domains between the TX signal crc_seed[7:1]
+           and crc_1.crc_16. Since this path is not synchronized, review the path to decide if there
+           are assumptions that warrant this path as safe or if you need to add a synchronizer. If the
+           crc_seed signal can be assumed to be stable, you can either specify a stable constraint or a
+           waiver.
+        3. Until you verify in the next CDC analysis session that the corrections you have made
+           have fixed this issue, set Status to Pending as described in "Set Status".
+       4. Export Status to propagate it in future CDC analysis sessions as outlined in "Set Status".
+        5. After you rerun analysis and check your results, based on the results, you may want to
+           modify the Status to Fixed.
+
+Combinational Logic Before Synchronizer
+
+  A clock domain crossing signal that drives a synchronizer directly is robust. However, if
+  combinational logic exists between the transmitter and the synchronizer, the crossing signal
+  value can have extra delay when changing. Such signals might be unstable for a greater
+  percentage of the receiving clock period, which can defeat the purpose of the synchronizer.
+  Review each combinational logic violation and possibly relocate the associated synchronizer.
+
+Procedure
+
+       1. Review the combinational logic violations.
+           Select the last combinational logic violation (the crossing from the pass_en[1] Tx
+           signal). Hover over the violation to display the information. Notice the clock for the TX
+           signal is cpu_clk_in and the clock for the RX signal is mac_clk_in. Display the
+           schematic for this violation. Either double-click or right-click and choose Show >
+           Schematic > TX Signal.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Review Synchronization Violations
+
+       2. Examine the schematic for the combinational logic violation.
+              Figure 2-14. Schematic Showing Combinational Logic Violation
+
+           The schematic shows an OR gate between the TX signal (pass_en[1]) and the 2DFF
+           synchronizer.
+           Experiment with the pop-up menu commands in the schematics viewer. Try these tasks:
+           · Use the Show commands to turn off/on the annotation of names and values.
+           · Use the Load Context commands to display additional parts of the schematic. Use
+
+                selection and the Show commands to display a relevant portion of the schematic.
+           · Use object selection and the Go To commands to display various statements in the
+
+                source code editor.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                            Review Synchronization Violations
+
+           · Use the Go To > Clock Groups commands to highlight in the Clocks window for the
+                clock groups shown in the schematic.
+
+           · Select nets and use the Expand Net commands to expand the schematic to show the
+                driving or receiving logic for the nets.
+
+       3. Fix this logic.
+       4. Set the Status of this violation to Pending as described in "Set Status".
+       5. Export Status to propagate it in future CDC analysis sessions as outlined in "Set Status".
+       6. After you rerun analysis and check your results, based on the results, you may want to
+
+           modify the Status to Fixed.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Manage CDC Analysis Results
+
+Manage CDC Analysis Results
+
+  Filters and Status are two closely related options that help you manage and display CDC checks
+  reported by CDC analysis. Filters hide CDC checks to reduce clutter when too many or
+  currently unnecessary checks are displayed in the CDC Checks window. Use Status to group
+  and annotate CDC check entries that you review. Using these features allows you to group,
+  track, document, and manage the verification process, and determine what to display so you can
+  focus on current issues.
+
+Filter CDC Results
+
+  Filters hide individual CDC check entries and/or groups of entries to create a more manageable
+  display that readily focuses on current issues. You can create multiple filters, name them, and
+  switch between them to display relevant entries. Filters you create persist across CDC GUI
+  sessions.
+
+Procedure
+
+       1. Filter the Evaluation and Proven checks.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                  Manage CDC Analysis Results
+
+           In the CDC Checks window, select the Evaluation group and then right-click and choose
+           Filter > Selected Row.
+
+           The Apply Filters dialog displays with an Evaluation entry. Use Filter > Selected Row
+           from the CDC Checks window again to select the Proven group. The Apply Filters
+           dialog adds the Proven entry to the list of filtered items.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Manage CDC Analysis Results
+
+           Click Apply and then click OK. Both the Evaluation and Proven groups are removed
+           from the CDC Checks window. The window banner changes color.
+
+       2. Save the current filter.
+           In the CDC Checks window, right-click to display the menu and select Filter > Export.
+           In the Export Filters dialog, enter the File name: high priority. Click Save.
+
+       3. Clear the current filter.
+           Right-click to display the Filter menu, then select Filter > Clear All.
+           The Confirm dialog displays, asking you to confirm that you want to clear all filters.
+
+           After you click Yes, the filters reset and all of the CDC Checks entries appear.
+       4. Use the same process that you used to create the high priority filter to create two more
+
+           filters:
+           · A filter that filters out all checks except the cautions. Name this filter cautions.
+           · A filter that filters out all checks except the violations. Name this filter violations.
+       5. Import filters.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                  Manage CDC Analysis Results
+
+           In the CDC Checks window, right-click to display the menu and select Filter > Import.
+           In the Import Filters dialog, select the cautions filter. Click Open.
+
+           These filters are saved in the database and exist in subsequent CDC analysis GUI
+           sessions unless you delete them from the respective directory.
+
+Set Status
+
+  Status features help you manage CDC results and the debugging and verification progress.
+  Group results by assigning Status: Waived, Fixed, Pending, Uninspected, Bug, or Verified.
+  Initially, unless Status is saved and propagated from previous CDC analysis sessions, all CDC
+  check entries are marked as Uninspected. Using the powerful yet flexible Status capabilities, as
+  you review each CDC check entry, modify the Status group, assign reviewers, and add
+  comments. Using these options, you can create a unique verification tracking and
+  documentation scheme that fits your development and verification processes.
+  Waiving checks can be helpful to remove issues that do not require your attention. If while
+  reviewing the checks, you determine a CDC entry is not a real problem, you might select
+  Waived to group it with issues that do not require resolution. For example, you have verified
+  that a CDC circuit is properly synchronized, or that a problem will be corrected automatically in
+  the future. Waiving such violations might be appropriate for your process. Reference "Waive
+  CDC Results" for details on how to waive CDC results.
+
+Procedure
+
+       1. Review CDC check entries and set Status.
+           a. Import the violations filter created in "Filter CDC Results".
+           b. Expand Uninspected and then Violation until you see all the violations.
+           c. Select the last Single-bit signal does not have proper synchronizer violation.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Manage CDC Analysis Results
+
+       2. Right-click the selected row and click Set Status.
+
+       3. In the Status Update dialog, choose Pending from the Status drop-down list.
+
+           (Optional) Click Advanced Edit to specify additional details regarding the
+           status change in the Add Directive dialog box. For example, you can select
+           specific Tx/Rx reset for the status change. In the Status Update dialog, choose
+           Pending from the Status drop-down list.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                  Manage CDC Analysis Results
+
+           Click OK.
+           When you specify a new directive file to save the changes, a prompt displays to
+           confirm the changes. In this case, click Yes.
+       4. In the Owner field, add andy_smith; in the Reviewer field, add tom_mann, and in
+           Comments field, add the message, Added 2-DFF synchronizer to init_done 02/12/2021.
+           Click OK. Make whatever other status changes you want to make.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                  Manage CDC Analysis Results
+
+       5. Export changes to preserve Status settings in future CDC analysis sessions.
+           a. Select the violation, right-click and choose Export Status.
+
+           b. When the Export Status dialog displays, click Browse.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Manage CDC Analysis Results
+
+           c. In the Save File dialog, double-click the qs_files folder.
+
+           d. Enter the filename status.tcl, then click Save.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                 CDC Static
+                                                     Manage CDC Analysis Results
+
+e. Click OK when the Export Status dialog displays.
+
+           Note
+         When you have made status changes and saved them to a file named status.tcl
+        during the current analysis session, click the Append to File check box to retain
+    the previous status changes and add the new status changes.
+
+f. If you specify the same made changes previously to the same status.tcl file, another
+    dialog appears asking whether to replace the file.
+
+                Click Yes to save the most recent changes.
+       6. Repeat Step 2 and 3 for the remaining Single-bit signal does not have proper
+
+           synchronizer violations.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Manage CDC Analysis Results
+
+       7. Check the Result Directives window to verify that Status is set properly and the directives are
+           correct.
+
+           If any changes are needed, double-click Add Directives in the Flow Navigator
+           window to open the Add Directives window
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Manage CDC Analysis Results
+
+           Select the directive, right-click and choose Edit Directive.
+
+           Make changes using the Edit Directive dialog. Click OK to save the changes.
+
+       8. Update the run_batch.bat to include the status.tcl file to propagate the Status changes in
+           future CDC analysis sessions.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                       CDC Static
+                                                           Manage CDC Analysis Results
+
+Use a text editor to add the status.tcl file to the run_batch.bat cdc target:
+
+:cdc
+
+      ECHO ###
+      ECHO ### NOTE: Run CDC
+      ECHO ###
+      qverify -c -od Output_Results -do ^" ^
+
+                do qs_files/directives.tcl; ^
+                do qs_files/status.tcl; ^
+                cdc run -d demo_top; ^
+                cdc generate report cdc_detail.rpt; ^
+                exit^"
+      exit /b
+
+ 9. Select File > Exit to exit the GUI.
+10. Rerun CDC analysis and load the results into the GUI.
+
+            prompt> run_batch run_vl
+
+Expand the violations in the CDC Checks window to see the saved Status changes.
+
+Waive CDC Results
+
+  Waiving entries helps you focus on relevant issues, document and track verified issues that do
+  not require any action, and declutter the display by categorizing and removing unnecessary
+  issues from the display.
+
+Procedure
+
+       1. Select the Combinational logic before synchronizer violation containing the TX Signal
+           err_thrs.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static
+Manage CDC Analysis Results
+
+       2. Right-click and choose Set Status... to display the Set Status dialog.
+
+       3. In the Set Status dialog, add the following information for the owner, message, and
+           reviewer:
+
+           Click OK. The waived item is no longer in the CDC Checks window.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                  Manage CDC Analysis Results
+
+       4. *Database needs to be updated appears on the top menu bar.
+          Click cdc status update button to save.
+
+           Waivers and filters differ. Filtered results are intrinsic to the GUI; Waivers are part of
+           the environment configuration for CDC analysis. As with other cdc report directives,
+           they do not affect CDC analysis functionality or performance; they just change the way
+           results are reported. This includes how CDC analysis reports results in text files during a
+           cdc run session. The Directives window shows the directives currently in effect
+           (specified during the batch session or interactively with the GUI directives' dialogs).
+       5. Click File > Exit to quit the GUI.
+       6. Load the database into the GUI.
+       7. Clear the filters: Filter > Clear All.
+       7. Confirm that the intended crossings (and only the intended crossings) are now in the
+           Waived group.
+           a. Expand the violations to see the Waived entries.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                                               CDC Static
+                                                                                                           CDC Static Conclusions
+
+CDC Static Conclusions
+
+  You have completed this tutorial, familiarized yourself with the basics of CDC analysis, and
+  learned how to do tasks that help you track and manage your CDC analysis, debugging, and
+  verification processes.
+  You have learned how to do these fundamental tasks in CDC static analysis:
+
+       · Set up and run CDC analysis
+       · Review CDC analysis checks
+       · Create filters
+       · Set, save, and propagate Status to track and document your debugging and verification
+
+           processes
+
+Questa® CDC Windows Tutorial v2023.3
+                                                  Chapter 3
+                              CDC Static in GUI Mode
+
+  Questa CDC GUI helps you load the source files, compile the source files to produce object
+  files, and link these object files with libraries and other resources to produce an executable file
+  which runs and produces CDC analysis results.
+  The tutorial reside in the following installation directory:
+
+        install_dir\win64\examples\design_solutions\tutorials\cdc_static
+
+  To run the tutorial, make a working copy and make the supporting files writable:
+
+        install_dir\win64\examples\design_solutions\tutorials\cdc_static
+        to
+        tutorial_dir\cdc_static
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Static Analysis (Windows)
+
+Static Analysis (Windows)
+
+  Questa CDC static analysis performs the following structural verification tasks:
+       · Identifies the design's clock structure: clock domains, clock gating, dividers, and so on.
+       · Identifies the design's clock domain crossing signals.
+       · Identifies the synchronization schemes on clock domain crossings.
+       · Checks synchronization schemes' structures.
+
+  Fine-tune CDC analysis to achieve better analysis by providing additional information that
+  guides the analyzer. For example, supply information on clock groups, preferred
+  synchronization types, exceptions, and other options. Use the GUI environment to setup a
+  project, apply constraints, compile design, and debug problems found by CDC analysis.
+  After you set up CDC analysis to perform properly, run CDC analysis, and then review the CDC
+  analysis results. For each reported CDC issue (caution or violation), either set Status to waive or
+  otherwise group issues (indicating the issues were reviewed and appropriately categorized for
+  your development and verification processes), or modify the design to fix bugs.
+  This tutorial (\examples\design_solutions\tutorials\cdc_static) runs Questa CDC static analysis
+  (Figure 3-1) on the demo design.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                             CDC Static in GUI Mode
+                                                         Static Analysis (Windows)
+
+                 Figure 3-1. Static CDC Method
+
+Table 3-1 shows the cdc_static directory structure.
+                             Table 3-1. cdc_static Directory Structure
+
+Directory  File                       Description
+
+scripts    directives.tcl             Directives file for the analysis.
+
+           filelist_vh                VHDL file list.
+
+           filelist_vl                Verilog filelist.
+
+           run_batch.bat              Batch file
+
+src/vhdl   tb.vhd                     VHDL source files relevant to the tutorial.
+           demo_top.vhd
+           dpmem2clk.vhd
+           generic_fifo_dc_gray.vhd
+
+src/vlog   tb.v                       Verilog source files relevant to the tutorial
+           demo_top.v
+           dpmem2clk.v
+           generic_fifo_dc_gray.v
+           dff2_sync.v
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Static Analysis (Windows)
+
+  In this tutorial, you do these tasks:
+       1. Create a new CDC project
+       2. Add sources files and constraints
+       3. Configure project settings and compile design files
+       4. Create a netlist
+       5. Run clock analysis
+       6. Review messages and CDC setup checks
+       7. Analyze clocks
+       8. Export constraints to a Tal file
+       9. Run CDC analysis
+     10. Review CDC analysis results
+     11. Manage results by creating and applying waivers
+
+  After you create your working copy of the tutorial, perform the tasks in these sections in the
+  order in which they are presented.
+
+          Note
+        The tutorial is a progression of tasks. In many cases, one section is the foundation for the
+       next section. Therefore, work through the tutorial sections in the order in which they are
+  presented until you become familiar with the tasks presented.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                              CDC Static in GUI Mode
+                                                                                                             Creating a CDC Project
+
+Creating a CDC Project
+
+  Questa CDC requires your RTL design to be compiled through the same compile flow that is
+  used by simulation; you can either compile VHDL designs using vcom command or Verilog
+  designs with vlog command. The easiest way to compile is to create a project and add your
+  design files into it.
+
+Procedure
+
+       1. Invoke the Questa CDC GUI by using the following command:
+
+                   prompt> qverify
+
+           The Questa CDC GUI displays.
+
+       2. Click File > Project > New.
+            The New Project window displays.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Creating a CDC Project
+
+      3. Enter the following information in the respective fields and click OK.
+
+Field      Value
+
+Project Name Type my_project.
+
+Project    This is pre-populated with the path of your working directory.
+Location
+Output     This is also pre-populated with the path of your working directory. Add
+Directory  the Output_Results directory at the end of the specified path.
+           From the drop-down menu, select CDC.
+Tool
+
+           A dialog box confirming to create the non-existing Output_Results directory displays.
+           Click Create Path.
+
+           The Flow Navigator displays. It provides a guided flow to add source files and
+           constraints for your CDC analysis.
+
+Results
+
+  The new project, my_project, is created and the corresponding Output_Results directory to store
+  the analysis result files is created in the working directory. The next steps involve adding source
+  files and constraints, and configuring the project settings.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                              CDC Static in GUI Mode
+                                                                                         Adding Source Files and Constraints
+
+Adding Source Files and Constraints
+
+  Use the Flow Navigator to quickly add design source files and constraints for the CDC analysis.
+
+Procedure
+
+       1. From Flow Navigator, click Add Sources.
+           The Add Sources window displays with the Verilog tab.
+
+       2. For the File-List field, click the browse button ( ).
+           The Select Design File List dialog displays.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Adding Source Files and Constraints
+
+           Double-click qs_files directory to open it, and then select filelist_vl and click Open.
+           Alternatively, if you want to add a VHDL filelist, click the VHDL tab and select
+           filelist_vh by navigating to qs_files directory.
+
+           The path of the selected filelist appears in the File-List field.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                              CDC Static in GUI Mode
+                                                                                         Adding Source Files and Constraints
+
+       3. Click Add File(s)/FileList. The corresponding commands appears in the Compile
+           Command and Library Command boxes.
+
+       4. Click Next to choose Methodology and Goal.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Adding Source Files and Constraints
+
+           The Add Constraints (optional) window displays.
+
+       5. For the Directive File field, click the browse button ( ).
+           The Select Directive File dialog box displays.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                              CDC Static in GUI Mode
+                                                                                         Adding Source Files and Constraints
+
+           Double-click qs_files directory to open it, and then select directives.tcl and click Open.
+
+           The selected filepath appears in the Directive File field.
+       6. Click the Add button ( ) to add the file in the list box below.
+
+            After the directive file entry appear in the list box, click Next.
+
+           The Project Settings window displays.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Configuring Project Settings and Compiling Design Files
+
+Results
+
+  Source files and constraint files are added to the CDC setup. The next step is to configure
+  project settings.
+
+Configuring Project Settings and Compiling Design
+Files
+
+  The final step before compiling the design file is to ensure that the project settings are
+  configured.
+
+Procedure
+
+       1. Configure project settings.
+             a. In the Project Settings window, ensure that the Run Directory field is pre-populated
+                with the path of Output_Results directory.
+           b. For the Top Module field, type demo_top and then click Finish.
+
+       2. Compile HDL design files.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                              CDC Static in GUI Mode
+                                                             Configuring Project Settings and Compiling Design Files
+
+           a. From Flow Navigator, click Compile Design.
+
+                A confirmation dialog box displays. Click Yes.
+                The tool compiles the design. The Transcript window below displays the progress.
+                After the compilation is complete, check the Transcript window for any errors and
+                warnings.
+
+           b. If any errors are there, debug them and recompile the design.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Creating a Netlist
+
+Results
+
+  Project settings are configured and the compilation of the design is clean.
+
+Creating a Netlist
+
+  To run CDC analysis, it is essential that you have a synthesized netlist. After the design is
+  compiled, you can create a synthesized netlist from your compiled work library.
+  To create a synthesized netlist, click Create Netlist from the Flow Navigator. A confirmation
+  box displays. Click Yes.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                          CDC Static in GUI Mode
+                                                                                                                  Creating a Netlist
+
+If the design elaboration is successful, the tool displays the Design, Source, and Message
+Viewer tabs.
+
+This design does not have any errors or warnings. But, if you do encounter any issues, you must
+fix them before running CDC analysis. Running a CDC analysis with existing issues can lead to
+unexpected results.
+
+Potential Issues
+
+  CDC netlist synthesis can uncover potential design elaboration or simulation issues that might
+  not be flagged by the design compilation step For example, a process in the design with missing a
+  signal in its sensitivity list may cause a difference between simulation and implementation.
+  Therefore, it is recommended to clean up as many of these issues as possible.
+
+Unresolved Modules
+
+  The netlist synthesis sometimes return an Unresolved module warning.
+
+# Message Summary
+
+# -----------------------------------------------------------
+
+# Count Type Message ID               Summary
+
+# -----------------------------------------------------------
+
+#3    Warning elaboration-702 Incomplete sensitivity-list.
+
+#1    Warning parser-278              Ignoring unsupported construct.
+
+# 10  Warning parser-285              Vopt warning.
+
+#7    Warning parser-47               Unresolved module.
+
+An unresolved module/entity is one for which no module or entity/architecture definition is
+present. If a component declaration is present, the port directions are derived from that
+declaration. Otherwise, the port directions are inferred from the connected logic. (If a port
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Running Clock Analysis
+
+direction cannot be inferred, the port direction is assumed to be INOUT). For Questa CDC,
+unresolved modules are treated as unused or undriven logic, which means that they may affect
+your CDC analysis.
+
+The solution is to find the unresolved modules and include them in your vcom or vlog compile
+command. Even if the modules or entities contain non-synthesizable constructs (such as RAM
+model or FPGA vendor behavioral model), compiling and including them removes the issue
+with the unresolved module and allows Questa CDC to infer the appropriate port directions and
+connections from the module.
+
+Black-boxed modules
+
+  Another issue that must be closely tracked is black boxing of a design entity or module. When a
+  module is black boxed, its internal logic is treated as unknown, including the connectivity
+  between its inputs and outputs. This can mask some CDC issues so it is important to examine
+  the cause of the black boxing. If a black boxed component does not connect to multiple clock
+  domains, then having a black box component may not be a concern. However, sometimes
+  multi-clocked components, such as FIFOs may not be fully recognized, and if they are black
+  boxed then the CDC analysis might report false issues. In such a case, a CDC directive can be
+  used (for example, cdc fifo). For more information on FIFO handling, see the Running Questa
+  CDC & Questa AutoCheck on FPGA Designs AppNote.On the other hand, sometimes it is
+  necessary to intentionally black box a component due to an encrypted vendor IP, a component
+  you do not have access to, or a high-level behavior model. To intentionally black box a
+  component by creating an HDM abstract model, select the object in the Design tab, right-click
+  and choose Add Directive > netlist blackbox.
+
+If the tool encounters an unsupported top-level construct in the top module, it can flag the
+following error:
+
+# Message Summary
+
+# -----------------------------------------------------------
+
+# Count Type Message ID Summary
+
+# -----------------------------------------------------------
+
+#1  Error hdl-94                      Top level design is black-boxed.
+
+In this scenario, the processing will abort as there is nothing to examine if the top module is
+black boxed.
+
+Running Clock Analysis
+
+  After reviewing the netlist results, the next step is to run clock analysis.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                           CDC Static in GUI Mode
+                                                          Running Clock Analysis
+
+Procedure
+
+       1. Click the Flow Navigator tab.
+
+2. From Flow Navigator, double-click Run Clock Analysis.
+    A confirmation dialog box displays. Click Yes.
+
+           The clock analysis is complete and the GUI displays Clocks and CDC Setup Checks
+           windows in addition to the previously displayed windows.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Reviewing Messages and Setup Checks
+
+Reviewing Messages and Setup Checks
+
+  Messages and CDC setup checks must be examined to catch any unexpected setup issues. For
+  example, often dead-end registers (registers that do not drive an output port) are flagged, which
+  may or may not be a cause for concern. Similarly, the flagged messages may point out other
+  issues, such as ports belonging to multiple clock domains among others.
+
+Procedure
+
+       1. Review messages.
+           Click the Message Viewer tab and expand the Error category.
+
+           The hdl-41 errors indicate ports that drive multiple clock domains. This error is an
+           indication that a constraint is needed on this input port. Status constraints can be
+           specified to waive any error, warning, or info message.
+       2. Review CDC Setup Checks.
+           a. Click the CDC Setup Checks tab and expand Dead-end Registers.
+
+                The Dead-end Registers type indicates registers that do not propagate to an output
+                port. Dead-end Registers are expected to be removed by synthesis optimization and
+                are not verified during CDC analysis. If these registers are disabled due to a disabled
+                mode for a multi-mode design, you may need to run modal analysis.
+           b. To verify if the ports are correctly assigned to their respective clock domains or
+                declared as asynchronous, check the CDC report, cdc.rpt.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                             CDC Static in GUI Mode
+                                                                                     Reviewing Messages and Setup Checks
+
+                From the main menu, choose View > Logs & Reports > cdc. Alternatively, click
+                Logs & Reports button ( ) and choose cdc from the drop down list.
+
+                The Text Viewer displays the cdc.rpt report.
+           c. Scroll down to Section 10 that displays port domain information and note the clock
+
+                domains assigned to each port.
+
+     .
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Reviewing Messages and Setup Checks
+
+                Clock signals will be assigned <undef>, but other signals should either be assigned
+                to a clock domain or declared asynchronous. Ports that are assigned <undef> domain
+                must be examined. In this example, the scan_clk port is in the <undef> clock
+                domain.
+           d. To set port clock domain, choose View > Objects from the main menu.
+                The Objects window displays.
+           e. Scroll down and select the scan_clk port, right-click and choose Add
+                Directive > nelist clock...
+
+Questa® CDC Windows Tutorial v2023.3
+                                     CDC Static in GUI Mode
+                                            Analyzing Clocks
+
+The Add Directives window displays.
+
+            f. Specify the port as asynchronous or specify a clock domain port for the port and then
+                click OK.
+
+Results
+
+  CDC Setup Checks and Messages are reviewed. You can now proceed to Clock analysis.
+
+Analyzing Clocks
+
+  Clocks eventually are explicitly declared in the design, but enabling Questa CDC to infer clocks in
+  the design can be informative. If there is anything unexpected detected, you must analyze and
+  investigate the clocks.
+  Running clock analysis automatically detects the clocks in your design. It traces the clock back
+  from the design registers, and unless the clocks are gated, MUXed, or run through black boxed
+  components, it will identify the design clock sources.
+
+Procedure
+
+       1. To view the clock analysis results, click the Clock tab.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Analyzing Clocks
+
+           Expand Total Clock Groups and Specified categories.
+
+           In this example, three clocks are specified in the directives.tcl file. Therefore, they are
+           listed under the Specified category. When clocks are not declared, they are listed under
+           the Inferred category.
+       2. To convert inferred clocks into user-specified clocks, right-click the clock signal and
+           choose Edit Directive > netlist clock.
+           The Add Directive window displays. Use the -module and -period fields to specify
+           module scope and period for the clock signal, respectively.
+
+           Before proceeding to CDC analysis, ensure that all synchronous clocks are grouped and
+           asynchronous clock groups are verified and confirmed.
+
+                   Note
+                 Running CDC analysis with incorrect clock grouping will result in noisy results and
+                false violations.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                              CDC Static in GUI Mode
+                                                                                                               Exporting Constraints
+
+Exporting Constraints
+
+  While the project remembers all the source files in the design, the directives you defined while
+  need saved separately as a Tcl file.
+
+Procedure
+
+       1. Click the Result Directives tab to view the list of directives.
+       2. Select a directive, right-click and click Export. Alternatively, you can click the Export
+
+           to Tcl ( ) button from the main toolbar.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Running CDC Analysis
+
+           The Export Directive dialog box displays.
+
+       3. Specify the required information.
+           a. For the Export field, select one of the All, Selected, or New radio buttons to export
+               the corresponding set of directives.
+           b. For the File Path field, click the browse button ( ) to navigate to the location
+                where you want to save the exported tcl file or type the complete path.
+           c. Select the Append to File check box, if you are appending few directives to an
+                existing tcl file.
+           d. Select the Exclude Duplicates check box, if you want to exclude any duplicate
+                directives.
+           e. Click OK.
+
+        4. From the main menu, choose File > Project > Save to save the changes made to the
+            project file. Alternatively, you can click the Save button ( ) from the main toolbar.
+            Project information is saved in the my_project.prj file within the working directory.
+
+Results
+
+  The directives are exported to a Tcl file and can be imported in the next CDC run using Add
+  Constraints in the Flow Navigator.
+
+Running CDC Analysis
+
+  After the HDL design is compiled, clocks are defined, and ports are assigned to their
+  corresponding clock domains, the next step is to run the CDC analysis.
+
+Procedure
+
+       1. Click the Flow Navigator tab and then double-click Run CDC Analysis.
+
+Questa® CDC Windows Tutorial v2023.3
+                                         CDC Static in GUI Mode
+                                         Running CDC Analysis
+
+A confirmation box displays. Click Yes.
+
+    The CDC analysis is performed and the tool displays the results in the CDC Checks
+    window.
+
+2. Expand the results to view the list of violations, cautions, evaluations, and proven
+    crossings.
+
+           The definition for each of these type of crossings is as follows:
+           · Violations -- Metastability occurs on these CDC paths with missing or incorrect
+
+                synchronizer structures.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Reviewing CDC Analysis Results
+
+           · Caution -- Correct synchronization structures, but metastability may be possible.
+                These are complex synchronizers where data loss, data corruption or metastability
+                may occur when the CDC protocols are violated.
+
+           · Evaluations -- Correct synchronization structures and metastability is not possible.
+                Data loss or data corruption may occur when CDC protocols are violated.
+
+           · Proven -- Correct synchronization structures and the protocol has been verified to
+                 be correct. Therefore, metastability, data loss, or data corruption is not possible.
+
+Reviewing CDC Analysis Results
+
+  Questa CDC provides various tools to review and debug a violation. You can view the help,
+  schematic, or source file from the GUI to understand the violation and debug it accordingly.
+
+Procedure
+
+       1. View the schematic for a violation.
+           a. Select a violation, right-click and choose Show > Schematic > Path.
+
+           b. From the schematic view, the CDC path is displayed and the components are
+                color-coded according to clock domains. The design logic can be traversed by
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                              CDC Static in GUI Mode
+                                                                                               Reviewing CDC Analysis Results
+
+                double-clicking on pins, nets or expressions. To find additional information, hover
+                any component.
+
+           c. Select and right-click the check_en_r1 register and choose Go To > Declaration to
+                cross-probe between the schematic and the source code.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Reviewing CDC Analysis Results
+
+                The source window displays with the code where the register is declared. The CDC
+                signals in the source window are also color-coded according to the clock domains.
+
+           d. Debug the CDC path violations. You can explore the following three options:
+                i. Fix the RTL for incorrect or missing structures.
+                ii. Specify design constraints. For example, a stable configuration register can be
+                    specified with a cdc signal -stable directive. Some available design constraints:
+                    · netlist constant for defining constants
+                    · cdc signal -gray_coded for defining gray coded signals
+                    · cdc signal -mutually_exclusive for defining mutually exclusive signal
+                    For a complete list of available directives, refer to the Command Reference
+                    Guide.
+
+               iii. Apply waiver for exceptional cases where a synchronizer is not required.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                             CDC Static in GUI Mode
+                                                                                                 Creating and Applying Waivers
+
+       2. Select a violation, right-click and choose Help to view the corresponding
+           documentation.
+
+Results
+
+  CDC analysis results are analyzed. Review other results and fix them using the available
+  options.
+
+Creating and Applying Waivers
+
+  When reviewing CDC violations, you may determine that a CDC synchronizer is not required.
+  These CDC path exception cases may include status signals that are sampled many clock cycles
+  later where metastability-prevention is not needed. You can create waivers for such crossings to
+  sort the results and focus on the potential issues.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Creating and Applying Waivers
+
+Procedure
+
+       1. Select the Combinational logic before synchronizer violation containing the TX Signal
+           err_thrs.
+
+       2. Right-click and choose Set Status... to display the Set Status dialog.
+
+Questa® CDC Windows Tutorial v2023.3
+CDC Static in GUI Mode
+Creating and Applying Waivers
+
+       3. In the Set Status dialog, add the following information for the owner, message, and
+           reviewer:
+
+           Click OK. The waived item is no longer in the CDC Checks window.
+           (Optional) Click Advanced Edit to specify additional details regarding the
+           status change in the Add Directive dialog box. For example, you can select
+           specific Tx/Rx reset for the status change. In the Status Update dialog, choose
+           Pending from the Status drop-down list.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                             CDC Static in GUI Mode
+                                                                                                 Creating and Applying Waivers
+
+           Click OK.
+           When you specify a new directive file to save the changes, a prompt displays to
+           confirm the changes. In this case, click Yes.
+       4. *Database needs to be updated appears on the top menu bar.
+          Click cdc status update button to save.
+
+           Waivers and filters differ. Filtered results are intrinsic to the GUI; Waivers are part of
+           the environment configuration for CDC analysis. As with other cdc report directives,
+           they do not affect CDC analysis functionality or performance; they just change the way
+           results are reported. This includes how CDC analysis reports results in text files during a
+           cdc run session. The Directives window shows the directives currently in effect
+           (specified during the batch session or interactively with the GUI directives' dialogs).
+       5. Click File > Exit to quit the GUI.
+       6. Load the database into the GUI.
+       7. Clear the filters: Filter > Clear All.
+       7. Confirm that the intended crossings (and only the intended crossings) are now in the
+           Waived group.
+           a. Expand the violations to see the Waived entries.
+
+Questa® CDC Windows Tutorial v2023.3
+                                                                                                             CDC Static in GUI Mode
+                                                                                                 Creating and Applying Waivers
+
+Results
+
+   Waivers are created and applied and can be exported to a new or existing Tcl file as described in
+  "Exporting Constraints".
+
+Questa® CDC Windows Tutorial v2023.3
+

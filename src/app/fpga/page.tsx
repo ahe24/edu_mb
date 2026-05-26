@@ -35,8 +35,8 @@ const curriculum = [
       {
         week: 4, title: 'CDC(Clock Domain Crossing) 분석',
         days: [
-          { day: 7, title: 'CDC 기초 이론 및 Questa CDC 소개', ready: false },
-          { day: 8, title: 'CDC 분석 실습 및 결과 해석', ready: false },
+          { day: 7, title: 'CDC 기초 이론 및 Questa CDC 소개', ready: true },
+          { day: 8, title: 'CDC 분석 실습 및 결과 해석', ready: true },
         ],
       },
     ],

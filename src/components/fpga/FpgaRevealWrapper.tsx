@@ -232,8 +232,16 @@ const fpgaThemeCSS = `
     line-height: 1.8;
   }
 
+  .fpga-theme .slides section code,
+  .fpga-theme .slides section pre {
+    /* RTL/Verilog 코드의 <= != == 등이 ligature로 잘못 표시되지 않도록 */
+    font-variant-ligatures: none;
+    -webkit-font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
+  }
+
   .fpga-theme .slides section code {
-    font-family: "JetBrains Mono", monospace;
+    font-family: Consolas, "Courier New", "Liberation Mono", monospace;
     background: rgba(74, 111, 165, 0.08);
     color: #4A6FA5;
     padding: 2px 6px;
