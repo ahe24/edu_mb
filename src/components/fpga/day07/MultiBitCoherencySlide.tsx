@@ -67,7 +67,7 @@ export default function MultiBitCoherencySlide() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.72rem', color: FPGA.text, lineHeight: 1.55 }}>
                 <div>
                   <strong style={{ color: '#48BB78' }}>① Stable (configuration)</strong>: SW가 한번만 write · RX는 충분히 안정된 후 read.
-                  <br />→ <code>cdc signal threshold -stable</code>
+                  <br />→ <code>cdc signal cfg_reg[7:0] -stable</code>
                 </div>
                 <div>
                   <strong style={{ color: '#48BB78' }}>② Gray code</strong>: 한 번에 1 bit만 변화 → bit별 sync 가능. FIFO 포인터에 적용.

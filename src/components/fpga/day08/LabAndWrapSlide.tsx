@@ -67,11 +67,11 @@ const labTasks: {
     num: 4,
     title: 'BUG2 multi_bits 수정',
     items: [
-      <><C>cdc signal threshold_cfg -stable</C> directive 추가</>,
+      <><C>cdc signal gain_cfg -stable</C> directive 추가</>,
       <>cascade no_sync 2건도 함께 해소</>,
     ],
     color: '#E8913A',
-    cmd: 'cdc signal threshold_cfg offset_cfg -stable',
+    cmd: 'cdc signal gain_cfg offset_cfg -stable',
     shell: 'qverify',
   },
   {

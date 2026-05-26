@@ -86,30 +86,99 @@ type Impl = {
 const impls: Record<string, Impl> = {
   '2-DFF': {
     title: '2-DFF Synchronizer',
-    subtitle: '가장 기본적인 동기화 회로 — flip-flop 2단 cascade',
+    subtitle: '가장 기본적인 동기화 회로 — flip-flop 2단 cascade (rx_clk 도메인)',
     bullets: [
-      '첫번째 flop은 metastable 가능 — 두번째 flop 전까지 해소 시간(τ) 확보',
-      '두번째 flop은 안정된 값만 통과 — 다운스트림 로직에 깨끗한 신호 전달',
-      'TX 입력은 RX clock 1주기 이상 안정 유지 필수 — 짧은 펄스는 손실 가능 (Pulse Sync 사용)',
+      '1st FF(meta_r)에 setup/hold 위반 가능 — TX 입력이 rx_clk edge 부근에 변하면 출력이 0/1 사이 불확정 (metastable)',
+      '해소시간 τ 안에 0 또는 1 로 수렴 — 다음 edge 전까지 1st FF 출력은 외부 노출 금지 (2nd FF 전용)',
+      '2nd FF(dout)는 안정된 meta_r 만 sample → 다운스트림에 항상 깨끗한 logic value',
+      'TX 입력은 rx_clk 1주기 이상 안정 hold 필수 — 짧은 펄스는 손실 가능 (Pulse Sync로 우회)',
       '파라미터 W 로 multi-bit 확장 가능 — 단, gray-code 아니면 multi_bits violation',
-      'Latency 2 cycle · 면적 최소 · MTBF는 clock 주파수 / τ 에 의존',
+      'Latency 2 rx_clk cycle · 면적 최소 · MTBF ∝ e^(τ × f_rx) — 일반 응용 충분, 고주파/safety-critical 시스템엔 4-Latch 고려',
       'CDC scheme: two_dff (1-bit) / bus_two_dff (multi-bit gray) — Evaluation',
     ],
+    diagram: (
+      <div>
+        <div style={{ fontSize: '0.72rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.2rem' }}>
+          Timing diagram — din 비동기 변화 → 1st FF metastable → 2nd FF 안정 capture
+        </div>
+        <svg viewBox="0 0 560 230" style={{ width: '100%' }}>
+          {/* Vertical guide lines at key rx_clk edges */}
+          <line x1="235" y1="18" x2="235" y2="220" stroke="#E53E3E" strokeWidth="0.7" strokeDasharray="2 2" opacity="0.55" />
+          <text x="235" y="13" fontSize="7.5" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">edge n (setup 위반)</text>
+          <line x1="315" y1="18" x2="315" y2="220" stroke="#48BB78" strokeWidth="0.7" strokeDasharray="2 2" opacity="0.55" />
+          <text x="315" y="13" fontSize="7.5" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily="monospace">edge n+1 (안정 capture)</text>
+
+          {/* tx_clk — fast (period 50), orange */}
+          <text x="4" y="38" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">tx_clk</text>
+          <path d="M 60,44 L 70,44 L 70,28 L 95,28 L 95,44 L 120,44 L 120,28 L 145,28 L 145,44 L 170,44 L 170,28 L 195,28 L 195,44 L 220,44 L 220,28 L 245,28 L 245,44 L 270,44 L 270,28 L 295,28 L 295,44 L 320,44 L 320,28 L 345,28 L 345,44 L 370,44 L 370,28 L 395,28 L 395,44 L 420,44 L 420,28 L 445,28 L 445,44 L 470,44 L 470,28 L 495,28 L 495,44 L 520,44 L 520,28 L 545,28 L 545,44 L 555,44"
+                stroke="#DD6B20" strokeWidth="1.4" fill="none" />
+
+          {/* din — TX domain async signal, rises at x=220 (just 15px before rx_clk edge at 235) */}
+          <text x="4" y="74" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">din</text>
+          <path d="M 60,81 L 220,81 L 220,64 L 555,64" stroke="#DD6B20" strokeWidth="1.6" fill="none" />
+          <text x="170" y="76" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">tx 도메인에서 비동기로 0→1</text>
+          {/* arrow from din transition to rx edge */}
+          <line x1="222" y1="56" x2="233" y2="56" stroke="#E53E3E" strokeWidth="0.9" />
+          <path d="M 231,54 L 233,56 L 231,58" stroke="#E53E3E" strokeWidth="0.9" fill="none" />
+
+          {/* rx_clk — slower (period 80), cyan, edges at 75, 155, 235, 315, 395, 475 */}
+          <text x="4" y="112" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">rx_clk</text>
+          <path d="M 60,118 L 75,118 L 75,102 L 115,102 L 115,118 L 155,118 L 155,102 L 195,102 L 195,118 L 235,118 L 235,102 L 275,102 L 275,118 L 315,118 L 315,102 L 355,102 L 355,118 L 395,118 L 395,102 L 435,102 L 435,118 L 475,118 L 475,102 L 515,102 L 515,118 L 555,118"
+                stroke={DAY07} strokeWidth="1.4" fill="none" />
+
+          {/* meta_r — 1st FF output: low → metastable region → high */}
+          <text x="4" y="146" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">meta_r</text>
+          <text x="4" y="156" fontSize="7" fontWeight="800" fill={DAY07} fontFamily="monospace" opacity="0.75">(1st FF)</text>
+          {/* low portion before metastable */}
+          <line x1="60" y1="153" x2="235" y2="153" stroke={DAY07} strokeWidth="1.6" />
+          {/* metastable band: edge n (235) → resolved by x=275 */}
+          <rect x="235" y="137" width="40" height="16" fill="rgba(229,62,62,0.22)" stroke="#E53E3E" strokeWidth="0.9" strokeDasharray="2 2" />
+          {/* oscillation hint inside metastable region */}
+          <path d="M 240,145 Q 245,138 250,145 T 260,145 T 270,145" stroke="#E53E3E" strokeWidth="0.9" fill="none" opacity="0.85" />
+          <text x="255" y="133" fontSize="7.5" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">meta ?</text>
+          {/* high portion after resolution */}
+          <line x1="275" y1="137" x2="555" y2="137" stroke={DAY07} strokeWidth="1.6" />
+          {/* τ arrow */}
+          <line x1="237" y1="166" x2="273" y2="166" stroke="#E53E3E" strokeWidth="0.9" />
+          <path d="M 239,164 L 237,166 L 239,168" stroke="#E53E3E" strokeWidth="0.9" fill="none" />
+          <path d="M 271,164 L 273,166 L 271,168" stroke="#E53E3E" strokeWidth="0.9" fill="none" />
+          <text x="255" y="174" fontSize="7" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">τ (resolve)</text>
+
+          {/* dout — 2nd FF output: stays low until edge n+1, then clean rise */}
+          <text x="4" y="190" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">dout</text>
+          <text x="4" y="200" fontSize="7" fontWeight="800" fill={DAY07} fontFamily="monospace" opacity="0.75">(2nd FF)</text>
+          <path d="M 60,197 L 315,197 L 315,181 L 555,181" stroke={DAY07} strokeWidth="1.6" fill="none" />
+          <circle cx="315" cy="181" r="3.5" fill="#48BB78" />
+          <text x="335" y="178" fontSize="8" fontWeight="800" fill="#48BB78" fontFamily="monospace">★ 항상 안정 값</text>
+
+          {/* Latency arrow */}
+          <line x1="237" y1="217" x2="313" y2="217" stroke="#48BB78" strokeWidth="0.9" />
+          <path d="M 239,215 L 237,217 L 239,219" stroke="#48BB78" strokeWidth="0.9" fill="none" />
+          <path d="M 311,215 L 313,217 L 311,219" stroke="#48BB78" strokeWidth="0.9" fill="none" />
+          <text x="275" y="226" fontSize="7.5" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily="monospace">latency = 2 rx_clk cycle</text>
+        </svg>
+        <div style={{ fontSize: '0.7rem', color: FPGA.textLight, marginTop: '0.3rem', lineHeight: 1.5 }}>
+          <strong style={{ color: '#E53E3E' }}>edge n</strong>: din이 rx_clk rising edge 직전에 변경 → setup 위반 → meta_r가 metastable 진입.
+          <br />
+          <strong style={{ color: '#48BB78' }}>edge n+1</strong>: τ 동안 meta_r는 0 또는 1로 수렴 (그림은 1로 수렴한 경우) → 2nd FF이 안정된 값을 sample → dout는 항상 valid logic.
+        </div>
+      </div>
+    ),
     code: `module sync_2dff #(parameter integer W = 1) (
-    input              clk,
+    input              clk,          // rx_clk (수신 도메인)
     input              rst,
-    input      [W-1:0] din,    // 비동기 source domain (TX clock으로 만들어진 신호)
-    output reg [W-1:0] dout    // 동기화된 출력 (clk 도메인 안정)
+    input      [W-1:0] din,          // 비동기 source — tx_clk 도메인 신호
+    output reg [W-1:0] dout          // 동기화된 출력 (rx_clk 도메인, 안정)
 );
-    reg [W-1:0] meta_r;        // 1단 — metastable 발생 가능 영역
+    reg [W-1:0] meta_r;              // 1st FF — metastable 가능 (외부 노출 금지)
 
     always @(posedge clk) begin
         if (rst) begin
             meta_r <= {W{1'b0}};
             dout   <= {W{1'b0}};
         end else begin
-            meta_r <= din;     // 1단 sample — TX 도메인 → RX 도메인
-            dout   <= meta_r;  // 2단 — τ 동안 meta 해소 후 통과
+            meta_r <= din;           // 1st FF — TX→RX sample (setup 위반 시 meta)
+            dout   <= meta_r;        // 2nd FF — τ 해소 후 안정값만 통과
         end
     end
 endmodule
@@ -117,9 +186,15 @@ endmodule
 // === 사용 예 === (단일 bit control 신호 동기화)
 // wire trip_active_bus;
 // sync_2dff #(.W(1)) u_sync (
-//     .clk (bus_clk), .rst (rst),
+//     .clk (bus_clk),  .rst (rst),
 //     .din (trip_active_proc),     // proc_clk 도메인 신호
-//     .dout(trip_active_bus));      // bus_clk 도메인 사용`,
+//     .dout(trip_active_bus));     // bus_clk 도메인에서 사용
+
+// === Timing diagram 시나리오 매핑 ===
+// din      : tx_clk으로 만들어진 신호 — rx_clk과 위상 무관
+// meta_r   : edge n에서 sample, setup 위반 시 τ 동안 metastable
+// dout     : edge n+1에서 안정된 meta_r를 sample — 항상 valid
+// → 다운스트림은 반드시 dout만 사용, meta_r는 fan-out 1 (=dout)`,
   },
 
   '4-Latch': {
@@ -169,45 +244,46 @@ endmodule
       <div>
         <div style={{ fontSize: '0.72rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.2rem' }}>Timing diagram — toggle 변환 + edge detect</div>
         <svg viewBox="0 0 560 220" style={{ width: '100%' }}>
-          {/* src_clk (TX) */}
+          {/* src_clk (TX) — period 60, rising edges at 80,140,200,260,320,380,440,500 */}
           <text x="4" y="32" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">src_clk</text>
-          <path d="M 60,38 L 80,38 L 80,22 L 110,22 L 110,38 L 140,38 L 140,22 L 170,22 L 170,38 L 200,38 L 200,22 L 230,22 L 230,38 L 260,38 L 260,22 L 290,22 L 290,38 L 320,38 L 320,22 L 350,22 L 350,38 L 380,38 L 380,22 L 410,22 L 410,38 L 440,38 L 440,22 L 470,22 L 470,38 L 555,38"
+          <path d="M 60,38 L 80,38 L 80,22 L 110,22 L 110,38 L 140,38 L 140,22 L 170,22 L 170,38 L 200,38 L 200,22 L 230,22 L 230,38 L 260,38 L 260,22 L 290,22 L 290,38 L 320,38 L 320,22 L 350,22 L 350,38 L 380,38 L 380,22 L 410,22 L 410,38 L 440,38 L 440,22 L 470,22 L 470,38 L 500,38 L 500,22 L 530,22 L 530,38 L 555,38"
                 stroke="#DD6B20" strokeWidth="1.4" fill="none" />
 
-          {/* src_pulse — 1-cycle pulse at two times */}
+          {/* src_pulse — 1-cycle pulse, transitions at src_clk rising edges */}
           <text x="4" y="68" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">src_pulse</text>
-          <path d="M 60,75 L 110,75 L 110,60 L 140,60 L 140,75 L 290,75 L 290,60 L 320,60 L 320,75 L 555,75"
+          <path d="M 60,75 L 80,75 L 80,60 L 140,60 L 140,75 L 260,75 L 260,60 L 320,60 L 320,75 L 555,75"
                 stroke="#DD6B20" strokeWidth="1.5" fill="none" />
-          <text x="125" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">P1</text>
-          <text x="305" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">P2</text>
+          <text x="110" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">P1</text>
+          <text x="290" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">P2</text>
 
-          {/* src_tog — toggle */}
+          {/* src_tog — toggle at next rising edge after pulse sampled */}
           <text x="4" y="105" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">src_tog</text>
           <path d="M 60,112 L 140,112 L 140,97 L 320,97 L 320,112 L 555,112"
                 stroke="#DD6B20" strokeWidth="1.5" fill="none" />
           <text x="230" y="92" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">toggle on each pulse (level signal)</text>
 
-          {/* dst_clk (RX, 더 느린 클럭) */}
+          {/* dst_clk (RX, 느린 clock) — period 90, rising edges at 90,180,270,360,450,540 */}
           <text x="4" y="145" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">dst_clk</text>
-          <path d="M 60,151 L 90,151 L 90,135 L 150,135 L 150,151 L 210,151 L 210,135 L 270,135 L 270,151 L 330,151 L 330,135 L 390,135 L 390,151 L 450,151 L 450,135 L 510,135 L 510,151 L 555,151"
+          <path d="M 60,151 L 90,151 L 90,135 L 135,135 L 135,151 L 180,151 L 180,135 L 225,135 L 225,151 L 270,151 L 270,135 L 315,135 L 315,151 L 360,151 L 360,135 L 405,135 L 405,151 L 450,151 L 450,135 L 495,135 L 495,151 L 540,151 L 540,135 L 555,135"
                 stroke={DAY07} strokeWidth="1.4" fill="none" />
-          <text x="295" y="130" fontSize="7" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">RX는 더 느린 clock — pulse 직접 sample 불가</text>
+          <text x="310" y="130" fontSize="7" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">RX는 더 느린 clock — pulse 직접 sample 불가</text>
 
-          {/* dst_pulse — recovered pulse */}
+          {/* dst_pulse — recovered pulse, transitions at dst_clk rising edges */}
+          {/* src_tog@140 → sync[0]@180 → sync[1]@270 → sync[2]@360 → pulse=[270,360) */}
+          {/* src_tog@320 → sync[0]@360 → sync[1]@450 → sync[2]@540 → pulse=[450,540) */}
           <text x="4" y="185" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">dst_pulse</text>
-          {/* 2-DFF sync → edge detect; toggle 1차 변경 후 ~2 dst_clk 후 edge 발견 */}
-          <path d="M 60,191 L 220,191 L 220,176 L 270,176 L 270,191 L 400,191 L 400,176 L 450,176 L 450,191 L 555,191"
+          <path d="M 60,191 L 270,191 L 270,176 L 360,176 L 360,191 L 450,191 L 450,176 L 540,176 L 540,191 L 555,191"
                 stroke={DAY07} strokeWidth="1.5" fill="none" />
-          <circle cx="220" cy="176" r="3" fill="#48BB78" />
-          <circle cx="400" cy="176" r="3" fill="#48BB78" />
-          <text x="245" y="172" fontSize="7" fontWeight="800" fill="#48BB78" fontFamily="monospace">★ P1 복원</text>
-          <text x="425" y="172" fontSize="7" fontWeight="800" fill="#48BB78" fontFamily="monospace">★ P2 복원</text>
+          <circle cx="270" cy="176" r="3" fill="#48BB78" />
+          <circle cx="450" cy="176" r="3" fill="#48BB78" />
+          <text x="315" y="172" fontSize="7" fontWeight="800" fill="#48BB78" fontFamily="monospace">★ P1 복원</text>
+          <text x="495" y="172" fontSize="7" fontWeight="800" fill="#48BB78" fontFamily="monospace">★ P2 복원</text>
 
           {/* Spacing annotation */}
-          <line x1="125" y1="207" x2="305" y2="207" stroke="#E8913A" strokeWidth="0.9" />
-          <path d="M 127,205 L 125,207 L 127,209" stroke="#E8913A" strokeWidth="0.9" fill="none" />
-          <path d="M 303,205 L 305,207 L 303,209" stroke="#E8913A" strokeWidth="0.9" fill="none" />
-          <text x="215" y="215" fontSize="7.5" fontWeight="800" fill="#E8913A" textAnchor="middle" fontFamily="monospace">spacing ≥ 2 × max(src, dst) period</text>
+          <line x1="140" y1="207" x2="260" y2="207" stroke="#E8913A" strokeWidth="0.9" />
+          <path d="M 142,205 L 140,207 L 142,209" stroke="#E8913A" strokeWidth="0.9" fill="none" />
+          <path d="M 258,205 L 260,207 L 258,209" stroke="#E8913A" strokeWidth="0.9" fill="none" />
+          <text x="200" y="215" fontSize="7.5" fontWeight="800" fill="#E8913A" textAnchor="middle" fontFamily="monospace">spacing ≥ 2 × max(src, dst) period</text>
         </svg>
       </div>
     ),
