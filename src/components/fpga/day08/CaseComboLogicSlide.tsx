@@ -127,7 +127,7 @@ export default function CaseComboLogicSlide() {
           {/* 하단 — 디버그 절차 + 일반 원리 */}
           <div style={{
             flex: 1, minHeight: 0,
-            display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '0.55rem',
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.55rem',
           }}>
             <div style={{
               background: FPGA.white,
