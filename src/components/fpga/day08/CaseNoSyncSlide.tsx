@@ -55,12 +55,20 @@ export default function CaseNoSyncSlide() {
               <div style={{ fontSize: '0.6rem', color: '#E53E3E', fontWeight: 800, marginBottom: '0.3rem', letterSpacing: '0.06em' }}>
                 ✗ BEFORE · 직결
               </div>
-              <pre style={{ margin: 0, fontSize: '0.62rem', lineHeight: 1.5, color: '#D4D4D4', whiteSpace: 'pre-wrap', fontFamily: '"JetBrains Mono", Consolas, monospace' }}>
-                <span style={{ color: '#6A9955' }}>// cdc_demo_top.v</span>{"\n"}
+              <pre style={{ margin: 0, fontSize: '0.58rem', lineHeight: 1.5, color: '#D4D4D4', whiteSpace: 'pre-wrap', fontFamily: '"JetBrains Mono", Consolas, monospace' }}>
+                <span style={{ color: '#6A9955' }}>// cdc_demo_top.v — proc_clk에서 trip_active 생성</span>{"\n"}
+                <span style={{ color: '#4EC9B0' }}>threshold_logic</span> <span style={{ color: '#DCDCAA' }}>u_proc</span> ({"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>clk</span>          (proc_clk),{"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>rst</span>          (rst),{"\n"}
+                {"  "}  ...{"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>trip_active</span>  (<span style={{ color: '#E53E3E', fontWeight: 'bold' }}>trip_active_proc</span>),  <span style={{ color: '#6A9955' }}>// ← proc_clk 출력</span>{"\n"}
+                );{"\n"}
+                {"\n"}
+                <span style={{ color: '#6A9955' }}>// sync 없이 bus_clk 모듈에 직결</span>{"\n"}
                 <span style={{ color: '#4EC9B0' }}>bus_iface</span> <span style={{ color: '#DCDCAA' }}>u_bus</span> ({"\n"}
-                {"  "}.<span style={{ color: '#9CDCFE' }}>clk</span>         (bus_clk),{"\n"}
-                {"  "}.<span style={{ color: '#9CDCFE' }}>trip_active</span> (<span style={{ color: '#E53E3E', fontWeight: 'bold', textDecoration: 'underline' }}>trip_active_proc</span>),  <span style={{ color: '#6A9955' }}>// ← raw</span>{"\n"}
-                {"  "}...{"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>clk</span>          (bus_clk),{"\n"}
+                {"  "}  ...{"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>trip_active</span>  (<span style={{ color: '#E53E3E', fontWeight: 'bold', textDecoration: 'underline' }}>trip_active_proc</span>),  <span style={{ color: '#E53E3E' }}>// ✗ raw CDC!</span>{"\n"}
                 );
               </pre>
             </div>
@@ -76,14 +84,22 @@ export default function CaseNoSyncSlide() {
               <div style={{ fontSize: '0.6rem', color: '#48BB78', fontWeight: 800, marginBottom: '0.3rem', letterSpacing: '0.06em' }}>
                 ✓ AFTER · 2DFF 추가
               </div>
-              <pre style={{ margin: 0, fontSize: '0.62rem', lineHeight: 1.5, color: '#D4D4D4', whiteSpace: 'pre-wrap', fontFamily: '"JetBrains Mono", Consolas, monospace' }}>
+              <pre style={{ margin: 0, fontSize: '0.58rem', lineHeight: 1.5, color: '#D4D4D4', whiteSpace: 'pre-wrap', fontFamily: '"JetBrains Mono", Consolas, monospace' }}>
+                <span style={{ color: '#6A9955' }}>// cdc_demo_top.v — 2DFF sync 추가</span>{"\n"}
                 <span style={{ color: '#569CD6' }}>wire</span> <span style={{ color: '#9CDCFE' }}>trip_active_bus</span>;{"\n"}
                 <span style={{ color: '#4EC9B0' }}>sync_2dff</span> <span style={{ color: '#569CD6' }}>#(.W(1))</span> <span style={{ color: '#DCDCAA' }}>u_sync_trip</span> ({"\n"}
-                {"  "}.<span style={{ color: '#9CDCFE' }}>clk</span> (bus_clk), .<span style={{ color: '#9CDCFE' }}>rst</span> (rst),{"\n"}
-                {"  "}.<span style={{ color: '#9CDCFE' }}>din</span> (trip_active_proc),{"\n"}
-                {"  "}.<span style={{ color: '#9CDCFE' }}>dout</span>(<span style={{ color: '#48BB78', fontWeight: 'bold', textDecoration: 'underline' }}>trip_active_bus</span>){"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>clk</span>  (bus_clk),{"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>rst</span>  (rst),{"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>din</span>  (trip_active_proc),    <span style={{ color: '#6A9955' }}>// proc_clk 신호</span>{"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>dout</span> (<span style={{ color: '#48BB78', fontWeight: 'bold' }}>trip_active_bus</span>)     <span style={{ color: '#6A9955' }}>// bus_clk 동기화</span>{"\n"}
                 );{"\n"}
-                <span style={{ color: '#6A9955' }}>// bus_iface 에는 trip_active_bus 연결</span>
+                {"\n"}
+                <span style={{ color: '#6A9955' }}>// 동기화된 신호를 bus_iface로 연결</span>{"\n"}
+                <span style={{ color: '#4EC9B0' }}>bus_iface</span> <span style={{ color: '#DCDCAA' }}>u_bus</span> ({"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>clk</span>          (bus_clk),{"\n"}
+                {"  "}  ...{"\n"}
+                {"  "}.<span style={{ color: '#9CDCFE' }}>trip_active</span>  (<span style={{ color: '#48BB78', fontWeight: 'bold', textDecoration: 'underline' }}>trip_active_bus</span>),   <span style={{ color: '#48BB78' }}>// ✓ synced</span>{"\n"}
+                );
               </pre>
             </div>
           </div>
