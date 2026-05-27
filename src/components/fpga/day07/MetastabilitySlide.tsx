@@ -74,27 +74,27 @@ export default function MetastabilitySlide() {
                 {/* Stable LOW : 50 → 150 (edge 1 캡처: DATA=0) */}
                 <path d="M 50,188 L 150,188" stroke={DAY07} strokeWidth="1.5" fill="none" />
 
-                {/* META 1 — persistence fan-out (LOW→HIGH, decay 시간 차등). 모든 trace 시작 (150,188) → 끝 (240,164) 공통 — settle 속도만 다름 */}
+                {/* META 1 — persistence fan-out (LOW→HIGH, decay 시간 차등). 느린 settle일수록 굵고 불투명 */}
                 <g stroke="#E53E3E" fill="none" strokeLinecap="round">
-                  <path d="M 150,188 C 162,170 178,164 240,164" strokeWidth="1.6" opacity="0.85" />
-                  <path d="M 150,188 C 175,176 200,164 240,164" strokeWidth="1.4" opacity="0.72" />
-                  <path d="M 150,188 C 190,178 220,168 240,164" strokeWidth="1.3" opacity="0.62" />
-                  <path d="M 150,188 C 210,182 232,172 240,164" strokeWidth="1.2" opacity="0.50" />
-                  <path d="M 150,188 C 225,184 237,176 240,164" strokeWidth="1.1" opacity="0.40" />
-                  <path d="M 150,188 C 232,186 239,180 240,164" strokeWidth="1.0" opacity="0.30" />
+                  <path d="M 150,188 C 162,170 178,164 240,164" strokeWidth="1.0" opacity="0.30" />
+                  <path d="M 150,188 C 175,176 200,164 240,164" strokeWidth="1.1" opacity="0.40" />
+                  <path d="M 150,188 C 190,178 220,168 240,164" strokeWidth="1.2" opacity="0.50" />
+                  <path d="M 150,188 C 210,182 232,172 240,164" strokeWidth="1.3" opacity="0.62" />
+                  <path d="M 150,188 C 225,184 237,176 240,164" strokeWidth="1.4" opacity="0.72" />
+                  <path d="M 150,188 C 232,186 239,180 240,164" strokeWidth="1.6" opacity="0.85" />
                 </g>
 
                 {/* Stable HIGH : 240 → 330 (edge 3 정상 캡처: DATA=1) */}
                 <path d="M 240,164 L 330,164" stroke={DAY07} strokeWidth="1.5" fill="none" />
 
-                {/* META 2 — persistence fan-out (HIGH→LOW, decay 시간 차등). 시작 (330,164) → 끝 (420,188) 공통 */}
+                {/* META 2 — persistence fan-out (HIGH→LOW, decay 시간 차등). 느린 settle일수록 굵고 불투명 */}
                 <g stroke="#E53E3E" fill="none" strokeLinecap="round">
-                  <path d="M 330,164 C 342,182 362,188 420,188" strokeWidth="1.6" opacity="0.85" />
-                  <path d="M 330,164 C 355,176 380,188 420,188" strokeWidth="1.4" opacity="0.72" />
-                  <path d="M 330,164 C 370,174 400,184 420,188" strokeWidth="1.3" opacity="0.62" />
-                  <path d="M 330,164 C 390,170 412,180 420,188" strokeWidth="1.2" opacity="0.50" />
-                  <path d="M 330,164 C 405,168 417,176 420,188" strokeWidth="1.1" opacity="0.40" />
-                  <path d="M 330,164 C 412,166 419,172 420,188" strokeWidth="1.0" opacity="0.30" />
+                  <path d="M 330,164 C 342,182 362,188 420,188" strokeWidth="1.0" opacity="0.30" />
+                  <path d="M 330,164 C 355,176 380,188 420,188" strokeWidth="1.1" opacity="0.40" />
+                  <path d="M 330,164 C 370,174 400,184 420,188" strokeWidth="1.2" opacity="0.50" />
+                  <path d="M 330,164 C 390,170 412,180 420,188" strokeWidth="1.3" opacity="0.62" />
+                  <path d="M 330,164 C 405,168 417,176 420,188" strokeWidth="1.4" opacity="0.72" />
+                  <path d="M 330,164 C 412,166 419,172 420,188" strokeWidth="1.6" opacity="0.85" />
                 </g>
 
                 {/* Stable LOW : 420 → 478 (edge 5 정상 캡처: DATA=0) */}
