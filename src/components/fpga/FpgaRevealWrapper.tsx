@@ -288,6 +288,13 @@ const fpgaThemeCSS = `
     font-feature-settings: "liga" 0, "calt" 0;
   }
 
+  /* 모달은 createPortal로 body에 렌더링되므로 별도 전역 규칙 필요 */
+  pre, code {
+    font-variant-ligatures: none !important;
+    -webkit-font-variant-ligatures: none !important;
+    font-feature-settings: "liga" 0, "calt" 0 !important;
+  }
+
   .fpga-theme .slides section code {
     font-family: Consolas, "Courier New", "Liberation Mono", monospace;
     background: rgba(74, 111, 165, 0.08);
