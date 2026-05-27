@@ -18,7 +18,7 @@ export default function QnASlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          title="오늘의 핵심 정리"
+          title="핵심 정리"
           subtitle="비동기 도메인 검증의 이론적 토대 — Day 8에서 실제 디버그로 연결"
         />
 
@@ -107,9 +107,6 @@ export default function QnASlide() {
               <path d="M9 9c0-1.5 1.2-2.5 3-2.5s3 1 3 2.5c0 2-3 2-3 4M12 17h.01" stroke={DAY07} strokeWidth="1.8" strokeLinecap="round" />
             </svg>
             <span style={{ fontSize: '0.95rem', fontWeight: 800, color: FPGA.dark }}>Q&A</span>
-            <span style={{ fontSize: '0.78rem', color: FPGA.textLight }}>
-              · 도메인 정의 / Scheme 선택 / methodology 설정에 대해 질문
-            </span>
           </div>
         </div>
       </div>

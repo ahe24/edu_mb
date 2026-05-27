@@ -65,19 +65,15 @@ export const styles = {
 
   /** 슬라이드 상단 태그 배지 */
   badge: (label?: string) => ({
-    display: 'inline-flex' as const,
-    alignItems: 'center' as const,
-    gap: '6px',
-    background: FPGA.primaryBg,
-    border: `1px solid ${FPGA.primaryLight}40`,
-    borderRadius: '999px',
-    padding: '2px 12px',
-    fontSize: '0.72rem',
-    color: FPGA.primary,
-    letterSpacing: '0.04em',
-    fontWeight: 700 as const,
-    marginBottom: '0.2rem',
-    boxShadow: '0 1px 4px rgba(74, 111, 165, 0.12)',
+    display: 'inline-block' as const,
+    background: 'transparent',
+    borderLeft: `3px solid ${FPGA.primary}`,
+    borderRadius: '2px',
+    padding: '1px 10px',
+    fontSize: '0.7rem',
+    color: FPGA.textLight,
+    letterSpacing: '0.02em',
+    fontWeight: 600 as const,
   }),
 
   /** 슬라이드 제목 (h2) */

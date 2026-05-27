@@ -9,29 +9,53 @@ const layers = [
   {
     n: '1',
     name: 'Static CDC',
-    desc: 'netlist 구조 검사 · 모든 crossing 망라',
-    output: '구조 위반 · 동기화 scheme 분류',
+    desc: 'Netlist 구조만으로 모든 clock domain crossing 경로를 추출하고 동기화 scheme을 자동 분류',
+    details: [
+      'RTL sim 없이 구조적 결함 검출',
+      'no_sync · combo_logic · multi_bits 등 위반 보고',
+      'two_dff · handshake · fifo 등 scheme 자동 식별',
+    ],
+    output: 'cdc.rpt · cdc_detail.rpt · cdc.db',
+    cmd: 'cdc run -d top_module',
     col: '#4A6FA5',
   },
   {
     n: '2',
     name: 'Protocol SVA',
-    desc: '동기화 scheme별 transfer protocol → SVA 자동 promotion',
-    output: 'cdc_protocol checker · sim/formal 사용',
+    desc: '각 scheme의 transfer protocol을 SVA assertion으로 자동 promotion → sim 또는 formal에서 검증',
+    details: [
+      'scheme별 protocol checker 자동 생성',
+      'bind file + checker library 출력',
+      'sim에서 protocol 위반 시 assertion fail',
+    ],
+    output: 'cdc_protocol.rpt · bind .sv',
+    cmd: 'cdc generate protocol',
     col: DAY07,
   },
   {
     n: '3',
     name: 'Formal CDC',
-    desc: '수학적 증명 — proof 가능한 path는 Proven 마킹',
-    output: 'Caution → Proven 격상',
+    desc: 'Protocol checker를 formal engine으로 수학적 증명 — vector 없이 모든 입력 조합을 탐색',
+    details: [
+      'Caution → Proven으로 격상 가능',
+      'proof 불가 시 반례(counterexample) 제공',
+      'static에서 놓친 protocol 위반 발견',
+    ],
+    output: 'Proven badge · 반례 trace',
+    cmd: 'cdc formal run',
     col: '#0E7C7B',
   },
   {
     n: '4',
     name: 'CDC-FX',
-    desc: 'Sim 중 random metastability injection',
-    output: '동적 + 메타 영향 평가',
+    desc: 'Sim 중 동기화 FF 출력에 random delay를 주입하여 metastability 영향을 동적으로 평가',
+    details: [
+      'cdc_fx / cdc_mfx / cdc_rfx checker 삽입',
+      'meta window 내 0/1 랜덤 결정 + 지연',
+      'functional sim에서 실제 meta 효과 관찰',
+    ],
+    output: 'FX cover points · sim log',
+    cmd: 'cdc generate fx',
     col: '#8B6FA5',
   },
 ];
@@ -72,7 +96,7 @@ export default function QuestaCDCToolSlide() {
               letterSpacing: '0.06em',
             }}>CLI</span>
             <div style={{ fontSize: '0.78rem', color: FPGA.text, flex: 1, lineHeight: 1.5 }}>
-              Lint와 동일 — <code>qverify</code>가 <strong>유일한 실행파일</strong>. 명령 prefix만 <code>lint</code> → <code>cdc</code>로 변경.
+              Lint와 동일 — <code>qverify</code>를 통한 <strong>공통 실행파일</strong>. 명령 prefix만 <code>lint</code> → <code>cdc</code>로 변경.
             </div>
             <code style={{
               fontSize: '0.66rem', background: '#1A2235', color: '#A8D8A8',
@@ -82,15 +106,15 @@ export default function QuestaCDCToolSlide() {
 
           {/* 4-layer 카드 */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.55rem' }}>
-            {layers.map((l) => (
+            {layers.map((l, i) => (
               <div key={l.name} style={{
                 background: FPGA.white,
                 border: `1px solid ${l.col}30`,
                 borderTop: `3px solid ${l.col}`,
                 borderRadius: '10px',
-                padding: '0.6rem 0.75rem',
+                padding: '0.55rem 0.7rem',
                 boxShadow: shadow.card,
-                display: 'flex', flexDirection: 'column', gap: '0.35rem',
+                display: 'flex', flexDirection: 'column', gap: '0.3rem',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
                   <span style={{
@@ -102,16 +126,28 @@ export default function QuestaCDCToolSlide() {
                   }}>{l.n}</span>
                   <span style={{ fontSize: '0.84rem', fontWeight: 800, color: FPGA.dark }}>{l.name}</span>
                 </div>
-                <div style={{ fontSize: '0.68rem', color: FPGA.text, lineHeight: 1.5 }}>
+                <div style={{ fontSize: '0.64rem', color: FPGA.text, lineHeight: 1.45 }}>
                   {l.desc}
                 </div>
+                {/* 세부 항목 */}
+                <ul style={{ margin: 0, paddingLeft: '0.85rem', fontSize: '0.6rem', color: FPGA.text, lineHeight: 1.55 }}>
+                  {l.details.map((d) => <li key={d}>{d}</li>)}
+                </ul>
+                {/* 산출물 */}
                 <div style={{
-                  fontSize: '0.62rem', color: l.col, fontWeight: 600,
+                  fontSize: '0.58rem', color: l.col, fontWeight: 600,
                   fontFamily: '"JetBrains Mono", monospace',
                   background: `${l.col}10`,
                   padding: '2px 6px', borderRadius: '4px',
                   border: `1px solid ${l.col}20`,
-                }}>{l.output}</div>
+                }}>→ {l.output}</div>
+                {/* 명령어 */}
+                <code style={{
+                  fontSize: '0.56rem',
+                  background: '#1A2235', color: '#A8D8A8',
+                  padding: '2px 6px', borderRadius: '3px',
+                  fontFamily: 'monospace',
+                }}>{l.cmd}</code>
               </div>
             ))}
           </div>

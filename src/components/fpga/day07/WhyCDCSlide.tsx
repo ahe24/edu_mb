@@ -49,6 +49,135 @@ export default function WhyCDCSlide() {
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+          {/* 배너 SVG — 다중 clock domain 인터페이스 구조도 */}
+          <div style={{
+            width: '100%',
+            borderRadius: '10px',
+            overflow: 'hidden',
+            boxShadow: shadow.card,
+            border: `1px solid ${DAY07}20`,
+            background: 'linear-gradient(135deg, #1e293b, #2a3a50)',
+            lineHeight: 0,
+          }}>
+            <svg viewBox="0 0 1180 155" style={{ width: '100%', display: 'block' }}>
+              {/* ── System A: Sensor / Actuator ── */}
+              {/* 외부 인터페이스 블록들 */}
+              <rect x="18" y="18" width="90" height="32" rx="5" fill="rgba(221,107,32,0.15)" stroke="#DD6B20" strokeWidth="1.2" />
+              <text x="63" y="32" fontSize="8.5" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>ADC / DAC</text>
+              <text x="63" y="43" fontSize="7" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.7">50 MHz</text>
+
+              <rect x="18" y="60" width="90" height="32" rx="5" fill="rgba(72,187,120,0.12)" stroke="#48BB78" strokeWidth="1.2" />
+              <text x="63" y="74" fontSize="8.5" fontWeight="700" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>SPI / I²C</text>
+              <text x="63" y="85" fontSize="7" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.7">25 MHz</text>
+
+              <rect x="18" y="102" width="90" height="32" rx="5" fill="rgba(139,111,165,0.15)" stroke="#8B6FA5" strokeWidth="1.2" />
+              <text x="63" y="116" fontSize="8.5" fontWeight="700" fill="#8B6FA5" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>Watchdog</text>
+              <text x="63" y="127" fontSize="7" fill="#8B6FA5" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.7">32 kHz (RC osc)</text>
+
+              {/* FPGA 블록 A */}
+              <rect x="140" y="12" width="130" height="132" rx="8" fill="rgba(8,145,178,0.08)" stroke={DAY07} strokeWidth="1.5" />
+              <text x="205" y="28" fontSize="9" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>FPGA Fabric</text>
+              {/* 내부 도메인 표시 */}
+              <rect x="150" y="35" width="110" height="22" rx="4" fill="rgba(221,107,32,0.10)" stroke="#DD6B20" strokeWidth="0.8" strokeDasharray="3 2" />
+              <text x="205" y="49" fontSize="7" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>clk_adc (50 MHz)</text>
+              <rect x="150" y="62" width="110" height="22" rx="4" fill="rgba(72,187,120,0.10)" stroke="#48BB78" strokeWidth="0.8" strokeDasharray="3 2" />
+              <text x="205" y="76" fontSize="7" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>clk_ctrl (100 MHz)</text>
+              <rect x="150" y="89" width="110" height="22" rx="4" fill="rgba(139,111,165,0.10)" stroke="#8B6FA5" strokeWidth="0.8" strokeDasharray="3 2" />
+              <text x="205" y="103" fontSize="7" fill="#8B6FA5" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>clk_wdt (32 kHz)</text>
+              {/* CDC crossing 표시 */}
+              <line x1="152" y1="57" x2="258" y2="57" stroke="#E53E3E" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.5" />
+              <line x1="152" y1="84" x2="258" y2="84" stroke="#E53E3E" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.5" />
+              <text x="205" y="121" fontSize="6.5" fontWeight="700" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.8">3 CDC boundaries</text>
+
+              {/* 연결선 A */}
+              <line x1="108" y1="34" x2="140" y2="46" stroke="#DD6B20" strokeWidth="1" opacity="0.6" />
+              <line x1="108" y1="76" x2="140" y2="73" stroke="#48BB78" strokeWidth="1" opacity="0.6" />
+              <line x1="108" y1="118" x2="140" y2="100" stroke="#8B6FA5" strokeWidth="1" opacity="0.6" />
+
+              {/* 시스템 라벨 A */}
+              <text x="150" y="152" fontSize="7.5" fontWeight="700" fill="rgba(255,255,255,0.5)" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>Sensor / Actuator System</text>
+
+              {/* ── System B: SoC / Communication ── */}
+              <rect x="320" y="18" width="90" height="32" rx="5" fill="rgba(74,111,165,0.18)" stroke="#4A6FA5" strokeWidth="1.2" />
+              <text x="365" y="32" fontSize="8.5" fontWeight="700" fill="#6B8CC7" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>PCIe Gen3</text>
+              <text x="365" y="43" fontSize="7" fill="#6B8CC7" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.7">250 MHz</text>
+
+              <rect x="320" y="60" width="90" height="32" rx="5" fill="rgba(8,145,178,0.15)" stroke={DAY07} strokeWidth="1.2" />
+              <text x="365" y="74" fontSize="8.5" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>GbE RGMII</text>
+              <text x="365" y="85" fontSize="7" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.7">125 MHz</text>
+
+              <rect x="320" y="102" width="90" height="32" rx="5" fill="rgba(221,107,32,0.15)" stroke="#DD6B20" strokeWidth="1.2" />
+              <text x="365" y="116" fontSize="8.5" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>DDR4</text>
+              <text x="365" y="127" fontSize="7" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.7">1200 MHz</text>
+
+              {/* FPGA 블록 B */}
+              <rect x="442" y="12" width="130" height="132" rx="8" fill="rgba(8,145,178,0.08)" stroke={DAY07} strokeWidth="1.5" />
+              <text x="507" y="28" fontSize="9" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>FPGA Fabric</text>
+              <rect x="452" y="35" width="110" height="22" rx="4" fill="rgba(74,111,165,0.10)" stroke="#4A6FA5" strokeWidth="0.8" strokeDasharray="3 2" />
+              <text x="507" y="49" fontSize="7" fill="#6B8CC7" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>clk_pcie (250 MHz)</text>
+              <rect x="452" y="62" width="110" height="22" rx="4" fill="rgba(8,145,178,0.10)" stroke={DAY07} strokeWidth="0.8" strokeDasharray="3 2" />
+              <text x="507" y="76" fontSize="7" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>clk_eth (125 MHz)</text>
+              <rect x="452" y="89" width="110" height="22" rx="4" fill="rgba(221,107,32,0.10)" stroke="#DD6B20" strokeWidth="0.8" strokeDasharray="3 2" />
+              <text x="507" y="103" fontSize="7" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>clk_ddr (1200 MHz)</text>
+              <line x1="454" y1="57" x2="560" y2="57" stroke="#E53E3E" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.5" />
+              <line x1="454" y1="84" x2="560" y2="84" stroke="#E53E3E" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.5" />
+              <text x="507" y="121" fontSize="6.5" fontWeight="700" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.8">3 CDC boundaries</text>
+
+              <line x1="410" y1="34" x2="442" y2="46" stroke="#4A6FA5" strokeWidth="1" opacity="0.6" />
+              <line x1="410" y1="76" x2="442" y2="73" stroke={DAY07} strokeWidth="1" opacity="0.6" />
+              <line x1="410" y1="118" x2="442" y2="100" stroke="#DD6B20" strokeWidth="1" opacity="0.6" />
+
+              <text x="450" y="152" fontSize="7.5" fontWeight="700" fill="rgba(255,255,255,0.5)" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>SoC / Communication</text>
+
+              {/* ── System C: Safety-Critical ── */}
+              <rect x="622" y="18" width="90" height="32" rx="5" fill="rgba(8,145,178,0.15)" stroke={DAY07} strokeWidth="1.2" />
+              <text x="667" y="32" fontSize="8.5" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>TMR Ch.A</text>
+              <text x="667" y="43" fontSize="7" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.7">80 MHz (osc1)</text>
+
+              <rect x="622" y="60" width="90" height="32" rx="5" fill="rgba(72,187,120,0.12)" stroke="#48BB78" strokeWidth="1.2" />
+              <text x="667" y="74" fontSize="8.5" fontWeight="700" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>TMR Ch.B</text>
+              <text x="667" y="85" fontSize="7" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.7">80 MHz (osc2)</text>
+
+              <rect x="622" y="102" width="90" height="32" rx="5" fill="rgba(232,145,58,0.12)" stroke="#E8913A" strokeWidth="1.2" />
+              <text x="667" y="116" fontSize="8.5" fontWeight="700" fill="#E8913A" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>Voter + WDT</text>
+              <text x="667" y="127" fontSize="7" fill="#E8913A" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.7">40 MHz (osc3)</text>
+
+              {/* FPGA 블록 C */}
+              <rect x="744" y="12" width="130" height="132" rx="8" fill="rgba(8,145,178,0.08)" stroke={DAY07} strokeWidth="1.5" />
+              <text x="809" y="28" fontSize="9" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>FPGA Fabric</text>
+              <rect x="754" y="35" width="110" height="18" rx="4" fill="rgba(8,145,178,0.10)" stroke={DAY07} strokeWidth="0.8" strokeDasharray="3 2" />
+              <text x="809" y="47" fontSize="6.5" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>clk_tmrA (80 MHz)</text>
+              <rect x="754" y="57" width="110" height="18" rx="4" fill="rgba(72,187,120,0.10)" stroke="#48BB78" strokeWidth="0.8" strokeDasharray="3 2" />
+              <text x="809" y="69" fontSize="6.5" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>clk_tmrB (80 MHz)</text>
+              <rect x="754" y="79" width="110" height="18" rx="4" fill="rgba(232,145,58,0.10)" stroke="#E8913A" strokeWidth="0.8" strokeDasharray="3 2" />
+              <text x="809" y="91" fontSize="6.5" fill="#E8913A" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>clk_voter (40 MHz)</text>
+              <line x1="756" y1="53" x2="862" y2="53" stroke="#E53E3E" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.5" />
+              <line x1="756" y1="75" x2="862" y2="75" stroke="#E53E3E" strokeWidth="0.6" strokeDasharray="2 2" opacity="0.5" />
+              {/* 동일 주파수지만 비동기 osc → CDC 필요 강조 */}
+              <text x="809" y="108" fontSize="6.5" fontWeight="700" fill="#E8913A" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.9">동일 주파수 · 다른 oscillator</text>
+              <text x="809" y="119" fontSize="6.5" fontWeight="700" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.8">= 비동기 → CDC 필수</text>
+              <text x="809" y="133" fontSize="6.5" fontWeight="700" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", monospace' opacity="0.8">4 CDC boundaries</text>
+
+              <line x1="712" y1="34" x2="744" y2="44" stroke={DAY07} strokeWidth="1" opacity="0.6" />
+              <line x1="712" y1="76" x2="744" y2="66" stroke="#48BB78" strokeWidth="1" opacity="0.6" />
+              <line x1="712" y1="118" x2="744" y2="88" stroke="#E8913A" strokeWidth="1" opacity="0.6" />
+
+              <text x="750" y="152" fontSize="7.5" fontWeight="700" fill="rgba(255,255,255,0.5)" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>Safety-Critical (TMR)</text>
+
+              {/* ── 우측 요약 패널 ── */}
+              <rect x="905" y="16" width="258" height="126" rx="8" fill="rgba(229,62,62,0.06)" stroke="#E53E3E" strokeWidth="1" strokeDasharray="4 3" />
+              <text x="1034" y="35" fontSize="10" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", monospace'>Why CDC Verification?</text>
+              <line x1="935" y1="42" x2="1133" y2="42" stroke="#E53E3E" strokeWidth="0.5" opacity="0.4" />
+              <text x="925" y="58" fontSize="8" fill="rgba(255,255,255,0.75)" fontFamily='"JetBrains Mono", monospace'>
+                <tspan x="925" dy="0">▸ 3개 이상의 비동기 도메인이 일반적</tspan>
+                <tspan x="925" dy="16">▸ 동일 주파수도 oscillator가 다르면 비동기</tspan>
+                <tspan x="925" dy="16">▸ 매 crossing마다 metastability 위험</tspan>
+                <tspan x="925" dy="16">▸ simulation으로 검출 불가능</tspan>
+                <tspan x="925" dy="16">▸ 정적 구조 분석만이 전수 검사 보장</tspan>
+              </text>
+            </svg>
+          </div>
+
           {/* 상단 — 핵심 명제 배너 */}
           <div style={{
             background: `linear-gradient(135deg, ${DAY07}08, ${DAY07}16)`,

@@ -16,11 +16,20 @@ export default function FpgaRevealWrapper({ children, header }: { children: Reac
   const keyHandler = useRef<((e: KeyboardEvent) => void) | null>(null);
   const [isPrintPDF, setIsPrintPDF] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [badgeText, setBadgeText] = useState<string | null>(null);
 
   useEffect(() => {
     const printMode = window.location.search.includes('print-pdf');
     setIsPrintPDF(printMode);
     setMounted(true);
+
+    /** 현재 슬라이드의 data-slide-badge 텍스트를 읽어 state에 반영 */
+    const updateBadge = () => {
+      const current = deckRef.current?.querySelector('section.present') as HTMLElement | null;
+      if (!current) { setBadgeText(null); return; }
+      const el = current.querySelector('[data-slide-badge]') as HTMLElement | null;
+      setBadgeText(el?.getAttribute('data-slide-badge') ?? null);
+    };
 
     const initReveal = async () => {
       if (deckRef.current && !deckInstance.current) {
@@ -51,6 +60,8 @@ export default function FpgaRevealWrapper({ children, header }: { children: Reac
         });
 
         await deckInstance.current.initialize();
+        deckInstance.current.on('slidechanged', updateBadge);
+        deckInstance.current.on('ready', updateBadge);
 
         if (!printMode) {
           keyHandler.current = (e: KeyboardEvent) => {
@@ -69,6 +80,8 @@ export default function FpgaRevealWrapper({ children, header }: { children: Reac
     return () => {
       try {
         if (deckInstance.current) {
+          deckInstance.current.off('slidechanged', updateBadge);
+          deckInstance.current.off('ready', updateBadge);
           deckInstance.current.destroy();
           deckInstance.current = null;
         }
@@ -167,6 +180,41 @@ export default function FpgaRevealWrapper({ children, header }: { children: Reac
             fontWeight: 600,
           }}>©2026. Changseon Jo.</span>
         </div>
+
+        {/* Badge overlay — .slides 바깥, Reveal transform 영향 없음 */}
+        {mounted && !isPrintPDF && badgeText && (
+          <div style={{
+            position: 'fixed',
+            top: header ? '1.8rem' : '0.5rem',
+            right: '1rem',
+            zIndex: 50,
+            pointerEvents: 'none',
+          }}>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'linear-gradient(135deg, rgba(74,111,165,0.10), rgba(107,140,199,0.16))',
+              border: '1px solid rgba(74,111,165,0.25)',
+              borderRadius: '6px',
+              padding: '4px 14px',
+              fontSize: '0.82rem',
+              color: '#2B4570',
+              letterSpacing: '0.03em',
+              fontWeight: 700,
+              boxShadow: '0 2px 8px rgba(74,111,165,0.12)',
+              backdropFilter: 'blur(4px)',
+            }}>
+              <span style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                background: '#4A6FA5',
+                flexShrink: 0,
+              }} />
+              {badgeText}</span>
+          </div>
+        )}
       </div>
     </>
   );
