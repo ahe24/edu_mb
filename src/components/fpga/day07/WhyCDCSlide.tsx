@@ -43,7 +43,7 @@ export default function WhyCDCSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="배경"
+          badge="CDC 검증 필요성"
           title="왜 CDC 검증이 필수인가"
           subtitle="단일 clock 시스템은 사실상 존재하지 않는다 — 비동기 도메인은 설계 필연"
         />

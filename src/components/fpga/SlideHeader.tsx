@@ -16,7 +16,7 @@ export default function SlideHeader({ badge, title, subtitle }: SlideHeaderProps
   return (
     <div style={{ marginBottom: '0.8rem', width: '100%', textAlign: 'center' }}>
       {badge && (
-        <div style={{ marginBottom: '0.4rem' }}>
+        <div style={{ marginBottom: '0.2rem' }}>
           <span style={styles.badge()}>● {badge}</span>
         </div>
       )}

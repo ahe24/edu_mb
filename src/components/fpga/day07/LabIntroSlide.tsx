@@ -132,7 +132,7 @@ export default function LabIntroSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="실습"
+          badge="Hands-on: 첫 CDC setup 실행"
           title="Lab — 데모 회로 + cdc setup 첫 실행"
           subtitle="Safety-critical 센서 파이프라인 · 3 도메인 · cdc setup → cdc.rpt 해석"
         />

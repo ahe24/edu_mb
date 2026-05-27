@@ -10,7 +10,7 @@ export default function MultiBitCoherencySlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="이론"
+          badge="bus 전송 시 일관성 위험"
           title="Multi-bit 일관성 · Reconvergence"
           subtitle="단일 bit OK ≠ bus OK · 동기화 후 합쳐지는 신호의 위험"
         />

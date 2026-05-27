@@ -40,7 +40,7 @@ export default function DirectivesAnatomySlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="Directives"
+          badge="Tcl directive 작성 전략"
           title="directives.tcl — 구조 + 핵심 9 가지"
           subtitle="Clock/Reset → Scheme/Methodology → Signal/Waiver 순으로 작성"
         />

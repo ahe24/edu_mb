@@ -132,7 +132,7 @@ export default function LabAndWrapSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="실습 + 정리"
+          badge="Hands-on: 버그 수정 → 0 violation 달성"
           title="3종 버그 수정 · 산출물 export · Day 9 예고"
           subtitle="cdc run → debug → fix → re-run cycle 완성 · 5 violation → 0"
         />

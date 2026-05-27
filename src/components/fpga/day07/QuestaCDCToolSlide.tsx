@@ -48,7 +48,7 @@ export default function QuestaCDCToolSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="도구"
+          badge="Questa CDC 운용 구조"
           title="Questa CDC — 4-Layer 검증"
           subtitle="qverify 단일 실행파일 · methodology + goal 으로 검증 강도 조절"
         />

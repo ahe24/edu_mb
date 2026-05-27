@@ -46,7 +46,7 @@ export default function GuiDebugSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="GUI"
+          badge="GUI 디버그 워크플로우"
           title="qverify GUI — Debug 워크플로우"
           subtitle="CDC Checks → Schematic ↔ Source → Set Status → status.tcl export"
         />

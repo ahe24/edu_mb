@@ -10,7 +10,7 @@ export default function FpgaSpecificsSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="FPGA"
+          badge="FPGA 환경 고유 처리"
           title="FPGA 특화 이슈 + V&V 산출물"
           subtitle="Vendor library / IP black box / Hierarchical Data Model · safety-critical 산출물"
         />

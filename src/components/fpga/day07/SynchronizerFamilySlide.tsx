@@ -798,7 +798,7 @@ export default function SynchronizerFamilySlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="이론"
+          badge="동기화 회로 설계 패턴"
           title="CDC 동기화 Scheme — 6종 비교"
           subtitle="신호 폭 / 처리량 / 프로토콜에 따라 적절한 scheme 선택 — 카드 클릭 시 구현 코드/블록도"
         />

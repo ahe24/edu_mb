@@ -10,7 +10,7 @@ export default function MetastabilitySlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="이론"
+          badge="물리적 원인 이해"
           title="Metastability — 비동기 천이의 물리적 한계"
           subtitle="Setup/Hold 위반 → 부정한 값 → downstream 파급"
         />

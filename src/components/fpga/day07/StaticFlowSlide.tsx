@@ -48,7 +48,7 @@ export default function StaticFlowSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="흐름"
+          badge="분석 단계별 산출물"
           title="정적 CDC 분석 흐름 + 산출물"
           subtitle="Compile → Setup → Run → Debug · 4단계 · 결과 등급 4종"
         />

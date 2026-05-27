@@ -41,7 +41,7 @@ export default function ResultSummarySlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="Result"
+          badge="분석 결과 해석"
           title="CDC Run 실측 결과 — 10 checks"
           subtitle="3개 violation 그룹 + 3개 정상 sync · status 흐름 파악"
         />
