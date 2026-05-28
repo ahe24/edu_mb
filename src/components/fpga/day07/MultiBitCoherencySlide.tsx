@@ -138,7 +138,7 @@ export default function MultiBitCoherencySlide() {
                 <li><code>reconvergence</code> — 일반 (Caution)</li>
                 <li><code>reconvergence_bus</code> — bus bit (Violation)</li>
                 <li><code>reconvergence_gray</code> — gray-coded (Evaluation)</li>
-                <li><code>single_source_reconv</code> — 단일 source (Violation)</li>
+                <li><code>single_source_reconvergence</code> — 단일 source (Violation)</li>
                 <li><code>reconvergence_multi_tx_clock</code> — 서로 다른 TX (Violation)</li>
               </ul>
               <div style={{ fontSize: '0.62rem', color: FPGA.textLight, fontStyle: 'italic', marginTop: '0.2rem' }}>

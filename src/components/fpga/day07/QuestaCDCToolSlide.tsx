@@ -9,6 +9,7 @@ const layers = [
   {
     n: '1',
     name: 'Static CDC',
+    question: '동기화가 존재하는가?',
     desc: 'Netlist 구조만으로 모든 clock domain crossing 경로를 추출하고 동기화 scheme을 자동 분류',
     details: [
       'RTL sim 없이 구조적 결함 검출',
@@ -21,33 +22,22 @@ const layers = [
   },
   {
     n: '2',
-    name: 'Protocol SVA',
-    desc: '각 scheme의 transfer protocol을 SVA assertion으로 자동 promotion → sim 또는 formal에서 검증',
+    name: 'Protocol',
+    question: 'protocol을 지키는가?',
+    desc: 'Static에서 식별된 scheme별 전송 protocol을 SVA assertion으로 자동 생성 → sim 또는 formal로 검증',
     details: [
-      'scheme별 protocol checker 자동 생성',
-      'bind file + checker library 출력',
-      'sim에서 protocol 위반 시 assertion fail',
+      'scheme별 protocol checker + bind file 자동 생성',
+      'Simulation: testbench로 protocol 위반 검출',
+      'Formal: 수학적 증명 — Caution → Proven 격상',
     ],
-    output: 'cdc_protocol.rpt · bind .sv',
+    output: 'cdc_protocol.rpt · bind .sv · Proven badge',
     cmd: 'cdc generate protocol',
     col: DAY07,
   },
   {
     n: '3',
-    name: 'Formal CDC',
-    desc: 'Protocol checker를 formal engine으로 수학적 증명 — vector 없이 모든 입력 조합을 탐색',
-    details: [
-      'Caution → Proven으로 격상 가능',
-      'proof 불가 시 반례(counterexample) 제공',
-      'static에서 놓친 protocol 위반 발견',
-    ],
-    output: 'Proven badge · 반례 trace',
-    cmd: 'cdc formal run',
-    col: '#0E7C7B',
-  },
-  {
-    n: '4',
     name: 'CDC-FX',
+    question: 'metastability를 견디는가?',
     desc: 'Sim 중 동기화 FF 출력에 random delay를 주입하여 metastability 영향을 동적으로 평가',
     details: [
       'cdc_fx / cdc_mfx / cdc_rfx checker 삽입',
@@ -73,7 +63,7 @@ export default function QuestaCDCToolSlide() {
       <div className="fpga-content-wrap">
         <SlideHeader
           badge="Questa CDC 운용 구조"
-          title="Questa CDC — 4-Layer 검증"
+          title="Questa CDC — 3-Layer 검증"
           subtitle="qverify 단일 실행파일 · methodology + goal 으로 검증 강도 조절"
         />
 
@@ -104,8 +94,8 @@ export default function QuestaCDCToolSlide() {
             }}>qverify -c -do script.tcl</code>
           </div>
 
-          {/* 4-layer 카드 */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.55rem' }}>
+          {/* 3-layer 카드 */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.55rem' }}>
             {layers.map((l, i) => (
               <div key={l.name} style={{
                 background: FPGA.white,
@@ -126,6 +116,9 @@ export default function QuestaCDCToolSlide() {
                   }}>{l.n}</span>
                   <span style={{ fontSize: '0.84rem', fontWeight: 800, color: FPGA.dark }}>{l.name}</span>
                 </div>
+                <div style={{
+                  fontSize: '0.62rem', fontWeight: 700, color: l.col, fontStyle: 'italic',
+                }}>&ldquo;{l.question}&rdquo;</div>
                 <div style={{ fontSize: '0.64rem', color: FPGA.text, lineHeight: 1.45 }}>
                   {l.desc}
                 </div>

@@ -10,7 +10,7 @@ const takeaways = [
   { k: 'CDC Scheme', v: '신호 폭 + 처리량 + protocol에 따라 6종 중 선택' },
   { k: 'Bus 일관성', v: 'multi-bit raw crossing 금지 · stable / gray / DMUX / FIFO 중 택1' },
   { k: 'Reconvergence', v: '동기화 후 합쳐지는 path는 RX가 cycle skew를 흡수해야 함' },
-  { k: 'Questa CDC', v: 'qverify 단일 실행 + Static / SVA / Formal / CDC-FX 4-layer 검증' },
+  { k: 'Questa CDC', v: 'qverify 단일 실행 + Static / Protocol (sim+formal) / CDC-FX 3-layer 검증' },
 ];
 
 export default function QnASlide() {
