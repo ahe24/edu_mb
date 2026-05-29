@@ -25,34 +25,34 @@ export default function TitleSlide() {
         <svg style={{ position: 'absolute', top: '40px', left: '48px', opacity: 0.10 }} width="280" height="180" viewBox="0 0 280 180">
           {/* TX 도메인 박스 */}
           <rect x="10" y="40" width="100" height="80" rx="10" stroke={DAY07} strokeWidth="2.5" fill="rgba(8,145,178,0.06)" />
-          <text x="60" y="36" textAnchor="middle" fontSize="11" fontWeight="800" fill={DAY07} fontFamily="monospace">CLK_A</text>
+          <text x="60" y="36" textAnchor="middle" fontSize="11" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>CLK_A</text>
           <circle cx="60" cy="80" r="14" stroke={DAY07} strokeWidth="2" fill="rgba(8,145,178,0.10)" />
-          <text x="60" y="85" textAnchor="middle" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">TX</text>
+          <text x="60" y="85" textAnchor="middle" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>TX</text>
 
           {/* RX 도메인 박스 */}
           <rect x="170" y="40" width="100" height="80" rx="10" stroke="#4A6FA5" strokeWidth="2.5" fill="rgba(74,111,165,0.06)" />
-          <text x="220" y="36" textAnchor="middle" fontSize="11" fontWeight="800" fill="#4A6FA5" fontFamily="monospace">CLK_B</text>
+          <text x="220" y="36" textAnchor="middle" fontSize="11" fontWeight="800" fill="#4A6FA5" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>CLK_B</text>
           <circle cx="220" cy="80" r="14" stroke="#4A6FA5" strokeWidth="2" fill="rgba(74,111,165,0.10)" />
-          <text x="220" y="85" textAnchor="middle" fontSize="10" fontWeight="800" fill="#4A6FA5" fontFamily="monospace">RX</text>
+          <text x="220" y="85" textAnchor="middle" fontSize="10" fontWeight="800" fill="#4A6FA5" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>RX</text>
 
           {/* 크로싱 화살표 */}
           <path d="M76 80 L204 80" stroke="#E53E3E" strokeWidth="2.5" strokeDasharray="4 3" />
           <path d="M198 75 L210 80 L198 85" stroke="#E53E3E" strokeWidth="2.5" fill="none" />
-          <text x="140" y="72" textAnchor="middle" fontSize="9" fontWeight="800" fill="#E53E3E" fontFamily="monospace">CDC ?</text>
+          <text x="140" y="72" textAnchor="middle" fontSize="9" fontWeight="800" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>CDC ?</text>
         </svg>
 
         {/* 우하단 — 메타스테이블 파형 */}
         <svg style={{ position: 'absolute', bottom: '30px', right: '50px', opacity: 0.08 }} width="280" height="120" viewBox="0 0 280 120">
           {/* 클럭 */}
           <path d="M0 30 L20 30 L20 10 L40 10 L40 30 L60 30 L60 10 L80 10 L80 30 L100 30 L100 10 L120 10 L120 30 L280 30" stroke={DAY07} strokeWidth="1.5" fill="none" />
-          <text x="10" y="48" fontSize="9" fontWeight="700" fill={DAY07} fontFamily="monospace">CLK</text>
+          <text x="10" y="48" fontSize="9" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>CLK</text>
 
           {/* D 입력 (불안정한 천이) */}
           <path d="M0 80 L60 80 L62 60 L80 60 L80 80 L130 80" stroke="#4A6FA5" strokeWidth="1.5" fill="none" />
           {/* 메타스테이블 zone (흔들리는 라인) */}
           <path d="M130 70 Q135 75 140 70 Q145 60 150 70 Q155 75 160 70" stroke="#E53E3E" strokeWidth="2" fill="none" />
           <path d="M160 70 L280 60" stroke="#4A6FA5" strokeWidth="1.5" fill="none" strokeDasharray="3 2" />
-          <text x="135" y="100" fontSize="9" fontWeight="800" fill="#E53E3E" fontFamily="monospace">META</text>
+          <text x="135" y="100" fontSize="9" fontWeight="800" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>META</text>
         </svg>
 
         <div style={{ position: 'absolute', bottom: '-60px', left: '-60px', width: '320px', height: '320px', background: `radial-gradient(circle, ${DAY07}14 0%, transparent 70%)`, borderRadius: '50%' }} />

@@ -38,7 +38,7 @@ function MiniWave({ signals }: { signals: { name: string; seq: (0 | 1 | 'x')[]; 
         }
         return (
           <g key={s.name}>
-            <text x="4" y={y + 12} fontSize="8" fontWeight="800" fill={s.color} fontFamily="monospace">{s.name}</text>
+            <text x="4" y={y + 12} fontSize="8" fontWeight="800" fill={s.color} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{s.name}</text>
             <line x1="36" y1={y + h + 2} x2="36" y2={y - 2} stroke={s.color} strokeWidth="0.5" opacity="0.3" />
             <path d={path} stroke={s.color} strokeWidth="1.5" fill="none" />
           </g>

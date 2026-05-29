@@ -141,7 +141,7 @@ function WidthOverflowDiagram() {
           fontWeight="800"
           textAnchor="middle"
           fill={isCarry ? err : bit ? activeColor : muted}
-          fontFamily="monospace"
+          fontFamily='"JetBrains Mono", "Pretendard", sans-serif'
         >
           {bit}
         </text>
@@ -215,44 +215,44 @@ function WidthOverflowDiagram() {
         </div>
         <svg viewBox="0 0 580 235" style={{ width: '100%', height: 'auto', display: 'block' }}>
           {/* Row a */}
-          <text x="6" y="37" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">a</text>
+          <text x="6" y="37" fontSize="12" fontWeight="700" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>a</text>
           <text x="20" y="37" fontSize="9" fill={muted}>[7:0]</text>
           {a.map((bit, i) => renderBit(bit, i, xStart8, 18, ok))}
-          <text x="395" y="37" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">= 255 (최대)</text>
+          <text x="395" y="37" fontSize="12" fontWeight="700" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>= 255 (최대)</text>
 
           {/* Row b */}
-          <text x="6" y="77" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">b</text>
+          <text x="6" y="77" fontSize="12" fontWeight="700" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>b</text>
           <text x="20" y="77" fontSize="9" fill={muted}>[7:0]</text>
           {b.map((bit, i) => renderBit(bit, i, xStart8, 58, ok))}
-          <text x="395" y="77" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">= 1</text>
+          <text x="395" y="77" fontSize="12" fontWeight="700" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>= 1</text>
 
           {/* Plus + separator */}
-          <text x="82" y="95" fontSize="16" fontWeight="800" fill={text} fontFamily="monospace">+</text>
+          <text x="82" y="95" fontSize="16" fontWeight="800" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>+</text>
           <line x1="80" y1="98" x2="380" y2="98" stroke={text} strokeWidth="1.2" />
 
           {/* Row sum (9 bits) */}
-          <text x="6" y="127" fontSize="12" fontWeight="700" fill={text} fontFamily="monospace">a+b</text>
+          <text x="6" y="127" fontSize="12" fontWeight="700" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>a+b</text>
           <text x="20" y="138" fontSize="9" fill={muted}>[8:0]</text>
           {sumBits.map((bit, i) =>
             renderBit(bit, i, xStart9, 108, ok, { isCarry: i === 0 })
           )}
-          <text x="395" y="127" fontSize="12" fontWeight="700" fill={ok} fontFamily="monospace">= 256 (정답·9b)</text>
+          <text x="395" y="127" fontSize="12" fontWeight="700" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>= 256 (정답·9b)</text>
 
           {/* 캐리 버려짐 */}
-          <text x={xStart9 + bitW / 2} y={151} fontSize="8.5" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">
+          <text x={xStart9 + bitW / 2} y={151} fontSize="8.5" fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
             버려짐!
           </text>
           <line x1={xStart9 + bitW / 2} y1={135} x2={xStart9 + bitW / 2} y2={144} stroke={err} strokeWidth="1.2" strokeDasharray="2,2" />
 
           {/* Row result (8 bits, aligned with LSB 8 of sum) */}
-          <text x="6" y="187" fontSize="12" fontWeight="700" fill={err} fontFamily="monospace">result</text>
+          <text x="6" y="187" fontSize="12" fontWeight="700" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>result</text>
           <text x="42" y="187" fontSize="9" fill={muted}>[7:0]</text>
           {resultBits.map((bit, i) => renderBit(bit, i, xStart8, 170, err))}
-          <text x="395" y="187" fontSize="12" fontWeight="700" fill={err} fontFamily="monospace">= 0 (틀린 값!)</text>
+          <text x="395" y="187" fontSize="12" fontWeight="700" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>= 0 (틀린 값!)</text>
 
           {/* 오차 강조 */}
           <rect x="140" y="208" width="300" height="22" rx="4" fill={err} opacity="0.08" />
-          <text x="290" y="223" fontSize="10.5" fontWeight="800" fill={err} textAnchor="middle" fontFamily="monospace">
+          <text x="290" y="223" fontSize="10.5" fontWeight="800" fill={err} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
             ⚠ 255 + 1 = 0 · 오차 256 (100% 빗나감, wrap-around)
           </text>
         </svg>
@@ -495,8 +495,8 @@ function LatchProblemDiagram() {
           {/* CLK=1 투명 영역 */}
           <rect x="150" y="12" width="80" height="200" fill={warn} opacity="0.07" />
           <rect x="310" y="12" width="80" height="200" fill={warn} opacity="0.07" />
-          <text x="190" y="10" fontSize="8" fontWeight="700" fill={warn} fontFamily="monospace">CLK=1 · 래치 투명</text>
-          <text x="350" y="10" fontSize="8" fontWeight="700" fill={warn} fontFamily="monospace">CLK=1 · 래치 투명</text>
+          <text x="190" y="10" fontSize="8" fontWeight="700" fill={warn} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>CLK=1 · 래치 투명</text>
+          <text x="350" y="10" fontSize="8" fontWeight="700" fill={warn} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>CLK=1 · 래치 투명</text>
 
           {/* 글리치 강조 (애니메이션) */}
           <rect className="lp-glitch-flash" x="195" y="12" width="28" height="200" fill={err} opacity="0" />
@@ -509,7 +509,7 @@ function LatchProblemDiagram() {
             { label: 'Q(FF)', y: 185 },
           ].map((t, i) => (
             <g key={i}>
-              <text x="4" y={t.y + 5} fontSize="9" fontWeight="700" fill={wire} fontFamily="monospace">{t.label}</text>
+              <text x="4" y={t.y + 5} fontSize="9" fontWeight="700" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{t.label}</text>
               <line x1="70" y1={t.y + 5} x2="560" y2={t.y + 5} stroke="#CBD5E0" strokeWidth="0.4" strokeDasharray="2,3" />
             </g>
           ))}
@@ -539,15 +539,15 @@ function LatchProblemDiagram() {
           {/* 글리치 주석 */}
           <line x1="208" y1="168" x2="208" y2="148" stroke={err} strokeWidth="1.2" markerEnd="url(#lpArrErr)" />
           <rect x="175" y="168" width="75" height="15" fill={err} opacity="0.08" rx="2" />
-          <text x="212" y="179" fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">글리치 전파!</text>
+          <text x="212" y="179" fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>글리치 전파!</text>
 
           {/* FF clean 주석 */}
           <line x1="340" y1="218" x2="315" y2="175" stroke={ok} strokeWidth="1.2" markerEnd="url(#lpArrOk)" />
-          <text x="380" y="225" fontSize="9" fontWeight="700" fill={ok} fontFamily="monospace">FF: edge 에서만 깨끗한 샘플</text>
+          <text x="380" y="225" fontSize="9" fontWeight="700" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>FF: edge 에서만 깨끗한 샘플</text>
 
           {/* 시간축 */}
           <line x1="70" y1="215" x2="560" y2="215" stroke="#A0AEC0" strokeWidth="0.5" />
-          <text x="560" y="225" fontSize="8" textAnchor="end" fill="#718096" fontFamily="monospace">time →</text>
+          <text x="560" y="225" fontSize="8" textAnchor="end" fill="#718096" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>time →</text>
 
           {/* 스캔라인 (애니메이션) */}
           <line className="lp-scanline" x1="70" y1="12" x2="70" y2="212" stroke={err} strokeWidth="1.2" opacity="0" />
@@ -615,12 +615,12 @@ function ComboLoopDiagram() {
           {/* a 피드백 wire (AND out → 위쪽 → 왼쪽 → OR top in) — 입력선 위에 덮음 */}
           <polyline points="240,42 270,42 270,14 16,14 16,94 52,94"
             fill="none" stroke={err} strokeWidth="1.8" strokeLinejoin="round" />
-          <text x="140" y="11" fontSize="9" fontWeight="700" fill={err} fontFamily="monospace">a</text>
+          <text x="140" y="11" fontSize="9" fontWeight="700" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>a</text>
 
           {/* b 피드백 wire (OR out → AND bot in) */}
           <polyline points="92,102 158,102 158,50 200,50"
             fill="none" stroke={err} strokeWidth="1.8" strokeLinejoin="round" />
-          <text x="163" y="78" fontSize="9" fontWeight="700" fill={err} fontFamily="monospace">b</text>
+          <text x="163" y="78" fontSize="9" fontWeight="700" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>b</text>
 
           {/* AND 게이트 (IEC: 박스 + '&') */}
           <rect x="200" y="24" width="40" height="36" rx="2"
@@ -637,8 +637,8 @@ function ComboLoopDiagram() {
           <circle cx="92" cy="102" r="2.5" fill={err} />
 
           {/* 입력 라벨 (최상위 렌더링) */}
-          <text x="-58" y="37" fontSize="9" fill={wire} fontFamily="monospace">input_x</text>
-          <text x="-58" y="113" fontSize="9" fill={wire} fontFamily="monospace">input_y</text>
+          <text x="-58" y="37" fontSize="9" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>input_x</text>
+          <text x="-58" y="113" fontSize="9" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>input_y</text>
         </svg>
         <div style={{ fontSize: '0.57rem', fontWeight: 700, color: err, textAlign: 'center', marginTop: '-2px' }}>
           ⚠ a → OR → b → AND → a 순환 · 클록 없이 값이 계속 바뀜 (발진)
@@ -676,12 +676,12 @@ function ComboLoopDiagram() {
           {/* a 피드백 (점선: 조합 경로. FF 덕분에 루프는 아님) */}
           <polyline points="290,42 290,14 16,14 16,94 52,94"
             fill="none" stroke={ok} strokeWidth="1.3" strokeDasharray="3,2" strokeLinejoin="round" />
-          <text x="140" y="11" fontSize="9" fontWeight="700" fill={ok} fontFamily="monospace">a (조합)</text>
+          <text x="140" y="11" fontSize="9" fontWeight="700" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>a (조합)</text>
 
           {/* b_reg (FF Q → AND bot in) */}
           <polyline points="194,102 212,102 212,50 232,50"
             fill="none" stroke={ok} strokeWidth="1.8" strokeLinejoin="round" />
-          <text x="216" y="78" fontSize="8.5" fontWeight="700" fill={ok} fontFamily="monospace">b_reg</text>
+          <text x="216" y="78" fontSize="8.5" fontWeight="700" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>b_reg</text>
 
           {/* OR out → FF D */}
           <line x1="92" y1="102" x2="134" y2="102" stroke={ok} strokeWidth="1.8" />
@@ -709,7 +709,7 @@ function ComboLoopDiagram() {
 
           {/* 외부 clk 입력 */}
           <line x1="164" y1="132" x2="164" y2="120" stroke={wire} strokeWidth="1.3" />
-          <text x="172" y="134" fontSize="8" fill={wire} fontFamily="monospace">clk</text>
+          <text x="172" y="134" fontSize="8" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>clk</text>
 
           {/* 접점 도트 */}
           <circle cx="272" cy="42" r="2.5" fill={ok} />
@@ -717,11 +717,11 @@ function ComboLoopDiagram() {
           <circle cx="92" cy="102" r="2.5" fill={ok} />
 
           {/* 외부 a 라벨 */}
-          <text x="296" y="37" fontSize="9" fontWeight="700" fill={wire} fontFamily="monospace">a</text>
+          <text x="296" y="37" fontSize="9" fontWeight="700" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>a</text>
 
           {/* 입력 라벨 (최상위 렌더링) */}
-          <text x="-58" y="37" fontSize="9" fill={wire} fontFamily="monospace">input_x</text>
-          <text x="-58" y="113" fontSize="9" fill={wire} fontFamily="monospace">input_y</text>
+          <text x="-58" y="37" fontSize="9" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>input_x</text>
+          <text x="-58" y="113" fontSize="9" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>input_y</text>
         </svg>
         <div style={{ fontSize: '0.57rem', fontWeight: 700, color: ok, textAlign: 'center', marginTop: '-2px' }}>
           ✓ FF가 OR→AND 경로에 클록 경계 삽입 · 조합 루프 제거
@@ -807,18 +807,18 @@ function SensitivityListDiagram() {
               </defs>
 
               {/* Input labels + wires */}
-              <text x="14" y="68" fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">a</text>
+              <text x="14" y="68" fontSize="11" fontWeight="800" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>a</text>
               <line x1="32" y1="65" x2="160" y2="65" stroke={wire} strokeWidth="1.5" />
-              <text x="14" y="93" fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">b</text>
+              <text x="14" y="93" fontSize="11" fontWeight="800" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>b</text>
               <line x1="32" y1="90" x2="160" y2="90" stroke={wire} strokeWidth="1.5" />
-              <text x="14" y="118" fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">c</text>
+              <text x="14" y="118" fontSize="11" fontWeight="800" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>c</text>
               <line x1="32" y1="115" x2="160" y2="115" stroke={wire} strokeWidth="1.5" />
 
               {/* AND3 gate */}
               <rect x="160" y="50" width="55" height="80" rx="3"
                 fill={bg} stroke={ok} strokeWidth="2" filter="url(#sl_shadow_ok)" />
-              <text x="187.5" y="96" fontSize="17" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">&amp;</text>
-              <text x="187.5" y="45" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">AND3</text>
+              <text x="187.5" y="96" fontSize="17" fontWeight="800" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>&amp;</text>
+              <text x="187.5" y="45" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>AND3</text>
 
               {/* Input pin dots */}
               <circle cx="160" cy="65"  r="2.2" fill={ok} />
@@ -828,10 +828,10 @@ function SensitivityListDiagram() {
               {/* Output wire */}
               <line x1="215" y1="90" x2="305" y2="90" stroke={wire} strokeWidth="1.5" />
               <circle cx="215" cy="90" r="2.2" fill={ok} />
-              <text x="310" y="94" fontSize="11" fontWeight="800" fill={ok} fontFamily="monospace">out</text>
+              <text x="310" y="94" fontSize="11" fontWeight="800" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>out</text>
 
               {/* Caption */}
-              <text x="170" y="155" fontSize="9" fontWeight="700" fill={text} fontFamily="monospace" textAnchor="middle">
+              <text x="170" y="155" fontSize="9" fontWeight="700" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="middle">
                 out  =  a · b · c   (연속 평가)
               </text>
             </svg>
@@ -867,18 +867,18 @@ function SensitivityListDiagram() {
               </defs>
 
               {/* Input labels + wires */}
-              <text x="14" y="68"  fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">a</text>
+              <text x="14" y="68"  fontSize="11" fontWeight="800" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>a</text>
               <line x1="32" y1="65"  x2="170" y2="65"  stroke={wire} strokeWidth="1.5" />
-              <text x="14" y="93"  fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">b</text>
+              <text x="14" y="93"  fontSize="11" fontWeight="800" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>b</text>
               <line x1="32" y1="90"  x2="170" y2="90"  stroke={wire} strokeWidth="1.5" />
-              <text x="14" y="118" fontSize="11" fontWeight="800" fill={text} fontFamily="monospace">c</text>
+              <text x="14" y="118" fontSize="11" fontWeight="800" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>c</text>
               <line x1="32" y1="115" x2="170" y2="115" stroke={wire} strokeWidth="1.5" />
 
               {/* AND3 gate */}
               <rect x="170" y="50" width="55" height="80" rx="3"
                 fill={bg} stroke={err} strokeWidth="2" filter="url(#sl_shadow_err)" />
-              <text x="197.5" y="96" fontSize="17" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">&amp;</text>
-              <text x="197.5" y="45" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">AND3</text>
+              <text x="197.5" y="96" fontSize="17" fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>&amp;</text>
+              <text x="197.5" y="45" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>AND3</text>
 
               {/* Input pin dots */}
               <circle cx="170" cy="65"  r="2.2" fill={err} />
@@ -891,15 +891,15 @@ function SensitivityListDiagram() {
               {/* LATCH block */}
               <rect x="275" y="70" width="65" height="45" rx="3"
                 fill={bg} stroke={err} strokeWidth="2" filter="url(#sl_shadow_err)" />
-              <text x="280" y="82" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace">D</text>
-              <text x="335" y="82" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace" textAnchor="end">Q</text>
-              <text x="307.5" y="98" fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">LATCH</text>
-              <text x="307.5" y="110" fontSize="7" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">EN</text>
+              <text x="280" y="82" fontSize="8" fontWeight="800" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>D</text>
+              <text x="335" y="82" fontSize="8" fontWeight="800" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="end">Q</text>
+              <text x="307.5" y="98" fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>LATCH</text>
+              <text x="307.5" y="110" fontSize="7" fontWeight="700" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>EN</text>
 
               {/* Output wire */}
               <line x1="340" y1="90" x2="410" y2="90" stroke={wire} strokeWidth="1.5" />
               <circle cx="340" cy="90" r="2.2" fill={err} />
-              <text x="415" y="94" fontSize="11" fontWeight="800" fill={err} fontFamily="monospace">out</text>
+              <text x="415" y="94" fontSize="11" fontWeight="800" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>out</text>
 
               {/* Taps on a and b */}
               <circle cx="70"  cy="65" r="3" fill={warn} />
@@ -912,7 +912,7 @@ function SensitivityListDiagram() {
               {/* Event-detector block */}
               <rect x="50" y="165" width="175" height="26" rx="4"
                 fill={`${warn}16`} stroke={warn} strokeWidth="1.5" strokeDasharray="3,2" />
-              <text x="137.5" y="183" fontSize="9" fontWeight="800" textAnchor="middle" fill={warn} fontFamily="monospace">
+              <text x="137.5" y="183" fontSize="9" fontWeight="800" textAnchor="middle" fill={warn} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
                 ⚡ @(a or b) 이벤트 감시
               </text>
 
@@ -926,10 +926,10 @@ function SensitivityListDiagram() {
                 <line x1="134" y1="109" x2="146" y2="121" stroke={err} strokeWidth="2.2" />
                 <line x1="146" y1="109" x2="134" y2="121" stroke={err} strokeWidth="2.2" />
               </g>
-              <text x="152" y="140" fontSize="8.5" fontWeight="800" fill={err} fontFamily="monospace">c 감시 없음!</text>
+              <text x="152" y="140" fontSize="8.5" fontWeight="800" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>c 감시 없음!</text>
 
               {/* Caption */}
-              <text x="220" y="205" fontSize="9" fontWeight="700" fill={text} fontFamily="monospace" textAnchor="middle">
+              <text x="220" y="205" fontSize="9" fontWeight="700" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="middle">
                 out 은 (a or b) 이벤트 때만 갱신 → c 단독 변화 시 이전값 유지
               </text>
             </svg>
@@ -965,7 +965,7 @@ function SensitivityListDiagram() {
             ].map((m, i) => (
               <g key={i}>
                 <line x1={m.x} y1="15" x2={m.x} y2="255" stroke="#CBD5E0" strokeWidth="0.5" strokeDasharray="2,3" />
-                <text x={m.x} y="12" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">{m.label}</text>
+                <text x={m.x} y="12" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{m.label}</text>
               </g>
             ))}
 
@@ -978,7 +978,7 @@ function SensitivityListDiagram() {
               { label: 'out (sim)',   y: 220, color: err },
             ].map((t, i) => (
               <g key={i}>
-                <text x="4" y={t.y + 15} fontSize="9.5" fontWeight="800" fill={t.color} fontFamily="monospace">{t.label}</text>
+                <text x="4" y={t.y + 15} fontSize="9.5" fontWeight="800" fill={t.color} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{t.label}</text>
                 <line x1="80" y1={t.y + 22} x2="580" y2={t.y + 22} stroke="#E2E8F0" strokeWidth="0.4" strokeDasharray="2,3" />
               </g>
             ))}
@@ -1006,18 +1006,18 @@ function SensitivityListDiagram() {
             {/* Sim-evaluate markers (on a/b events) */}
             <circle cx="280" cy="242" r="3.5" fill={wire} />
             <circle cx="380" cy="220" r="3.5" fill={wire} />
-            <text x="286" y="238" fontSize="7"   fontWeight="700" fill={wire} fontFamily="monospace">evaluate</text>
-            <text x="386" y="216" fontSize="7"   fontWeight="700" fill={wire} fontFamily="monospace">evaluate</text>
+            <text x="286" y="238" fontSize="7"   fontWeight="700" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>evaluate</text>
+            <text x="386" y="216" fontSize="7"   fontWeight="700" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>evaluate</text>
 
             {/* Mismatch labels */}
-            <text x="230" y="265" fontSize="9"   fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">❌ 불일치 #1</text>
-            <text x="230" y="276" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">c↑ 인데 sim = 0</text>
-            <text x="530" y="265" fontSize="9"   fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">❌ 불일치 #2</text>
-            <text x="530" y="276" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">c↓ 인데 sim = 1</text>
+            <text x="230" y="265" fontSize="9"   fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>❌ 불일치 #1</text>
+            <text x="230" y="276" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>c↑ 인데 sim = 0</text>
+            <text x="530" y="265" fontSize="9"   fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>❌ 불일치 #2</text>
+            <text x="530" y="276" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>c↓ 인데 sim = 1</text>
 
             {/* Time axis */}
             <line x1="80" y1="255" x2="580" y2="255" stroke="#A0AEC0" strokeWidth="0.5" />
-            <text x="580" y="252" fontSize="8" textAnchor="end" fill={muted} fontFamily="monospace">time →</text>
+            <text x="580" y="252" fontSize="8" textAnchor="end" fill={muted} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>time →</text>
           </svg>
 
           {/* Legend */}
@@ -1133,7 +1133,7 @@ function FsmNoResetDiagram() {
               { label: 'state',  y: 118 },
             ].map((t, i) => (
               <g key={i}>
-                <text x="4" y={t.y + 4} fontSize="8.5" fontWeight="700" fill={wire} fontFamily="monospace">{t.label}</text>
+                <text x="4" y={t.y + 4} fontSize="8.5" fontWeight="700" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{t.label}</text>
                 <line x1="55" y1={t.y + 4} x2="335" y2={t.y + 4} stroke="#CBD5E0" strokeWidth="0.4" strokeDasharray="2,3" />
               </g>
             ))}
@@ -1141,12 +1141,12 @@ function FsmNoResetDiagram() {
               fill="none" stroke={wire} strokeWidth="1.6" />
             <polyline points="55,82 130,82 130,62 170,62 170,82 335,82"
               fill="none" stroke={err} strokeWidth="1.8" strokeDasharray="4,3" />
-            <text x="138" y="57" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace">rst_n 무시!</text>
+            <text x="138" y="57" fontSize="8" fontWeight="800" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rst_n 무시!</text>
             <text className="nr-bolt" x="200" y="57" fontSize="11" fill={err}>⚡</text>
             <rect x="55" y="100" width="280" height="30" fill={err} opacity="0.10" rx="3" />
-            <text className="nr-x" x="195" y="122" fontSize="17" fontWeight="900" textAnchor="middle" fill={err} fontFamily="monospace">X  X  X  X  X  X</text>
+            <text className="nr-x" x="195" y="122" fontSize="17" fontWeight="900" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>X  X  X  X  X  X</text>
             <line x1="55" y1="148" x2="335" y2="148" stroke="#A0AEC0" strokeWidth="0.5" />
-            <text x="335" y="160" fontSize="8" textAnchor="end" fill={muted} fontFamily="monospace">time →</text>
+            <text x="335" y="160" fontSize="8" textAnchor="end" fill={muted} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>time →</text>
             <text x="195" y="163" fontSize="8.5" fontWeight="700" textAnchor="middle" fill={err}>state = X 영구 전파 · FSM 정상 동작 불가</text>
           </svg>
         </div>
@@ -1170,7 +1170,7 @@ function FsmNoResetDiagram() {
               { label: 'state',  y: 118 },
             ].map((t, i) => (
               <g key={i}>
-                <text x="4" y={t.y + 4} fontSize="8.5" fontWeight="700" fill={wire} fontFamily="monospace">{t.label}</text>
+                <text x="4" y={t.y + 4} fontSize="8.5" fontWeight="700" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{t.label}</text>
                 <line x1="55" y1={t.y + 4} x2="335" y2={t.y + 4} stroke="#CBD5E0" strokeWidth="0.4" strokeDasharray="2,3" />
               </g>
             ))}
@@ -1179,14 +1179,14 @@ function FsmNoResetDiagram() {
             <polyline className="nr-reset" points="55,82 130,82 130,62 170,62 170,82 335,82"
               fill="none" stroke={ok} strokeWidth="1.8" />
             <circle cx="170" cy="82" r="3.2" fill={ok} />
-            <text x="140" y="57" fontSize="8" fontWeight="800" fill={ok} fontFamily="monospace">rst_n 해제 에지</text>
+            <text x="140" y="57" fontSize="8" fontWeight="800" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rst_n 해제 에지</text>
             <rect x="55" y="100" width="115" height="30" fill={err} opacity="0.10" rx="3" />
-            <text x="112" y="122" fontSize="13" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">X</text>
+            <text x="112" y="122" fontSize="13" fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>X</text>
             <rect className="nr-idle" x="170" y="100" width="165" height="30" fill={ok} opacity="0.14" rx="3" />
-            <text className="nr-idle" x="252" y="121" fontSize="11" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">ST_IDLE</text>
+            <text className="nr-idle" x="252" y="121" fontSize="11" fontWeight="800" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>ST_IDLE</text>
             <polygon points="163,105 172,115 163,125" fill={ok} />
             <line x1="55" y1="148" x2="335" y2="148" stroke="#A0AEC0" strokeWidth="0.5" />
-            <text x="335" y="160" fontSize="8" textAnchor="end" fill={muted} fontFamily="monospace">time →</text>
+            <text x="335" y="160" fontSize="8" textAnchor="end" fill={muted} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>time →</text>
             <text x="195" y="163" fontSize="8.5" fontWeight="700" textAnchor="middle" fill={ok}>리셋 해제와 동시에 IDLE 진입 · 이후 정상 전이</text>
           </svg>
         </div>
@@ -1235,7 +1235,7 @@ function FsmDeadendDiagram() {
         stroke={color} strokeWidth={trapped ? 2.2 : 1.8}
         filter={trapped ? undefined : `url(#de_sh_${color.slice(1)})`} />
       <text x={pos[id].x} y={pos[id].y + 4} fontSize="11" fontWeight="800"
-        textAnchor="middle" fill={color} fontFamily="monospace">{label}</text>
+        textAnchor="middle" fill={color} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{label}</text>
     </g>
   );
 
@@ -1251,7 +1251,7 @@ function FsmDeadendDiagram() {
       <g key={`${fromId}_${toId}`}>
         <path d={`M ${sx} ${sy} Q ${mx} ${my} ${ex} ${ey}`}
           fill="none" stroke={color} strokeWidth="1.8" markerEnd={`url(#de_arr_${color.slice(1)})`} />
-        <text x={mx} y={my - 5} fontSize="8.5" fontWeight="800" textAnchor="middle" fill={color} fontFamily="monospace">
+        <text x={mx} y={my - 5} fontSize="8.5" fontWeight="800" textAnchor="middle" fill={color} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
           {lbl}
         </text>
       </g>
@@ -1317,11 +1317,11 @@ function FsmDeadendDiagram() {
             {/* ST3 → ST0 back edge (curved below) */}
             <path d={`M ${pos.ST3.x - 5} ${pos.ST3.y + R} Q ${(pos.ST0.x + pos.ST3.x) / 2} 205 ${pos.ST0.x + 5} ${pos.ST0.y + R}`}
               fill="none" stroke={wire} strokeWidth="1.6" markerEnd={`url(#de_arr_${wire.slice(1)})`} />
-            <text x="155" y="200" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">b=1</text>
+            <text x="155" y="200" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>b=1</text>
             {arrow('ST3', 'ST4', 'b=0', err)}
             {/* ST4 dead-end self label */}
-            <text x={pos.ST4.x} y={pos.ST4.y - R - 8} fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">💀 탈출 전이 없음</text>
-            <text x={pos.ST4.x} y={pos.ST4.y + R + 14} fontSize="8" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">영구 갇힘</text>
+            <text x={pos.ST4.x} y={pos.ST4.y - R - 8} fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>💀 탈출 전이 없음</text>
+            <text x={pos.ST4.x} y={pos.ST4.y + R + 14} fontSize="8" fontWeight="700" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>영구 갇힘</text>
 
             {/* Bubbles */}
             {bubble('ST0', 'ST0', wire)}
@@ -1356,15 +1356,15 @@ function FsmDeadendDiagram() {
             {arrow('ST2', 'ST3', '', wire, 8)}
             <path d={`M ${pos.ST3.x - 5} ${pos.ST3.y + R} Q ${(pos.ST0.x + pos.ST3.x) / 2} 205 ${pos.ST0.x + 5} ${pos.ST0.y + R}`}
               fill="none" stroke={wire} strokeWidth="1.6" markerEnd={`url(#de_arr_${wire.slice(1)})`} />
-            <text x="155" y="200" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">b=1</text>
+            <text x="155" y="200" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>b=1</text>
             {arrow('ST3', 'ST4', 'b=0', wire)}
             {/* NEW ST4 → ST0 back edge (curved above) */}
             <path d={`M ${pos.ST4.x - 5} ${pos.ST4.y - R} Q ${(pos.ST0.x + pos.ST4.x) / 2} 15 ${pos.ST0.x + 5} ${pos.ST0.y - R}`}
               fill="none" stroke={ok} strokeWidth="2.2" markerEnd={`url(#de_arr_${ok.slice(1)})`} />
-            <text x={(pos.ST0.x + pos.ST4.x) / 2} y="25" fontSize="9" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">
+            <text x={(pos.ST0.x + pos.ST4.x) / 2} y="25" fontSize="9" fontWeight="800" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
               복귀 전이 (신규)
             </text>
-            <text x={pos.ST4.x} y={pos.ST4.y + R + 14} fontSize="8" fontWeight="700" textAnchor="middle" fill={ok} fontFamily="monospace">안전한 복귀</text>
+            <text x={pos.ST4.x} y={pos.ST4.y + R + 14} fontSize="8" fontWeight="700" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>안전한 복귀</text>
 
             {bubble('ST0', 'ST0', wire)}
             {bubble('ST1', 'ST1', wire)}
@@ -1442,7 +1442,7 @@ function FsmUnreachableDiagram() {
           strokeWidth={orphan ? 1.6 : 2}
           strokeDasharray={orphan ? '4,2' : undefined} />
         <text x={pos[id].x} y={pos[id].y + 4} fontSize="10" fontWeight="800"
-          textAnchor="middle" fill={orphan ? '#A0AEC0' : color} fontFamily="monospace">{label}</text>
+          textAnchor="middle" fill={orphan ? '#A0AEC0' : color} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{label}</text>
       </g>
     );
   };
@@ -1459,7 +1459,7 @@ function FsmUnreachableDiagram() {
       <g key={`${fromId}_${toId}`}>
         <path d={`M ${sx} ${sy} Q ${mx} ${my} ${ex} ${ey}`}
           fill="none" stroke={color} strokeWidth="1.8" markerEnd={`url(#un_arr_${color.slice(1)})`} />
-        <text x={mx} y={my - 5} fontSize="8.5" fontWeight="800" textAnchor="middle" fill={color} fontFamily="monospace">
+        <text x={mx} y={my - 5} fontSize="8.5" fontWeight="800" textAnchor="middle" fill={color} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
           {lbl}
         </text>
       </g>
@@ -1491,7 +1491,7 @@ function FsmUnreachableDiagram() {
         <path d={`M ${sx.toFixed(2)} ${sy.toFixed(2)} C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)} ${cp2x.toFixed(2)} ${cp2y.toFixed(2)} ${ex.toFixed(2)} ${ey.toFixed(2)}`}
           fill="none" stroke={color} strokeWidth="1.5" markerEnd={`url(#un_arr_${color.slice(1)})`} />
         <text x={tipX + (opts?.labelDx ?? 0)} y={tipY + (opts?.labelDy ?? -4)}
-          fontSize="7.5" fontWeight="700" fill={color} fontFamily="monospace" textAnchor="middle">
+          fontSize="7.5" fontWeight="700" fill={color} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="middle">
           {lbl}
         </text>
       </g>
@@ -1536,7 +1536,7 @@ function FsmUnreachableDiagram() {
             {/* DONE → IDLE back edge (curved above) */}
             <path d={`M ${pos.DONE.x} ${pos.DONE.y - R} Q ${(pos.IDLE.x + pos.DONE.x) / 2} 35 ${pos.IDLE.x} ${pos.IDLE.y - R}`}
               fill="none" stroke={wire} strokeWidth="1.7" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
-            <text x={(pos.IDLE.x + pos.DONE.x) / 2} y="45" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">
+            <text x={(pos.IDLE.x + pos.DONE.x) / 2} y="45" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
               unconditional
             </text>
 
@@ -1544,11 +1544,11 @@ function FsmUnreachableDiagram() {
             <path d={`M ${pos.ERROR.x - R} ${pos.ERROR.y + 5} Q 200 90 ${pos.IDLE.x + R} ${pos.IDLE.y - 8}`}
               fill="none" stroke="#A0AEC0" strokeWidth="1.2" strokeDasharray="3,3"
               markerEnd={`url(#un_arr_${'#A0AEC0'.slice(1)})`} opacity="0.6" />
-            <text x="230" y="80" fontSize="7.5" fontWeight="700" fill="#A0AEC0" fontFamily="monospace">ERROR→IDLE</text>
+            <text x="230" y="80" fontSize="7.5" fontWeight="700" fill="#A0AEC0" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>ERROR→IDLE</text>
 
             {/* Orphan label */}
             <text className="un-orphan-label" x={pos.ERROR.x} y={pos.ERROR.y - R - 12}
-              fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">
+              fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
               ⛔ 진입 경로 0개 — Dead Code
             </text>
 
@@ -1584,19 +1584,19 @@ function FsmUnreachableDiagram() {
             {/* NEW RUN → ERROR — exits top-right of RUN, enters lower-left of ERROR */}
             <path d={`M 182 109.22 Q 265 45 343.03 71.97`}
               fill="none" stroke={ok} strokeWidth="2.2" markerEnd={`url(#un_arr_${ok.slice(1)})`} />
-            <text x="265" y="40" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">
+            <text x="265" y="40" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
               err (신규)
             </text>
             {/* DONE → IDLE */}
             <path d={`M ${pos.DONE.x} ${pos.DONE.y - R} Q ${(pos.IDLE.x + pos.DONE.x) / 2} 35 ${pos.IDLE.x} ${pos.IDLE.y - R}`}
               fill="none" stroke={wire} strokeWidth="1.7" markerEnd={`url(#un_arr_${wire.slice(1)})`} />
-            <text x={(pos.IDLE.x + pos.DONE.x) / 2} y="25" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily="monospace">
+            <text x={(pos.IDLE.x + pos.DONE.x) / 2} y="25" fontSize="8.5" fontWeight="800" textAnchor="middle" fill={wire} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
               unconditional
             </text>
             {/* ERROR → IDLE — recovery path routed below via wide downward arc */}
             <path d={`M 351.79 77.55 Q 210 225 82.55 121.79`}
               fill="none" stroke={ok} strokeWidth="1.8" markerEnd={`url(#un_arr_${ok.slice(1)})`} />
-            <text x="215" y="187" fontSize="8" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">복구 경로</text>
+            <text x="215" y="187" fontSize="8" fontWeight="800" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>복구 경로</text>
 
             {bubble('IDLE',  'IDLE',  wire)}
             {bubble('RUN',   'RUN',   wire)}
@@ -1824,10 +1824,10 @@ function FsmNoDefaultDiagram() {
                 </radialGradient>
               </defs>
               <rect x="0" y="0" width="340" height="50" fill="url(#nd_sky)" rx="4" />
-              <text x="170" y="20" fontSize="9" fontWeight="700" textAnchor="middle" fill="#E2E8F0" fontFamily="monospace">
+              <text x="170" y="20" fontSize="9" fontWeight="700" textAnchor="middle" fill="#E2E8F0" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
                 ☁ 우주 방사선 / 중성자 / α 입자
               </text>
-              <text x="170" y="34" fontSize="7.5" fontWeight="600" textAnchor="middle" fill="#A0AEC0" fontFamily="monospace">
+              <text x="170" y="34" fontSize="7.5" fontWeight="600" textAnchor="middle" fill="#A0AEC0" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
                 우주·항공 시스템 또는 고에너지 환경
               </text>
               {/* stars */}
@@ -1840,13 +1840,13 @@ function FsmNoDefaultDiagram() {
                 <line x1="210" y1="40" x2="210" y2="60" stroke={err} strokeWidth="1.5" opacity="0.7" />
                 <circle cx="210" cy="60" r="4" fill={err} />
                 <circle cx="210" cy="60" r="7" fill="none" stroke={err} strokeWidth="1" opacity="0.5" />
-                <text x="222" y="64" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace">n⁺</text>
+                <text x="222" y="64" fontSize="8" fontWeight="800" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>n⁺</text>
               </g>
 
               {/* Chip package */}
               <rect x="50" y="110" width="240" height="90" rx="6"
                 fill="#E2E8F0" stroke="#718096" strokeWidth="1.5" />
-              <text x="170" y="125" fontSize="8" fontWeight="800" textAnchor="middle" fill="#4A5568" fontFamily="monospace">
+              <text x="170" y="125" fontSize="8" fontWeight="800" textAnchor="middle" fill="#4A5568" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
                 FPGA · state[1:0] register  (MSB ← → LSB)
               </text>
               {/* Chip pins */}
@@ -1859,32 +1859,32 @@ function FsmNoDefaultDiagram() {
               <rect x="140" y="140" width="40" height="40" rx="4"
                 fill={`${ok}14`} stroke={ok} strokeWidth="1.5" />
               <text x="160" y="168" fontSize="22" fontWeight="900"
-                textAnchor="middle" fill={text} fontFamily="monospace">1</text>
-              <text x="160" y="132" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={muted} fontFamily="monospace">bit[1]</text>
+                textAnchor="middle" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>1</text>
+              <text x="160" y="132" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={muted} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>bit[1]</text>
 
               {/* bit[0] — LSB, gets hit · card-flip 0 → 1 */}
               <rect className="nd-bit" x="190" y="140" width="40" height="40" rx="4"
                 fill="#F7FAFC" stroke="#CBD5E0" strokeWidth="1.5" />
               {/* two overlaid digits; scaleY flip swaps visibility */}
               <text className="nd-bit-before" x="210" y="168" fontSize="22" fontWeight="900"
-                textAnchor="middle" fill={text} fontFamily="monospace">0</text>
+                textAnchor="middle" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>0</text>
               <text className="nd-bit-after" x="210" y="168" fontSize="22" fontWeight="900"
-                textAnchor="middle" fill={err} fontFamily="monospace">1</text>
-              <text x="210" y="132" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={muted} fontFamily="monospace">bit[0]</text>
+                textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>1</text>
+              <text x="210" y="132" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={muted} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>bit[0]</text>
               {/* Shock ring at bit[0] */}
               <circle className="nd-shock" cx="210" cy="160" r="28" fill="url(#nd_shock_grad)" />
               {/* 0 → 1 flip label */}
               <text className="nd-after-show" x="210" y="194" fontSize="7.5" fontWeight="800"
-                textAnchor="middle" fill={err} fontFamily="monospace">0 → 1 flip!</text>
+                textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>0 → 1 flip!</text>
 
               {/* Before/after indicator */}
-              <text className="nd-before-dim" x="80" y="152" fontSize="8" fontWeight="800" fill={text} fontFamily="monospace">before:</text>
-              <text className="nd-before-dim" x="80" y="165" fontSize="12" fontWeight="900" fill={text} fontFamily="monospace">2'b10</text>
-              <text className="nd-before-dim" x="80" y="178" fontSize="7" fontWeight="700" fill={ok} fontFamily="monospace">✓ 정의됨</text>
+              <text className="nd-before-dim" x="80" y="152" fontSize="8" fontWeight="800" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>before:</text>
+              <text className="nd-before-dim" x="80" y="165" fontSize="12" fontWeight="900" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2'b10</text>
+              <text className="nd-before-dim" x="80" y="178" fontSize="7" fontWeight="700" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>✓ 정의됨</text>
 
-              <text className="nd-poison" x="244" y="152" fontSize="8" fontWeight="800" fill={err} fontFamily="monospace">after:</text>
-              <text className="nd-poison" x="244" y="165" fontSize="12" fontWeight="900" fill={err} fontFamily="monospace">2'b11</text>
-              <text className="nd-poison" x="244" y="178" fontSize="7" fontWeight="700" fill={err} fontFamily="monospace">⚠ 미정의!</text>
+              <text className="nd-poison" x="244" y="152" fontSize="8" fontWeight="800" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>after:</text>
+              <text className="nd-poison" x="244" y="165" fontSize="12" fontWeight="900" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2'b11</text>
+              <text className="nd-poison" x="244" y="178" fontSize="7" fontWeight="700" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>⚠ 미정의!</text>
             </svg>
           </div>
 
@@ -1992,29 +1992,29 @@ function FsmNoDefaultDiagram() {
 
               {/* poisoned state */}
               <circle cx="85" cy="110" r="32" fill={`${err}12`} stroke={err} strokeWidth="2" strokeDasharray="4,3" />
-              <text x="85" y="108" fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily="monospace">SEU 후</text>
-              <text x="85" y="122" fontSize="11" fontWeight="900" textAnchor="middle" fill={err} fontFamily="monospace">2'b11</text>
-              <text x="85" y="158" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={err} fontFamily="monospace">(미정의 인코딩)</text>
+              <text x="85" y="108" fontSize="9" fontWeight="800" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>SEU 후</text>
+              <text x="85" y="122" fontSize="11" fontWeight="900" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2'b11</text>
+              <text x="85" y="158" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>(미정의 인코딩)</text>
 
               {/* Arrow: default transition */}
               <path d="M 120 105 Q 170 45 225 95"
                 fill="none" stroke={ok} strokeWidth="2.2" markerEnd="url(#nd_arr_ok)" />
-              <text x="172" y="62" fontSize="9" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">
+              <text x="172" y="62" fontSize="9" fontWeight="800" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
                 default:
               </text>
-              <text x="172" y="75" fontSize="8" fontWeight="700" textAnchor="middle" fill={ok} fontFamily="monospace">
+              <text x="172" y="75" fontSize="8" fontWeight="700" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
                 state ← 2'b00
               </text>
 
               {/* safe state */}
               <circle cx="250" cy="110" r="36" fill={`${ok}16`} stroke={ok} strokeWidth="2.5" />
-              <text x="250" y="106" fontSize="9" fontWeight="800" textAnchor="middle" fill={ok} fontFamily="monospace">안전 복귀</text>
-              <text x="250" y="122" fontSize="12" fontWeight="900" textAnchor="middle" fill={ok} fontFamily="monospace">2'b00</text>
-              <text x="250" y="162" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={ok} fontFamily="monospace">(IDLE 재시작)</text>
+              <text x="250" y="106" fontSize="9" fontWeight="800" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>안전 복귀</text>
+              <text x="250" y="122" fontSize="12" fontWeight="900" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2'b00</text>
+              <text x="250" y="162" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>(IDLE 재시작)</text>
 
               {/* FF clock tick showing recovery */}
               <rect x="50" y="178" width="240" height="28" rx="4" fill="#fff" stroke="#CBD5E0" strokeWidth="1" />
-              <text x="60" y="196" fontSize="8" fontWeight="800" fill={text} fontFamily="monospace">t:</text>
+              <text x="60" y="196" fontSize="8" fontWeight="800" fill={text} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>t:</text>
               {[
                 { x: 80,  label: '2\'b10', color: ok },
                 { x: 130, label: '2\'b11', color: err },
@@ -2022,16 +2022,16 @@ function FsmNoDefaultDiagram() {
                 { x: 240, label: '2\'b01', color: ok },
               ].map((c, i) => (
                 <g key={i}>
-                  {i === 1 && <text x={c.x + 13} y="174" fontSize="8" textAnchor="middle" fill={err} fontFamily="monospace">⚡SEU</text>}
-                  {i === 2 && <text x={c.x + 13} y="174" fontSize="8" textAnchor="middle" fill={ok} fontFamily="monospace">default 복귀</text>}
+                  {i === 1 && <text x={c.x + 13} y="174" fontSize="8" textAnchor="middle" fill={err} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>⚡SEU</text>}
+                  {i === 2 && <text x={c.x + 13} y="174" fontSize="8" textAnchor="middle" fill={ok} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>default 복귀</text>}
                   <rect x={c.x} y="184" width="30" height="18" rx="2"
                     fill={`${c.color}18`} stroke={c.color} strokeWidth="1.2" />
-                  <text x={c.x + 15} y="197" fontSize="9" fontWeight="800" textAnchor="middle" fill={c.color} fontFamily="monospace">
+                  <text x={c.x + 15} y="197" fontSize="9" fontWeight="800" textAnchor="middle" fill={c.color} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>
                     {c.label}
                   </text>
                 </g>
               ))}
-              <text x="170" y="217" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={muted} fontFamily="monospace">1 클록 내 정상 상태로 복구</text>
+              <text x="170" y="217" fontSize="7.5" fontWeight="700" textAnchor="middle" fill={muted} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>1 클록 내 정상 상태로 복구</text>
             </svg>
           </div>
 

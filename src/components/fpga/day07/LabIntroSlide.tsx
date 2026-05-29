@@ -153,7 +153,7 @@ export default function LabIntroSlide() {
             <svg viewBox="0 0 760 110" style={{ width: '100%', height: '90px' }}>
               {/* adc_clk box */}
               <rect x="10" y="32" width="125" height="50" rx="7" stroke="#4A6FA5" strokeWidth="1.8" fill="rgba(74,111,165,0.08)" />
-              <text x="72" y="22" fontSize="12" fontWeight="800" fill="#4A6FA5" textAnchor="middle" fontFamily="monospace">adc_clk 50MHz</text>
+              <text x="72" y="22" fontSize="12" fontWeight="800" fill="#4A6FA5" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>adc_clk 50MHz</text>
               <text x="72" y="62" fontSize="13" fontWeight="700" fill={FPGA.dark} textAnchor="middle">adc_capture</text>
 
               {/* FIFO */}
@@ -165,7 +165,7 @@ export default function LabIntroSlide() {
 
               {/* proc_clk */}
               <rect x="245" y="32" width="180" height="50" rx="7" stroke={DAY07} strokeWidth="1.8" fill="rgba(8,145,178,0.08)" />
-              <text x="335" y="22" fontSize="12" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily="monospace">proc_clk 100MHz</text>
+              <text x="335" y="22" fontSize="12" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>proc_clk 100MHz</text>
               <text x="335" y="62" fontSize="13" fontWeight="700" fill={FPGA.dark} textAnchor="middle">threshold_logic</text>
 
               {/* sync_2dff */}
@@ -177,7 +177,7 @@ export default function LabIntroSlide() {
 
               {/* bus_clk */}
               <rect x="525" y="32" width="190" height="50" rx="7" stroke="#DD6B20" strokeWidth="1.8" fill="rgba(221,107,32,0.08)" />
-              <text x="620" y="22" fontSize="12" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">bus_clk 40MHz</text>
+              <text x="620" y="22" fontSize="12" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>bus_clk 40MHz</text>
               <text x="620" y="62" fontSize="13" fontWeight="700" fill={FPGA.dark} textAnchor="middle">bus_iface</text>
 
               {/* host */}

@@ -27,30 +27,30 @@ export default function TitleSlide() {
         {/* 좌상단 — Violation/Caution/Eval 색 점 */}
         <svg style={{ position: 'absolute', top: '40px', left: '52px', opacity: 0.10 }} width="260" height="200" viewBox="0 0 260 200">
           {/* Tree 구조 — CDC Checks 윈도우 시뮬레이션 */}
-          <text x="10" y="22" fontSize="11" fontWeight="800" fill={DAY08} fontFamily="monospace">▼ Violations (5)</text>
-          <text x="20" y="42" fontSize="9" fontWeight="700" fill="#E53E3E" fontFamily="monospace">● no_sync · 3</text>
-          <text x="20" y="58" fontSize="9" fontWeight="700" fill="#E53E3E" fontFamily="monospace">● combo_logic · 1</text>
-          <text x="20" y="74" fontSize="9" fontWeight="700" fill="#E53E3E" fontFamily="monospace">● multi_bits · 1</text>
-          <text x="10" y="98" fontSize="11" fontWeight="800" fill={DAY08} fontFamily="monospace">▼ Evaluations (4)</text>
-          <text x="20" y="118" fontSize="9" fontWeight="700" fill="#48BB78" fontFamily="monospace">● bus_two_dff · 2</text>
-          <text x="20" y="134" fontSize="9" fontWeight="700" fill="#48BB78" fontFamily="monospace">● pulse_sync · 1</text>
-          <text x="20" y="150" fontSize="9" fontWeight="700" fill="#48BB78" fontFamily="monospace">● fifo · 1</text>
-          <text x="10" y="174" fontSize="11" fontWeight="800" fill={DAY08} fontFamily="monospace">▼ Proven (1)</text>
-          <text x="20" y="194" fontSize="9" fontWeight="700" fill="#48BB78" fontFamily="monospace">● two_dff · 1</text>
+          <text x="10" y="22" fontSize="11" fontWeight="800" fill={DAY08} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>▼ Violations (5)</text>
+          <text x="20" y="42" fontSize="9" fontWeight="700" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>● no_sync · 3</text>
+          <text x="20" y="58" fontSize="9" fontWeight="700" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>● combo_logic · 1</text>
+          <text x="20" y="74" fontSize="9" fontWeight="700" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>● multi_bits · 1</text>
+          <text x="10" y="98" fontSize="11" fontWeight="800" fill={DAY08} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>▼ Evaluations (4)</text>
+          <text x="20" y="118" fontSize="9" fontWeight="700" fill="#48BB78" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>● bus_two_dff · 2</text>
+          <text x="20" y="134" fontSize="9" fontWeight="700" fill="#48BB78" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>● pulse_sync · 1</text>
+          <text x="20" y="150" fontSize="9" fontWeight="700" fill="#48BB78" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>● fifo · 1</text>
+          <text x="10" y="174" fontSize="11" fontWeight="800" fill={DAY08} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>▼ Proven (1)</text>
+          <text x="20" y="194" fontSize="9" fontWeight="700" fill="#48BB78" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>● two_dff · 1</text>
         </svg>
 
         {/* 우하단 — schematic 시뮬레이션 */}
         <svg style={{ position: 'absolute', bottom: '30px', right: '50px', opacity: 0.08 }} width="290" height="130" viewBox="0 0 290 130">
           {/* TX flop */}
           <rect x="10" y="50" width="50" height="30" rx="3" stroke={DAY08} strokeWidth="1.5" fill="rgba(14,124,123,0.10)" />
-          <text x="35" y="68" fontSize="10" fontWeight="700" fill={DAY08} textAnchor="middle" fontFamily="monospace">TX</text>
+          <text x="35" y="68" fontSize="10" fontWeight="700" fill={DAY08} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>TX</text>
           {/* Bad arrow */}
           <path d="M60 65 L200 65" stroke="#E53E3E" strokeWidth="2" strokeDasharray="4 3" />
           <path d="M194 60 L206 65 L194 70" stroke="#E53E3E" strokeWidth="2" fill="none" />
-          <text x="125" y="55" fontSize="9" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">no_sync</text>
+          <text x="125" y="55" fontSize="9" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>no_sync</text>
           {/* RX flop */}
           <rect x="210" y="50" width="50" height="30" rx="3" stroke="#4A6FA5" strokeWidth="1.5" fill="rgba(74,111,165,0.10)" />
-          <text x="235" y="68" fontSize="10" fontWeight="700" fill="#4A6FA5" textAnchor="middle" fontFamily="monospace">RX</text>
+          <text x="235" y="68" fontSize="10" fontWeight="700" fill="#4A6FA5" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>RX</text>
         </svg>
 
         <div style={{ position: 'absolute', bottom: '-60px', left: '-60px', width: '320px', height: '320px', background: `radial-gradient(circle, ${DAY08}18 0%, transparent 70%)`, borderRadius: '50%' }} />

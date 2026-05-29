@@ -38,8 +38,8 @@ const agenda = [
     desc: '`=` vs `<=` 4 패턴 — CP15·CP17·CP18·SS6 정확 매핑.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <text x="5" y="19" fontSize="14" fontWeight="800" fill="#4A6FA5" fontFamily="monospace">=</text>
-        <text x="14" y="19" fontSize="14" fontWeight="800" fill={DAY05} fontFamily="monospace">&lt;=</text>
+        <text x="5" y="19" fontSize="14" fontWeight="800" fill="#4A6FA5" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>=</text>
+        <text x="14" y="19" fontSize="14" fontWeight="800" fill={DAY05} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>&lt;=</text>
       </svg>
     ),
     color: '#4A6FA5',

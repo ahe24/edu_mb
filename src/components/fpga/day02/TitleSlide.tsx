@@ -45,17 +45,17 @@ export default function TitleSlide() {
         {/* 우하단 — 파이프라인 흐름 */}
         <svg style={{ position: 'absolute', bottom: '50px', right: '40px', opacity: 0.10 }} width="340" height="80" viewBox="0 0 340 80">
           <rect x="0" y="20" width="70" height="36" rx="6" stroke="#4A6FA5" strokeWidth="2" fill="rgba(74,111,165,0.08)" />
-          <text x="35" y="43" textAnchor="middle" fill="#4A6FA5" fontSize="11" fontFamily="monospace" fontWeight="700">RTL</text>
+          <text x="35" y="43" textAnchor="middle" fill="#4A6FA5" fontSize="11" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">RTL</text>
           <path d="M72 38h18" stroke="#4A6FA5" strokeWidth="2" />
           <path d="M86 33l6 5-6 5" stroke="#4A6FA5" strokeWidth="1.8" fill="none" strokeLinecap="round" />
           <rect x="92" y="20" width="90" height="36" rx="6" stroke="#E8913A" strokeWidth="2.5" fill="rgba(232,145,58,0.08)" />
-          <text x="137" y="36" textAnchor="middle" fill="#E8913A" fontSize="10" fontFamily="monospace" fontWeight="700">Questa</text>
-          <text x="137" y="50" textAnchor="middle" fill="#E8913A" fontSize="10" fontFamily="monospace" fontWeight="700">Lint</text>
+          <text x="137" y="36" textAnchor="middle" fill="#E8913A" fontSize="10" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Questa</text>
+          <text x="137" y="50" textAnchor="middle" fill="#E8913A" fontSize="10" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Lint</text>
           <path d="M184 38h18" stroke="#4A6FA5" strokeWidth="2" />
           <path d="M198 33l6 5-6 5" stroke="#4A6FA5" strokeWidth="1.8" fill="none" strokeLinecap="round" />
           <rect x="204" y="20" width="90" height="36" rx="6" stroke="#5B8C5A" strokeWidth="2" fill="rgba(91,140,90,0.08)" />
-          <text x="249" y="36" textAnchor="middle" fill="#5B8C5A" fontSize="10" fontFamily="monospace" fontWeight="700">Lint</text>
-          <text x="249" y="50" textAnchor="middle" fill="#5B8C5A" fontSize="10" fontFamily="monospace" fontWeight="700">Report</text>
+          <text x="249" y="36" textAnchor="middle" fill="#5B8C5A" fontSize="10" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Lint</text>
+          <text x="249" y="50" textAnchor="middle" fill="#5B8C5A" fontSize="10" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Report</text>
         </svg>
 
         {/* Glow 효과 */}

@@ -25,9 +25,9 @@ export default function TitleSlide() {
           <circle cx="80" cy="80" r="50" stroke={DAY06} strokeWidth="3" fill="rgba(107,70,193,0.06)" />
           <line x1="118" y1="118" x2="155" y2="160" stroke={DAY06} strokeWidth="5" strokeLinecap="round" />
           {/* 내부: latch */}
-          <text x="80" y="70" textAnchor="middle" fontSize="10" fontWeight="800" fill={DAY06} fontFamily="monospace">latch</text>
-          <text x="80" y="85" textAnchor="middle" fontSize="10" fontWeight="800" fill={DAY06} fontFamily="monospace">case?</text>
-          <text x="80" y="100" textAnchor="middle" fontSize="10" fontWeight="800" fill={DAY06} fontFamily="monospace">width</text>
+          <text x="80" y="70" textAnchor="middle" fontSize="10" fontWeight="800" fill={DAY06} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>latch</text>
+          <text x="80" y="85" textAnchor="middle" fontSize="10" fontWeight="800" fill={DAY06} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>case?</text>
+          <text x="80" y="100" textAnchor="middle" fontSize="10" fontWeight="800" fill={DAY06} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>width</text>
         </svg>
 
         {/* 우하단 — FSM 다이어그램 */}
@@ -36,10 +36,10 @@ export default function TitleSlide() {
           <circle cx="110" cy="35" r="22" stroke={DAY06} strokeWidth="2" fill="rgba(107,70,193,0.08)" />
           <circle cx="110" cy="95" r="22" stroke="#E53E3E" strokeWidth="2" strokeDasharray="4 2" fill="rgba(229,62,62,0.06)" />
           <circle cx="200" cy="65" r="22" stroke={DAY06} strokeWidth="2" fill="rgba(107,70,193,0.08)" />
-          <text x="30"  y="70" textAnchor="middle" fontSize="11" fontWeight="800" fill={DAY06} fontFamily="monospace">S0</text>
-          <text x="110" y="40" textAnchor="middle" fontSize="11" fontWeight="800" fill={DAY06} fontFamily="monospace">S1</text>
-          <text x="110" y="100" textAnchor="middle" fontSize="11" fontWeight="800" fill="#E53E3E" fontFamily="monospace">??</text>
-          <text x="200" y="70" textAnchor="middle" fontSize="11" fontWeight="800" fill={DAY06} fontFamily="monospace">S2</text>
+          <text x="30"  y="70" textAnchor="middle" fontSize="11" fontWeight="800" fill={DAY06} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>S0</text>
+          <text x="110" y="40" textAnchor="middle" fontSize="11" fontWeight="800" fill={DAY06} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>S1</text>
+          <text x="110" y="100" textAnchor="middle" fontSize="11" fontWeight="800" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>??</text>
+          <text x="200" y="70" textAnchor="middle" fontSize="11" fontWeight="800" fill={DAY06} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>S2</text>
           <path d="M52 60 L92 40" stroke={DAY06} strokeWidth="1.5" />
           <path d="M132 40 L180 58" stroke={DAY06} strokeWidth="1.5" />
         </svg>

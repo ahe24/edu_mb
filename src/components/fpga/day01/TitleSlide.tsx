@@ -61,13 +61,13 @@ export default function TitleSlide() {
 
         {/* 우하단 — 디지털 파형 */}
         <svg style={{ position: 'absolute', bottom: '50px', right: '40px', opacity: 0.10 }} width="320" height="140" viewBox="0 0 320 140">
-          <text x="0" y="18" fill="#4A6FA5" fontSize="11" fontFamily="monospace" fontWeight="600">CLK</text>
+          <text x="0" y="18" fill="#4A6FA5" fontSize="11" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="600">CLK</text>
           <polyline points="35,25 35,5 55,5 55,25 75,25 75,5 95,5 95,25 115,25 115,5 135,5 135,25 155,25 155,5 175,5 175,25 195,25 195,5 215,5 215,25 235,25 235,5 255,5 255,25 275,25 275,5 295,5 295,25" stroke="#4A6FA5" strokeWidth="2" fill="none" />
-          <text x="0" y="58" fill="#5B8C5A" fontSize="11" fontFamily="monospace" fontWeight="600">DATA</text>
+          <text x="0" y="58" fill="#5B8C5A" fontSize="11" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="600">DATA</text>
           <polyline points="35,65 55,65 55,45 95,45 95,65 115,65 115,45 175,45 175,65 195,65 195,45 235,45 235,65 295,65" stroke="#5B8C5A" strokeWidth="2" fill="none" />
-          <text x="0" y="98" fill="#8B6FA5" fontSize="11" fontFamily="monospace" fontWeight="600">VALID</text>
+          <text x="0" y="98" fill="#8B6FA5" fontSize="11" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="600">VALID</text>
           <polyline points="35,105 75,105 75,85 135,85 135,105 175,105 175,85 255,85 255,105 295,105" stroke="#8B6FA5" strokeWidth="2" fill="none" />
-          <text x="0" y="133" fill="#E8913A" fontSize="11" fontFamily="monospace" fontWeight="600">READY</text>
+          <text x="0" y="133" fill="#E8913A" fontSize="11" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="600">READY</text>
           <polyline points="35,135 95,135 95,120 115,120 115,135 195,135 195,120 215,120 215,135 295,135" stroke="#E8913A" strokeWidth="2" fill="none" />
         </svg>
 

@@ -23,16 +23,16 @@ export default function TitleSlide() {
         {/* 좌상단 — sim ≠ synth 비교 그래픽 */}
         <svg style={{ position: 'absolute', top: '48px', left: '56px', opacity: 0.07 }} width="240" height="170" viewBox="0 0 240 170">
           {/* sim 파형 */}
-          <text x="4" y="16" fontSize="11" fontWeight="700" fill="#4A6FA5" fontFamily="monospace">SIM</text>
+          <text x="4" y="16" fontSize="11" fontWeight="700" fill="#4A6FA5" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>SIM</text>
           <path d="M30 22h24v-12h24v12h24v-12h24v12h24" stroke="#4A6FA5" strokeWidth="2" fill="none" />
           {/* ≠ */}
-          <text x="110" y="60" fontSize="24" fontWeight="900" fill={DAY05} fontFamily="monospace">≠</text>
+          <text x="110" y="60" fontSize="24" fontWeight="900" fill={DAY05} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>≠</text>
           {/* synth 파형 */}
-          <text x="4" y="100" fontSize="11" fontWeight="700" fill={DAY05} fontFamily="monospace">SYNTH</text>
+          <text x="4" y="100" fontSize="11" fontWeight="700" fill={DAY05} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>SYNTH</text>
           <path d="M30 106h24v-12h24v-12h24v24h24v-24h24" stroke={DAY05} strokeWidth="2" fill="none" />
           {/* warning */}
           <circle cx="200" cy="140" r="18" stroke="#E53E3E" strokeWidth="2" fill="rgba(229,62,62,0.08)" />
-          <text x="200" y="147" textAnchor="middle" fontSize="16" fontWeight="800" fill="#E53E3E" fontFamily="monospace">!</text>
+          <text x="200" y="147" textAnchor="middle" fontSize="16" fontWeight="800" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>!</text>
         </svg>
 
         {/* 우하단 — 합성 불가 구문 아이콘 */}
@@ -45,7 +45,7 @@ export default function TitleSlide() {
           ].map((k) => (
             <g key={k.t}>
               <rect x={k.x} y="30" width="70" height="30" rx="5" stroke={DAY05} strokeWidth="2" fill={`${DAY05}12`} />
-              <text x={k.x + 35} y="50" textAnchor="middle" fontSize="9" fontWeight="800" fill={DAY05} fontFamily="monospace">{k.t}</text>
+              <text x={k.x + 35} y="50" textAnchor="middle" fontSize="9" fontWeight="800" fill={DAY05} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{k.t}</text>
               <line x1={k.x + 8} y1="38" x2={k.x + 62} y2="52" stroke="#E53E3E" strokeWidth="1.5" opacity="0.8" />
             </g>
           ))}

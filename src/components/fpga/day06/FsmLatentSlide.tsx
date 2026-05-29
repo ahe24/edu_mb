@@ -68,7 +68,7 @@ function FsmDiagram({ sel }: { sel: IssueKey }) {
 
       {/* S0 */}
       <circle cx={S0.x} cy={S0.y} r="20" stroke="#4A6FA5" strokeWidth="2" fill="rgba(74,111,165,0.08)" />
-      <text x={S0.x} y={S0.y + 4} fontSize="11" fontWeight="800" textAnchor="middle" fill="#4A6FA5" fontFamily="monospace">{S0.label}</text>
+      <text x={S0.x} y={S0.y + 4} fontSize="11" fontWeight="800" textAnchor="middle" fill="#4A6FA5" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{S0.label}</text>
 
       {/* S1 */}
       <circle cx={S1.x} cy={S1.y} r="20"
@@ -77,7 +77,7 @@ function FsmDiagram({ sel }: { sel: IssueKey }) {
         strokeDasharray={isF1 ? '5 3' : 'none'}
         fill={isF1 ? 'rgba(229,62,62,0.08)' : 'rgba(74,111,165,0.08)'} />
       <text x={S1.x} y={S1.y + 4} fontSize="11" fontWeight="800" textAnchor="middle"
-        fill={isF1 ? '#E53E3E' : '#4A6FA5'} fontFamily="monospace">{S1.label}</text>
+        fill={isF1 ? '#E53E3E' : '#4A6FA5'} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{S1.label}</text>
       {isF1 && <text x={S1.x} y={S1.y - 25} fontSize="9" fontWeight="800" textAnchor="middle" fill="#E53E3E">unreachable</text>}
 
       {/* S2 (deadend) */}
@@ -86,18 +86,18 @@ function FsmDiagram({ sel }: { sel: IssueKey }) {
         strokeWidth={isF2 ? 2.5 : 2}
         fill={isF2 ? 'rgba(229,62,62,0.12)' : 'rgba(74,111,165,0.08)'} />
       <text x={S2.x} y={S2.y + 4} fontSize="11" fontWeight="800" textAnchor="middle"
-        fill={isF2 ? '#E53E3E' : '#4A6FA5'} fontFamily="monospace">{S2.label}</text>
+        fill={isF2 ? '#E53E3E' : '#4A6FA5'} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{S2.label}</text>
       {isF2 && <text x={S2.x} y={S2.y + 36} fontSize="9" fontWeight="800" textAnchor="middle" fill="#E53E3E">deadend</text>}
 
       {/* S3 */}
       <circle cx={S3.x} cy={S3.y} r="20" stroke="#4A6FA5" strokeWidth="2" fill="rgba(74,111,165,0.08)" />
-      <text x={S3.x} y={S3.y + 4} fontSize="11" fontWeight="800" textAnchor="middle" fill="#4A6FA5" fontFamily="monospace">{S3.label}</text>
+      <text x={S3.x} y={S3.y + 4} fontSize="11" fontWeight="800" textAnchor="middle" fill="#4A6FA5" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{S3.label}</text>
 
       {/* Sx — 미정의 조합 (F3) */}
       {isF3 && (
         <>
           <circle cx={Sx.x} cy={Sx.y} r="20" stroke="#DD6B20" strokeWidth="2.5" strokeDasharray="5 3" fill="rgba(221,107,32,0.12)" />
-          <text x={Sx.x} y={Sx.y + 4} fontSize="11" fontWeight="800" textAnchor="middle" fill="#DD6B20" fontFamily="monospace">{Sx.label}</text>
+          <text x={Sx.x} y={Sx.y + 4} fontSize="11" fontWeight="800" textAnchor="middle" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{Sx.label}</text>
           <text x={Sx.x} y={Sx.y + 36} fontSize="9" fontWeight="800" textAnchor="middle" fill="#DD6B20">미정의 조합</text>
         </>
       )}

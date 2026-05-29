@@ -13,29 +13,29 @@ function XPropWave() {
         .xp-x { animation: xpPulse 1.8s ease-in-out infinite; }
       `}</style>
       {/* clk */}
-      <text x="4" y="20" fontSize="10" fontWeight="800" fill="#4A6FA5" fontFamily="monospace">clk</text>
+      <text x="4" y="20" fontSize="10" fontWeight="800" fill="#4A6FA5" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>clk</text>
       <path d="M30 18h18v-10h18v10h18v-10h18v10h18v-10h18v10h18v-10h18v10h18v-10h18v10"
         stroke="#4A6FA5" strokeWidth="1.5" fill="none" />
 
       {/* reset 없는 FF */}
-      <text x="4" y="56" fontSize="10" fontWeight="800" fill="#E53E3E" fontFamily="monospace">FF_no_rst</text>
+      <text x="4" y="56" fontSize="10" fontWeight="800" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>FF_no_rst</text>
       <rect className="xp-x" x="30" y="44" width="160" height="18" rx="2" fill="rgba(229,62,62,0.12)" stroke="#E53E3E" strokeWidth="1.3" strokeDasharray="4 2" />
-      <text x="110" y="57" fontSize="11" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">X X X X X X X</text>
+      <text x="110" y="57" fontSize="11" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>X X X X X X X</text>
       <path d="M190 54h18v-12h18v12h18v-12h18v12h18v-12h18v12" stroke="#E53E3E" strokeWidth="1.5" fill="none" />
 
       {/* undriven source */}
-      <text x="4" y="96" fontSize="10" fontWeight="800" fill="#E8913A" fontFamily="monospace">undriven</text>
+      <text x="4" y="96" fontSize="10" fontWeight="800" fill="#E8913A" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>undriven</text>
       <rect className="xp-x" x="30" y="84" width="280" height="18" rx="2" fill="rgba(232,145,58,0.12)" stroke="#E8913A" strokeWidth="1.3" strokeDasharray="4 2" />
-      <text x="170" y="97" fontSize="11" fontWeight="800" fill="#E8913A" textAnchor="middle" fontFamily="monospace">X X X X X X X X X X</text>
+      <text x="170" y="97" fontSize="11" fontWeight="800" fill="#E8913A" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>X X X X X X X X X X</text>
 
       {/* downstream */}
-      <text x="4" y="136" fontSize="10" fontWeight="800" fill="#E53E3E" fontFamily="monospace">downstream</text>
+      <text x="4" y="136" fontSize="10" fontWeight="800" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>downstream</text>
       <rect className="xp-x" x="30" y="124" width="280" height="18" rx="2" fill="rgba(229,62,62,0.14)" stroke="#E53E3E" strokeWidth="1.3" />
-      <text x="170" y="137" fontSize="11" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">X 전파 → V&amp;V 무효</text>
+      <text x="170" y="137" fontSize="11" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>X 전파 → V&amp;V 무효</text>
 
       {/* 시간 축 */}
       <line x1="30" y1="160" x2="320" y2="160" stroke="#718096" strokeWidth="0.8" />
-      <text x="330" y="164" fontSize="9" fill="#718096" fontFamily="monospace">t</text>
+      <text x="330" y="164" fontSize="9" fill="#718096" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>t</text>
     </svg>
   );
 }

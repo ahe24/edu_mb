@@ -46,18 +46,18 @@ export default function TitleSlide() {
         {/* 우하단 — DO-254 / FPGA Methodology 레이블 */}
         <svg style={{ position: 'absolute', bottom: '45px', right: '40px', opacity: 0.10 }} width="360" height="100" viewBox="0 0 360 100">
           <rect x="0" y="15" width="100" height="36" rx="7" stroke="#4A6FA5" strokeWidth="2" fill="rgba(74,111,165,0.08)" />
-          <text x="50" y="28" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">FPGA</text>
-          <text x="50" y="43" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">Methodology</text>
+          <text x="50" y="28" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">FPGA</text>
+          <text x="50" y="43" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Methodology</text>
           <path d="M102 33h16" stroke="#4A6FA5" strokeWidth="1.8" />
           <path d="M114 29l4 4-4 4" stroke="#4A6FA5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
           <rect x="120" y="15" width="100" height="36" rx="7" stroke="#8B6FA5" strokeWidth="2" fill="rgba(139,111,165,0.08)" />
-          <text x="170" y="28" textAnchor="middle" fill="#8B6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">DO-254</text>
-          <text x="170" y="43" textAnchor="middle" fill="#8B6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">Based Checks</text>
+          <text x="170" y="28" textAnchor="middle" fill="#8B6FA5" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">DO-254</text>
+          <text x="170" y="43" textAnchor="middle" fill="#8B6FA5" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Based Checks</text>
           <path d="M222 33h16" stroke="#4A6FA5" strokeWidth="1.8" />
           <path d="M234 29l4 4-4 4" stroke="#4A6FA5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
           <rect x="240" y="15" width="110" height="36" rx="7" stroke="#E8913A" strokeWidth="2" fill="rgba(232,145,58,0.08)" />
-          <text x="295" y="28" textAnchor="middle" fill="#E8913A" fontSize="9" fontFamily="monospace" fontWeight="700">Customization</text>
-          <text x="295" y="43" textAnchor="middle" fill="#E8913A" fontSize="9" fontFamily="monospace" fontWeight="700">&amp; Waiver</text>
+          <text x="295" y="28" textAnchor="middle" fill="#E8913A" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Customization</text>
+          <text x="295" y="43" textAnchor="middle" fill="#E8913A" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">&amp; Waiver</text>
         </svg>
 
         {/* Glow 효과 */}

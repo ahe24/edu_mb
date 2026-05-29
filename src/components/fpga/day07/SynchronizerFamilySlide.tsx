@@ -104,58 +104,58 @@ const impls: Record<string, Impl> = {
         <svg viewBox="0 0 560 230" style={{ width: '100%' }}>
           {/* Vertical guide lines at key rx_clk edges */}
           <line x1="235" y1="18" x2="235" y2="220" stroke="#E53E3E" strokeWidth="0.7" strokeDasharray="2 2" opacity="0.55" />
-          <text x="235" y="13" fontSize="7.5" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">edge n (setup 위반)</text>
+          <text x="235" y="13" fontSize="7.5" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>edge n (setup 위반)</text>
           <line x1="315" y1="18" x2="315" y2="220" stroke="#48BB78" strokeWidth="0.7" strokeDasharray="2 2" opacity="0.55" />
-          <text x="315" y="13" fontSize="7.5" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily="monospace">edge n+1 (안정 capture)</text>
+          <text x="315" y="13" fontSize="7.5" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>edge n+1 (안정 capture)</text>
 
           {/* tx_clk — fast (period 50), orange */}
-          <text x="4" y="38" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">tx_clk</text>
+          <text x="4" y="38" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>tx_clk</text>
           <path d="M 60,44 L 70,44 L 70,28 L 95,28 L 95,44 L 120,44 L 120,28 L 145,28 L 145,44 L 170,44 L 170,28 L 195,28 L 195,44 L 220,44 L 220,28 L 245,28 L 245,44 L 270,44 L 270,28 L 295,28 L 295,44 L 320,44 L 320,28 L 345,28 L 345,44 L 370,44 L 370,28 L 395,28 L 395,44 L 420,44 L 420,28 L 445,28 L 445,44 L 470,44 L 470,28 L 495,28 L 495,44 L 520,44 L 520,28 L 545,28 L 545,44 L 555,44"
                 stroke="#DD6B20" strokeWidth="1.4" fill="none" />
 
           {/* din — TX domain async signal, rises at x=220 (just 15px before rx_clk edge at 235) */}
-          <text x="4" y="74" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">din</text>
+          <text x="4" y="74" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>din</text>
           <path d="M 60,81 L 220,81 L 220,64 L 555,64" stroke="#DD6B20" strokeWidth="1.6" fill="none" />
-          <text x="170" y="76" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">tx 도메인에서 비동기로 0→1</text>
+          <text x="170" y="76" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>tx 도메인에서 비동기로 0→1</text>
           {/* arrow from din transition to rx edge */}
           <line x1="222" y1="56" x2="233" y2="56" stroke="#E53E3E" strokeWidth="0.9" />
           <path d="M 231,54 L 233,56 L 231,58" stroke="#E53E3E" strokeWidth="0.9" fill="none" />
 
           {/* rx_clk — slower (period 80), cyan, edges at 75, 155, 235, 315, 395, 475 */}
-          <text x="4" y="112" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">rx_clk</text>
+          <text x="4" y="112" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rx_clk</text>
           <path d="M 60,118 L 75,118 L 75,102 L 115,102 L 115,118 L 155,118 L 155,102 L 195,102 L 195,118 L 235,118 L 235,102 L 275,102 L 275,118 L 315,118 L 315,102 L 355,102 L 355,118 L 395,118 L 395,102 L 435,102 L 435,118 L 475,118 L 475,102 L 515,102 L 515,118 L 555,118"
                 stroke={DAY07} strokeWidth="1.4" fill="none" />
 
           {/* meta_r — 1st FF output: low → metastable region → high */}
-          <text x="4" y="146" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">meta_r</text>
-          <text x="4" y="156" fontSize="7" fontWeight="800" fill={DAY07} fontFamily="monospace" opacity="0.75">(1st FF)</text>
+          <text x="4" y="146" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>meta_r</text>
+          <text x="4" y="156" fontSize="7" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' opacity="0.75">(1st FF)</text>
           {/* low portion before metastable */}
           <line x1="60" y1="153" x2="235" y2="153" stroke={DAY07} strokeWidth="1.6" />
           {/* metastable band: edge n (235) → resolved by x=275 */}
           <rect x="235" y="137" width="40" height="16" fill="rgba(229,62,62,0.22)" stroke="#E53E3E" strokeWidth="0.9" strokeDasharray="2 2" />
           {/* oscillation hint inside metastable region */}
           <path d="M 240,145 Q 245,138 250,145 T 260,145 T 270,145" stroke="#E53E3E" strokeWidth="0.9" fill="none" opacity="0.85" />
-          <text x="255" y="133" fontSize="7.5" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">meta ?</text>
+          <text x="255" y="133" fontSize="7.5" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>meta ?</text>
           {/* high portion after resolution */}
           <line x1="275" y1="137" x2="555" y2="137" stroke={DAY07} strokeWidth="1.6" />
           {/* τ arrow */}
           <line x1="237" y1="166" x2="273" y2="166" stroke="#E53E3E" strokeWidth="0.9" />
           <path d="M 239,164 L 237,166 L 239,168" stroke="#E53E3E" strokeWidth="0.9" fill="none" />
           <path d="M 271,164 L 273,166 L 271,168" stroke="#E53E3E" strokeWidth="0.9" fill="none" />
-          <text x="255" y="174" fontSize="7" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">τ (resolve)</text>
+          <text x="255" y="174" fontSize="7" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>τ (resolve)</text>
 
           {/* dout — 2nd FF output: stays low until edge n+1, then clean rise */}
-          <text x="4" y="190" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">dout</text>
-          <text x="4" y="200" fontSize="7" fontWeight="800" fill={DAY07} fontFamily="monospace" opacity="0.75">(2nd FF)</text>
+          <text x="4" y="190" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>dout</text>
+          <text x="4" y="200" fontSize="7" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' opacity="0.75">(2nd FF)</text>
           <path d="M 60,197 L 315,197 L 315,181 L 555,181" stroke={DAY07} strokeWidth="1.6" fill="none" />
           <circle cx="315" cy="181" r="3.5" fill="#48BB78" />
-          <text x="335" y="178" fontSize="8" fontWeight="800" fill="#48BB78" fontFamily="monospace">★ 항상 안정 값</text>
+          <text x="335" y="178" fontSize="8" fontWeight="800" fill="#48BB78" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>★ 항상 안정 값</text>
 
           {/* Latency arrow */}
           <line x1="237" y1="217" x2="313" y2="217" stroke="#48BB78" strokeWidth="0.9" />
           <path d="M 239,215 L 237,217 L 239,219" stroke="#48BB78" strokeWidth="0.9" fill="none" />
           <path d="M 311,215 L 313,217 L 311,219" stroke="#48BB78" strokeWidth="0.9" fill="none" />
-          <text x="275" y="226" fontSize="7.5" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily="monospace">latency = 2 rx_clk cycle</text>
+          <text x="275" y="226" fontSize="7.5" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>latency = 2 rx_clk cycle</text>
         </svg>
         <div style={{ fontSize: '0.7rem', color: FPGA.textLight, marginTop: '0.3rem', lineHeight: 1.5 }}>
           <strong style={{ color: '#E53E3E' }}>edge n</strong>: din이 rx_clk rising edge 직전에 변경 → setup 위반 → meta_r가 metastable 진입.
@@ -245,45 +245,45 @@ endmodule
         <div style={{ fontSize: '0.72rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.2rem' }}>Timing diagram — toggle 변환 + edge detect</div>
         <svg viewBox="0 0 560 220" style={{ width: '100%' }}>
           {/* src_clk (TX) — period 60, rising edges at 80,140,200,260,320,380,440,500 */}
-          <text x="4" y="32" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">src_clk</text>
+          <text x="4" y="32" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>src_clk</text>
           <path d="M 60,38 L 80,38 L 80,22 L 110,22 L 110,38 L 140,38 L 140,22 L 170,22 L 170,38 L 200,38 L 200,22 L 230,22 L 230,38 L 260,38 L 260,22 L 290,22 L 290,38 L 320,38 L 320,22 L 350,22 L 350,38 L 380,38 L 380,22 L 410,22 L 410,38 L 440,38 L 440,22 L 470,22 L 470,38 L 500,38 L 500,22 L 530,22 L 530,38 L 555,38"
                 stroke="#DD6B20" strokeWidth="1.4" fill="none" />
 
           {/* src_pulse — 1-cycle pulse, transitions at src_clk rising edges */}
-          <text x="4" y="68" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">src_pulse</text>
+          <text x="4" y="68" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>src_pulse</text>
           <path d="M 60,75 L 80,75 L 80,60 L 140,60 L 140,75 L 260,75 L 260,60 L 320,60 L 320,75 L 555,75"
                 stroke="#DD6B20" strokeWidth="1.5" fill="none" />
-          <text x="110" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">P1</text>
-          <text x="290" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">P2</text>
+          <text x="110" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>P1</text>
+          <text x="290" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>P2</text>
 
           {/* src_tog — toggle at next rising edge after pulse sampled */}
-          <text x="4" y="105" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">src_tog</text>
+          <text x="4" y="105" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>src_tog</text>
           <path d="M 60,112 L 140,112 L 140,97 L 320,97 L 320,112 L 555,112"
                 stroke="#DD6B20" strokeWidth="1.5" fill="none" />
-          <text x="230" y="92" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">toggle on each pulse (level signal)</text>
+          <text x="230" y="92" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>toggle on each pulse (level signal)</text>
 
           {/* dst_clk (RX, 느린 clock) — period 90, rising edges at 90,180,270,360,450,540 */}
-          <text x="4" y="145" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">dst_clk</text>
+          <text x="4" y="145" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>dst_clk</text>
           <path d="M 60,151 L 90,151 L 90,135 L 135,135 L 135,151 L 180,151 L 180,135 L 225,135 L 225,151 L 270,151 L 270,135 L 315,135 L 315,151 L 360,151 L 360,135 L 405,135 L 405,151 L 450,151 L 450,135 L 495,135 L 495,151 L 540,151 L 540,135 L 555,135"
                 stroke={DAY07} strokeWidth="1.4" fill="none" />
-          <text x="310" y="130" fontSize="7" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">RX는 더 느린 clock — pulse 직접 sample 불가</text>
+          <text x="310" y="130" fontSize="7" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>RX는 더 느린 clock — pulse 직접 sample 불가</text>
 
           {/* dst_pulse — recovered pulse, transitions at dst_clk rising edges */}
           {/* src_tog@140 → sync[0]@180 → sync[1]@270 → sync[2]@360 → pulse=[270,360) */}
           {/* src_tog@320 → sync[0]@360 → sync[1]@450 → sync[2]@540 → pulse=[450,540) */}
-          <text x="4" y="185" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">dst_pulse</text>
+          <text x="4" y="185" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>dst_pulse</text>
           <path d="M 60,191 L 270,191 L 270,176 L 360,176 L 360,191 L 450,191 L 450,176 L 540,176 L 540,191 L 555,191"
                 stroke={DAY07} strokeWidth="1.5" fill="none" />
           <circle cx="270" cy="176" r="3" fill="#48BB78" />
           <circle cx="450" cy="176" r="3" fill="#48BB78" />
-          <text x="315" y="172" fontSize="7" fontWeight="800" fill="#48BB78" fontFamily="monospace">★ P1 복원</text>
-          <text x="495" y="172" fontSize="7" fontWeight="800" fill="#48BB78" fontFamily="monospace">★ P2 복원</text>
+          <text x="315" y="172" fontSize="7" fontWeight="800" fill="#48BB78" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>★ P1 복원</text>
+          <text x="495" y="172" fontSize="7" fontWeight="800" fill="#48BB78" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>★ P2 복원</text>
 
           {/* Spacing annotation */}
           <line x1="140" y1="207" x2="260" y2="207" stroke="#E8913A" strokeWidth="0.9" />
           <path d="M 142,205 L 140,207 L 142,209" stroke="#E8913A" strokeWidth="0.9" fill="none" />
           <path d="M 258,205 L 260,207 L 258,209" stroke="#E8913A" strokeWidth="0.9" fill="none" />
-          <text x="200" y="215" fontSize="7.5" fontWeight="800" fill="#E8913A" textAnchor="middle" fontFamily="monospace">spacing ≥ 2 × max(src, dst) period</text>
+          <text x="200" y="215" fontSize="7.5" fontWeight="800" fill="#E8913A" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>spacing ≥ 2 × max(src, dst) period</text>
         </svg>
       </div>
     ),
@@ -337,34 +337,34 @@ endmodule
           <svg viewBox="0 0 540 220" style={{ width: '100%' }}>
             {/* TX domain box */}
             <rect x="10" y="40" width="180" height="140" rx="8" stroke="#DD6B20" strokeWidth="1.8" fill="rgba(221,107,32,0.06)" strokeDasharray="4 3" />
-            <text x="100" y="32" fontSize="11" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">TX domain (tx_clk)</text>
+            <text x="100" y="32" fontSize="11" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>TX domain (tx_clk)</text>
 
             <rect x="30" y="70" width="80" height="34" rx="4" stroke="#DD6B20" strokeWidth="1.5" fill="rgba(221,107,32,0.12)" />
-            <text x="70" y="92" fontSize="11" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">data_tx[N]</text>
+            <text x="70" y="92" fontSize="11" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_tx[N]</text>
 
             <rect x="30" y="130" width="80" height="34" rx="4" stroke="#DD6B20" strokeWidth="1.5" fill="rgba(221,107,32,0.12)" />
-            <text x="70" y="152" fontSize="11" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">sel_tx</text>
+            <text x="70" y="152" fontSize="11" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_tx</text>
 
             <path d="M 110,87 L 220,87 L 220,110" stroke="#DD6B20" strokeWidth="1.5" fill="none" />
             <path d="M 110,147 L 220,147" stroke="#DD6B20" strokeWidth="1.5" fill="none" />
 
             <rect x="220" y="130" width="80" height="34" rx="4" stroke={DAY07} strokeWidth="1.8" fill="rgba(8,145,178,0.10)" />
-            <text x="260" y="146" fontSize="10" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily="monospace">2-DFF</text>
-            <text x="260" y="158" fontSize="8" fontWeight="600" fill={DAY07} textAnchor="middle" fontFamily="monospace">sync</text>
+            <text x="260" y="146" fontSize="10" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2-DFF</text>
+            <text x="260" y="158" fontSize="8" fontWeight="600" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sync</text>
 
             <rect x="320" y="40" width="210" height="140" rx="8" stroke={DAY07} strokeWidth="1.8" fill="rgba(8,145,178,0.06)" strokeDasharray="4 3" />
-            <text x="425" y="32" fontSize="11" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily="monospace">RX domain (rx_clk)</text>
+            <text x="425" y="32" fontSize="11" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>RX domain (rx_clk)</text>
 
             <path d="M 340,70 L 400,70 L 420,90 L 420,130 L 400,150 L 340,150 Z" stroke={DAY07} strokeWidth="1.5" fill="rgba(8,145,178,0.10)" />
-            <text x="375" y="105" fontSize="11" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">MUX</text>
-            <text x="375" y="120" fontSize="8" fontWeight="500" fill={DAY07} textAnchor="middle" fontFamily="monospace">+ reg</text>
+            <text x="375" y="105" fontSize="11" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>MUX</text>
+            <text x="375" y="120" fontSize="8" fontWeight="500" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>+ reg</text>
 
             <path d="M 220,110 L 340,110" stroke="#DD6B20" strokeWidth="1.5" fill="none" />
             <path d="M 300,147 L 320,147 L 340,140" stroke={DAY07} strokeWidth="1.5" fill="none" />
-            <text x="305" y="138" fontSize="8" fontWeight="700" fill={DAY07} fontFamily="monospace">sel_sync</text>
+            <text x="305" y="138" fontSize="8" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_sync</text>
 
             <path d="M 420,110 L 510,110" stroke={DAY07} strokeWidth="1.5" fill="none" />
-            <text x="465" y="103" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">data_rx[N]</text>
+            <text x="465" y="103" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_rx[N]</text>
 
             <text x="155" y="200" fontSize="8.5" fontWeight="600" fill={FPGA.textLight} textAnchor="middle" fontStyle="italic">TX가 sel 동안 data hold (protocol)</text>
             <text x="425" y="200" fontSize="8.5" fontWeight="600" fill={FPGA.textLight} textAnchor="middle" fontStyle="italic">sel_sync rising edge에 안정 data capture</text>
@@ -377,14 +377,14 @@ endmodule
           <svg viewBox="0 0 560 220" style={{ width: '100%' }}>
             {/* Time guide verticals */}
             <line x1="120" y1="14" x2="120" y2="210" stroke="#48BB78" strokeWidth="0.7" strokeDasharray="2 2" opacity="0.5" />
-            <text x="120" y="10" fontSize="7" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily="monospace">T1</text>
+            <text x="120" y="10" fontSize="7" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>T1</text>
             <line x1="240" y1="14" x2="240" y2="210" stroke="#E53E3E" strokeWidth="0.8" strokeDasharray="2 2" opacity="0.65" />
-            <text x="240" y="10" fontSize="7" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">T3 capture</text>
+            <text x="240" y="10" fontSize="7" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>T3 capture</text>
             <line x1="420" y1="14" x2="420" y2="210" stroke="#48BB78" strokeWidth="0.7" strokeDasharray="2 2" opacity="0.5" />
-            <text x="420" y="10" fontSize="7" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily="monospace">T5 hold 끝</text>
+            <text x="420" y="10" fontSize="7" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>T5 hold 끝</text>
 
             {/* data_tx — bus notation (two parallel lines + X transitions) */}
-            <text x="4" y="36" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">data_tx</text>
+            <text x="4" y="36" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_tx</text>
             <line x1="60" y1="28" x2="116" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
             <line x1="60" y1="42" x2="116" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
             <line x1="116" y1="28" x2="124" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
@@ -395,41 +395,41 @@ endmodule
             <line x1="416" y1="42" x2="424" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
             <line x1="424" y1="28" x2="555" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
             <line x1="424" y1="42" x2="555" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
-            <text x="88" y="38" fontSize="8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">OLD</text>
-            <text x="270" y="38" fontSize="9" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">NEW (안정 hold)</text>
-            <text x="490" y="38" fontSize="8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">NEXT</text>
+            <text x="88" y="38" fontSize="8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>OLD</text>
+            <text x="270" y="38" fontSize="9" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEW (안정 hold)</text>
+            <text x="490" y="38" fontSize="8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEXT</text>
 
             {/* TX hold band */}
             <rect x="120" y="48" width="300" height="10" fill="rgba(72,187,120,0.18)" stroke="#48BB78" strokeWidth="0.7" strokeDasharray="2 2" />
-            <text x="270" y="56" fontSize="7" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily="monospace">TX hold ≥ sync latency + 1 cycle</text>
+            <text x="270" y="56" fontSize="7" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>TX hold ≥ sync latency + 1 cycle</text>
 
             {/* sel_tx */}
-            <text x="4" y="83" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">sel_tx</text>
+            <text x="4" y="83" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_tx</text>
             <path d="M 60,90 L 120,90 L 120,75 L 420,75 L 420,90 L 555,90" stroke="#DD6B20" strokeWidth="1.6" fill="none" />
 
             {/* sel_sync */}
-            <text x="4" y="133" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">sel_sync</text>
+            <text x="4" y="133" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_sync</text>
             <path d="M 60,140 L 240,140 L 240,125 L 480,125 L 480,140 L 555,140" stroke={DAY07} strokeWidth="1.6" fill="none" />
             {/* sync latency 표시 화살표 */}
             <line x1="130" y1="115" x2="230" y2="115" stroke={DAY07} strokeWidth="0.9" />
             <path d="M 132,113 L 130,115 L 132,117" stroke={DAY07} strokeWidth="0.9" fill="none" />
             <path d="M 228,113 L 230,115 L 228,117" stroke={DAY07} strokeWidth="0.9" fill="none" />
-            <text x="180" y="111" fontSize="7" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">2 rx_clk latency</text>
+            <text x="180" y="111" fontSize="7" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2 rx_clk latency</text>
 
             {/* Capture star at T3 */}
             <circle cx="240" cy="125" r="4" fill="#E53E3E" />
-            <text x="250" y="121" fontSize="8" fontWeight="800" fill="#E53E3E" fontFamily="monospace">★ data_rx ← data_tx</text>
+            <text x="250" y="121" fontSize="8" fontWeight="800" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>★ data_rx ← data_tx</text>
 
             {/* data_rx */}
-            <text x="4" y="183" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">data_rx</text>
+            <text x="4" y="183" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_rx</text>
             <line x1="60" y1="175" x2="236" y2="175" stroke={DAY07} strokeWidth="1.5" />
             <line x1="60" y1="189" x2="236" y2="189" stroke={DAY07} strokeWidth="1.5" />
             <line x1="236" y1="175" x2="244" y2="189" stroke={DAY07} strokeWidth="1.5" />
             <line x1="236" y1="189" x2="244" y2="175" stroke={DAY07} strokeWidth="1.5" />
             <line x1="244" y1="175" x2="555" y2="175" stroke={DAY07} strokeWidth="1.5" />
             <line x1="244" y1="189" x2="555" y2="189" stroke={DAY07} strokeWidth="1.5" />
-            <text x="148" y="185" fontSize="8" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">OLD</text>
-            <text x="400" y="185" fontSize="9" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily="monospace">NEW (T3 capture)</text>
+            <text x="148" y="185" fontSize="8" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>OLD</text>
+            <text x="400" y="185" fontSize="9" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEW (T3 capture)</text>
 
             <text x="280" y="208" fontSize="8" fontStyle="italic" fontWeight="700" fill={FPGA.text} textAnchor="middle">★ T3 시점 data_tx가 안정 hold 중이라 안전 — hold 위반 시 잘못된 값 capture</text>
           </svg>
@@ -496,42 +496,42 @@ always @(posedge rx_clk)
           ].map((p) => (
             <g key={p.label}>
               <line x1={p.x} y1="14" x2={p.x} y2="210" stroke={p.color} strokeWidth="0.7" strokeDasharray="2 2" opacity="0.45" />
-              <text x={p.x} y="9" fontSize="7" fontWeight="800" fill={p.color} textAnchor="middle" fontFamily="monospace">{p.label} {p.text}</text>
+              <text x={p.x} y="9" fontSize="7" fontWeight="800" fill={p.color} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>{p.label} {p.text}</text>
             </g>
           ))}
 
           {/* data_tx — bus */}
-          <text x="4" y="36" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">data_tx</text>
+          <text x="4" y="36" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_tx</text>
           <line x1="60" y1="28" x2="96" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
           <line x1="60" y1="42" x2="96" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
           <line x1="96" y1="28" x2="104" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
           <line x1="96" y1="42" x2="104" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
           <line x1="104" y1="28" x2="555" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
           <line x1="104" y1="42" x2="555" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
-          <text x="78" y="38" fontSize="8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">old</text>
-          <text x="330" y="38" fontSize="9" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">NEW (full transaction 동안 hold)</text>
+          <text x="78" y="38" fontSize="8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>old</text>
+          <text x="330" y="38" fontSize="9" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEW (full transaction 동안 hold)</text>
 
           {/* req (TX 측) */}
-          <text x="4" y="76" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">req (tx)</text>
+          <text x="4" y="76" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>req (tx)</text>
           <path d="M 60,82 L 100,82 L 100,68 L 360,68 L 360,82 L 555,82" stroke="#DD6B20" strokeWidth="1.6" fill="none" />
 
           {/* req_sync (RX 측) */}
-          <text x="4" y="116" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">req_sync (rx)</text>
+          <text x="4" y="116" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>req_sync (rx)</text>
           <path d="M 60,122 L 175,122 L 175,108 L 410,108 L 410,122 L 555,122" stroke={DAY07} strokeWidth="1.5" fill="none" />
-          <text x="138" y="103" fontSize="6.8" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">2 rx_clk sync</text>
+          <text x="138" y="103" fontSize="6.8" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2 rx_clk sync</text>
 
           {/* ack (RX 측) */}
-          <text x="4" y="156" fontSize="10" fontWeight="800" fill={DAY07} fontFamily="monospace">ack (rx)</text>
+          <text x="4" y="156" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>ack (rx)</text>
           <path d="M 60,162 L 195,162 L 195,148 L 425,148 L 425,162 L 555,162" stroke={DAY07} strokeWidth="1.6" fill="none" />
 
           {/* ack_sync (TX 측) */}
-          <text x="4" y="196" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily="monospace">ack_sync (tx)</text>
+          <text x="4" y="196" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>ack_sync (tx)</text>
           <path d="M 60,202 L 250,202 L 250,188 L 470,188 L 470,202 L 555,202" stroke="#DD6B20" strokeWidth="1.5" fill="none" />
-          <text x="223" y="184" fontSize="6.8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">2 tx_clk sync</text>
+          <text x="223" y="184" fontSize="6.8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2 tx_clk sync</text>
 
           {/* Capture marker */}
           <circle cx="195" cy="148" r="3.5" fill="#48BB78" />
-          <text x="220" y="143" fontSize="6.8" fontWeight="800" fill="#48BB78" fontFamily="monospace">★ data capture</text>
+          <text x="220" y="143" fontSize="6.8" fontWeight="800" fill="#48BB78" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>★ data capture</text>
         </svg>
       </div>
     ),
@@ -592,73 +592,73 @@ end`,
       <svg viewBox="0 0 580 270" style={{ width: '100%' }}>
         {/* WCLK domain */}
         <rect x="10" y="20" width="260" height="220" rx="8" stroke="#DD6B20" strokeWidth="1.8" fill="rgba(221,107,32,0.05)" strokeDasharray="4 3" />
-        <text x="140" y="14" fontSize="11" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">WCLK domain</text>
+        <text x="140" y="14" fontSize="11" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>WCLK domain</text>
 
         {/* wbin */}
         <rect x="30" y="45" width="80" height="28" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.12)" />
-        <text x="70" y="63" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">wbin (++)</text>
+        <text x="70" y="63" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wbin (++)</text>
 
         {/* bin→gray */}
         <rect x="30" y="90" width="80" height="28" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.12)" />
-        <text x="70" y="108" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">bin→gray</text>
+        <text x="70" y="108" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>bin→gray</text>
         <path d="M 70,73 L 70,90" stroke="#DD6B20" strokeWidth="1.3" />
 
         {/* wgray */}
-        <text x="82" y="125" fontSize="8.5" fontWeight="800" fill="#DD6B20" textAnchor="start" fontFamily="monospace">wgray</text>
+        <text x="82" y="125" fontSize="8.5" fontWeight="800" fill="#DD6B20" textAnchor="start" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wgray</text>
 
         {/* full comparator */}
         <rect x="80" y="180" width="100" height="32" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.10)" />
-        <text x="130" y="200" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">wfull cmp</text>
+        <text x="130" y="200" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wfull cmp</text>
 
         {/* rgray (RCLK, cyan) → 2DFF (wclk) → 도메인 색 전환 → rgray_sync (WCLK, orange) → wfull cmp */}
         {/* 1단: cyan — rgray가 WCLK 도메인의 2DFF 입력까지 전달 (y=154) */}
         <path d="M 500,154 L 254,154" stroke={DAY07} strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
         {/* 2DFF Block */}
         <rect x="220" y="143" width="34" height="22" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.12)" />
-        <text x="237" y="157" fontSize="8" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily="monospace">2DFF</text>
+        <text x="237" y="157" fontSize="8" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2DFF</text>
         {/* 2단: orange — 2DFF 출력은 wclk-domain 신호 rgray_sync */}
         <path d="M 220,154 L 130,154 L 130,180" stroke="#DD6B20" strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
-        <text x="175" y="148" fontSize="8" fontWeight="700" fill="#DD6B20" fontFamily="monospace" textAnchor="middle">rgray_sync</text>
+        <text x="175" y="148" fontSize="8" fontWeight="700" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="middle">rgray_sync</text>
 
         {/* RCLK domain */}
         <rect x="320" y="20" width="250" height="220" rx="8" stroke={DAY07} strokeWidth="1.8" fill="rgba(8,145,178,0.05)" strokeDasharray="4 3" />
-        <text x="445" y="14" fontSize="11" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily="monospace">RCLK domain</text>
+        <text x="445" y="14" fontSize="11" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>RCLK domain</text>
 
         {/* rbin */}
         <rect x="460" y="45" width="80" height="28" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.12)" />
-        <text x="500" y="63" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">rbin (++)</text>
+        <text x="500" y="63" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rbin (++)</text>
 
         {/* bin→gray */}
         <rect x="460" y="90" width="80" height="28" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.12)" />
-        <text x="500" y="108" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">bin→gray</text>
+        <text x="500" y="108" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>bin→gray</text>
         <path d="M 500,73 L 500,90" stroke={DAY07} strokeWidth="1.3" />
 
         {/* rgray */}
-        <text x="488" y="125" fontSize="8.5" fontWeight="800" fill={DAY07} textAnchor="end" fontFamily="monospace">rgray</text>
+        <text x="488" y="125" fontSize="8.5" fontWeight="800" fill={DAY07} textAnchor="end" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rgray</text>
 
         {/* empty comparator */}
         <rect x="390" y="180" width="100" height="32" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.10)" />
-        <text x="440" y="200" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily="monospace">rempty cmp</text>
+        <text x="440" y="200" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rempty cmp</text>
 
         {/* wgray (WCLK, orange) → 2DFF (rclk) → 도메인 색 전환 → wgray_sync (RCLK, cyan) → rempty cmp */}
         {/* 1단: orange — wgray가 RCLK 도메인의 2DFF 입력까지 전달 (y=134) */}
         <path d="M 70,134 L 330,134" stroke="#DD6B20" strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
         {/* 2DFF Block */}
         <rect x="330" y="123" width="34" height="22" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.12)" />
-        <text x="347" y="137" fontSize="8" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily="monospace">2DFF</text>
+        <text x="347" y="137" fontSize="8" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2DFF</text>
         {/* 2단: cyan — 2DFF 출력은 rclk-domain 신호 wgray_sync */}
         <path d="M 364,134 L 440,134 L 440,180" stroke={DAY07} strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
-        <text x="402" y="128" fontSize="8" fontWeight="700" fill={DAY07} fontFamily="monospace" textAnchor="middle">wgray_sync</text>
+        <text x="402" y="128" fontSize="8" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="middle">wgray_sync</text>
 
         {/* Dual-port RAM */}
         <rect x="135" y="245" width="310" height="22" rx="4" stroke="#4A5568" strokeWidth="1.5" fill="rgba(74,85,104,0.10)" />
-        <text x="290" y="260" fontSize="11" fontWeight="800" fill="#2D3748" textAnchor="middle" fontFamily="monospace">Dual-port RAM (2^AW × DW)</text>
+        <text x="290" y="260" fontSize="11" fontWeight="800" fill="#2D3748" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>Dual-port RAM (2^AW × DW)</text>
 
         {/* RAM connections */}
         <path d="M 70,118 L 70,235 L 200,235 L 200,245" stroke="#DD6B20" strokeWidth="1.2" fill="none" opacity="0.6" />
-        <text x="80" y="232" fontSize="8" fontWeight="700" fill="#DD6B20" fontFamily="monospace">wdata, wclk</text>
+        <text x="80" y="232" fontSize="8" fontWeight="700" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wdata, wclk</text>
         <path d="M 500,118 L 500,235 L 380,235 L 380,245" stroke={DAY07} strokeWidth="1.2" fill="none" opacity="0.6" />
-        <text x="490" y="232" fontSize="8" fontWeight="700" fill={DAY07} fontFamily="monospace" textAnchor="end">rclk, rdata</text>
+        <text x="490" y="232" fontSize="8" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="end">rclk, rdata</text>
       </svg>
       </div>
     ),

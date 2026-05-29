@@ -47,18 +47,18 @@ export default function TitleSlide() {
         {/* 우하단 — Layered Goals (장식, 카드와 겹치지 않도록 위치/투명도 조정) */}
         <svg style={{ position: 'absolute', bottom: '24px', right: '45px', opacity: 0.05 }} width="320" height="98" viewBox="0 0 360 110">
           <rect x="0" y="25" width="100" height="36" rx="7" stroke="#4A6FA5" strokeWidth="2" fill="rgba(74,111,165,0.08)" />
-          <text x="50" y="38" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">Base Goal</text>
-          <text x="50" y="53" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">release</text>
+          <text x="50" y="38" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Base Goal</text>
+          <text x="50" y="53" textAnchor="middle" fill="#4A6FA5" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">release</text>
           <path d="M102 43h16" stroke="#4A6FA5" strokeWidth="1.8" />
           <path d="M114 39l4 4-4 4" stroke="#4A6FA5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
           <rect x="120" y="25" width="100" height="36" rx="7" stroke="#8B6FA5" strokeWidth="2" fill="rgba(139,111,165,0.08)" />
-          <text x="170" y="38" textAnchor="middle" fill="#8B6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">Project</text>
-          <text x="170" y="53" textAnchor="middle" fill="#8B6FA5" fontSize="9" fontFamily="monospace" fontWeight="700">Preference</text>
+          <text x="170" y="38" textAnchor="middle" fill="#8B6FA5" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Project</text>
+          <text x="170" y="53" textAnchor="middle" fill="#8B6FA5" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Preference</text>
           <path d="M222 43h16" stroke="#4A6FA5" strokeWidth="1.8" />
           <path d="M234 39l4 4-4 4" stroke="#4A6FA5" strokeWidth="1.5" fill="none" strokeLinecap="round" />
           <rect x="240" y="25" width="110" height="36" rx="7" stroke="#E8913A" strokeWidth="2" fill="rgba(232,145,58,0.08)" />
-          <text x="295" y="38" textAnchor="middle" fill="#E8913A" fontSize="9" fontFamily="monospace" fontWeight="700">Waivers</text>
-          <text x="295" y="53" textAnchor="middle" fill="#E8913A" fontSize="9" fontFamily="monospace" fontWeight="700">+ Audit</text>
+          <text x="295" y="38" textAnchor="middle" fill="#E8913A" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">Waivers</text>
+          <text x="295" y="53" textAnchor="middle" fill="#E8913A" fontSize="9" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' fontWeight="700">+ Audit</text>
         </svg>
 
         {/* Glow */}

@@ -36,32 +36,32 @@ export default function MetastabilitySlide() {
               <svg viewBox="0 0 480 220" style={{ width: '100%', height: 'auto' }}>
                 {/* === Setup window (RX edge 150 직전) === */}
                 <rect x="142" y="10" width="8" height="198" fill="rgba(229,62,62,0.07)" stroke="#E53E3E" strokeWidth="0.7" strokeDasharray="2 2" />
-                <text x="146" y="7" fontSize="6.8" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">tsu</text>
+                <text x="146" y="7" fontSize="6.8" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>tsu</text>
                 {/* === Hold window (RX edge 330 직후) === */}
                 <rect x="330" y="10" width="8" height="198" fill="rgba(229,62,62,0.07)" stroke="#E53E3E" strokeWidth="0.7" strokeDasharray="2 2" />
-                <text x="334" y="7" fontSize="6.8" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">th</text>
+                <text x="334" y="7" fontSize="6.8" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>th</text>
 
                 {/* === CLK_TX (period 63, 7 cycles) === */}
-                <text x="6" y="32" fontSize="10.5" fontWeight="800" fill="#DD6B20" fontFamily="monospace">CLK_TX</text>
+                <text x="6" y="32" fontSize="10.5" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>CLK_TX</text>
                 <path d="M 50,38 L 80,38 L 80,18 L 112,18 L 112,38 L 143,38 L 143,18 L 175,18 L 175,38 L 206,38 L 206,18 L 238,18 L 238,38 L 269,38 L 269,18 L 301,18 L 301,38 L 332,38 L 332,18 L 364,18 L 364,38 L 395,38 L 395,18 L 427,18 L 427,38 L 458,38 L 458,18 L 478,18"
                       stroke="#DD6B20" strokeWidth="1.5" fill="none" />
 
                 {/* === CLK_RX (period 90, 5 edges: 60/150/240/330/420) === */}
-                <text x="6" y="73" fontSize="10.5" fontWeight="800" fill={DAY07} fontFamily="monospace">CLK_RX</text>
+                <text x="6" y="73" fontSize="10.5" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>CLK_RX</text>
                 <path d="M 50,82 L 60,82 L 60,56 L 105,56 L 105,82 L 150,82 L 150,56 L 195,56 L 195,82 L 240,82 L 240,56 L 285,56 L 285,82 L 330,82 L 330,56 L 375,56 L 375,82 L 420,82 L 420,56 L 465,56 L 465,82 L 478,82"
                       stroke={DAY07} strokeWidth="1.5" fill="none" />
                 {/* RX edge 마커 — 위반(red) / 정상(green) */}
                 <circle cx="150" cy="56" r="3.5" fill="#E53E3E" />
-                <text x="150" y="49" fontSize="6.6" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">tsu 위반</text>
+                <text x="150" y="49" fontSize="6.6" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>tsu 위반</text>
                 <circle cx="240" cy="56" r="3" fill="#48BB78" />
-                <text x="240" y="49" fontSize="6.6" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily="monospace">정상 (1↑)</text>
+                <text x="240" y="49" fontSize="6.6" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>정상 (1↑)</text>
                 <circle cx="330" cy="56" r="3.5" fill="#E53E3E" />
-                <text x="330" y="49" fontSize="6.6" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">th 위반</text>
+                <text x="330" y="49" fontSize="6.6" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>th 위반</text>
                 <circle cx="420" cy="56" r="3" fill="#48BB78" />
-                <text x="420" y="49" fontSize="6.6" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily="monospace">정상 (0↑)</text>
+                <text x="420" y="49" fontSize="6.6" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>정상 (0↑)</text>
 
                 {/* === DATA (TX 도메인) — LOW→HIGH @ x=145 (TX edge 143), HIGH→LOW @ x=334 (TX edge 332) === */}
-                <text x="6" y="128" fontSize="10.5" fontWeight="800" fill="#DD6B20" fontFamily="monospace">DATA</text>
+                <text x="6" y="128" fontSize="10.5" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>DATA</text>
                 <path d="M 50,138 L 143,138 L 147,114 L 332,114 L 336,138 L 478,138"
                       stroke="#DD6B20" strokeWidth="1.5" fill="none" />
                 {/* TX edge 가이드 (DATA 천이 시점 표시) */}
@@ -69,7 +69,7 @@ export default function MetastabilitySlide() {
                 <line x1="332" y1="38" x2="332" y2="114" stroke="#DD6B20" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.45" />
 
                 {/* === Q (RX flop 출력) === */}
-                <text x="6" y="180" fontSize="10.5" fontWeight="800" fill={DAY07} fontFamily="monospace">Q</text>
+                <text x="6" y="180" fontSize="10.5" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>Q</text>
 
                 {/* Stable LOW : 50 → 150 (edge 1 캡처: DATA=0) */}
                 <path d="M 50,188 L 150,188" stroke={DAY07} strokeWidth="1.5" fill="none" />
@@ -101,11 +101,11 @@ export default function MetastabilitySlide() {
                 <path d="M 420,188 L 478,188" stroke={DAY07} strokeWidth="1.5" fill="none" />
 
                 {/* META 라벨 (각 fan-out 영역 위) */}
-                <text x="195" y="155" fontSize="9" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">META</text>
-                <text x="375" y="155" fontSize="9" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily="monospace">META</text>
+                <text x="195" y="155" fontSize="9" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>META</text>
+                <text x="375" y="155" fontSize="9" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>META</text>
 
                 {/* 하단 캡션 */}
-                <text x="240" y="216" fontSize="7.5" fontStyle="italic" fontWeight="700" fill={FPGA.text} textAnchor="middle" fontFamily="monospace">META 이후 → 다음 RX edge에서 안정된 DATA 정상 캡처</text>
+                <text x="240" y="216" fontSize="7.5" fontStyle="italic" fontWeight="700" fill={FPGA.text} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>META 이후 → 다음 RX edge에서 안정된 DATA 정상 캡처</text>
               </svg>
             </div>
 
