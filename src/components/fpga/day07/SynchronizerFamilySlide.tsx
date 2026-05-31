@@ -111,7 +111,7 @@ const impls: Record<string, Impl> = {
           {/* tx_clk — fast (period 50), orange */}
           <text x="4" y="38" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>tx_clk</text>
           <path d="M 60,44 L 70,44 L 70,28 L 95,28 L 95,44 L 120,44 L 120,28 L 145,28 L 145,44 L 170,44 L 170,28 L 195,28 L 195,44 L 220,44 L 220,28 L 245,28 L 245,44 L 270,44 L 270,28 L 295,28 L 295,44 L 320,44 L 320,28 L 345,28 L 345,44 L 370,44 L 370,28 L 395,28 L 395,44 L 420,44 L 420,28 L 445,28 L 445,44 L 470,44 L 470,28 L 495,28 L 495,44 L 520,44 L 520,28 L 545,28 L 545,44 L 555,44"
-                stroke="#DD6B20" strokeWidth="1.4" fill="none" />
+            stroke="#DD6B20" strokeWidth="1.4" fill="none" />
 
           {/* din — TX domain async signal, rises at x=220 (just 15px before rx_clk edge at 235) */}
           <text x="4" y="74" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>din</text>
@@ -124,7 +124,7 @@ const impls: Record<string, Impl> = {
           {/* rx_clk — slower (period 80), cyan, edges at 75, 155, 235, 315, 395, 475 */}
           <text x="4" y="112" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rx_clk</text>
           <path d="M 60,118 L 75,118 L 75,102 L 115,102 L 115,118 L 155,118 L 155,102 L 195,102 L 195,118 L 235,118 L 235,102 L 275,102 L 275,118 L 315,118 L 315,102 L 355,102 L 355,118 L 395,118 L 395,102 L 435,102 L 435,118 L 475,118 L 475,102 L 515,102 L 515,118 L 555,118"
-                stroke={DAY07} strokeWidth="1.4" fill="none" />
+            stroke={DAY07} strokeWidth="1.4" fill="none" />
 
           {/* meta_r — 1st FF output: low → metastable region → high */}
           <text x="4" y="146" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>meta_r</text>
@@ -247,25 +247,25 @@ endmodule
           {/* src_clk (TX) — period 60, rising edges at 80,140,200,260,320,380,440,500 */}
           <text x="4" y="32" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>src_clk</text>
           <path d="M 60,38 L 80,38 L 80,22 L 110,22 L 110,38 L 140,38 L 140,22 L 170,22 L 170,38 L 200,38 L 200,22 L 230,22 L 230,38 L 260,38 L 260,22 L 290,22 L 290,38 L 320,38 L 320,22 L 350,22 L 350,38 L 380,38 L 380,22 L 410,22 L 410,38 L 440,38 L 440,22 L 470,22 L 470,38 L 500,38 L 500,22 L 530,22 L 530,38 L 555,38"
-                stroke="#DD6B20" strokeWidth="1.4" fill="none" />
+            stroke="#DD6B20" strokeWidth="1.4" fill="none" />
 
           {/* src_pulse — 1-cycle pulse, transitions at src_clk rising edges */}
           <text x="4" y="68" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>src_pulse</text>
           <path d="M 60,75 L 80,75 L 80,60 L 140,60 L 140,75 L 260,75 L 260,60 L 320,60 L 320,75 L 555,75"
-                stroke="#DD6B20" strokeWidth="1.5" fill="none" />
+            stroke="#DD6B20" strokeWidth="1.5" fill="none" />
           <text x="110" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>P1</text>
           <text x="290" y="55" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>P2</text>
 
           {/* src_tog — toggle at next rising edge after pulse sampled */}
           <text x="4" y="105" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>src_tog</text>
           <path d="M 60,112 L 140,112 L 140,97 L 320,97 L 320,112 L 555,112"
-                stroke="#DD6B20" strokeWidth="1.5" fill="none" />
+            stroke="#DD6B20" strokeWidth="1.5" fill="none" />
           <text x="230" y="92" fontSize="7" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>toggle on each pulse (level signal)</text>
 
           {/* dst_clk (RX, 느린 clock) — period 90, rising edges at 90,180,270,360,450,540 */}
           <text x="4" y="145" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>dst_clk</text>
           <path d="M 60,151 L 90,151 L 90,135 L 135,135 L 135,151 L 180,151 L 180,135 L 225,135 L 225,151 L 270,151 L 270,135 L 315,135 L 315,151 L 360,151 L 360,135 L 405,135 L 405,151 L 450,151 L 450,135 L 495,135 L 495,151 L 540,151 L 540,135 L 555,135"
-                stroke={DAY07} strokeWidth="1.4" fill="none" />
+            stroke={DAY07} strokeWidth="1.4" fill="none" />
           <text x="310" y="130" fontSize="7" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>RX는 더 느린 clock — pulse 직접 sample 불가</text>
 
           {/* dst_pulse — recovered pulse, transitions at dst_clk rising edges */}
@@ -273,7 +273,7 @@ endmodule
           {/* src_tog@320 → sync[0]@360 → sync[1]@450 → sync[2]@540 → pulse=[450,540) */}
           <text x="4" y="185" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>dst_pulse</text>
           <path d="M 60,191 L 270,191 L 270,176 L 360,176 L 360,191 L 450,191 L 450,176 L 540,176 L 540,191 L 555,191"
-                stroke={DAY07} strokeWidth="1.5" fill="none" />
+            stroke={DAY07} strokeWidth="1.5" fill="none" />
           <circle cx="270" cy="176" r="3" fill="#48BB78" />
           <circle cx="450" cy="176" r="3" fill="#48BB78" />
           <text x="315" y="172" fontSize="7" fontWeight="800" fill="#48BB78" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>★ P1 복원</text>
@@ -589,77 +589,77 @@ end`,
     diagram: (
       <div>
         <div style={{ fontSize: '0.72rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.2rem' }}>회로 블록도</div>
-      <svg viewBox="0 0 580 270" style={{ width: '100%' }}>
-        {/* WCLK domain */}
-        <rect x="10" y="20" width="260" height="220" rx="8" stroke="#DD6B20" strokeWidth="1.8" fill="rgba(221,107,32,0.05)" strokeDasharray="4 3" />
-        <text x="140" y="14" fontSize="11" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>WCLK domain</text>
+        <svg viewBox="0 0 580 270" style={{ width: '100%' }}>
+          {/* WCLK domain */}
+          <rect x="10" y="20" width="260" height="220" rx="8" stroke="#DD6B20" strokeWidth="1.8" fill="rgba(221,107,32,0.05)" strokeDasharray="4 3" />
+          <text x="140" y="14" fontSize="11" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>WCLK domain</text>
 
-        {/* wbin */}
-        <rect x="30" y="45" width="80" height="28" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.12)" />
-        <text x="70" y="63" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wbin (++)</text>
+          {/* wbin */}
+          <rect x="30" y="45" width="80" height="28" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.12)" />
+          <text x="70" y="63" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wbin (++)</text>
 
-        {/* bin→gray */}
-        <rect x="30" y="90" width="80" height="28" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.12)" />
-        <text x="70" y="108" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>bin→gray</text>
-        <path d="M 70,73 L 70,90" stroke="#DD6B20" strokeWidth="1.3" />
+          {/* bin→gray */}
+          <rect x="30" y="90" width="80" height="28" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.12)" />
+          <text x="70" y="108" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>bin→gray</text>
+          <path d="M 70,73 L 70,90" stroke="#DD6B20" strokeWidth="1.3" />
 
-        {/* wgray */}
-        <text x="82" y="125" fontSize="8.5" fontWeight="800" fill="#DD6B20" textAnchor="start" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wgray</text>
+          {/* wgray */}
+          <text x="82" y="125" fontSize="8.5" fontWeight="800" fill="#DD6B20" textAnchor="start" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wgray</text>
 
-        {/* full comparator */}
-        <rect x="80" y="180" width="100" height="32" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.10)" />
-        <text x="130" y="200" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wfull cmp</text>
+          {/* full comparator */}
+          <rect x="80" y="180" width="100" height="32" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.10)" />
+          <text x="130" y="200" fontSize="10" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wfull cmp</text>
 
-        {/* rgray (RCLK, cyan) → 2DFF (wclk) → 도메인 색 전환 → rgray_sync (WCLK, orange) → wfull cmp */}
-        {/* 1단: cyan — rgray가 WCLK 도메인의 2DFF 입력까지 전달 (y=154) */}
-        <path d="M 500,154 L 254,154" stroke={DAY07} strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
-        {/* 2DFF Block */}
-        <rect x="220" y="143" width="34" height="22" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.12)" />
-        <text x="237" y="157" fontSize="8" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2DFF</text>
-        {/* 2단: orange — 2DFF 출력은 wclk-domain 신호 rgray_sync */}
-        <path d="M 220,154 L 130,154 L 130,180" stroke="#DD6B20" strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
-        <text x="175" y="148" fontSize="8" fontWeight="700" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="middle">rgray_sync</text>
+          {/* rgray (RCLK, cyan) → 2DFF (wclk) → 도메인 색 전환 → rgray_sync (WCLK, orange) → wfull cmp */}
+          {/* 1단: cyan — rgray가 WCLK 도메인의 2DFF 입력까지 전달 (y=154) */}
+          <path d="M 500,154 L 254,154" stroke={DAY07} strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
+          {/* 2DFF Block */}
+          <rect x="220" y="143" width="34" height="22" rx="4" stroke="#DD6B20" strokeWidth="1.4" fill="rgba(221,107,32,0.12)" />
+          <text x="237" y="157" fontSize="8" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2DFF</text>
+          {/* 2단: orange — 2DFF 출력은 wclk-domain 신호 rgray_sync */}
+          <path d="M 220,154 L 130,154 L 130,180" stroke="#DD6B20" strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
+          <text x="175" y="148" fontSize="8" fontWeight="700" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="middle">rgray_sync</text>
 
-        {/* RCLK domain */}
-        <rect x="320" y="20" width="250" height="220" rx="8" stroke={DAY07} strokeWidth="1.8" fill="rgba(8,145,178,0.05)" strokeDasharray="4 3" />
-        <text x="445" y="14" fontSize="11" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>RCLK domain</text>
+          {/* RCLK domain */}
+          <rect x="320" y="20" width="250" height="220" rx="8" stroke={DAY07} strokeWidth="1.8" fill="rgba(8,145,178,0.05)" strokeDasharray="4 3" />
+          <text x="445" y="14" fontSize="11" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>RCLK domain</text>
 
-        {/* rbin */}
-        <rect x="460" y="45" width="80" height="28" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.12)" />
-        <text x="500" y="63" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rbin (++)</text>
+          {/* rbin */}
+          <rect x="460" y="45" width="80" height="28" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.12)" />
+          <text x="500" y="63" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rbin (++)</text>
 
-        {/* bin→gray */}
-        <rect x="460" y="90" width="80" height="28" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.12)" />
-        <text x="500" y="108" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>bin→gray</text>
-        <path d="M 500,73 L 500,90" stroke={DAY07} strokeWidth="1.3" />
+          {/* bin→gray */}
+          <rect x="460" y="90" width="80" height="28" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.12)" />
+          <text x="500" y="108" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>bin→gray</text>
+          <path d="M 500,73 L 500,90" stroke={DAY07} strokeWidth="1.3" />
 
-        {/* rgray */}
-        <text x="488" y="125" fontSize="8.5" fontWeight="800" fill={DAY07} textAnchor="end" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rgray</text>
+          {/* rgray */}
+          <text x="488" y="125" fontSize="8.5" fontWeight="800" fill={DAY07} textAnchor="end" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rgray</text>
 
-        {/* empty comparator */}
-        <rect x="390" y="180" width="100" height="32" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.10)" />
-        <text x="440" y="200" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rempty cmp</text>
+          {/* empty comparator */}
+          <rect x="390" y="180" width="100" height="32" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.10)" />
+          <text x="440" y="200" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rempty cmp</text>
 
-        {/* wgray (WCLK, orange) → 2DFF (rclk) → 도메인 색 전환 → wgray_sync (RCLK, cyan) → rempty cmp */}
-        {/* 1단: orange — wgray가 RCLK 도메인의 2DFF 입력까지 전달 (y=134) */}
-        <path d="M 70,134 L 330,134" stroke="#DD6B20" strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
-        {/* 2DFF Block */}
-        <rect x="330" y="123" width="34" height="22" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.12)" />
-        <text x="347" y="137" fontSize="8" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2DFF</text>
-        {/* 2단: cyan — 2DFF 출력은 rclk-domain 신호 wgray_sync */}
-        <path d="M 364,134 L 440,134 L 440,180" stroke={DAY07} strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
-        <text x="402" y="128" fontSize="8" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="middle">wgray_sync</text>
+          {/* wgray (WCLK, orange) → 2DFF (rclk) → 도메인 색 전환 → wgray_sync (RCLK, cyan) → rempty cmp */}
+          {/* 1단: orange — wgray가 RCLK 도메인의 2DFF 입력까지 전달 (y=134) */}
+          <path d="M 70,134 L 330,134" stroke="#DD6B20" strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
+          {/* 2DFF Block */}
+          <rect x="330" y="123" width="34" height="22" rx="4" stroke={DAY07} strokeWidth="1.4" fill="rgba(8,145,178,0.12)" />
+          <text x="347" y="137" fontSize="8" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2DFF</text>
+          {/* 2단: cyan — 2DFF 출력은 rclk-domain 신호 wgray_sync */}
+          <path d="M 364,134 L 440,134 L 440,180" stroke={DAY07} strokeWidth="1.3" strokeDasharray="3 2" fill="none" />
+          <text x="402" y="128" fontSize="8" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="middle">wgray_sync</text>
 
-        {/* Dual-port RAM */}
-        <rect x="135" y="245" width="310" height="22" rx="4" stroke="#4A5568" strokeWidth="1.5" fill="rgba(74,85,104,0.10)" />
-        <text x="290" y="260" fontSize="11" fontWeight="800" fill="#2D3748" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>Dual-port RAM (2^AW × DW)</text>
+          {/* Dual-port RAM */}
+          <rect x="135" y="245" width="310" height="22" rx="4" stroke="#4A5568" strokeWidth="1.5" fill="rgba(74,85,104,0.10)" />
+          <text x="290" y="260" fontSize="11" fontWeight="800" fill="#2D3748" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>Dual-port RAM (2^AW × DW)</text>
 
-        {/* RAM connections */}
-        <path d="M 70,118 L 70,235 L 200,235 L 200,245" stroke="#DD6B20" strokeWidth="1.2" fill="none" opacity="0.6" />
-        <text x="80" y="232" fontSize="8" fontWeight="700" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wdata, wclk</text>
-        <path d="M 500,118 L 500,235 L 380,235 L 380,245" stroke={DAY07} strokeWidth="1.2" fill="none" opacity="0.6" />
-        <text x="490" y="232" fontSize="8" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="end">rclk, rdata</text>
-      </svg>
+          {/* RAM connections */}
+          <path d="M 70,118 L 70,235 L 200,235 L 200,245" stroke="#DD6B20" strokeWidth="1.2" fill="none" opacity="0.6" />
+          <text x="80" y="232" fontSize="8" fontWeight="700" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>wdata, wclk</text>
+          <path d="M 500,118 L 500,235 L 380,235 L 380,245" stroke={DAY07} strokeWidth="1.2" fill="none" opacity="0.6" />
+          <text x="490" y="232" fontSize="8" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif' textAnchor="end">rclk, rdata</text>
+        </svg>
       </div>
     ),
     code: `// === 핵심: gray-code 변환 + cross-clock 2DFF sync ===
@@ -799,7 +799,7 @@ export default function SynchronizerFamilySlide() {
       <div className="fpga-content-wrap">
         <SlideHeader
           badge="동기화 회로 설계 패턴"
-          title="CDC 동기화 Scheme — 6종 비교"
+          title="CDC 동기화 Scheme"
           subtitle="신호 폭 / 처리량 / 프로토콜에 따라 적절한 scheme 선택 — 카드 클릭 시 구현 코드/블록도"
         />
 
