@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import RevealWrapper from '@/components/RevealWrapper';
 import ImagePlaceholder from '@/components/ImagePlaceholder';
@@ -12,6 +13,7 @@ import CodeBlock from '@/components/CodeBlock';
 export default function MicroBlazeSlides() {
   const [swState, setSwState] = useState([true, false, true, false]);
   const [btnState, setBtnState] = useState([false, false, false, false]);
+  const [lightbox, setLightbox] = useState<{ src: string; caption: string } | null>(null);
 
   const toggleSwitch = (i: number) => {
     const next = [...swState];
@@ -510,7 +512,18 @@ export default function MicroBlazeSlides() {
                   <div className="step-icon">3</div>
                   <div className="step-content">
                     <span className="step-title">Board 컴포넌트 연동</span>
-                    <span className="step-desc">좌측 Board 탭에서 <code>System Clock</code>과 <code>System Reset</code>을 캔버스로 드래그 앤 드롭</span>
+                    <span className="step-desc">
+                      <span
+                        onClick={() => setLightbox({ src: '/images/viv_boardtab.png', caption: 'Vivado 좌측 패널의 Board 탭 위치' })}
+                        style={{
+                          color: 'var(--primary)', fontWeight: 700, cursor: 'pointer',
+                          borderBottom: '2px dotted var(--primary)', paddingBottom: '1px',
+                          whiteSpace: 'nowrap',
+                        }}
+                        title="클릭하면 위치를 캡쳐 화면으로 확인할 수 있어요"
+                      >좌측 Board 탭</span>
+                      에서 <code>System Reset</code>을 먼저, 이어서 <code>System Clock</code>을 캔버스로 드래그 앤 드롭
+                    </span>
                   </div>
                 </li>
                 <li>
@@ -523,10 +536,19 @@ export default function MicroBlazeSlides() {
                 <li>
                   <div className="step-icon">5</div>
                   <div className="step-content">
-                    <span className="step-title">Run Block Automation</span>
+                    <span
+                      className="step-title"
+                      onClick={() => setLightbox({ src: '/images/viv_blk_auto.png', caption: 'Run Block Automation 다이얼로그 설정 화면' })}
+                      style={{
+                        cursor: 'pointer',
+                        borderBottom: '2px dotted var(--primary)', paddingBottom: '1px',
+                        display: 'inline-block', width: 'fit-content',
+                      }}
+                      title="클릭하면 Block Automation 설정 화면을 확인할 수 있어요"
+                    >Run Block Automation</span>
                     <span className="step-desc">
                       <ul className="step-list-sub">
-                        <li>자동 연결로 Clock/Reset 극성 문제 자동 해결!</li>
+                        <li>블럭 자동화 수행 후, 자동 연결 클릭 : Clock 및 Reset 극성 자동</li>
                         <li><span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Local Memory:</span> 32KB 또는 64KB 설정</li>
                         <li><span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Debug Module:</span> Debug Only 포맷 유지</li>
                       </ul>
@@ -593,7 +615,16 @@ export default function MicroBlazeSlides() {
                 <li>
                   <div className="step-icon">5</div>
                   <div className="step-content">
-                    <span className="step-title">Create HDL Wrapper</span>
+                    <span
+                      className="step-title"
+                      onClick={() => setLightbox({ src: '/images/cr_hdl_wrapper.png', caption: 'Sources 탭에서 Block Design 우클릭 ➔ Create HDL Wrapper' })}
+                      style={{
+                        cursor: 'pointer',
+                        borderBottom: '2px dotted var(--primary)', paddingBottom: '1px',
+                        display: 'inline-block', width: 'fit-content',
+                      }}
+                      title="클릭하면 Create HDL Wrapper 메뉴 위치를 확인할 수 있어요"
+                    >Create HDL Wrapper</span>
                     <span className="step-desc">Sources 탭에서 Block Design 우클릭 ➔ <code>Create HDL Wrapper</code> 실행 (Let Vivado manage)</span>
                   </div>
                 </li>
@@ -1227,6 +1258,41 @@ export default function MicroBlazeSlides() {
 
       {/* Slide 7: 예제 4 (Vertical Slides) */}
       <Ex4Slides />
+
+      {/* 클릭 가능한 텍스트로 띄우는 이미지 라이트박스 (포털로 viewport 전체에 렌더) */}
+      {lightbox && typeof document !== 'undefined' && createPortal(
+        <div
+          onClick={() => setLightbox(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            background: 'rgba(15,23,42,0.78)', backdropFilter: 'blur(3px)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            gap: '1rem', cursor: 'zoom-out', padding: '3vh 3vw',
+          }}
+        >
+          <img
+            src={lightbox.src}
+            alt={lightbox.caption}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '92vw', maxHeight: '82vh', objectFit: 'contain',
+              borderRadius: '10px', border: '3px solid #fff',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.55)', cursor: 'default',
+            }}
+          />
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '0.75rem',
+            color: '#e2e8f0', fontSize: '1.05rem', fontWeight: 600,
+          }}>
+            <span>{lightbox.caption}</span>
+            <span style={{
+              fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500,
+              border: '1px solid #475569', borderRadius: '999px', padding: '2px 12px',
+            }}>화면 아무 곳이나 클릭하면 닫힘</span>
+          </div>
+        </div>,
+        document.body
+      )}
     </RevealWrapper>
   );
 }
