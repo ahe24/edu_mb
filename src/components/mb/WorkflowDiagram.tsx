@@ -159,6 +159,40 @@ export default function WorkflowDiagram() {
         <span style={{ margin: '0 0.4rem', color: '#cbd5e1' }}>·</span>
         하드웨어 + 소프트웨어 통합 흐름
       </div>
+
+      {/* Abbreviation glossary */}
+      <div className="curriculum-anim" style={{
+        animationDelay: '2.0s',
+        marginTop: '1.4rem',
+        display: 'flex', justifyContent: 'center', gap: '0.8rem',
+        flexWrap: 'wrap',
+      }}>
+        {[
+          { term: 'XSA', full: 'Xilinx Support Archive', desc: '블록 디자인의 하드웨어 정보(주소맵·IP·핀)를 담아 SW로 전달하는 플랫폼 파일', color: 'var(--primary)' },
+          { term: 'BSP', full: 'Board Support Package', desc: '드라이버·하드웨어 추상화 계층(HAL) 등 SW가 HW를 제어하는 기반 라이브러리', color: 'var(--accent)' },
+          { term: 'ELF', full: 'Executable and Linkable Format', desc: '컴파일·링크 후 보드에서 실행되는 최종 SW 바이너리', color: 'var(--primary-dark)' },
+        ].map((g, i) => (
+          <div key={i} style={{
+            flex: '1 1 0',
+            maxWidth: '320px',
+            background: 'white',
+            borderRadius: '10px',
+            padding: '0.7rem 0.9rem',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.07)',
+            borderLeft: `4px solid ${g.color}`,
+            textAlign: 'left',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', marginBottom: '0.25rem' }}>
+              <span style={{
+                fontFamily: '"JetBrains Mono", monospace', fontWeight: 800,
+                fontSize: '0.9rem', color: g.color,
+              }}>{g.term}</span>
+              <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>{g.full}</span>
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#475569', lineHeight: 1.45 }}>{g.desc}</div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
