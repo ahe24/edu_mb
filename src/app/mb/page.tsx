@@ -682,12 +682,27 @@ export default function MicroBlazeSlides() {
                 <li>
                   <div className="step-icon">2</div>
                   <div className="step-content">
-                    <span className="step-title">Create Platform Project</span>
+                    <span
+                      className="step-title"
+                      onClick={() => setLightbox({ src: '/images/viv_cp.png', caption: 'New Platform Project — 프로젝트 이름 입력 후 Next (XSA 하드웨어 명세로 플랫폼 생성)' })}
+                      style={{
+                        cursor: 'pointer',
+                        borderBottom: '2px dotted var(--primary)', paddingBottom: '1px',
+                        display: 'inline-block', width: 'fit-content',
+                      }}
+                      title="클릭하면 Create Platform Project 화면을 확인할 수 있어요"
+                    >Create Platform Project</span>
                     <span className="step-desc">
                       <ul className="step-list-sub">
-                        <li><code>Create Platform Project</code> 클릭</li>
+                        <li><code>File ➔ New ➔ Platform Project...</code> 실행</li>
                         <li>이전 단계에서 추출한 <b><code>.xsa</code> 하드웨어 명세 파일</b>을 찾아(Browse) 로드</li>
-                        <li>플랫폼 빌드(Build) 진행하여 하드웨어 종속 라이브러리(BSP) 생성</li>
+                        <li>
+                          <span
+                            onClick={() => setLightbox({ src: '/images/vitis_platform_build.png', caption: 'Explorer에서 Platform 프로젝트 우클릭 ➔ Build Project (BSP·하드웨어 종속 라이브러리 생성)' })}
+                            style={{ cursor: 'pointer', borderBottom: '2px dotted var(--primary)', paddingBottom: '1px' }}
+                            title="클릭하면 Platform Build 메뉴 위치를 확인할 수 있어요"
+                          >플랫폼 빌드(Build)</span>{' '}진행하여 하드웨어 종속 라이브러리(BSP) 생성
+                        </li>
                       </ul>
                     </span>
                   </div>
@@ -695,10 +710,19 @@ export default function MicroBlazeSlides() {
                 <li>
                   <div className="step-icon">3</div>
                   <div className="step-content">
-                    <span className="step-title">Create Application Project</span>
+                    <span
+                      className="step-title"
+                      onClick={() => setLightbox({ src: '/images/new_app_prj.png', caption: 'File ➔ New ➔ Application Project... (메뉴 바에서 새 Application 프로젝트 생성)' })}
+                      style={{
+                        cursor: 'pointer',
+                        borderBottom: '2px dotted var(--primary)', paddingBottom: '1px',
+                        display: 'inline-block', width: 'fit-content',
+                      }}
+                      title="클릭하면 New Application Project 메뉴 위치를 확인할 수 있어요"
+                    >Create Application Project</span>
                     <span className="step-desc">
                       <ul className="step-list-sub">
-                        <li><code>Create Application Project</code> 클릭</li>
+                        <li><code>File ➔ New ➔ Application Project...</code> 실행</li>
                         <li>방금 생성한 Platform을 타겟으로 선택</li>
                         <li>반드시 <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Empty Application(C)</span> 템플릿 선택<br /><span style={{ fontSize: '0.9rem', color: '#64748b' }}>(* UART IP가 없으므로 <code>Hello World</code> 템플릿은 빌드 에러 발생)</span></li>
                       </ul>
