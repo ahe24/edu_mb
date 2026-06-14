@@ -321,13 +321,14 @@ endmodule
 
   'DMUX': {
     title: 'DMUX Synchronizer',
-    subtitle: 'Multi-bit data + 1-bit select 동기화 — TX hold protocol 핵심',
+    subtitle: 'Multi-bit data 직접 전송 + 1-bit select만 2-DFF sync — recirculating MUX & TX hold protocol',
     bullets: [
-      '핵심: sel_tx가 2-DFF로 sync되는 2 RX clock 동안 data_tx 변경 금지',
-      'TX는 (data 설정 → sel assert) 후 sync latency + 1 cycle 만큼 data hold',
-      'sel_sync rising edge에서 RX가 data_tx capture — 그 시점 data가 안정 보장',
-      'Protocol 위반 시 잘못된 중간값 capture (multi_bits violation과 동일)',
-      'CDC scheme: dmux (Caution — protocol 검증 필요)',
+      'data bus는 동기화하지 않음 — TX의 1-bit select만 2-DFF로 sync, 그 sel_sync가 RX MUX를 enable',
+      'recirculating MUX: sel_sync=1 → data_tx 통과, sel_sync=0 → 자기 출력(data_rx) 되먹임(hold). enable 동안 매 rx_clk edge가 data_tx를 다시 sampling',
+      '안전 조건: sel_sync=1 인 모든 rx_clk edge에서 data_tx가 NEW로 안정 — TX는 enable 구간(+setup/hold) 전체를 덮도록 data hold',
+      '★ sel_sync=1 인데 data_tx가 NEXT로 바뀌면, enable 구간 안의 rx_clk edge가 NEXT를 capture (hold 위반) → NEXT 적재는 sel_sync 완전 deassert 후에만',
+      'Questa 검증: cdc_dsel checker가 "tx data stable"(default On) + hold check를 자동 promote → 위반 시 dmux_no_hold / partial_dmux',
+      'CDC scheme: dmux (Caution — TX hold protocol을 sim/formal로 검증 필요)',
     ],
     diagram: (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
@@ -356,119 +357,142 @@ endmodule
             <text x="425" y="32" fontSize="11" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>RX domain (rx_clk)</text>
 
             <path d="M 340,70 L 400,70 L 420,90 L 420,130 L 400,150 L 340,150 Z" stroke={DAY07} strokeWidth="1.5" fill="rgba(8,145,178,0.10)" />
-            <text x="375" y="105" fontSize="11" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>MUX</text>
-            <text x="375" y="120" fontSize="8" fontWeight="500" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>+ reg</text>
+            <text x="372" y="103" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>MUX</text>
+            <text x="372" y="115" fontSize="7.5" fontWeight="500" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>+ rx reg</text>
+            <text x="345" y="106" fontSize="8" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>1</text>
+            <text x="345" y="146" fontSize="8" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>0</text>
 
+            {/* data_tx → MUX 입력1 (2-DFF 우회: data는 동기화하지 않고 직접 연결) */}
             <path d="M 220,110 L 340,110" stroke="#DD6B20" strokeWidth="1.5" fill="none" />
-            <path d="M 300,147 L 320,147 L 340,140" stroke={DAY07} strokeWidth="1.5" fill="none" />
-            <text x="305" y="138" fontSize="8" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_sync</text>
+            {/* recirculation feedback → MUX 입력0 (sel_sync=0 시 직전 data_rx 유지) */}
+            <path d="M 465,110 L 465,186 L 332,186 L 332,140 L 340,140" stroke={DAY07} strokeWidth="1.2" fill="none" strokeDasharray="3 2" opacity="0.7" />
+            <text x="402" y="182" fontSize="7.5" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>recirc (hold)</text>
+            {/* sel_sync = select */}
+            <path d="M 300,147 L 318,147 L 318,160 L 372,160" stroke={DAY07} strokeWidth="1.5" fill="none" />
+            <text x="316" y="171" fontSize="8" fontWeight="700" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_sync (select)</text>
 
             <path d="M 420,110 L 510,110" stroke={DAY07} strokeWidth="1.5" fill="none" />
-            <text x="465" y="103" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_rx[N]</text>
+            <text x="468" y="103" fontSize="10" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_rx[N]</text>
 
-            <text x="155" y="200" fontSize="8.5" fontWeight="600" fill={FPGA.textLight} textAnchor="middle" fontStyle="italic">TX가 sel 동안 data hold (protocol)</text>
-            <text x="425" y="200" fontSize="8.5" fontWeight="600" fill={FPGA.textLight} textAnchor="middle" fontStyle="italic">sel_sync rising edge에 안정 data capture</text>
+            <text x="155" y="205" fontSize="8.5" fontWeight="600" fill={FPGA.textLight} textAnchor="middle" fontStyle="italic">TX는 sel_sync=1 구간 전체에서 data hold</text>
+            <text x="430" y="205" fontSize="8.5" fontWeight="600" fill={FPGA.textLight} textAnchor="middle" fontStyle="italic">sel_sync=1 → data_tx 통과 · =0 → 직전값 유지</text>
           </svg>
         </div>
 
         {/* === Timing diagram (시간 구조) — TX hold protocol 시각화 === */}
         <div>
-          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.2rem' }}>② Timing diagram — TX hold protocol</div>
-          <svg viewBox="0 0 560 220" style={{ width: '100%' }}>
-            {/* Time guide verticals */}
-            <line x1="120" y1="14" x2="120" y2="210" stroke="#48BB78" strokeWidth="0.7" strokeDasharray="2 2" opacity="0.5" />
-            <text x="120" y="10" fontSize="7" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>T1</text>
-            <line x1="240" y1="14" x2="240" y2="210" stroke="#E53E3E" strokeWidth="0.8" strokeDasharray="2 2" opacity="0.65" />
-            <text x="240" y="10" fontSize="7" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>T3 capture</text>
-            <line x1="420" y1="14" x2="420" y2="210" stroke="#48BB78" strokeWidth="0.7" strokeDasharray="2 2" opacity="0.5" />
-            <text x="420" y="10" fontSize="7" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>T5 hold 끝</text>
+          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.2rem' }}>② Timing diagram — clock 포함 · recirculating MUX · TX hold protocol</div>
+          <svg viewBox="0 0 560 288" style={{ width: '100%' }}>
+            {/* ===== enable window (sel_sync=1) 음영 — 매 rx_clk edge가 data_tx sampling ===== */}
+            <rect x="240" y="158" width="240" height="68" fill="rgba(8,145,178,0.08)" stroke="none" />
+            <text x="360" y="154" fontSize="7.5" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_sync = 1  (MUX enable — 매 rx_clk edge capture)</text>
 
-            {/* data_tx — bus notation (two parallel lines + X transitions) */}
-            <text x="4" y="36" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_tx</text>
-            <line x1="60" y1="28" x2="116" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
-            <line x1="60" y1="42" x2="116" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
-            <line x1="116" y1="28" x2="124" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
-            <line x1="116" y1="42" x2="124" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
-            <line x1="124" y1="28" x2="416" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
-            <line x1="124" y1="42" x2="416" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
-            <line x1="416" y1="28" x2="424" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
-            <line x1="416" y1="42" x2="424" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
-            <line x1="424" y1="28" x2="555" y2="28" stroke="#DD6B20" strokeWidth="1.5" />
-            <line x1="424" y1="42" x2="555" y2="42" stroke="#DD6B20" strokeWidth="1.5" />
-            <text x="88" y="38" fontSize="8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>OLD</text>
-            <text x="270" y="38" fontSize="9" fontWeight="800" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEW (안정 hold)</text>
-            <text x="490" y="38" fontSize="8" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEXT</text>
+            {/* ===== 세로 가이드: 첫/마지막 enabled edge ===== */}
+            <line x1="240" y1="12" x2="240" y2="232" stroke="#48BB78" strokeWidth="0.8" strokeDasharray="2 2" opacity="0.7" />
+            <text x="240" y="9" fontSize="6.8" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>첫 enabled edge</text>
+            <line x1="480" y1="12" x2="480" y2="232" stroke="#E53E3E" strokeWidth="0.9" strokeDasharray="2 2" opacity="0.75" />
+            <text x="480" y="9" fontSize="6.8" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>마지막 enabled edge = hold 한계</text>
 
-            {/* TX hold band */}
-            <rect x="120" y="48" width="300" height="10" fill="rgba(72,187,120,0.18)" stroke="#48BB78" strokeWidth="0.7" strokeDasharray="2 2" />
-            <text x="270" y="56" fontSize="7" fontWeight="800" fill="#48BB78" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>TX hold ≥ sync latency + 1 cycle</text>
+            {/* ===== tx_clk (빠름, period 40) ===== */}
+            <text x="2" y="25" fontSize="8.5" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>tx_clk</text>
+            <path d="M 56,30 L 60,30 L 60,16 L 80,16 L 80,30 L 100,30 L 100,16 L 120,16 L 120,30 L 140,30 L 140,16 L 160,16 L 160,30 L 180,30 L 180,16 L 200,16 L 200,30 L 220,30 L 220,16 L 240,16 L 240,30 L 260,30 L 260,16 L 280,16 L 280,30 L 300,30 L 300,16 L 320,16 L 320,30 L 340,30 L 340,16 L 360,16 L 360,30 L 380,30 L 380,16 L 400,16 L 400,30 L 420,30 L 420,16 L 440,16 L 440,30 L 460,30 L 460,16 L 480,16 L 480,30 L 500,30 L 500,16 L 520,16 L 520,30 L 540,30" stroke="#DD6B20" strokeWidth="1.1" fill="none" />
 
-            {/* sel_tx */}
-            <text x="4" y="83" fontSize="10" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_tx</text>
-            <path d="M 60,90 L 120,90 L 120,75 L 420,75 L 420,90 L 555,90" stroke="#DD6B20" strokeWidth="1.6" fill="none" />
+            {/* ===== rx_clk (느림, period 80) — rising @ 80·160·240·320·400·480 ===== */}
+            <text x="2" y="55" fontSize="8.5" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>rx_clk</text>
+            <path d="M 56,60 L 80,60 L 80,46 L 120,46 L 120,60 L 160,60 L 160,46 L 200,46 L 200,60 L 240,60 L 240,46 L 280,46 L 280,60 L 320,60 L 320,46 L 360,46 L 360,60 L 400,60 L 400,46 L 440,46 L 440,60 L 480,60 L 480,46 L 520,46 L 520,60 L 540,60" stroke={DAY07} strokeWidth="1.1" fill="none" />
 
-            {/* sel_sync */}
-            <text x="4" y="133" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_sync</text>
-            <path d="M 60,140 L 240,140 L 240,125 L 480,125 L 480,140 L 555,140" stroke={DAY07} strokeWidth="1.6" fill="none" />
-            {/* sync latency 표시 화살표 */}
-            <line x1="130" y1="115" x2="230" y2="115" stroke={DAY07} strokeWidth="0.9" />
-            <path d="M 132,113 L 130,115 L 132,117" stroke={DAY07} strokeWidth="0.9" fill="none" />
-            <path d="M 228,113 L 230,115 L 228,117" stroke={DAY07} strokeWidth="0.9" fill="none" />
-            <text x="180" y="111" fontSize="7" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2 rx_clk latency</text>
+            {/* ===== data_tx — NEW 안정구간 음영 + bus ===== */}
+            <rect x="104" y="72" width="396" height="20" fill="rgba(72,187,120,0.13)" stroke="none" />
+            <text x="2" y="86" fontSize="8.5" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_tx</text>
+            <path d="M 56,74 L 96,74 L 104,90 L 496,90 L 504,74 L 540,74" stroke="#DD6B20" strokeWidth="1.4" fill="none" />
+            <path d="M 56,90 L 96,90 L 104,74 L 496,74 L 504,90 L 540,90" stroke="#DD6B20" strokeWidth="1.4" fill="none" />
+            <text x="78" y="86" fontSize="7.5" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>OLD</text>
+            <text x="300" y="86" fontSize="8.5" fontWeight="800" fill="#2F855A" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEW — enable 구간 전체 안정 hold</text>
+            <text x="522" y="86" fontSize="7.5" fontWeight="700" fill="#DD6B20" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEXT</text>
 
-            {/* Capture star at T3 */}
-            <circle cx="240" cy="125" r="4" fill="#E53E3E" />
-            <text x="250" y="121" fontSize="8" fontWeight="800" fill="#E53E3E" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>★ data_rx ← data_tx</text>
+            {/* ===== sel_tx (tx edge에 assert, data보다 1 tx_clk 뒤) ===== */}
+            <text x="2" y="115" fontSize="8.5" fontWeight="800" fill="#DD6B20" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_tx</text>
+            <path d="M 56,118 L 140,118 L 140,104 L 340,104 L 340,118 L 540,118" stroke="#DD6B20" strokeWidth="1.5" fill="none" />
 
-            {/* data_rx */}
-            <text x="4" y="183" fontSize="10" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_rx</text>
-            <line x1="60" y1="175" x2="236" y2="175" stroke={DAY07} strokeWidth="1.5" />
-            <line x1="60" y1="189" x2="236" y2="189" stroke={DAY07} strokeWidth="1.5" />
-            <line x1="236" y1="175" x2="244" y2="189" stroke={DAY07} strokeWidth="1.5" />
-            <line x1="236" y1="189" x2="244" y2="175" stroke={DAY07} strokeWidth="1.5" />
-            <line x1="244" y1="175" x2="555" y2="175" stroke={DAY07} strokeWidth="1.5" />
-            <line x1="244" y1="189" x2="555" y2="189" stroke={DAY07} strokeWidth="1.5" />
-            <text x="148" y="185" fontSize="8" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>OLD</text>
-            <text x="400" y="185" fontSize="9" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEW (T3 capture)</text>
+            {/* ===== sel_meta (1st FF) — 첫 sample meta 가능 ===== */}
+            <text x="2" y="142" fontSize="8.5" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_meta</text>
+            <text x="2" y="151" fontSize="6.5" fontWeight="700" fill={DAY07} opacity="0.7" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>(1st FF)</text>
+            <path d="M 56,148 L 160,148 L 160,134 L 400,134 L 400,148 L 540,148" stroke={DAY07} strokeWidth="1.5" fill="none" />
+            <path d="M 162,141 Q 167,134 172,141 T 182,141" stroke="#E53E3E" strokeWidth="0.8" fill="none" opacity="0.85" />
+            <text x="173" y="131" fontSize="6.3" fontWeight="800" fill="#E53E3E" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>meta?</text>
 
-            <text x="280" y="208" fontSize="8" fontStyle="italic" fontWeight="700" fill={FPGA.text} textAnchor="middle">★ T3 시점 data_tx가 안정 hold 중이라 안전 — hold 위반 시 잘못된 값 capture</text>
+            {/* ===== sel_sync (2nd FF) — enable ===== */}
+            <text x="2" y="178" fontSize="8.5" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>sel_sync</text>
+            <text x="2" y="187" fontSize="6.5" fontWeight="700" fill={DAY07} opacity="0.7" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>(2nd FF)</text>
+            <path d="M 56,178 L 240,178 L 240,164 L 480,164 L 480,178 L 540,178" stroke={DAY07} strokeWidth="1.5" fill="none" />
+            {/* 2-DFF latency 화살표 (sel_tx assert → sel_sync high) */}
+            <line x1="142" y1="157" x2="238" y2="157" stroke={DAY07} strokeWidth="0.8" />
+            <path d="M 144,155 L 142,157 L 144,159" stroke={DAY07} strokeWidth="0.8" fill="none" />
+            <path d="M 236,155 L 238,157 L 236,159" stroke={DAY07} strokeWidth="0.8" fill="none" />
+            <text x="190" y="155" fontSize="6.5" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>2-DFF sync (2 rx_clk)</text>
+
+            {/* ===== data_rx — enabled edge마다 capture ===== */}
+            <text x="2" y="210" fontSize="8.5" fontWeight="800" fill={DAY07} fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>data_rx</text>
+            <path d="M 56,198 L 236,198 L 244,214 L 540,214" stroke={DAY07} strokeWidth="1.4" fill="none" />
+            <path d="M 56,214 L 236,214 L 244,198 L 540,198" stroke={DAY07} strokeWidth="1.4" fill="none" />
+            <text x="146" y="210" fontSize="7.5" fontWeight="700" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>OLD (recirc)</text>
+            <text x="392" y="210" fontSize="8.5" fontWeight="800" fill={DAY07} textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>NEW</text>
+            {/* capture dots @ enabled rx edges 240·320·400·480 (모두 NEW → 안전) */}
+            <circle cx="240" cy="192" r="3" fill="#48BB78" />
+            <circle cx="320" cy="192" r="3" fill="#48BB78" />
+            <circle cx="400" cy="192" r="3" fill="#48BB78" />
+            <circle cx="480" cy="192" r="3.4" fill="#48BB78" stroke="#E53E3E" strokeWidth="1.1" />
+            <text x="300" y="186" fontSize="6.5" fontWeight="800" fill="#2F855A" textAnchor="middle" fontFamily='"JetBrains Mono", "Pretendard", sans-serif'>4 edge 모두 NEW capture ✓</text>
+
+            {/* ===== 하단 설명 ===== */}
+            <text x="280" y="248" fontSize="7.5" fontWeight="700" fill={FPGA.text} textAnchor="middle">sel_sync=1 인 매 rx_clk edge(240·320·400·480)가 data_tx 재-sampling → data_tx는 그 구간 전체에서 NEW 유지 필수</text>
+            <text x="280" y="263" fontSize="7.5" fontStyle="italic" fontWeight="800" fill="#E53E3E" textAnchor="middle">★ data_tx → NEXT를 480 이전에 적재하면, 그 edge가 NEXT(또는 천이중 값)를 capture — hold 위반</text>
+            <text x="280" y="278" fontSize="7.5" fontWeight="700" fill={FPGA.textLight} textAnchor="middle">Questa: cdc_dsel checker의 tx-data-stable + hold check가 이 조건을 sim/formal로 검증 (위반 시 dmux_no_hold)</text>
           </svg>
         </div>
       </div>
     ),
-    code: `// ============== TX 측 (tx_clk) — data 설정 + sel + hold ==============
+    code: `// ============== TX 측 (tx_clk) — data 먼저 확정 → sel → 충분히 hold ==============
 reg [N-1:0] data_tx;
 reg         sel_tx;
-reg [2:0]   hold_cnt;       // sync latency + capture margin
+reg [3:0]   cnt;
+localparam IDLE = 2'd0, LOAD = 2'd1, HOLD = 2'd2;
+reg [1:0]   st;
 
 always @(posedge tx_clk) begin
     if (rst) begin
-        sel_tx   <= 1'b0;
-        hold_cnt <= 3'd0;
-    end else if (start && !sel_tx) begin
-        data_tx  <= new_data;   // (1) 새 data 설정
-        sel_tx   <= 1'b1;       // (2) sel assert
-        hold_cnt <= 3'd4;       // 2 sync + 1 capture + 1 margin
-    end else if (sel_tx) begin
-        if (hold_cnt > 0)
-            hold_cnt <= hold_cnt - 1;   // (3) data hold 유지
-        else
-            sel_tx   <= 1'b0;           // (4) hold 끝 → sel deassert
-    end
+        st <= IDLE; sel_tx <= 1'b0;
+    end else case (st)
+        IDLE: if (start) begin
+                  data_tx <= new_data;   // (1) 새 data 먼저 확정 (sel보다 1 cycle 앞)
+                  st      <= LOAD;
+              end
+        LOAD: begin
+                  sel_tx <= 1'b1;        // (2) data 안정 후 sel assert
+                  cnt    <= 4'd8;        // enable 폭 + 2-DFF 왕복 drain + margin
+                  st     <= HOLD;        //    (cnt는 rx/tx 주파수비 worst-case로 산정)
+              end
+        HOLD: begin                      // (3) cnt 동안 data_tx = NEW 절대 변경 금지
+                  cnt <= cnt - 1'b1;
+                  if (cnt == 4'd3) sel_tx <= 1'b0;  // sel 먼저 내림 (data는 계속 hold)
+                  if (cnt == 4'd0) st     <= IDLE;  // sel_sync까지 완전 drain → 이제 NEXT 가능
+              end
+    endcase
 end
 
-// ============== RX 측 (rx_clk) — sel 2-DFF + edge capture ==============
-reg sel_meta, sel_sync, sel_sync_d;
+// ============== RX 측 (rx_clk) — sel 2-DFF + recirculating MUX ==============
+reg sel_meta, sel_sync;
 always @(posedge rx_clk) begin
-    sel_meta   <= sel_tx;          // 1단 — metastable 가능
-    sel_sync   <= sel_meta;        // 2단 — 안정화 (2 rx_clk latency)
-    sel_sync_d <= sel_sync;        // edge detect 용
+    sel_meta <= sel_tx;       // 1단 — metastable 가능
+    sel_sync <= sel_meta;     // 2단 — 안정화 (2 rx_clk latency)
 end
 
 reg [N-1:0] data_rx;
 always @(posedge rx_clk)
-    if (sel_sync && !sel_sync_d)   // sel_sync rising edge
-        data_rx <= data_tx;         // ★ TX hold 중 → 안정 data capture`,
+    if (sel_sync)             // enable=1 → capture, =0 → 직전 값 유지(recirculate)
+        data_rx <= data_tx;   // ★ sel_sync=1 인 '매' rx_clk edge가 data_tx를 sampling
+                              //   ⇒ data_tx는 그 구간 전체에서 NEW로 안정해야 안전
+                              //   ⇒ NEXT는 sel_sync가 0으로 drain된 뒤에만 적재 (hold)`,
   },
 
   'Handshake': {
