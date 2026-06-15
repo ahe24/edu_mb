@@ -4,6 +4,7 @@ import { useState, type CSSProperties } from 'react';
 import { FPGA, slideBg, shadow } from '../FpgaSlideStyles';
 import SlideHeader from '../SlideHeader';
 import SlideModal from '../SlideModal';
+import VerilogCode from '../VerilogCode';
 
 const DAY07 = '#0891B2';
 const ORANGE = '#DD6B20';
@@ -222,12 +223,7 @@ function BadBusDetail({ onClose }: { onClose: () => void }) {
           <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#FCA5A5', marginBottom: '0.4rem', letterSpacing: '0.04em', fontFamily: MONO }}>
             ✗ BAD — bus를 bit마다 따로 2-DFF
           </div>
-          <pre style={{
-            margin: 0, fontSize: '0.84rem', lineHeight: 1.55, color: '#E2E8F0',
-            fontFamily: 'Consolas, "Courier New", monospace',
-            fontVariantLigatures: 'none', fontFeatureSettings: '"liga" 0, "calt" 0',
-            whiteSpace: 'pre-wrap',
-          }}>{`module bus_bad #(parameter W = 3) (
+          <VerilogCode style={{ fontSize: '0.84rem', lineHeight: 1.55 }} code={`module bus_bad #(parameter W = 3) (
     input              clk_rx, rst_n,
     input      [W-1:0] d_tx,   // tx_clk 동기 버스
     output     [W-1:0] d_rx    // rx_clk 도메인
@@ -239,7 +235,7 @@ function BadBusDetail({ onClose }: { onClose: () => void }) {
         //  ↑ 각 bit가 독립적으로 meta 해소
         //    → 해소 edge가 bit마다 달라짐
     assign d_rx = sync;        // → 중간값(010,110) 노출
-endmodule`}</pre>
+endmodule`} />
         </div>
       </div>
 

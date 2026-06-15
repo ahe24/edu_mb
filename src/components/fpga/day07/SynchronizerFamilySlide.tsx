@@ -4,6 +4,7 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 import { FPGA, slideBg, shadow } from '../FpgaSlideStyles';
 import SlideHeader from '../SlideHeader';
 import SlideModal from '../SlideModal';
+import VerilogCode from '../VerilogCode';
 
 const DAY07 = '#0891B2';
 
@@ -796,18 +797,7 @@ function ImplPanel({ impl, schemeKey, onClose }: { impl: Impl; schemeKey: string
           }}>
             Verilog 구현 예시
           </div>
-          <pre style={{
-            margin: 0,
-            fontSize: '0.74rem', lineHeight: 1.55,
-            color: '#E2E8F0',
-            fontFamily: 'Consolas, "Courier New", "Liberation Mono", monospace',
-            fontVariantLigatures: 'none',
-            WebkitFontVariantLigatures: 'none' as any,
-            fontFeatureSettings: '"liga" 0, "calt" 0',
-            whiteSpace: 'pre-wrap',
-          }}>
-            {impl.code}
-          </pre>
+          <VerilogCode code={impl.code} style={{ fontSize: '0.74rem', lineHeight: 1.55 }} />
         </div>
       )}
     </div>
