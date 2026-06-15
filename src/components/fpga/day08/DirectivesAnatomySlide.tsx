@@ -60,15 +60,16 @@ export default function DirectivesAnatomySlide() {
               }}>
                 <div style={{ fontSize: '0.84rem', fontWeight: 800, color: g.col }}>{g.cat}</div>
                 {g.items.map((it) => (
-                  <div key={it.cmd} style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
+                  <div key={it.cmd} style={{ display: 'flex', flexDirection: 'column', gap: '0.22rem' }}>
                     <code style={{
-                      fontSize: '0.62rem',
+                      fontSize: '0.64rem',
                       background: '#1A2235', color: '#A8D8A8',
-                      padding: '3px 6px', borderRadius: '4px',
-                      fontFamily: 'monospace',
-                      whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                      padding: '5px 8px', borderRadius: '5px',
+                      fontFamily: 'ui-monospace, "JetBrains Mono", monospace',
+                      lineHeight: 1.4,
+                      whiteSpace: 'pre-wrap', wordBreak: 'break-word',
                     }}>{it.cmd}</code>
-                    <div style={{ fontSize: '0.62rem', color: FPGA.textLight, lineHeight: 1.45, paddingLeft: '4px' }}>
+                    <div style={{ fontSize: '0.66rem', color: FPGA.text, lineHeight: 1.5, paddingLeft: '4px' }}>
                       {it.d}
                     </div>
                   </div>

@@ -12,7 +12,7 @@ export default function CaseNoSyncSlide() {
         <SlideHeader
           badge="CASE 1 · no_sync"
           title="단일 bit 미동기 — 가장 흔한 violation"
-          subtitle="trip_active (proc_clk → bus_clk) · sync 없이 host_rdata로 직결"
+          subtitle="proc_clk에서 만든 trip_active를 2DFF 동기화 없이 bus_clk 수신 레지스터(host_rdata)에 바로 연결"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
@@ -69,7 +69,10 @@ export default function CaseNoSyncSlide() {
                 {"  "}.<span style={{ color: '#9CDCFE' }}>clk</span>          (bus_clk),{"\n"}
                 {"  "}  ...{"\n"}
                 {"  "}.<span style={{ color: '#9CDCFE' }}>trip_active</span>  (<span style={{ color: '#E53E3E', fontWeight: 'bold', textDecoration: 'underline' }}>trip_active_proc</span>),  <span style={{ color: '#E53E3E' }}>// ✗ raw CDC!</span>{"\n"}
-                );
+                );{"\n"}
+                <span style={{ color: '#6A9955' }}>{"// bus_iface.v 내부: bus_clk RX flop = report end"}</span>{"\n"}
+                <span style={{ color: '#C586C0' }}>always</span> @(<span style={{ color: '#569CD6' }}>posedge</span> bus_clk){"\n"}
+                {"  "}<span style={{ color: '#9CDCFE' }}>host_rdata[0]</span> <span style={{ color: '#D4D4D4' }}>{"<="}</span> <span style={{ color: '#E53E3E', fontWeight: 'bold' }}>trip_active</span>;  <span style={{ color: '#E53E3E' }}>// ✗ 미동기 래치</span>
               </pre>
             </div>
 
@@ -99,7 +102,10 @@ export default function CaseNoSyncSlide() {
                 {"  "}.<span style={{ color: '#9CDCFE' }}>clk</span>          (bus_clk),{"\n"}
                 {"  "}  ...{"\n"}
                 {"  "}.<span style={{ color: '#9CDCFE' }}>trip_active</span>  (<span style={{ color: '#48BB78', fontWeight: 'bold', textDecoration: 'underline' }}>trip_active_bus</span>),   <span style={{ color: '#48BB78' }}>// ✓ synced</span>{"\n"}
-                );
+                );{"\n"}
+                <span style={{ color: '#6A9955' }}>{"// bus_iface.v 내부: bus_clk RX flop = report end"}</span>{"\n"}
+                <span style={{ color: '#C586C0' }}>always</span> @(<span style={{ color: '#569CD6' }}>posedge</span> bus_clk){"\n"}
+                {"  "}<span style={{ color: '#9CDCFE' }}>host_rdata[0]</span> <span style={{ color: '#D4D4D4' }}>{"<="}</span> <span style={{ color: '#48BB78', fontWeight: 'bold' }}>trip_active</span>;  <span style={{ color: '#48BB78' }}>// ✓ 동기화된 입력</span>
               </pre>
             </div>
           </div>
