@@ -86,14 +86,14 @@ export default function CourseOverviewSlides() {
               {
                 month: '2개월차',
                 weeks: 'Week 5~8',
-                title: '동적 검증',
+                title: '설계 기반 검증',
                 color: '#5B8C5A',
-                keywords: ['QuestaSim', 'Testbench', 'Coverage', 'Autocheck'],
+                keywords: ['Arty-7 설계', 'QuestaSim', 'Testbench', 'Coverage'],
                 topics: [
-                  'QuestaSim 기본 · TB 설계',
-                  '기능 시뮬레이션',
-                  '커버리지 분석',
-                  'Autocheck · Covercheck',
+                  'QuestaSim · 조합/순차 설계',
+                  'FSM · UART 설계 검증',
+                  'TB 고도화 · 커버리지',
+                  '통합 설계 · 보드 검증',
                 ],
               },
               {
@@ -101,9 +101,9 @@ export default function CourseOverviewSlides() {
                 weeks: 'Week 9~12',
                 title: '형식 검증 / 통합',
                 color: '#8B6FA5',
-                keywords: ['Formal', 'STA', 'V&V Report', '인허가'],
+                keywords: ['Formal', 'Autocheck', 'STA', 'V&V Report'],
                 topics: [
-                  '형식 검증 · 등가성',
+                  '형식 검증 · Autocheck',
                   'STA 타이밍 분석',
                   '통합 툴 활용',
                   'V&V Report · 인허가',

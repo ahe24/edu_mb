@@ -44,7 +44,9 @@ export default function FpgaRevealWrapper({ children, header }: { children: Reac
           slideNumber: true,
           controls: !printMode,
           progress: !printMode,
-          center: true,
+          // center:false + section height:100% 로 콘텐츠가 슬라이드 전체 높이를 채우게 함
+          // (center:true는 콘텐츠를 자연 높이로 중앙에 띄워 상하 여백이 크게 남음)
+          center: false,
           // 16:9.5 — 일반적인 노트북/외부 모니터 (1440×900, 1920×1080, 1366×768) 의
           // 가용 영역 비율과 유사하게 맞춰 letterboxing 최소화
           width: 1280,
@@ -228,12 +230,14 @@ const fpgaThemeCSS = `
     color: #2D3748;
     text-align: left;
     background: #FAFBFD;
-    /* 전체 폭 활용: 좌우 여백 최소화, 중앙 정렬 */
+    /* 전체 폭·높이 활용: 콘텐츠가 슬라이드 영역 전체를 채우도록 */
+    box-sizing: border-box;
+    height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 1.2rem 2.5rem !important;
+    padding: 1.1rem 2.5rem !important;
   }
 
   /* 슬라이드 내 직접 자식 요소 전폭 활용 */

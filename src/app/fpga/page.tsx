@@ -43,35 +43,35 @@ const curriculum = [
   },
   {
     month: 2,
-    theme: '동적 시뮬레이션 및 커버리지 검증',
+    theme: '설계 실습 기반 동적 검증 (Arty-7)',
     color: '#5B8C5A',
     weeks: [
       {
-        week: 5, title: 'QuestaSim 기본 및 Testbench 설계',
+        week: 5, title: 'QuestaSim·Visualizer 입문 및 기초 RTL 설계',
         days: [
-          { day: 9, title: 'QuestaSim 환경 및 기본 시뮬레이션', ready: false },
-          { day: 10, title: 'Testbench 구조 설계 원칙', ready: false },
+          { day: 9, title: 'QuestaSim·Visualizer 환경 및 조합논리 설계', ready: true },
+          { day: 10, title: '순차논리 설계 및 self-checking Testbench 기초', ready: true },
         ],
       },
       {
-        week: 6, title: '기능 시뮬레이션 단계별 검증',
+        week: 6, title: '점증적 RTL 설계 및 기능 시뮬레이션',
         days: [
-          { day: 11, title: '합성 전 기능 시뮬레이션', ready: false },
-          { day: 12, title: '합성 후 및 Post-P&R 시뮬레이션', ready: false },
+          { day: 11, title: 'FSM 설계 및 상태 천이 검증', ready: true },
+          { day: 12, title: 'UART 통신 설계 및 프로토콜 검증', ready: true },
         ],
       },
       {
-        week: 7, title: '커버리지(Coverage) 분석',
+        week: 7, title: 'Testbench 고도화 및 커버리지 분석',
         days: [
-          { day: 13, title: '코드 커버리지 측정 및 분석', ready: false },
-          { day: 14, title: '기능 커버리지 및 커버리지 클로저 전략', ready: false },
+          { day: 13, title: '재사용 Testbench 구조 및 SVA Assertion 기초', ready: false },
+          { day: 14, title: '코드 커버리지 측정 및 커버리지 클로저', ready: false },
         ],
       },
       {
-        week: 8, title: 'Questa Autocheck & Covercheck',
+        week: 8, title: '통합 설계 및 합성·보드 검증',
         days: [
-          { day: 15, title: 'Autocheck를 이용한 자동 속성 검증', ready: false },
-          { day: 16, title: 'Covercheck를 이용한 커버리지 분석 보완', ready: false },
+          { day: 15, title: '통합 미니 프로젝트 설계 및 시뮬레이션', ready: false },
+          { day: 16, title: 'Vivado 합성·구현 및 실보드 동작 검증', ready: false },
         ],
       },
     ],
@@ -82,10 +82,10 @@ const curriculum = [
     color: '#8B6FA5',
     weeks: [
       {
-        week: 9, title: '형식 검증: 모델 및 등가성 확인',
+        week: 9, title: '형식 검증 · 자동 속성/커버리지 검증',
         days: [
-          { day: 17, title: '형식 검증 기초 이론', ready: false },
-          { day: 18, title: '등가성 검증 실습', ready: false },
+          { day: 17, title: '형식 검증 기초 및 Autocheck 자동 속성 검증', ready: false },
+          { day: 18, title: '등가성 검증 및 Covercheck 커버리지 보완', ready: false },
         ],
       },
       {
