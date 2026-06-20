@@ -74,11 +74,9 @@ export default function SeqDetectorSlide() {
   const [xdcOpen, setXdcOpen] = useState(false);
 
   const feed = (b: number) => {
-    setState((s) => {
-      const ns = NXT[s][b];
-      setTape((t) => [...t.slice(-13), { bit: b, state: ns, found: ns === 3 }]);
-      return ns;
-    });
+    const ns = NXT[state][b];
+    setState(ns);
+    setTape((t) => [...t.slice(-13), { bit: b, state: ns, found: ns === 3 }]);
   };
   const reset = () => { setState(0); setTape([]); };
   const inject = () => {
@@ -96,7 +94,7 @@ export default function SeqDetectorSlide() {
 
   // 상태 ring 좌표 (가로 배치)
   const ring = [
-    { cx: 40, cy: 60 }, { cx: 120, cy: 60 }, { cx: 200, cy: 60 }, { cx: 280, cy: 60 },
+    { cx: 40, cy: 80 }, { cx: 120, cy: 80 }, { cx: 200, cy: 80 }, { cx: 280, cy: 80 },
   ];
 
   return (
@@ -120,14 +118,14 @@ export default function SeqDetectorSlide() {
               <div style={{ fontSize: '0.62rem', fontWeight: 700, color: FPGA.textLight, textAlign: 'center', marginBottom: '0.05rem' }}>
                 <strong style={{ color: DAY11 }}>din 비트</strong>를 직접 넣어 보기 — 상태가 따라 이동, <strong style={{ color: '#48BB78' }}>S101 도달 시 found</strong>
               </div>
-              <svg viewBox="0 0 320 130" style={{ width: '100%' }}>
-                {/* 천이 화살표 (정방향 1) */}
-                <path d="M60 56 H100" stroke={DAY11} strokeWidth="1.5" markerEnd="url(#sa)" /><text x="80" y="48" fontSize="7" fill={DAY11} textAnchor="middle" fontFamily={MONO}>1</text>
-                <path d="M140 64 H180" stroke={DAY11} strokeWidth="1.5" markerEnd="url(#sa)" /><text x="160" y="78" fontSize="7" fill={DAY11} textAnchor="middle" fontFamily={MONO}>0</text>
-                <path d="M220 56 H260" stroke={DAY11} strokeWidth="1.5" markerEnd="url(#sa)" /><text x="240" y="48" fontSize="7" fill={DAY11} textAnchor="middle" fontFamily={MONO}>1</text>
-                {/* overlap S101 → S1 (din=1) */}
-                <path d="M270 44 A70 70 0 0 0 128 44" fill="none" stroke="#48BB78" strokeWidth="1.4" strokeDasharray="4 3" markerEnd="url(#sa)" />
-                <text x="200" y="16" fontSize="6.8" fill="#48BB78" textAnchor="middle" fontFamily={MONO}>din=1 (overlap → S1)</text>
+              <svg viewBox="0 0 320 116" style={{ width: '100%' }}>
+                {/* 천이 화살표 (정방향) */}
+                <path d="M60 80 H100" stroke={DAY11} strokeWidth="1.5" markerEnd="url(#sa)" /><text x="80" y="73" fontSize="7" fill={DAY11} textAnchor="middle" fontFamily={MONO}>1</text>
+                <path d="M140 80 H180" stroke={DAY11} strokeWidth="1.5" markerEnd="url(#sa)" /><text x="160" y="95" fontSize="7" fill={DAY11} textAnchor="middle" fontFamily={MONO}>0</text>
+                <path d="M220 80 H260" stroke={DAY11} strokeWidth="1.5" markerEnd="url(#sa)" /><text x="240" y="73" fontSize="7" fill={DAY11} textAnchor="middle" fontFamily={MONO}>1</text>
+                {/* overlap S101 → S1 (din=1) — 노드 위로 완만하게 */}
+                <path d="M278 64 A95 95 0 0 0 122 64" fill="none" stroke="#48BB78" strokeWidth="1.4" strokeDasharray="4 3" markerEnd="url(#sa)" />
+                <text x="200" y="22" fontSize="6.8" fill="#48BB78" textAnchor="middle" fontFamily={MONO}>din=1 (overlap → S1)</text>
                 {/* nodes */}
                 {ring.map((n, i) => {
                   const active = state === i;
