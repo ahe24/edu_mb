@@ -59,9 +59,13 @@ make clean
 `counter.en = tick & en_sw` 로 연결. counter 는 여전히 100MHz 로 동작하되 tick 일 때만 +1.
 
 ```verilog
-tick_gen #(.DIV(100_000_000)) u_tick (.clk(clk), .rst(rst), .tick(tick));
+tick_gen u_tick (.clk(clk), .rst(rst), .tick(tick));   // DIV 은 `ifdef FUNC_SIM 분기
 counter  #(.W(4)) u_cnt (.clk(clk), .rst(rst), .en(tick & en_sw), .cnt(cnt));
 ```
+
+`tick_gen` 의 `DIV` 는 `+define+FUNC_SIM` 컴파일이면 축소(시뮬), 없으면 실제 값(1억,
+합성). 같은 RTL 한 벌. `W=4` 는 LED 4개에 직결되는 **실제 비트 폭** — 시뮬·보드 동일
+(분주비처럼 sim 용으로 바꾸는 값이 아님).
 
 ## 보드 구현 (참고)
 

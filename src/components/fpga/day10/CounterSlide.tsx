@@ -64,13 +64,17 @@ set_property -dict { PACKAGE_PIN T10 IOSTANDARD LVCMOS33 } [get_ports { cnt[3] }
 
 // 보드 적용 — 100MHz → 1Hz "클럭 인에이블(tick)" 생성
 const tickGenCode = `// tick_gen.v — 100MHz 에서 1클럭 폭 tick(클럭 인에이블) 생성
-module tick_gen #(
-  parameter integer DIV = 100_000_000   // 100MHz → 1Hz
-)(
+module tick_gen (
   input  wire clk,        // 보드 메인 클럭 100MHz
   input  wire rst,
   output reg  tick        // DIV 클럭마다 1클럭 폭 HIGH
 );
+  // 시뮬(+define+FUNC_SIM)이면 DIV 축소 → 빨리 확인, 합성은 실제 값
+\`ifdef FUNC_SIM
+  localparam integer DIV = 4;            // 시뮬용
+\`else
+  localparam integer DIV = 100_000_000;  // 100MHz → 1Hz
+\`endif
   reg [26:0] cnt;
   always @(posedge clk)
     if (rst)               begin cnt <= 0; tick <= 1'b0; end
@@ -80,9 +84,9 @@ endmodule`;
 
 const topWireCode = `// top.v — 새 클럭을 만들지 말 것! 단일 100MHz + 클럭 인에이블
 wire tick;
-tick_gen #(.DIV(100_000_000)) u_tick (.clk(clk), .rst(rst), .tick(tick));
+tick_gen u_tick (.clk(clk), .rst(rst), .tick(tick));   // DIV 은 FUNC_SIM 로 분기
 
-// counter 는 여전히 100MHz clk 로 동작 — tick 일 때만 +1
+// counter 는 여전히 100MHz clk 로 동작 — tick 일 때만 +1 (W=4 = LED 4개, 실제 폭)
 counter  #(.W(4)) u_cnt (.clk(clk), .rst(rst), .en(tick), .cnt(cnt));`;
 
 /** 실물형 슬라이드 스위치 — 라벨은 본체 왼쪽 같은 줄 */
@@ -159,9 +163,9 @@ export default function CounterSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="실습 2 · 오전 ② · 카운터"
+          badge="실습 · 카운터"
           title="N-bit 카운터 · enable · wrap-around"
-          subtitle="클럭마다 enable이면 +1, W비트 한계에서 자동으로 0으로 — 스위치·클럭을 직접 돌려보자"
+          subtitle="클럭마다 enable이면 +1, W비트 한계에서 자동 wrap (15→0)"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.12fr 1fr', gap: '0.75rem' }}>
@@ -510,7 +514,7 @@ export default function CounterSlide() {
             <li>Arty 메인 클럭은 <strong>100MHz</strong>. counter를 이 클럭으로 매 엣지 +1 하면 초당 1억 증가 → LED로 변화를 볼 수 없다.</li>
             <li><span style={{ color: '#FF7B72', fontWeight: 800 }}>❌ 클럭을 분주해 counter의 clk으로 사용</span> = 파생 클럭(gated/divided clock) → 스큐·타이밍·CDC 문제, safety-critical 금기.</li>
             <li><span style={{ color: '#7EE787', fontWeight: 800 }}>✅ 단일 100MHz 클럭 유지 + 1클럭 폭 tick(클럭 인에이블)</span> 을 만들어 <code style={{ color: '#9CDCFE' }}>en</code> 에 연결. counter는 100MHz로 동작하되 tick일 때만 증가.</li>
-            <li>시뮬에선 <code style={{ color: '#9CDCFE' }}>DIV</code> 를 작게 override해 빨리 확인, 합성은 실제 값(1억).</li>
+            <li><code style={{ color: '#9CDCFE' }}>tick_gen</code> 의 <code style={{ color: '#9CDCFE' }}>DIV</code> 는 <code style={{ color: '#9CDCFE' }}>+define+FUNC_SIM</code> 로 축소해 시뮬, 합성은 실제 값(1억) — 동일 RTL. (counter 단위 시뮬은 <code style={{ color: '#9CDCFE' }}>en</code> 을 직접 구동해 tick_gen 불필요.)</li>
           </ul>
 
           <div style={{ background: '#1A2235', borderRadius: '8px', padding: '0.6rem 0.85rem', borderLeft: `3px solid ${DAY10}` }}>

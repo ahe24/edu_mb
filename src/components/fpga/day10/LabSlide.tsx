@@ -21,14 +21,13 @@ const C = ({ children }: { children: ReactNode }) => <code style={codeStyle}>{ch
 
 const labTasks: {
   num: number;
-  slot: string;
   title: string;
   items: ReactNode[];
   color: string;
   cmd: string;
 }[] = [
   {
-    num: 1, slot: '오전 ①',
+    num: 1,
     title: '클럭분주 blinker',
     items: [
       <><C>blinker.v</C> · 카운터로 토글</>,
@@ -38,7 +37,7 @@ const labTasks: {
     cmd: 'make sim',
   },
   {
-    num: 2, slot: '오전 ②',
+    num: 2,
     title: 'N-bit 카운터',
     items: [
       <><C>counter.v</C> · rst/en/wrap</>,
@@ -48,7 +47,7 @@ const labTasks: {
     cmd: 'make wave',
   },
   {
-    num: 3, slot: '오후 ①',
+    num: 3,
     title: '버튼 디바운서',
     items: [
       <>2FF 동기화 + 카운터 안정화</>,
@@ -58,7 +57,7 @@ const labTasks: {
     cmd: '// btn_in 글리치 자극',
   },
   {
-    num: 4, slot: '오후 ②',
+    num: 4,
     title: 'self-checking TB',
     items: [
       <>reference <C>model</C> 추가 · 매 클럭 비교</>,
@@ -99,9 +98,9 @@ export default function LabSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="Hands-on · 오전 2 · 오후 2"
-          title="오늘의 실습 4 · 순차 설계 → 모델 검증"
-          subtitle="클럭·리셋이 있는 회로 3종을 만들고 reference model로 검증한다"
+          badge="Hands-on · 실습 4종"
+          title="오늘의 실습 4종 · 순차 설계 → 모델 검증"
+          subtitle="클럭·리셋이 있는 회로 3종을 만들고 reference model로 검증한다 (순서 무관)"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -123,11 +122,6 @@ export default function LabSlide() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '0.7rem', fontWeight: 800, color: task.color, flexShrink: 0,
                   }}>{task.num}</span>
-                  <span style={{
-                    fontSize: '0.58rem', fontWeight: 700, color: task.color,
-                    background: `${task.color}12`, border: `1px solid ${task.color}25`,
-                    padding: '1px 6px', borderRadius: '4px', fontFamily: '"JetBrains Mono", monospace',
-                  }}>{task.slot}</span>
                   <span style={{ fontSize: '0.78rem', fontWeight: 800, color: FPGA.dark }}>{task.title}</span>
                 </div>
 

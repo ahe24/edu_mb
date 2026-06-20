@@ -36,7 +36,7 @@ const agenda: Item[] = [
   {
     step: 5,
     title: 'self-checking · Lab',
-    desc: 'reference model 기반 자동 판정 · $error · 4 실습 (오전2·오후2).',
+    desc: 'reference model 기반 자동 판정 · $error · 실습 4종 (순서 무관).',
     color: '#48BB78',
     isLab: true,
   },

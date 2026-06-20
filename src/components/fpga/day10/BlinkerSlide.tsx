@@ -15,14 +15,18 @@ const MONO = '"JetBrains Mono", monospace';
 // 구현부 임시 잠금 암호 (기록: ref_lab/SOLUTION_PASSWORDS.txt)
 const REVEAL_PW = '8220';
 
-// 항상 보이는 포트 선언부
-const portsCode = `module blinker #(
-  parameter integer DIV = 50_000_000  // 100MHz → ~1Hz 토글
-)(
+// 항상 보이는 포트 + DIV 조건부 컴파일부
+const portsCode = `module blinker (
   input  wire clk,
   input  wire rst,          // 동기 active-high
   output reg  led
-);`;
+);
+  // 기능검증 컴파일(+define+FUNC_SIM)이면 DIV 축소 → 빨리 토글
+\`ifdef FUNC_SIM
+  localparam integer DIV = 4;            // 시뮬용
+\`else
+  localparam integer DIV = 50_000_000;   // 100MHz → ~1Hz
+\`endif`;
 
 const bodyHidden = `  // ⋯ 구현부 숨김 — 🔒 구현 보기 클릭
 
@@ -39,8 +43,9 @@ const bodyShown = `  reg [25:0] cnt;
   end
 endmodule`;
 
-const tbCode = `// TB에서 DIV를 작게 override → 빨리 본다
-blinker #(.DIV(4)) dut (.clk(clk), .rst(rst), .led(led));`;
+const tbCode = `# 기능검증: +define+FUNC_SIM 로 컴파일 → DIV 축소
+vlog +define+FUNC_SIM blinker.v blinker_tb.v
+# 합성/임플리먼트: define 없이 → DIV = 50,000,000`;
 
 const xdcCode = `## ==================================================================
 ## Day 10 blinker — arty.xdc (Arty A7-35T Master 발췌)
@@ -121,9 +126,9 @@ export default function BlinkerSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="실습 1 · 오전 ① · 클럭 분주"
+          badge="실습 · 클럭 분주"
           title="blinker — 100MHz를 1Hz LED로"
-          subtitle="카운터로 클럭을 분주해 LED를 토글 — 클럭을 직접 돌려 분주를 눈으로 본다"
+          subtitle="÷DIV 카운터로 클럭 분주 → led 토글 · 단일 클럭 도메인 설계"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.12fr 1fr', gap: '0.75rem' }}>
@@ -244,16 +249,47 @@ export default function BlinkerSlide() {
               padding: '0.55rem 0.8rem', boxShadow: shadow.card,
             }}>
               <div style={{ fontSize: '0.72rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.3rem' }}>분주 원리</div>
-              <svg width="100%" height="64" viewBox="0 0 320 64">
-                <text x="2" y="18" fontSize="8.5" fontWeight="700" fill="#4A6FA5" fontFamily={MONO}>clk</text>
-                <path d="M30 22 H38 V8 H46 V22 H54 V8 H62 V22 H70 V8 H78 V22 H86 V8 H94 V22 H102 V8 H110 V22 H300"
+              <svg width="100%" height="100" viewBox="0 0 320 112">
+                {/* cnt 셀 경계 (clk 1주기 = cnt 1스텝) */}
+                {[70, 110, 190, 230, 270].map((x) => (
+                  <line key={x} x1={x} y1="14" x2={x} y2="60" stroke="#CBD5E1" strokeWidth="0.7" strokeDasharray="2 2" />
+                ))}
+                {/* 분주 경계 강조선: cnt==DIV-1 의 다음 edge */}
+                <line x1="230" y1="14" x2="230" y2="92" stroke={ORANGE} strokeWidth="1.4" strokeDasharray="3 2" />
+
+                {/* clk */}
+                <text x="2" y="29" fontSize="8" fontWeight="700" fill="#4A6FA5" fontFamily={MONO}>clk</text>
+                <path d="M30 32 V18 H50 V32 H70 V18 H90 V32 H110 V18 H130 V32 H150"
                   stroke="#4A6FA5" strokeWidth="1.1" fill="none" />
-                <text x="2" y="50" fontSize="8.5" fontWeight="700" fill={DAY10} fontFamily={MONO}>led</text>
-                <path d="M30 54 H110 V32 H190 V54 H270 V32 H300" stroke={DAY10} strokeWidth="2.2" fill="none" />
-                <text x="120" y="28" fontSize="7.5" fill={FPGA.textLight} fontFamily={MONO}>DIV 클럭마다 1회 토글</text>
+                <path d="M190 32 V18 H210 V32 H230 V18 H250 V32 H270 V18 H290 V32 H310"
+                  stroke="#4A6FA5" strokeWidth="1.1" fill="none" />
+                <text x="170" y="28" fontSize="9" fontWeight="800" fill="#4A6FA5" textAnchor="middle" fontFamily={MONO}>⋯</text>
+
+                {/* cnt 값 (clk 마다 +1) */}
+                <text x="2" y="53" fontSize="8" fontWeight="700" fill={ORANGE} fontFamily={MONO}>cnt</text>
+                <text x="50"  y="52" fontSize="7" fontWeight="800" fill="#5A4326" textAnchor="middle" fontFamily={MONO}>0</text>
+                <text x="90"  y="52" fontSize="7" fontWeight="800" fill="#5A4326" textAnchor="middle" fontFamily={MONO}>1</text>
+                <text x="130" y="52" fontSize="7" fontWeight="800" fill="#5A4326" textAnchor="middle" fontFamily={MONO}>2</text>
+                <text x="170" y="53" fontSize="9" fontWeight="800" fill="#5A4326" textAnchor="middle" fontFamily={MONO}>⋯</text>
+                <text x="210" y="52" fontSize="5.8" fontWeight="800" fill={ORANGE} textAnchor="middle" fontFamily={MONO}>49,999,999</text>
+                <text x="250" y="52" fontSize="7" fontWeight="800" fill="#5A4326" textAnchor="middle" fontFamily={MONO}>0</text>
+                <text x="290" y="52" fontSize="7" fontWeight="800" fill="#5A4326" textAnchor="middle" fontFamily={MONO}>1</text>
+                <text x="312" y="53" fontSize="9" fontWeight="800" fill="#5A4326" textAnchor="middle" fontFamily={MONO}>⋯</text>
+
+                {/* led — cnt==DIV-1 의 다음 edge(x=230)에서 토글 */}
+                <text x="2" y="83" fontSize="8" fontWeight="700" fill={DAY10} fontFamily={MONO}>led</text>
+                <path d="M30 88 H230 V74 H310" stroke={DAY10} strokeWidth="2.2" fill="none" />
+                <path d="M226 78 l4 -5 l4 5 Z" fill={DAY10} />
+                <text x="120" y="85" fontSize="6.5" fontWeight="700" fill={DAY10} textAnchor="middle" fontFamily={MONO}>0</text>
+                <text x="270" y="71" fontSize="6.5" fontWeight="700" fill={DAY10} textAnchor="middle" fontFamily={MONO}>1</text>
+
+                {/* 경계 설명 */}
+                <text x="160" y="108" fontSize="6.3" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>
+                  cnt = DIV−1 도달 → 다음 edge에서 cnt→0 · <tspan fill={DAY10} fontWeight="800">led 토글</tspan>
+                </text>
               </svg>
-              <div style={{ fontSize: '0.64rem', color: FPGA.text, lineHeight: 1.5, marginTop: '0.2rem' }}>
-                LED 주기 = <code>2 × DIV × Tclk</code>. DIV=50M → 1초 ON / 1초 OFF.
+              <div style={{ fontSize: '0.62rem', color: FPGA.text, lineHeight: 1.5, marginTop: '0.2rem' }}>
+                LED 주기 = <code>2 × DIV × Tclk</code>. DIV=50M → cnt 0~49,999,999 반복, 1초 ON / 1초 OFF.
               </div>
             </div>
 
@@ -263,7 +299,7 @@ export default function BlinkerSlide() {
               borderLeft: `3px solid ${ORANGE}`,
             }}>
               <div style={{ fontSize: '0.6rem', color: ORANGE, fontWeight: 800, marginBottom: '0.3rem', letterSpacing: '0.05em' }}>
-                시뮬 팁 — parameter override
+                시뮬 팁 — DIV 조건부 컴파일 (`ifdef FUNC_SIM)
               </div>
               <VerilogCode code={tbCode} style={{ fontSize: '0.62rem', lineHeight: 1.5 }} />
             </div>

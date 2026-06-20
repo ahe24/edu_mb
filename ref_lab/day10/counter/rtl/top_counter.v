@@ -13,11 +13,11 @@ module top_counter (
 );
   wire tick;
 
-  tick_gen #(.DIV(100_000_000)) u_tick (
+  tick_gen u_tick (              // DIV 은 tick_gen 내부 `ifdef FUNC_SIM 로 분기
     .clk(clk), .rst(rst), .tick(tick)
   );
 
-  counter #(.W(4)) u_cnt (
+  counter #(.W(4)) u_cnt (       // W=4 = LED 4개, 시뮬·보드 동일(실제 폭)
     .clk(clk), .rst(rst), .en(tick & en_sw), .cnt(cnt)
   );
 endmodule

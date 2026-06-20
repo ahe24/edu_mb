@@ -7,8 +7,8 @@
 
 ```
 blinker/
-├─ rtl/blinker.v             설계 RTL
-├─ testbench/tb_blinker.sv   reference model self-checking TB (DIV override)
+├─ rtl/blinker.v             설계 RTL (DIV 은 `ifdef FUNC_SIM 으로 분기)
+├─ testbench/tb_blinker.sv   reference model self-checking TB
 ├─ sim/{Makefile, flist.f}   comp → opt → sim → wave
 └─ fpga/arty.xdc             clk(create_clock) · rst · led
 ```
@@ -19,7 +19,8 @@ blinker/
 - 단일 100MHz clk 로 카운터를 돌려 `cnt==DIV-1` 마다 `led` 반전 — **새 클럭을
   만들지 않는다**(파생 클럭 금지). 같은 분주 카운터가 Day10 counter 실습의
   tick(클럭 인에이블) 으로 재사용된다.
-- 시뮬은 `tb_blinker` 에서 `DIV` 를 작게 override 해 빨리 확인, 합성은 실제 값.
+- 시뮬은 `+define+FUNC_SIM` 로 컴파일 → `DIV` 축소해 빨리 확인, 합성/임플은
+  define 없이 실제 값(50,000,000). 동일 RTL 한 벌로 sim/synth 분리.
 
 ## 실행
 

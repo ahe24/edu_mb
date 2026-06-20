@@ -12,6 +12,7 @@ FLIST := flist.f
 OPT   := opt
 WAVE  := qwave.db
 DSGN  := design.bin
+DEFS  := +define+FUNC_SIM      # 시뮬: DIV 축소 (합성/임플은 define 없이 실제 값)
 
 .PHONY: all comp opt sim wave clean
 
@@ -20,7 +21,7 @@ all: sim
 comp:
 	vlib work
 	vmap work work
-	vlog -f $(FLIST)
+	vlog $(DEFS) -f $(FLIST)
 
 opt: comp
 	vopt $(TOP) -o $(OPT) -debug +designfile

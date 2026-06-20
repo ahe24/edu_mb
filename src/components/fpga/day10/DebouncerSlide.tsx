@@ -161,9 +161,9 @@ export default function DebouncerSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="실습 3 · 오후 ① · 디바운서"
+          badge="실습 · 디바운서"
           title="버튼 디바운서 — raw → clean"
-          subtitle="비동기 버튼을 2FF로 동기화 후 채터링 제거 — 버튼을 눌러 바운스가 흡수되는지 본다"
+          subtitle="비동기 버튼 2FF 동기화 → 카운터 안정화로 채터링 제거"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.12fr 1fr', gap: '0.75rem' }}>

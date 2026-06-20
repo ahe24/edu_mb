@@ -99,7 +99,7 @@ export default function TitleSlide() {
           marginBottom: '2.5rem',
         }}>
           {[
-            { label: '실습', value: '4 (오전2·오후2)' },
+            { label: '실습', value: '4종 (순서 무관)' },
             { label: '설계 예제', value: 'blinker · counter · debounce' },
             { label: '검증', value: 'reference model TB' },
           ].map(({ label, value }) => (
