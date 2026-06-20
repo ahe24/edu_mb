@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import { FPGA, slideBg, shadow } from '../FpgaSlideStyles';
 import SlideHeader from '../SlideHeader';
-import VerilogCode from '../VerilogCode';
 import SlideModal from '../SlideModal';
-import RevealLock from '../RevealLock';
+import RevealCodeModal from '../RevealCodeModal';
 
 // 구현부 임시 잠금 암호 (기록: ref_lab/SOLUTION_PASSWORDS.txt)
 const REVEAL_PW = '7710';
@@ -28,16 +27,6 @@ const portsCode = `module mux4 (
   input  wire [1:0] sw,    // sw[1:0] = sel — 슬라이드 스위치로 색 선택
   output reg  [2:0] rgb    // 선택된 색 → RGB LED  ({R,G,B})
 );`;
-
-// 클릭 전: 구현부 숨김 (줄 수를 bodyShown 과 맞춤)
-const bodyHidden = `  // ⋯ 구현부 숨김 — [구현 보기 ▸] 클릭
-
-
-
-
-
-
-endmodule`;
 
 // 클릭 후: 구현부 공개
 const bodyShown = `  always @* begin            // 조합논리 (클럭 없음)
@@ -111,7 +100,6 @@ function RgbLed({ cx, cy, color }: { cx: number; cy: number; color: string }) {
 
 export default function Mux4Slide() {
   const [sw, setSw] = useState(0b10);   // 기본 sel=10 → B
-  const [revealed, setRevealed] = useState(false);
   const [xdcOpen, setXdcOpen] = useState(false);
 
   const toggle = (i: number) => setSw((v) => v ^ (1 << i));
@@ -167,7 +155,7 @@ export default function Mux4Slide() {
                       <text x="24" y={y + 3} fontSize="9" fontWeight="800" textAnchor="middle"
                         fill={c.name === 'W' ? '#444' : '#fff'} fontFamily={MONO}>{c.name}</text>
                       <text x="44" y={y - 1} fontSize="6.5" fontWeight="700" fill={on ? FPGA.dark : '#A0AEC0'} fontFamily={MONO}>in{i} ({c.sel})</text>
-                      <text x="44" y={y + 8} fontSize="6" fill={on ? FPGA.textLight : '#B8C2CE'} fontFamily={MONO}>3'b{c.bits}</text>
+                      <text x="44" y={y + 8} fontSize="6" fill={on ? FPGA.textLight : '#B8C2CE'} fontFamily={MONO}>{`3'b${c.bits}`}</text>
                       {/* 입력 → MUX 배선 (좌측 변에 균등 연결) */}
                       <path d={`M88 ${y} H128`} stroke={on ? c.css : DIM} strokeWidth={on ? 2.6 : 1.3} opacity={on ? 1 : 0.55} />
                       <circle cx="128" cy={y} r={on ? 2.6 : 1.8} fill={on ? c.css : DIM} opacity={on ? 1 : 0.55} />
@@ -183,7 +171,7 @@ export default function Mux4Slide() {
 
                 {/* MUX 출력 → RGB LED */}
                 <path d={`M178 127 H286`} stroke={selWire} strokeWidth="2.6" />
-                <text x="222" y="120" fontSize="6.5" fontWeight="700" fill={FPGA.dark} fontFamily={MONO}>rgb = 3'b{cur.bits}</text>
+                <text x="222" y="120" fontSize="6.5" fontWeight="700" fill={FPGA.dark} fontFamily={MONO}>{`rgb = 3'b${cur.bits}`}</text>
                 <RgbLed cx={300} cy={127} color={cur.css} />
 
                 {/* sel 입력 — 좌측 하단 2줄 스위치 → 꺾은선으로 MUX 하단 진입 */}
@@ -215,22 +203,15 @@ export default function Mux4Slide() {
               padding: '0.55rem 0.85rem', boxShadow: shadow.card,
               borderLeft: `3px solid ${DAY09}`,
             }}>
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem',
-                userSelect: 'none', WebkitUserSelect: 'none',
-              }}>
-                <span style={{ fontSize: '0.6rem', color: DAY09, fontWeight: 800, letterSpacing: '0.05em' }}>
-                  mux4.v — case 기반 설계
-                </span>
-                <RevealLock
-                  revealed={revealed}
-                  onReveal={() => setRevealed(true)}
-                  onHide={() => setRevealed(false)}
-                  password={REVEAL_PW}
-                  accent={DAY09}
-                />
-              </div>
-              <VerilogCode code={`${portsCode}\n${revealed ? bodyShown : bodyHidden}`} style={{ fontSize: '0.6rem', lineHeight: 1.42 }} />
+              <RevealCodeModal
+                title="mux4.v — case 기반 설계"
+                accent={DAY09}
+                password={REVEAL_PW}
+                portsCode={portsCode}
+                fullCode={`${portsCode}\n${bodyShown}`}
+                subtitle="4:1 컬러 MUX · full-case"
+                inlineStyle={{ fontSize: '0.56rem', lineHeight: 1.4 }}
+              />
             </div>
           </div>
 

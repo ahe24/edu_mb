@@ -21,14 +21,13 @@ const C = ({ children }: { children: ReactNode }) => <code style={codeStyle}>{ch
 
 const labTasks: {
   num: number;
-  slot: string;
   title: string;
   items: ReactNode[];
   color: string;
   cmd: string;
 }[] = [
   {
-    num: 1, slot: '오전 ①',
+    num: 1,
     title: '신호등 Moore FSM',
     items: [
       <><C>traffic_light.v</C> · 3상태 타이머 천이</>,
@@ -38,27 +37,27 @@ const labTasks: {
     cmd: 'make sim',
   },
   {
-    num: 2, slot: '오전 ②',
+    num: 2,
     title: 'RGB PWM 밝기 FSM',
     items: [
-      <><C>pwm_rgb.v</C> · 4모드 순환 + PWM duty</>,
-      <>btn_p 펄스로 OFF→DIM→MID→BRT</>,
+      <><C>pwm_rgb.v</C> · 1kHz PWM · RGB duty 50% 상한</>,
+      <>btn_p 펄스로 OFF→DIM→MID→MAX(50%)</>,
     ],
     color: DAY11,
     cmd: 'make wave',
   },
   {
-    num: 3, slot: '오후 ①',
+    num: 3,
     title: '시퀀스 검출 FSM',
     items: [
-      <><C>seq_detect.v</C> · "101" overlap</>,
+      <><C>seq_detect.v</C> · {'"101"'} overlap</>,
       <>101101 인가 → found 2회 확인</>,
     ],
     color: '#8B6FA5',
     cmd: '// din 패턴 인가',
   },
   {
-    num: 4, slot: '오후 ②',
+    num: 4,
     title: '천이·corner 검증',
     items: [
       <>state coverage 4/4 · 기대 found 자동판정</>,
@@ -123,11 +122,6 @@ export default function LabSlide() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '0.7rem', fontWeight: 800, color: task.color, flexShrink: 0,
                   }}>{task.num}</span>
-                  <span style={{
-                    fontSize: '0.58rem', fontWeight: 700, color: task.color,
-                    background: `${task.color}12`, border: `1px solid ${task.color}25`,
-                    padding: '1px 6px', borderRadius: '4px', fontFamily: '"JetBrains Mono", monospace',
-                  }}>{task.slot}</span>
                   <span style={{ fontSize: '0.78rem', fontWeight: 800, color: FPGA.dark }}>{task.title}</span>
                 </div>
 

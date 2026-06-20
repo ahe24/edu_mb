@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react';
 import { FPGA, slideBg, shadow } from '../FpgaSlideStyles';
 import SlideHeader from '../SlideHeader';
-import VerilogCode from '../VerilogCode';
 import ToolImage from '../ToolImage';
 import SlideModal from '../SlideModal';
-import RevealLock from '../RevealLock';
+import RevealCodeModal from '../RevealCodeModal';
 
 const DAY10 = '#1B998B';
 const ORANGE = '#E8913A';
@@ -24,16 +23,6 @@ const portsCode = `module debounce #(
   input  wire btn_in,        // 노이즈 있는 raw 버튼
   output reg  btn_out        // 안정화된 버튼
 );`;
-
-const bodyHidden = `  // ⋯ 구현부 숨김 — 🔒 구현 보기 클릭
-
-
-
-
-
-
-
-endmodule`;
 
 const bodyShown = `  reg [19:0] cnt;
   reg        s0, s1;         // 2단 동기화 FF
@@ -118,7 +107,6 @@ export default function DebouncerSlide() {
   const [rst, setRst] = useState(false);
   const [running, setRunning] = useState(false);
   const [phase, setPhase] = useState(false);
-  const [revealed, setRevealed] = useState(false);
   const [xdcOpen, setXdcOpen] = useState(false);
 
   const clkStep = () => {
@@ -282,22 +270,15 @@ export default function DebouncerSlide() {
               padding: '0.55rem 0.85rem', boxShadow: shadow.card,
               borderLeft: `3px solid ${DAY10}`,
             }}>
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem',
-                userSelect: 'none', WebkitUserSelect: 'none',
-              }}>
-                <span style={{ fontSize: '0.6rem', color: DAY10, fontWeight: 800, letterSpacing: '0.05em' }}>
-                  debounce.v — 설계
-                </span>
-                <RevealLock
-                  revealed={revealed}
-                  onReveal={() => setRevealed(true)}
-                  onHide={() => setRevealed(false)}
-                  password={REVEAL_PW}
-                  accent={DAY10}
-                />
-              </div>
-              <VerilogCode code={`${portsCode}\n${revealed ? bodyShown : bodyHidden}`} style={{ fontSize: '0.58rem', lineHeight: 1.4 }} />
+              <RevealCodeModal
+                title="debounce.v — 설계"
+                accent={DAY10}
+                password={REVEAL_PW}
+                portsCode={portsCode}
+                fullCode={`${portsCode}\n${bodyShown}`}
+                subtitle="2FF 동기화 + 카운터 안정화"
+                inlineStyle={{ fontSize: '0.56rem', lineHeight: 1.4 }}
+              />
             </div>
           </div>
 

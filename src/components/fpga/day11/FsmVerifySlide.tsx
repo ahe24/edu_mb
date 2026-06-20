@@ -7,25 +7,27 @@ import VerilogCode from '../VerilogCode';
 const DAY11 = '#3D8361';
 
 const code = `module seq_detect_tb;
-  reg clk=0, rst, din;
-  wire found;
+  reg clk=0, rst, din;  wire found;
   seq_detect dut(.clk(clk), .rst(rst), .din(din), .found(found));
   always #5 clk = ~clk;
 
-  reg [5:0] visited = 0;            // 방문 상태 마스크 (coverage)
+  reg [3:0] visited = 0;            // 방문 상태 마스크 (coverage)
   always @(posedge clk) visited[dut.state] <= 1'b1;
 
-  reg [7:0] seq = 8'b1011_0110;    // 인가 패턴 (MSB first)
-  integer i, hits = 0;
+  reg [6:0] seq = 7'b1011011;      // 인가 패턴 (MSB first → found 2회)
+  integer i, hits = 0, errors = 0;
   initial begin
-    rst=1; din=0; repeat(2)@(posedge clk); rst=0;
-    for (i=7; i>=0; i=i-1) begin
+    rst=1; din=0; repeat(2)@(posedge clk);
+    if (found) begin errors=errors+1; $error("reset 중 found"); end
+    rst=0;
+    for (i=6; i>=0; i=i-1) begin
       din = seq[i]; @(posedge clk);
       if (found) hits = hits + 1;   // self-check: 카운트
     end
-    if (hits != 2) $error("expected 2 found, got %0d", hits);
-    if (visited[3:0] != 4'hF) $error("state not fully covered");
-    $display("PASS · found=%0d · states covered", hits);
+    if (hits != 2)            begin errors=errors+1; $error("found %0d != 2", hits); end
+    if (visited != 4'hF)      begin errors=errors+1; $error("state 미커버 %b", visited); end
+    if (errors==0) $display(" RESULT: PASS  (found=%0d · state 4/4)", hits);
+    else           $display(" RESULT: FAIL  (%0d error)", errors);
     $finish;
   end
 endmodule`;
@@ -35,7 +37,7 @@ export default function FsmVerifySlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="실습 4 · 오후 ② · 천이 검증"
+          badge="실습 · 천이 검증"
           title="상태 천이·corner case·커버리지까지"
           subtitle="기대 출력 자동 판정 + 전체 상태 방문 확인 + 미사용 상태·천이 검증"
         />
@@ -87,7 +89,7 @@ export default function FsmVerifySlide() {
                 illegal state 주입 (force)
               </div>
               <code style={{ fontSize: '0.6rem', color: '#1A2235', background: 'rgba(0,0,0,0.05)', padding: '2px 6px', borderRadius: '4px', display: 'block' }}>
-                force dut.state = 2'bxx; #10; release dut.state;
+                {"force dut.state = 2'bxx; #10; release dut.state;"}
               </code>
               <div style={{ fontSize: '0.62rem', color: FPGA.text, lineHeight: 1.45, marginTop: '0.25rem' }}>
                 다음 클럭에 default로 S0 복귀하는지 = safety-critical 필수 검증.
