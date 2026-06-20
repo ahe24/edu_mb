@@ -62,3 +62,19 @@ scratch_*
 
 # documents
 *.pdf
+
+# 강사 전용 — 구현부 잠금 암호 (로컬 전용, 커밋 제외)
+SOLUTION_PASSWORD*.txt
+
+# QuestaSim/Visualizer 시뮬 생성물 (ref_lab)
+ref_lab/**/sim/work/
+ref_lab/**/sim/.visualizer/
+ref_lab/**/sim/design.bin
+ref_lab/**/sim/qwave.db
+ref_lab/**/sim/transcript
+ref_lab/**/sim/questa.ini
+ref_lab/**/sim/modelsim.ini
+ref_lab/**/sim/*.wlf
+ref_lab/**/sim/*.vstf
+ref_lab/**/sim/*.ses
+ref_lab/**/sim/*.log

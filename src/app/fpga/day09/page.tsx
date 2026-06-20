@@ -21,8 +21,8 @@ import LabSlide from '@/components/fpga/day09/LabSlide';
  *   4. QuestaFlowSlide     — vlib/vlog/vsim 3-step + Visualizer · 진입장벽 제거
  *   5. ComboBasicsSlide    — 실습1 조합논리 개념 · sw→LED passthrough/invert
  *   6. LogicGatesSlide     — 실습2 logic gates → RGB LED · 진리표
- *   7. Mux4Slide           — 실습3 4:1 MUX · case · latch 회피
- *   8. TestbenchSlide      — 실습4 첫 self-checking TB · Visualizer 파형 읽기
+ *   7. Mux4Slide           — 실습3 4:1 컬러 MUX (sel→R/G/B/W) · case · latch 회피
+ *   8. TestbenchSlide      — 실습4 mux4 self-checking TB · Visualizer 파형 읽기
  *   9. LabSlide            — 4 실습 (오전2·오후2) 체크리스트 + Day 10 예고
  */
 export default function Day09Page() {

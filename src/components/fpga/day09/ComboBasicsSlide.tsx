@@ -4,6 +4,10 @@ import { useState } from 'react';
 import { FPGA, slideBg, shadow } from '../FpgaSlideStyles';
 import SlideHeader from '../SlideHeader';
 import VerilogCode from '../VerilogCode';
+import RevealLock from '../RevealLock';
+
+// 구현부 임시 잠금 암호 (기록: ref_lab/SOLUTION_PASSWORDS.txt)
+const REVEAL_PW = '2724';
 
 const DAY09 = '#2E8B57';   // 단색 LED (led = sw) — 녹색
 const ORANGE = '#E8913A';  // XDC 카드 액센트
@@ -267,23 +271,13 @@ export default function ComboBasicsSlide() {
                 <span style={{ fontSize: '0.6rem', color: DAY09, fontWeight: 800, letterSpacing: '0.05em' }}>
                   sw_led.v — 설계
                 </span>
-                <button
-                  onClick={() => setRevealed((r) => !r)}
-                  style={{
-                    cursor: 'pointer',
-                    userSelect: 'none', WebkitUserSelect: 'none',
-                    fontSize: '0.58rem', fontWeight: 800, letterSpacing: '0.03em',
-                    color: revealed ? '#1A2235' : DAY09,
-                    background: revealed ? DAY09 : 'transparent',
-                    border: `1px solid ${DAY09}`,
-                    borderRadius: '5px',
-                    padding: '2px 9px',
-                    fontFamily: '"JetBrains Mono", monospace',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  {revealed ? '구현 숨기기 ▾' : '구현 보기 ▸'}
-                </button>
+                <RevealLock
+                  revealed={revealed}
+                  onReveal={() => setRevealed(true)}
+                  onHide={() => setRevealed(false)}
+                  password={REVEAL_PW}
+                  accent={DAY09}
+                />
               </div>
               <VerilogCode code={`${portsCode}\n${revealed ? bodyShown : bodyHidden}`} style={{ fontSize: '0.66rem', lineHeight: 1.5 }} />
             </div>

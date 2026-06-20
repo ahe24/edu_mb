@@ -9,9 +9,11 @@ interface ToolImageProps {
   name: string;
   width?: string;
   height?: string;
+  /** 썸네일 이미지 맞춤 방식 (기본 contain — 전체가 잘림 없이 보임) */
+  fit?: 'contain' | 'cover';
 }
 
-export default function ToolImage({ src, name, width = '100%', height = '60px' }: ToolImageProps) {
+export default function ToolImage({ src, name, width = '100%', height = '60px', fit = 'contain' }: ToolImageProps) {
   const [hasError, setHasError] = useState(false);
   const [lightbox, setLightbox] = useState(false);
 
@@ -44,7 +46,7 @@ export default function ToolImage({ src, name, width = '100%', height = '60px' }
           <img
             src={src}
             alt={name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit: fit }}
             onError={() => setHasError(true)}
           />
         )}
