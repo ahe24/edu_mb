@@ -18,7 +18,7 @@ import LabSlide from '@/components/fpga/day11/LabSlide';
  *   1. TitleSlide        — Day 11 타이틀
  *   2. AgendaSlide       — 5단계 흐름
  *   3. FsmConceptSlide   — FSM 구조 · Moore/Mealy · encoding · 안전 상태
- *   4. FsmStyleSlide     — 2-process 템플릿 · full-case default · illegal state 복구
+ *   4. FsmStyleSlide     — 1·2·3-process 비교 · 6-state 3-process 템플릿 · full-case default · illegal 복구
  *   5. TrafficLightSlide — 실습1 신호등 Moore FSM · state diagram · timed
  *   6. PwmModeSlide      — 실습2 RGB PWM 밝기 · mode FSM (버튼 순환)
  *   7. SeqDetectorSlide  — 실습3 시퀀스 검출 FSM · overlap 처리
