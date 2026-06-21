@@ -111,13 +111,15 @@ export default function UartRxSlide() {
         return { ...s, step: next, valid: false };
       }
       if (s.state === 'START') {
-        // start 중앙(os=7) 확인 후 DATA 진입
-        return { ...s, step: next, state: 'DATA', idx: 0, sh: 0, valid: false };
+        // start 중앙(os=7) 확인 후 DATA 진입 — next 셀(D0)을 바로 중앙 샘플
+        const sh = (bit << 7) & 0xff; // 첫 비트 D0 → MSB 적재(LSB first 시프트 시작)
+        return { ...s, step: next, state: 'DATA', idx: 0, sh, valid: false };
       }
       if (s.state === 'DATA') {
-        // 비트 중앙(os=15) 샘플 → LSB first 시프트
+        // D0는 진입 시 샘플 완료 → D7(idx==7)까지 샘플했으면 다음(stop)에서 STOP
+        if (s.idx === 7) return { ...s, step: next, state: 'STOP', valid: false };
+        // 다음 비트 중앙(os=15) 샘플 → LSB first 시프트(새 비트는 MSB로)
         const sh = ((s.sh >> 1) | (bit << 7)) & 0xff;
-        if (s.idx === 7) return { ...s, step: next, state: 'STOP', sh, valid: false };
         return { ...s, step: next, idx: s.idx + 1, sh, valid: false };
       }
       // STOP: data 확정 + valid 펄스 → IDLE
@@ -258,7 +260,8 @@ export default function UartRxSlide() {
                 </text>
 
                 {/* ── shift reg / data / valid ── */}
-                <text x="14" y="200" fontSize="6.5" fill={FPGA.textLight} fontFamily={MONO}>조립 shift</text>
+                <text x="14" y="196" fontSize="6.5" fill={FPGA.textLight} fontFamily={MONO}>조립 shift</text>
+                <text x="14" y="205" fontSize="5.4" fill="#94A3B8" fontFamily={MONO}>b7··b0</text>
                 {[7, 6, 5, 4, 3, 2, 1, 0].map((b, i) => {
                   const filled = rx.state === 'DATA' ? rx.idx >= (7 - b) : (rx.state === 'STOP' || rx.valid);
                   const v = (rx.sh >> b) & 1;
@@ -282,6 +285,11 @@ export default function UartRxSlide() {
                 <text x="330" y="201" fontSize="8" fontWeight="800"
                   fill={rx.valid ? '#48BB78' : FPGA.textLight} fontFamily={MONO}>
                   data=0x{(rx.valid ? rx.data : rx.sh).toString(16).toUpperCase().padStart(2, '0')}
+                </text>
+
+                {/* LSB first — 파형 도착순서와 레지스터 비트순서는 반전 관계 */}
+                <text x="14" y="224" fontSize="5.8" fill={ORANGE} fontFamily={MONO}>
+                  도착순서 D0··D7 = {DBITS.join('')} → LSB first 비트반전 → 0x{TARGET.toString(16).toUpperCase()} (b7··b0 = {TARGET.toString(2).padStart(8, '0')})
                 </text>
 
                 <defs>
@@ -360,21 +368,62 @@ export default function UartRxSlide() {
               padding: '0.6rem 0.75rem', boxShadow: shadow.card,
               flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column',
             }}>
-              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.3rem' }}>중앙 샘플 타이밍</div>
-              <svg width="100%" viewBox="0 0 320 96" style={{ flex: 1, minHeight: 0 }}>
-                {/* rx line */}
-                <path d="M10 30 H50 V52 H110 V30 V52 H170 V30 H300" stroke={DAY12} strokeWidth="2" fill="none" />
-                <text x="14" y="24" fontSize="7" fill="#E53E3E" fontFamily={MONO}>idle</text>
-                <text x="62" y="66" fontSize="7" fill={DAY12} fontFamily={MONO}>start</text>
-                {/* sample markers at mid */}
-                {[80, 140, 200].map((x) => (
-                  <g key={x}>
-                    <line x1={x} y1="16" x2={x} y2="56" stroke={ORANGE} strokeWidth="1" strokeDasharray="3 2" />
-                    <circle cx={x} cy={x === 80 ? 52 : 40} r="3" fill={ORANGE} />
-                  </g>
-                ))}
-                <text x="160" y="80" fontSize="7" fill={ORANGE} textAnchor="middle" fontFamily={MONO}>os=7(start), os=15(data) 중앙</text>
-                <text x="160" y="92" fontSize="6.3" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>16× oversample → 비트 중앙이 가장 안정적인 샘플점</text>
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.2rem' }}>
+                수신 FSM — 상태 천이 &amp; 할 일 <span style={{ fontSize: '0.55rem', fontWeight: 600, color: FPGA.textLight }}>(현재 상태 점등)</span>
+              </div>
+              <svg width="100%" viewBox="0 0 300 300" style={{ flex: 1, minHeight: 0 }}>
+                <defs>
+                  <marker id="fsmA" markerWidth="7.5" markerHeight="7.5" refX="5.4" refY="3" orient="auto">
+                    <path d="M0 0 L5.6 3 L0 6 z" fill="#64748B" />
+                  </marker>
+                </defs>
+
+                {/* ── 시계방향 링 천이 (상태박스 뒤에 깔리도록 먼저) ── */}
+                {/* IDLE(N) → START(E) : 북동 */}
+                <path d="M185 34 Q 252 44, 262 114" stroke="#E53E3E" strokeWidth="1.5" fill="none" markerEnd="url(#fsmA)" />
+                <text x="206" y="60" fontSize="6" fill="#E53E3E" fontWeight="700" fontFamily={MONO}>rx==0 (start↓)</text>
+                <text x="206" y="68" fontSize="5.6" fill={FPGA.textLight} fontFamily={MONO}>os←0</text>
+                {/* START(E) → DATA(S) : 남동 */}
+                <path d="M262 150 Q 254 222, 187 230" stroke={DAY12} strokeWidth="1.5" fill="none" markerEnd="url(#fsmA)" />
+                <text x="200" y="194" fontSize="6" fill={DAY12} fontWeight="700" fontFamily={MONO}>os==7 재확인</text>
+                <text x="200" y="202" fontSize="5.6" fill={FPGA.textLight} fontFamily={MONO}>os←0, idx←0</text>
+                {/* DATA(S) → STOP(W) : 남서 */}
+                <path d="M113 230 Q 46 222, 38 150" stroke="#4A6FA5" strokeWidth="1.5" fill="none" markerEnd="url(#fsmA)" />
+                <text x="98" y="194" fontSize="6" fill="#4A6FA5" fontWeight="700" textAnchor="end" fontFamily={MONO}>os==15 &amp;</text>
+                <text x="98" y="202" fontSize="6" fill="#4A6FA5" fontWeight="700" textAnchor="end" fontFamily={MONO}>idx==7</text>
+                {/* STOP(W) → IDLE(N) : 북서 */}
+                <path d="M38 114 Q 46 44, 113 34" stroke="#48BB78" strokeWidth="1.5" fill="none" markerEnd="url(#fsmA)" />
+                <text x="94" y="58" fontSize="6" fill="#48BB78" fontWeight="700" textAnchor="end" fontFamily={MONO}>os==15</text>
+                <text x="94" y="66" fontSize="5.6" fill={FPGA.textLight} textAnchor="end" fontFamily={MONO}>data←sh, valid←1</text>
+                {/* DATA self-loop (남, 8비트 샘플 반복) */}
+                <path d="M138 246 C 126 280, 174 280, 162 246" stroke="#4A6FA5" strokeWidth="1.4" fill="none" markerEnd="url(#fsmA)" />
+                <text x="150" y="288" fontSize="5.8" fill="#4A6FA5" fontWeight="700" textAnchor="middle" fontFamily={MONO}>
+                  os==15 &amp; idx&lt;7 → sh←{'{'}rx,sh[7:1]{'}'}, idx++ (×8)
+                </text>
+
+                {/* ── 상태 박스 (N·E·S·W) ── */}
+                {([
+                  { k: 'IDLE',  c: '#E53E3E', x: 115, y: 18,  sub: 'start 하강 대기' },
+                  { k: 'START', c: DAY12,     x: 227, y: 116, sub: 'os=7 중앙 정렬' },
+                  { k: 'DATA',  c: '#4A6FA5', x: 115, y: 214, sub: '8비트 샘플·시프트' },
+                  { k: 'STOP',  c: '#48BB78', x: 3,   y: 116, sub: 'data 확정·valid' },
+                ] as { k: Phase; c: string; x: number; y: number; sub: string }[]).map((st) => {
+                  const on = rx.state === st.k;
+                  return (
+                    <g key={st.k}>
+                      <rect x={st.x} y={st.y} width="70" height="32" rx="8"
+                        fill={on ? `${st.c}24` : '#FFFFFF'} stroke={st.c} strokeWidth={on ? 2.8 : 1.3}
+                        style={{ filter: on ? `drop-shadow(0 1.5px 4px ${st.c}66)` : 'drop-shadow(0 1px 1.5px rgba(0,0,0,0.12))' }} />
+                      <text x={st.x + 35} y={st.y + 14} fontSize="9.5" fontWeight="800" fill={st.c} textAnchor="middle" fontFamily={MONO}>{st.k}</text>
+                      <text x={st.x + 35} y={st.y + 24} fontSize="5.4" fill={on ? st.c : FPGA.textLight} textAnchor="middle" fontFamily={MONO}>{st.sub}</text>
+                    </g>
+                  );
+                })}
+
+                {/* 중앙 공통 규칙 */}
+                <text x="150" y="134" fontSize="5.7" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>tick16에서만 천이</text>
+                <text x="150" y="143" fontSize="5.7" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>미충족 시 os←os+1</text>
+                <text x="150" y="152" fontSize="5.2" fill="#94A3B8" textAnchor="middle" fontFamily={MONO}>(16 tick = 1 비트)</text>
               </svg>
             </div>
 
