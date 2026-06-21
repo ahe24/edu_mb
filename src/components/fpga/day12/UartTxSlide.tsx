@@ -61,21 +61,6 @@ create_clock -name sys_clk -period 10.0 [get_ports { clk }];
 ## ── rst → 푸시버튼 BTN0 ──
 set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { rst }];`;
 
-/** 실물형 슬라이드 스위치 — 라벨은 본체 왼쪽 같은 줄 */
-function SlideSwitch({ cx, cy, on, onToggle, label }: { cx: number; cy: number; on: boolean; onToggle: () => void; label: string }) {
-  const knobX = on ? cx + 3 : cx - 15;
-  return (
-    <g onClick={onToggle} style={{ cursor: 'pointer' }}>
-      <text x={cx - 25} y={cy + 3} fontSize="7" fontWeight="800" fill="#475569" textAnchor="end" fontFamily={MONO}>{label}</text>
-      <rect x={cx - 20} y={cy - 10} width="40" height="20" rx="4" fill={on ? '#1F7A6E' : '#245A9E'} stroke="#143468" strokeWidth="1" />
-      <rect x={cx - 20} y={cy - 10} width="40" height="8" rx="4" fill="rgba(255,255,255,0.16)" />
-      <rect x={cx - 16} y={cy - 5} width="32" height="10" rx="5" fill="#0E2547" />
-      <rect x={knobX} y={cy - 7} width="12" height="14" rx="2.5" fill="#EDF2F7" stroke="#94A3B8" strokeWidth="0.8" />
-      <text x={on ? cx - 9 : cx + 9} y={cy + 3} fontSize="7" fontWeight="800" fill="#DBE7F5" textAnchor="middle" fontFamily={MONO}>{on ? '1' : '0'}</text>
-    </g>
-  );
-}
-
 interface TxState {
   state: number;     // 0..3 (IDLE/START/DATA/STOP)
   idx: number;       // DATA 비트 인덱스 0..7
@@ -154,9 +139,6 @@ export default function UartTxSlide() {
                 <strong style={{ color: DAY12 }}>tick</strong>마다 1비트 진행 · <strong style={{ color: '#4A6FA5' }}>sh</strong> 오른쪽 시프트(LSB out) → <strong style={{ color: DAY12 }}>tx</strong> 직렬 출력 (0xA5)
               </div>
               <svg viewBox="0 0 470 236" style={{ flex: 1, minHeight: 0, width: '100%' }}>
-                {/* rst */}
-                <SlideSwitch cx={46} cy={26} on={false} onToggle={() => setSt(INIT)} label="rst" />
-
                 {/* 상태 칩 IDLE/START/DATA/STOP */}
                 {STATES.map((nm, i) => {
                   const active = st.state === i;
@@ -291,63 +273,93 @@ export default function UartTxSlide() {
             </div>
           </div>
 
-          {/* ── 우: FSM 흐름 + 파형 + 포인트 ── */}
+          {/* ── 우: FSM 상태천이도 + 설계 핵심 + 포인트 ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem', minHeight: 0 }}>
             <div style={{
               background: FPGA.white, border: `1px solid ${DAY12}25`,
               borderTop: `3px solid ${DAY12}`, borderRadius: '10px',
-              padding: '0.55rem 0.75rem', boxShadow: shadow.card,
+              padding: '0.6rem 0.75rem', boxShadow: shadow.card,
+              flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column',
             }}>
-              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.35rem' }}>FSM 흐름</div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                {['IDLE', 'START', 'DATA×8', 'STOP'].map((s, i, arr) => (
-                  <div key={s} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <span style={{
-                      fontSize: '0.6rem', fontWeight: 800, color: DAY12,
-                      background: `${DAY12}12`, border: `1px solid ${DAY12}30`,
-                      padding: '4px 8px', borderRadius: '6px', fontFamily: MONO,
-                    }}>{s}</span>
-                    {i < arr.length - 1 && <span style={{ color: FPGA.textLight, fontSize: '0.7rem' }}>→</span>}
-                  </div>
-                ))}
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.2rem' }}>
+                송신 FSM — 상태 천이 &amp; 할 일 <span style={{ fontSize: '0.55rem', fontWeight: 600, color: FPGA.textLight }}>(현재 상태 점등)</span>
               </div>
+              <svg width="100%" viewBox="0 0 300 300" style={{ flex: 1, minHeight: 0 }}>
+                <defs>
+                  <marker id="txfsmA" markerWidth="7.5" markerHeight="7.5" refX="5.4" refY="3" orient="auto">
+                    <path d="M0 0 L5.6 3 L0 6 z" fill="#64748B" />
+                  </marker>
+                </defs>
+
+                {/* ── 시계방향 링 천이 (상태박스 뒤에 먼저) ── */}
+                {/* IDLE(N) → START(E) : 북동 */}
+                <path d="M185 34 Q 252 44, 262 114" stroke="#E53E3E" strokeWidth="1.5" fill="none" markerEnd="url(#txfsmA)" />
+                <text x="206" y="60" fontSize="6" fill="#E53E3E" fontWeight="700" fontFamily={MONO}>start==1</text>
+                <text x="206" y="68" fontSize="5.6" fill={FPGA.textLight} fontFamily={MONO}>sh←data, busy←1</text>
+                {/* START(E) → DATA(S) : 남동 */}
+                <path d="M262 150 Q 254 222, 187 230" stroke={DAY12} strokeWidth="1.5" fill="none" markerEnd="url(#txfsmA)" />
+                <text x="200" y="194" fontSize="6" fill={DAY12} fontWeight="700" fontFamily={MONO}>tick</text>
+                <text x="200" y="202" fontSize="5.6" fill={FPGA.textLight} fontFamily={MONO}>idx←0</text>
+                {/* DATA(S) → STOP(W) : 남서 */}
+                <path d="M113 230 Q 46 222, 38 150" stroke="#4A6FA5" strokeWidth="1.5" fill="none" markerEnd="url(#txfsmA)" />
+                <text x="98" y="194" fontSize="6" fill="#4A6FA5" fontWeight="700" textAnchor="end" fontFamily={MONO}>tick &amp;</text>
+                <text x="98" y="202" fontSize="6" fill="#4A6FA5" fontWeight="700" textAnchor="end" fontFamily={MONO}>idx==7</text>
+                {/* STOP(W) → IDLE(N) : 북서 */}
+                <path d="M38 114 Q 46 44, 113 34" stroke="#48BB78" strokeWidth="1.5" fill="none" markerEnd="url(#txfsmA)" />
+                <text x="94" y="58" fontSize="6" fill="#48BB78" fontWeight="700" textAnchor="end" fontFamily={MONO}>tick</text>
+                <text x="94" y="66" fontSize="5.6" fill={FPGA.textLight} textAnchor="end" fontFamily={MONO}>busy←0</text>
+                {/* DATA self-loop (남, 8비트 시프트 반복) */}
+                <path d="M138 246 C 126 280, 174 280, 162 246" stroke="#4A6FA5" strokeWidth="1.4" fill="none" markerEnd="url(#txfsmA)" />
+                <text x="150" y="288" fontSize="5.8" fill="#4A6FA5" fontWeight="700" textAnchor="middle" fontFamily={MONO}>
+                  tick &amp; idx&lt;7 → sh←{'{'}1&apos;b0,sh[7:1]{'}'}, idx++ (×8)
+                </text>
+
+                {/* ── 상태 박스 (N·E·S·W) ── */}
+                {([
+                  { i: 0, k: 'IDLE',  c: '#E53E3E', x: 115, y: 18,  sub: 'tx=1, busy=0' },
+                  { i: 1, k: 'START', c: DAY12,     x: 227, y: 116, sub: 'tx=0 start bit' },
+                  { i: 2, k: 'DATA',  c: '#4A6FA5', x: 115, y: 214, sub: 'tx=sh[0]·시프트' },
+                  { i: 3, k: 'STOP',  c: '#48BB78', x: 3,   y: 116, sub: 'tx=1 stop bit' },
+                ] as { i: number; k: string; c: string; x: number; y: number; sub: string }[]).map((s) => {
+                  const on = st.state === s.i;
+                  return (
+                    <g key={s.k}>
+                      <rect x={s.x} y={s.y} width="70" height="32" rx="8"
+                        fill={on ? `${s.c}24` : '#FFFFFF'} stroke={s.c} strokeWidth={on ? 2.8 : 1.3}
+                        style={{ filter: on ? `drop-shadow(0 1.5px 4px ${s.c}66)` : 'drop-shadow(0 1px 1.5px rgba(0,0,0,0.12))' }} />
+                      <text x={s.x + 35} y={s.y + 14} fontSize="9.5" fontWeight="800" fill={s.c} textAnchor="middle" fontFamily={MONO}>{s.k}</text>
+                      <text x={s.x + 35} y={s.y + 24} fontSize="5.4" fill={on ? s.c : FPGA.textLight} textAnchor="middle" fontFamily={MONO}>{s.sub}</text>
+                    </g>
+                  );
+                })}
+
+                {/* 중앙 공통 규칙 */}
+                <text x="150" y="134" fontSize="5.7" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>tick에서만 다음 비트</text>
+                <text x="150" y="143" fontSize="5.7" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>미도래 시 현재 tx 유지</text>
+                <text x="150" y="152" fontSize="5.2" fill="#94A3B8" textAnchor="middle" fontFamily={MONO}>(1 tick = 1 baud bit)</text>
+              </svg>
             </div>
 
             <div style={{
-              flex: 1, minHeight: 0,
-              background: FPGA.white, border: `1px solid ${FPGA.border}`,
-              borderRadius: '10px', padding: '0.55rem 0.75rem', boxShadow: shadow.card,
-              display: 'flex', flexDirection: 'column',
+              background: 'linear-gradient(135deg, rgba(74,111,165,0.05), rgba(74,111,165,0.12))',
+              border: '1px solid rgba(74,111,165,0.30)', borderLeft: '4px solid #4A6FA5',
+              borderRadius: '10px', padding: '0.55rem 0.85rem', boxShadow: shadow.card,
             }}>
-              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.25rem' }}>tx 출력 (0xA5 = 1010_0101)</div>
-              <svg width="100%" viewBox="0 0 320 64" style={{ flex: 1, minHeight: 0 }}>
-                {/* idle(1), start(0), D0..D7 LSB first, stop(1) */}
-                {(() => {
-                  const seq = [1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1];
-                  const w = 280 / seq.length;
-                  let d = `M20 ${seq[0] ? 14 : 42}`;
-                  let x = 20;
-                  for (let i = 0; i < seq.length; i++) {
-                    const y = seq[i] ? 14 : 42;
-                    d += ` L${x} ${y} L${x + w} ${y}`;
-                    x += w;
-                  }
-                  return <path d={d} stroke={DAY12} strokeWidth="2" fill="none" />;
-                })()}
-                <text x="20" y="60" fontSize="6.5" fill={FPGA.textLight} fontFamily={MONO}>idle</text>
-                <text x="48" y="60" fontSize="6.5" fill={DAY12} fontFamily={MONO}>start</text>
-                <text x="120" y="60" fontSize="6.5" fill="#4A6FA5" fontFamily={MONO}>D0→D7 (LSB)</text>
-                <text x="280" y="60" fontSize="6.5" fill="#48BB78" fontFamily={MONO}>stop</text>
-              </svg>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#4A6FA5', marginBottom: '0.2rem' }}>
+                설계 핵심 — registered tx + LSB-first 시프트
+              </div>
+              <div style={{ fontSize: '0.65rem', color: FPGA.text, lineHeight: 1.55 }}>
+                <code>tx</code>는 항상 <code>reg</code>로 출력 → 조합 글리치 없는 안정 직렬 라인(safety-critical 필수). DATA는 <code>sh&gt;&gt;1</code> 시프트로 <strong>LSB부터</strong> 한 비트씩, <code>idx</code>로 8회 카운트.
+              </div>
             </div>
 
             <div style={{
               background: `linear-gradient(135deg, ${DAY12}08, ${DAY12}15)`,
               border: `1px solid ${DAY12}30`, borderRadius: '8px', padding: '0.45rem 0.8rem',
             }}>
-              <span style={{ fontSize: '0.62rem', fontWeight: 800, color: DAY12 }}>포인트 · </span>
+              <span style={{ fontSize: '0.62rem', fontWeight: 800, color: DAY12 }}>핸드셰이크 · </span>
               <span style={{ fontSize: '0.64rem', color: FPGA.text, lineHeight: 1.45 }}>
-                <code>busy</code>로 전송 중 재요청 차단. idle에서 tx=1 유지가 다음 start 검출 기준. DATA는 시프트로 LSB first.
+                <code>start</code>는 1-clk 펄스 요청, <code>busy</code>로 전송 중 재요청 차단. IDLE의 <code>tx=1</code> 유지가 다음 프레임 start 검출 기준선.
               </span>
             </div>
 
