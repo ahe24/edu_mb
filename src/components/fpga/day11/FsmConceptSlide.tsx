@@ -21,6 +21,14 @@ const DEMO = [0, 1, 1, 0, 1, 1, 1];
 
 interface Tick { din: number; mo: number; me: number; }
 
+// 상태 인코딩 (Moore/Mealy와 별개 선택) — 4상태 예시
+type EncKey = 'Binary' | 'One-hot' | 'Gray';
+const ENCODINGS: Record<EncKey, { c: string; ff: string; codes: string[]; d: string }> = {
+  Binary:    { c: BLUE,   ff: '2', codes: ['00', '01', '10', '11'],                 d: 'FF 최소(⌈log₂N⌉) · 다음상태 디코딩 로직은 복잡' },
+  'One-hot': { c: DAY11,  ff: 'N', codes: ['0001', '0010', '0100', '1000'],         d: '상태당 FF 1개 · 디코딩 단순·고속 · FPGA 기본·디버깅 쉬움' },
+  Gray:      { c: ORANGE, ff: '2', codes: ['00', '01', '11', '10'],                 d: '인접 상태 간 1비트만 변화 · 글리치↓ · CDC·저전력 유리' },
+};
+
 const mooreCode = `parameter S0=0, S1=1, S2=2;     // 상태 3개
 // 다음상태 (조합)
 always @* case (state)
@@ -46,6 +54,7 @@ export default function FsmConceptSlide() {
   const [ms, setMs] = useState(0);   // Moore 현재 상태
   const [es, setEs] = useState(0);   // Mealy 현재 상태
   const [tape, setTape] = useState<Tick[]>([]);
+  const [enc, setEnc] = useState<EncKey>('One-hot');  // 상태 인코딩 선택
 
   const modeC = mode === 'moore' ? DAY11 : MEALY;
 
@@ -300,31 +309,92 @@ export default function FsmConceptSlide() {
                 <strong>safety-critical:</strong> 출력이 외부 액추에이터를 직접 구동하면 글리치 없는 <strong>Moore 권장</strong> · case엔 항상 <code>default</code>로 illegal 상태 안전 복구.
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* ── 하단: 상태 인코딩 참고 스트립 ── */}
-        <div style={{ marginTop: '0.5rem', display: 'grid', gridTemplateColumns: 'auto 1fr 1fr 1fr', gap: '0.5rem', alignItems: 'stretch' }}>
-          <div style={{ display: 'flex', alignItems: 'center', fontSize: '0.62rem', fontWeight: 800, color: FPGA.dark, paddingLeft: '0.2rem' }}>
-            상태 인코딩<br />(별개 선택)
-          </div>
-          {[
-            { t: 'Binary', c: BLUE, ff: '2', bits: '00·01·10·11', d: 'FF 최소 · 디코딩 복잡' },
-            { t: 'One-hot', c: DAY11, ff: 'N', bits: '0001·0010·0100·1000', d: 'FPGA 기본 · 고속·디버깅 쉬움' },
-            { t: 'Gray', c: ORANGE, ff: '2', bits: '00·01·11·10', d: '1비트씩 변화 · CDC·저전력' },
-          ].map((g) => (
-            <div key={g.t} style={{
-              background: `linear-gradient(135deg, ${g.c}08, ${g.c}15)`, border: `1px solid ${g.c}30`,
-              borderRadius: '8px', padding: '0.32rem 0.6rem', boxShadow: shadow.card,
+            {/* 상태 인코딩 — 좌:탭 / 우:상태별 세로 FF 레지스터 + 설명 (세로 스택이 패널 높이를 채워 letterbox 제거) */}
+            <div style={{
+              flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex',
+              background: FPGA.white, border: `1px solid ${FPGA.border}`,
+              borderLeft: `4px solid ${ENCODINGS[enc].c}`, borderRadius: '10px', boxShadow: shadow.card,
             }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem' }}>
-                <span style={{ fontSize: '0.66rem', fontWeight: 800, color: g.c }}>{g.t}</span>
-                <span style={{ fontSize: '0.52rem', fontWeight: 700, color: '#fff', background: g.c, borderRadius: '4px', padding: '0 5px' }}>FF {g.ff}</span>
-                <span style={{ marginLeft: 'auto', fontSize: '0.56rem', fontFamily: MONO, color: g.c, fontWeight: 700 }}>{g.bits}</span>
+              {/* 좌: 타이틀 + 탭 */}
+              <div style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                padding: '0.5rem 0.75rem', background: FPGA.bgAlt, borderRight: `1px solid ${FPGA.border}`,
+              }}>
+                <span style={{ fontSize: '0.6rem', fontWeight: 800, color: FPGA.dark, lineHeight: 1.2, textAlign: 'center' }}>
+                  상태 인코딩<br /><span style={{ fontSize: '0.48rem', fontWeight: 600, color: FPGA.textLight }}>(출력모델과 별개)</span>
+                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                  {(Object.keys(ENCODINGS) as EncKey[]).map((k) => {
+                    const on = enc === k; const c = ENCODINGS[k].c;
+                    return (
+                      <button key={k} onClick={() => setEnc(k)} style={{
+                        cursor: 'pointer', fontSize: '0.58rem', fontWeight: 800, fontFamily: MONO,
+                        border: `1px solid ${c}`, borderRadius: '5px', padding: '2px 16px', textAlign: 'center',
+                        color: on ? '#fff' : c, background: on ? c : 'transparent',
+                        boxShadow: on ? '0 1px 4px rgba(0,0,0,0.2)' : 'none', transition: 'all .12s',
+                      }}>{k}</button>
+                    );
+                  })}
+                </div>
               </div>
-              <div style={{ fontSize: '0.57rem', color: FPGA.text, lineHeight: 1.3, marginTop: '1px' }}>{g.d}</div>
+
+              {/* 우: 세로 FF 스택(위=MSB, 아래=LSB) + 설명줄 */}
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+                {/* MSB/LSB 축 + 상태별 세로 비트 스택 */}
+                <div style={{ flex: 1, display: 'flex', alignItems: 'stretch', padding: '0.3rem 0.6rem 0.25rem' }}>
+                  {/* 비트 축 라벨 */}
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'flex-end', paddingRight: '0.45rem', paddingTop: '0.85rem' }}>
+                    <span style={{ fontSize: '0.46rem', fontFamily: MONO, fontWeight: 700, color: FPGA.textLight }}>MSB</span>
+                    <span style={{ fontSize: '0.46rem', fontFamily: MONO, fontWeight: 700, color: FPGA.textLight }}>LSB</span>
+                  </div>
+                  {/* 상태 컬럼들 */}
+                  <div style={{ flex: 1, display: 'flex', justifyContent: 'space-evenly', alignItems: 'stretch' }}>
+                    {['S0', 'S1', 'S2', 'S3'].map((st, si) => {
+                      const code = ENCODINGS[enc].codes[si]; const c = ENCODINGS[enc].c;
+                      const cells = [...Array(4 - code.length).fill(null), ...code.split('')]; // 위쪽 빈 슬롯으로 정렬
+                      return (
+                        <div key={st} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.56rem', fontFamily: MONO, fontWeight: 800, color: si === 0 ? c : FPGA.textLight, marginBottom: '3px' }}>{st}</span>
+                          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            {cells.map((bit, bi) => bit === null ? (
+                              <div key={bi} style={{ width: '22px', height: '22px' }} />
+                            ) : (
+                              <div key={bi} style={{
+                                width: '22px', height: '22px', borderRadius: '4px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '0.58rem', fontWeight: 800, fontFamily: MONO,
+                                background: bit === '1' ? c : '#EDF0F5',
+                                color: bit === '1' ? '#fff' : '#9AA6B8',
+                                border: bit === '1' ? `1px solid ${c}` : '1px solid #DDE2EA',
+                                boxShadow: bit === '1'
+                                  ? `0 2px 6px ${c}70, inset 0 1px 0 rgba(255,255,255,0.45)`
+                                  : 'inset 0 1px 2px rgba(0,0,0,0.07)',
+                              }}>{bit}</div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 설명줄: 이름 + FF 배지 + 핵심 + 범례 */}
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap',
+                  padding: '0.35rem 0.7rem 0.4rem', borderTop: `1px solid ${FPGA.border}`, background: `${ENCODINGS[enc].c}0A`,
+                }}>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 800, color: ENCODINGS[enc].c }}>{enc}</span>
+                  <span style={{ fontSize: '0.5rem', fontWeight: 700, color: '#fff', background: ENCODINGS[enc].c, borderRadius: '4px', padding: '0 6px' }}>FF {ENCODINGS[enc].ff}</span>
+                  <span style={{ fontSize: '0.56rem', color: FPGA.text, lineHeight: 1.3, flex: 1, minWidth: '45%' }}>{ENCODINGS[enc].d}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.48rem', color: FPGA.textLight, fontFamily: MONO }}>
+                    <span style={{ width: '11px', height: '11px', borderRadius: '3px', background: ENCODINGS[enc].c, boxShadow: `0 1px 3px ${ENCODINGS[enc].c}70` }} />1=set
+                    <span style={{ width: '11px', height: '11px', borderRadius: '3px', background: '#EDF0F5', border: '1px solid #DDE2EA', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.07)' }} />0
+                  </span>
+                </div>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>

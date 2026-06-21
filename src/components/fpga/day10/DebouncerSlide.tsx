@@ -332,30 +332,29 @@ export default function DebouncerSlide() {
                 day10_debounce_wave.png — 짧은 글리치는 흡수, STABLE 지속 시에만 btn_out 변화 (클릭 시 확대)
               </div>
             </div>
+
+            {/* ── arty.xdc 보드 핀 제약 (클릭 모달) ── */}
+            <button
+              onClick={() => setXdcOpen(true)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                background: `linear-gradient(135deg, ${ORANGE}0F, ${ORANGE}1E)`,
+                border: `1px solid ${ORANGE}45`, borderLeft: `4px solid ${ORANGE}`,
+                borderRadius: '9px', padding: '0.5rem 0.8rem',
+                boxShadow: shadow.card, cursor: 'pointer', textAlign: 'left', width: '100%',
+              }}
+            >
+              <span style={{
+                fontSize: '0.6rem', fontWeight: 800, color: '#fff', background: ORANGE,
+                padding: '2px 8px', borderRadius: '5px', fontFamily: MONO, flexShrink: 0,
+              }}>arty.xdc</span>
+              <span style={{ fontSize: '0.62rem', color: FPGA.text, lineHeight: 1.4 }}>
+                보드 핀 제약 — <strong>clk(100MHz) · rst(BTN1) · btn_in(BTN0) · btn_out(LED)</strong>
+              </span>
+              <span style={{ marginLeft: 'auto', fontSize: '0.62rem', fontWeight: 800, color: ORANGE, flexShrink: 0 }}>📄 ▸</span>
+            </button>
           </div>
         </div>
-
-        {/* ── 하단: XDC 클릭 모달 ── */}
-        <button
-          onClick={() => setXdcOpen(true)}
-          style={{
-            marginTop: '0.55rem',
-            display: 'flex', alignItems: 'center', gap: '0.55rem',
-            background: `linear-gradient(135deg, ${ORANGE}0F, ${ORANGE}1E)`,
-            border: `1px solid ${ORANGE}45`, borderLeft: `4px solid ${ORANGE}`,
-            borderRadius: '9px', padding: '0.5rem 0.9rem',
-            boxShadow: shadow.card, cursor: 'pointer', textAlign: 'left', width: '100%',
-          }}
-        >
-          <span style={{
-            fontSize: '0.62rem', fontWeight: 800, color: '#fff', background: ORANGE,
-            padding: '2px 9px', borderRadius: '5px', fontFamily: MONO, flexShrink: 0,
-          }}>arty.xdc</span>
-          <span style={{ fontSize: '0.7rem', color: FPGA.text }}>
-            보드 핀 제약 — <strong>clk(100MHz) · rst(BTN1) · btn_in(BTN0) · btn_out(LED)</strong>
-          </span>
-          <span style={{ marginLeft: 'auto', fontSize: '0.66rem', fontWeight: 800, color: ORANGE, flexShrink: 0 }}>📄 전체 보기 ▸</span>
-        </button>
       </div>
 
       <SlideModal

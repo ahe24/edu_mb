@@ -137,7 +137,7 @@ export default function TrafficLightSlide() {
       <div className="fpga-content-wrap">
         <SlideHeader
           badge="실습 · 신호등 FSM"
-          title="타이머 기반 신호등 — Moore FSM 정석"
+          title="타이머 기반 신호등 — Moore FSM 구현"
           subtitle="RED→GREEN→YELLOW 순환 · 각 상태를 타이머로 유지 · 안전 default는 적색"
         />
 
@@ -314,30 +314,29 @@ export default function TrafficLightSlide() {
                 시뮬은 <code>+define+FUNC_SIM</code>으로 타이머 축소 → 순환을 빨리 확인. 합성은 define 없이 실제값.
               </span>
             </div>
+
+            {/* ── arty.xdc 보드 핀 제약 (클릭 모달) ── */}
+            <button
+              onClick={() => setXdcOpen(true)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                background: `linear-gradient(135deg, ${ORANGE}0F, ${ORANGE}1E)`,
+                border: `1px solid ${ORANGE}45`, borderLeft: `4px solid ${ORANGE}`,
+                borderRadius: '9px', padding: '0.5rem 0.8rem',
+                boxShadow: shadow.card, cursor: 'pointer', textAlign: 'left', width: '100%',
+              }}
+            >
+              <span style={{
+                fontSize: '0.6rem', fontWeight: 800, color: '#fff', background: ORANGE,
+                padding: '2px 8px', borderRadius: '5px', fontFamily: MONO, flexShrink: 0,
+              }}>arty.xdc</span>
+              <span style={{ fontSize: '0.62rem', color: FPGA.text, lineHeight: 1.4 }}>
+                보드 핀 제약 — <strong>clk(100MHz, create_clock) · rst(버튼) · light[2:0](R/Y/G LED)</strong>
+              </span>
+              <span style={{ marginLeft: 'auto', fontSize: '0.62rem', fontWeight: 800, color: ORANGE, flexShrink: 0 }}>📄 ▸</span>
+            </button>
           </div>
         </div>
-
-        {/* ── 하단: XDC 클릭 모달 ── */}
-        <button
-          onClick={() => setXdcOpen(true)}
-          style={{
-            marginTop: '0.55rem',
-            display: 'flex', alignItems: 'center', gap: '0.55rem',
-            background: `linear-gradient(135deg, ${ORANGE}0F, ${ORANGE}1E)`,
-            border: `1px solid ${ORANGE}45`, borderLeft: `4px solid ${ORANGE}`,
-            borderRadius: '9px', padding: '0.5rem 0.9rem',
-            boxShadow: shadow.card, cursor: 'pointer', textAlign: 'left', width: '100%',
-          }}
-        >
-          <span style={{
-            fontSize: '0.62rem', fontWeight: 800, color: '#fff', background: ORANGE,
-            padding: '2px 9px', borderRadius: '5px', fontFamily: MONO, flexShrink: 0,
-          }}>arty.xdc</span>
-          <span style={{ fontSize: '0.7rem', color: FPGA.text }}>
-            보드 핀 제약 — <strong>clk(100MHz, create_clock) · rst(버튼) · light[2:0](R/Y/G LED)</strong>
-          </span>
-          <span style={{ marginLeft: 'auto', fontSize: '0.66rem', fontWeight: 800, color: ORANGE, flexShrink: 0 }}>📄 전체 보기 ▸</span>
-        </button>
       </div>
 
       <SlideModal
