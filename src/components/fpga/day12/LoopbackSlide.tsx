@@ -68,6 +68,26 @@ const STAGES = [
   { key: 'tx_pin', label: 'tx_pin 출력', desc: 'echo 완료 — 호스트로 0x41 복귀' },
 ];
 
+// echo 타이밍 파형용 직렬 프레임 (idle,start,b0..b7,stop) — 0x41 LSB first: 1,0,0,0,0,0,1,0
+const FRAME_BITS = [1, 0, 0, 0, 0, 0, 1, 0];
+const buildFrame = (x0: number, bw: number, hi: number, lo: number) => {
+  const levels = [1, 0, ...FRAME_BITS, 1];
+  let x = x0;
+  let d = `M${x} ${levels[0] ? hi : lo}`;
+  x += bw;
+  d += ` H${x}`;
+  for (let i = 1; i < levels.length; i++) {
+    const y = levels[i] ? hi : lo;
+    d += ` V${y} H${x + bw}`;
+    x += bw;
+  }
+  return d;
+};
+const RX_WAVE = buildFrame(58, 7, 36, 50) + ' H294';   // rx_pin 직렬 입력
+const TX_WAVE = buildFrame(146, 7, 116, 130) + ' H294'; // tx_pin 직렬 출력 (echo)
+const VALID_WAVE = 'M56 92 H135 V80 H142 V92 H294';     // valid 1-clk 펄스
+const CURSOR_X = [70, 102, 138, 188, 224];              // stage별 시간축 커서
+
 export default function LoopbackSlide() {
   const [stage, setStage] = useState(0);
   const [running, setRunning] = useState(false);
@@ -231,27 +251,42 @@ export default function LoopbackSlide() {
               padding: '0.5rem', boxShadow: shadow.card,
               flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column',
             }}>
-              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.2rem' }}>통합 블록도 — uart_loop</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: FPGA.dark }}>echo 타이밍 — 같은 단계로 동기화</div>
+                <div style={{ fontSize: '0.55rem', fontWeight: 700, color: FPGA.textLight, fontFamily: MONO }}>시간축 →</div>
+              </div>
               <svg width="100%" height="100%" viewBox="0 0 300 150" style={{ flex: 1, minHeight: 0 }}>
-                {/* PC */}
-                <rect x="8" y="58" width="50" height="34" rx="5" fill="rgba(74,111,165,0.10)" stroke="#4A6FA5" strokeWidth="1.5" />
-                <text x="33" y="79" fontSize="8" fontWeight="800" fill="#4A6FA5" textAnchor="middle" fontFamily={MONO}>PC term</text>
-                {/* FT2232 */}
-                <rect x="86" y="58" width="46" height="34" rx="5" fill="rgba(113,128,150,0.10)" stroke="#718096" strokeWidth="1.5" />
-                <text x="109" y="79" fontSize="7.5" fontWeight="700" fill="#718096" textAnchor="middle" fontFamily={MONO}>FT2232</text>
-                {/* RX block */}
-                <rect x="166" y="20" width="56" height="32" rx="5" fill="rgba(74,111,165,0.12)" stroke="#4A6FA5" strokeWidth="1.5" />
-                <text x="194" y="40" fontSize="8.5" fontWeight="800" fill="#4A6FA5" textAnchor="middle" fontFamily={MONO}>uart_rx</text>
-                {/* TX block */}
-                <rect x="166" y="98" width="56" height="32" rx="5" fill={`${DAY12}15`} stroke={DAY12} strokeWidth="1.5" />
-                <text x="194" y="118" fontSize="8.5" fontWeight="800" fill={DAY12} textAnchor="middle" fontFamily={MONO}>uart_tx</text>
-                {/* arrows */}
-                <path d="M58 75 H86" stroke="#4A6FA5" strokeWidth="1.4" />
-                <path d="M132 70 L166 40" stroke="#4A6FA5" strokeWidth="1.4" markerEnd="url(#bl12)" /><text x="148" y="50" fontSize="6.5" fill="#4A6FA5">rx_pin</text>
-                <path d="M222 36 H252 V114 H222" fill="none" stroke="#E8913A" strokeWidth="1.4" strokeDasharray="4 3" markerEnd="url(#bl12)" />
-                <text x="256" y="78" fontSize="6.5" fill="#E8913A" fontFamily={MONO}>valid→start</text>
-                <path d="M166 114 L132 84" stroke={DAY12} strokeWidth="1.4" markerEnd="url(#bl12)" /><text x="140" y="108" fontSize="6.5" fill={DAY12}>tx_pin</text>
-                <defs><marker id="bl12" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill={FPGA.textLight} /></marker></defs>
+                {/* baselines (faint) + time axis */}
+                <line x1="56" y1="50" x2="294" y2="50" stroke="#E2E8F0" strokeWidth="0.6" />
+                <line x1="56" y1="92" x2="294" y2="92" stroke="#E2E8F0" strokeWidth="0.6" />
+                <line x1="56" y1="130" x2="294" y2="130" stroke="#E2E8F0" strokeWidth="0.6" />
+                <line x1="56" y1="142" x2="294" y2="142" stroke={FPGA.border} strokeWidth="0.8" />
+
+                {/* signal labels */}
+                <text x="4" y="46" fontSize="7" fontWeight="800" fill="#4A6FA5" fontFamily={MONO}>rx_pin</text>
+                <text x="4" y="88" fontSize="7" fontWeight="800" fill={ORANGE} fontFamily={MONO}>valid</text>
+                <text x="4" y="127" fontSize="7" fontWeight="800" fill={DAY12} fontFamily={MONO}>tx_pin</text>
+
+                {/* rx 프레임 비트 주석 */}
+                <text x="68.5" y="31" fontSize="4.6" fill="#B45309" textAnchor="middle" fontFamily={MONO}>S</text>
+                {FRAME_BITS.map((b, i) => (
+                  <text key={i} x={72 + 7 * (i + 0.5)} y="31" fontSize="4.6" fill="#94A3B8" textAnchor="middle" fontFamily={MONO}>{b}</text>
+                ))}
+                <text x="131.5" y="31" fontSize="4.6" fill="#B45309" textAnchor="middle" fontFamily={MONO}>P</text>
+
+                {/* waveforms */}
+                <path d={RX_WAVE} fill="none" stroke="#4A6FA5" strokeWidth={rxBlk ? 2.4 : 1.3} strokeLinejoin="round" opacity={rxBlk ? 1 : 0.5} />
+                <path d={VALID_WAVE} fill="none" stroke={ORANGE} strokeWidth={isValid ? 2.6 : 1.3} strokeLinejoin="round" opacity={isValid ? 1 : 0.5} />
+                <path d={TX_WAVE} fill="none" stroke={DAY12} strokeWidth={txBlk ? 2.4 : 1.3} strokeLinejoin="round" opacity={txBlk ? 1 : 0.5} />
+
+                {/* valid → start 1-clk 주석 */}
+                <text x="138" y="76" fontSize="5" fontWeight="800" fill={ORANGE} textAnchor="middle" fontFamily={MONO}>1-clk</text>
+                <text x="200" y="113" fontSize="5" fontWeight="700" fill={DAY12} textAnchor="middle" fontFamily={MONO}>= 0x41 echo</text>
+
+                {/* 단계 동기화 커서 */}
+                <line x1={CURSOR_X[stage]} y1="26" x2={CURSOR_X[stage]} y2="140" stroke={DAY12} strokeWidth="1.2" strokeDasharray="2 2" opacity="0.85" />
+                <text x={CURSOR_X[stage]} y="22" fontSize="5.6" fontWeight="800" fill={DAY12} textAnchor="middle" fontFamily={MONO}>{cur.label}</text>
+                <circle cx={CURSOR_X[stage]} cy="26" r="2.6" fill={DAY12} />
               </svg>
             </div>
 
