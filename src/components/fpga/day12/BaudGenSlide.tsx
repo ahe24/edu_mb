@@ -78,6 +78,12 @@ export default function BaudGenSlide() {
 
   const DIM = '#94A3B8';
 
+  // 1× vs 16× 오버샘플링 다이어그램 좌표 (비트 셀 = 16 샘플 단위)
+  const OS = { x0: 46, cw: 124, n: 2, y1: 46, y16: 90 };
+  const osCells = Array.from({ length: OS.n }, (_, c) => OS.x0 + c * OS.cw);
+  const osGap = OS.cw / 16;                  // 16× 틱 간격 = 1비트 / 16
+  const osXend = OS.x0 + OS.cw * OS.n;
+
   return (
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
@@ -204,34 +210,112 @@ export default function BaudGenSlide() {
               borderTop: `3px solid ${DAY12}`, borderRadius: '10px',
               padding: '0.7rem 0.8rem', boxShadow: shadow.card,
             }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.35rem' }}>1× (TX) vs 16× (RX)</div>
-              <svg width="100%" height="78" viewBox="0 0 320 78">
-                {/* 1x */}
-                <text x="2" y="16" fontSize="8" fontWeight="700" fill={DAY12} fontFamily={MONO}>1×</text>
-                {[40, 130, 220].map((x) => <rect key={x} x={x} y="8" width="3" height="12" fill={DAY12} />)}
-                <line x1="30" y1="20" x2="300" y2="20" stroke={FPGA.border} strokeWidth="1" />
-                {/* 16x */}
-                <text x="2" y="50" fontSize="8" fontWeight="700" fill="#4A6FA5" fontFamily={MONO}>16×</text>
-                {Array.from({ length: 18 }, (_, i) => 30 + i * 15).map((x, i) => (
-                  <rect key={x} x={x} y="42" width="2.4" height={i % 16 === 8 ? 16 : 10} fill={i % 16 === 8 ? ORANGE : '#4A6FA5'} />
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.3rem' }}>1× (TX) vs 16× (RX) — 같은 1비트 구간을 몇 번 샘플?</div>
+              <svg viewBox="0 0 320 106" width="100%" style={{ height: 'auto', display: 'block' }}>
+                {/* 비트 셀 배경 — 1비트 = 16 샘플 단위 (두 행 공통 경계) */}
+                {osCells.map((cx, c) => (
+                  <g key={`os-cell-${c}`}>
+                    <rect x={cx} y="16" width={OS.cw} height="80" fill={c % 2 ? '#EEF2F7' : '#F8FAFC'} stroke={FPGA.border} strokeWidth="0.8" />
+                    <text x={cx + OS.cw / 2} y="12" fontSize="7" fontWeight="700" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>1 비트 = 16 샘플</text>
+                  </g>
                 ))}
-                <line x1="30" y1="58" x2="300" y2="58" stroke={FPGA.border} strokeWidth="1" />
-                <text x="150" y="74" fontSize="7.5" fill={ORANGE} fontFamily={MONO}>↑ 8번째 = 비트 중앙 샘플</text>
+
+                {/* 비트 중앙 가이드 (8번째 틱 위치) */}
+                {osCells.map((cx, c) => {
+                  const xH = cx + 7.5 * osGap;
+                  return <line key={`os-guide-${c}`} x1={xH} y1="18" x2={xH} y2={OS.y16} stroke={ORANGE} strokeWidth="1" strokeDasharray="3 3" opacity="0.45" />;
+                })}
+
+                {/* 1× (TX): 비트 경계마다 1 틱 */}
+                <text x="2" y={OS.y1 - 3} fontSize="8" fontWeight="800" fill={DAY12} fontFamily={MONO}>1×</text>
+                <text x="2" y={OS.y1 + 6} fontSize="6" fontWeight="700" fill={DAY12} fontFamily={MONO}>TX</text>
+                <line x1={OS.x0} y1={OS.y1} x2={osXend} y2={OS.y1} stroke={FPGA.border} strokeWidth="1" />
+                {Array.from({ length: OS.n + 1 }, (_, i) => OS.x0 + i * OS.cw).map((x, i) => (
+                  <rect key={`os-tx-${i}`} x={x - 1.4} y={OS.y1 - 14} width="2.8" height="14" rx="1" fill={DAY12} />
+                ))}
+                <text x={OS.x0 + OS.cw / 2} y={OS.y1 - 17} fontSize="6.3" fontWeight="700" fill={DAY12} textAnchor="middle" fontFamily={MONO}>비트당 1 틱 — 출력만</text>
+
+                {/* 16× (RX): 비트당 16 틱, 8번째 = 중앙 샘플 */}
+                <text x="2" y={OS.y16 - 3} fontSize="8" fontWeight="800" fill="#4A6FA5" fontFamily={MONO}>16×</text>
+                <text x="2" y={OS.y16 + 6} fontSize="6" fontWeight="700" fill="#4A6FA5" fontFamily={MONO}>RX</text>
+                <line x1={OS.x0} y1={OS.y16} x2={osXend} y2={OS.y16} stroke={FPGA.border} strokeWidth="1" />
+                {osCells.map((cx, c) =>
+                  Array.from({ length: 16 }, (_, j) => {
+                    const x = cx + (j + 0.5) * osGap;
+                    const mid = j === 7;                      // 8번째 틱 = 비트 중앙
+                    return (
+                      <rect key={`os-rx-${c}-${j}`} x={x - (mid ? 1.3 : 0.9)} y={mid ? OS.y16 - 20 : OS.y16 - 10}
+                        width={mid ? 2.6 : 1.8} height={mid ? 20 : 10} rx="0.6"
+                        fill={mid ? ORANGE : '#4A6FA5'} />
+                    );
+                  })
+                )}
+
+                {/* 8번째 틱에 샘플 화살표 + 번호 */}
+                {osCells.map((cx, c) => {
+                  const xH = cx + 7.5 * osGap;
+                  return (
+                    <g key={`os-arrow-${c}`}>
+                      <text x={xH} y={OS.y16 - 30} fontSize="6.8" fontWeight="800" fill={ORANGE} textAnchor="middle" fontFamily={MONO}>8</text>
+                      <path d={`M${xH} ${OS.y16 - 28} v6 m-2.6 -2.6 l2.6 2.6 l2.6 -2.6`} stroke={ORANGE} strokeWidth="1.3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                    </g>
+                  );
+                })}
+
+                <text x={OS.x0 + OS.cw} y="104" fontSize="7.2" fontWeight="700" fill={ORANGE} textAnchor="middle" fontFamily={MONO}>↑ 매 비트 16샘플 중 8번째(중앙)에서 값 읽기</text>
               </svg>
             </div>
 
             <div style={{
-              flex: 1.2, minHeight: 0,
+              flex: 1.45, minHeight: 0,
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
               background: `linear-gradient(135deg, ${DAY12}08, ${DAY12}15)`,
               border: `1px solid ${DAY12}30`, borderRadius: '10px',
-              padding: '0.7rem 0.85rem', boxShadow: shadow.card,
+              padding: '0.5rem 0.65rem', boxShadow: shadow.card,
             }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: DAY12, marginBottom: '0.2rem' }}>왜 oversampling</div>
-              <ul style={{ margin: 0, paddingLeft: '1rem', fontSize: '0.66rem', color: FPGA.text, lineHeight: 1.75 }}>
-                <li>송수신 baud 오차·드리프트 흡수</li>
-                <li>start 하강엣지 검출 후 <strong>중앙(8/16)</strong>에서 샘플 → 노이즈 강건</li>
-                <li>TX는 1× tick으로 비트 출력, RX는 16× tick 사용</li>
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: DAY12, marginBottom: '0.05rem' }}>
+                왜 16×? — 편차는 쌓이지만 매 START에서 재동기
+              </div>
+              <svg viewBox="0 0 320 84" width="100%" style={{ height: 'auto', display: 'block' }}>
+                {/* framing error 한계 영역 (±half-bit) */}
+                <rect x="34" y="6" width="278" height="12" fill="#E2574C" opacity="0.09" />
+                <line x1="34" y1="18" x2="312" y2="18" stroke="#C0392B" strokeWidth="0.9" strokeDasharray="3 2" opacity="0.7" />
+                <text x="36" y="14" fontSize="6" fontWeight="700" fill="#C0392B" fontFamily={MONO}>±8 tick (half-bit) = framing error 한계</text>
+
+                {/* 중앙(0) baseline */}
+                <line x1="34" y1="60" x2="312" y2="60" stroke={FPGA.border} strokeWidth="1" />
+                <text x="2" y="20" fontSize="5.6" fontWeight="700" fill="#C0392B" fontFamily={MONO}>한계</text>
+                <text x="2" y="62" fontSize="5.6" fontWeight="700" fill={FPGA.textLight} fontFamily={MONO}>중앙</text>
+
+                {/* 누적 → 리셋 톱니 (프레임 2개) */}
+                {[0, 132].map((off, f) => {
+                  const xs = 40 + off, xe = 170 + off, yb = 60, yp = 24;
+                  const dots = Array.from({ length: 7 }, (_, i) => ({
+                    x: xs + (xe - xs) * i / 6,
+                    y: yb + (yp - yb) * i / 6,
+                    last: i === 6,
+                  }));
+                  return (
+                    <g key={`frame-${f}`}>
+                      <polyline points={`${xs},${yb} ${xe},${yp}`} fill="none" stroke={ORANGE} strokeWidth="1.7" />
+                      <line x1={xe} y1={yp} x2={xe + 2} y2={yb} stroke={ORANGE} strokeWidth="1.7" />
+                      <line x1={xs} y1={yb} x2={xs} y2={yb + 6} stroke={DAY12} strokeWidth="1.4" />
+                      <text x={xs} y={yb + 14} fontSize="6.2" fontWeight="800" fill={DAY12} textAnchor="middle" fontFamily={MONO}>START ↺</text>
+                      {dots.map((d, i) => (
+                        <circle key={i} cx={d.x} cy={d.y} r={d.last ? 2.4 : 1.5} fill={d.last ? '#C0392B' : ORANGE} />
+                      ))}
+                      <text x={xs + 52} y={yb - 8} fontSize="6.2" fontWeight="700" fill={ORANGE} fontFamily={MONO}>오차 누적 ↗</text>
+                    </g>
+                  );
+                })}
+                {/* 마지막 프레임 뒤 재동기 START */}
+                <line x1="304" y1="60" x2="304" y2="66" stroke={DAY12} strokeWidth="1.4" />
+                <text x="304" y="74" fontSize="6.2" fontWeight="800" fill={DAY12} textAnchor="middle" fontFamily={MONO}>START ↺</text>
+              </svg>
+
+              <ul style={{ margin: '0.1rem 0 0', paddingLeft: '0.9rem', fontSize: '0.6rem', color: FPGA.text, lineHeight: 1.5 }}>
+                <li>오차 누적은 <strong>1프레임(≈10비트) 안에서만</strong> — START 하강엣지마다 0으로 리셋</li>
+                <li>8번째(중앙) 샘플 = 양쪽 <strong>±8 tick</strong> 마진 → 합산 편차 <strong>~±5%</strong>까지 견딤</li>
               </ul>
             </div>
 
