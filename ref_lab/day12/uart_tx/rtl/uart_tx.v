@@ -17,13 +17,16 @@ module uart_tx (
   reg [1:0] state;
   reg [2:0] idx;
   reg [7:0] sh;
+  reg       pend;     // start 요청 보류 — 다음 tick 경계에서 프레임 시작(start bit 정렬)
 
   always @(posedge clk)
-    if (rst) begin state<=IDLE; tx<=1'b1; busy<=1'b0; end
+    if (rst) begin state<=IDLE; tx<=1'b1; busy<=1'b0; pend<=1'b0; end
     else case (state)
       IDLE:  begin tx<=1'b1; busy<=1'b0;
-               if (start) begin sh<=data; busy<=1'b1; state<=START; end end
-      START: begin tx<=1'b0;                      // start bit
+               if (start) begin sh<=data; pend<=1'b1; end          // 요청 보류(busy 아직)
+               // free-running tick 경계에 맞춰 start bit 시작 → 한 비트 폭 보장
+               if (pend && tick) begin pend<=1'b0; busy<=1'b1; tx<=1'b0; state<=START; end end
+      START: begin tx<=1'b0;                      // start bit (정확히 1 tick 주기)
                if (tick) begin state<=DATA; idx<=0; end end
       DATA:  begin tx<=sh[0];                     // LSB first
                if (tick) begin sh<={1'b0, sh[7:1]};
