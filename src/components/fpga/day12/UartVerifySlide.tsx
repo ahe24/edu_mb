@@ -6,37 +6,46 @@ import VerilogCode from '../VerilogCode';
 
 const DAY12 = '#177E89';
 
-const code = `module uart_verify_tb;
-  reg clk=0, rst, start;  reg [7:0] tx_data;
-  wire tx_line, busy, rx_valid;  wire [7:0] rx_data;
+const code = `module tb_uart_loop;                  // DUT = 보드 top, rx_pin/tx_pin 2핀만
+  localparam CLK_HZ=160, BAUD=10, BIT_CLK=16, NBYTES=8;  // 시뮬 가속 1× DIV=16
+  reg clk=0, rst, rx_pin;  wire tx_pin;  integer errors=0;
+  uart_loop #(.CLK_HZ(CLK_HZ),.BAUD(BAUD)) dut (.clk,.rst,.rx_pin,.tx_pin);
   always #5 clk = ~clk;
 
-  // 시뮬 가속 — 작은 baud (1× DIV=16, 16× DIV=1)
-  wire tick, tick16;
-  baud_gen #(.CLK_HZ(160),.BAUD(10))  b1 (.clk,.rst,.tick(tick));
-  baud_gen #(.CLK_HZ(160),.BAUD(160)) b16(.clk,.rst,.tick(tick16));
-  uart_tx u_tx(.clk,.rst,.tick,.start,.data(tx_data),.tx(tx_line),.busy);
-  uart_rx u_rx(.clk,.rst,.tick16,.rx_in(tx_line),         // loopback
-               .data(rx_data),.valid(rx_valid));
+  reg [7:0] sb [0:63];  integer wr=0, rd=0;              // scoreboard queue
 
-  reg [7:0] sb [0:15];  integer wr=0, rd=0, errors=0, i;  // scoreboard
+  task tx_bit(input v);                                  // 시리얼 라인 직접 토글
+    integer k; begin for(k=0;k<BIT_CLK;k=k+1) @(posedge clk) rx_pin=v; end
+  endtask
+  task send_frame(input [7:0] b);                        // start+8data(LSB)+stop
+    integer i; begin tx_bit(0); for(i=0;i<8;i=i+1) tx_bit(b[i]); tx_bit(1); end
+  endtask
 
-  always @(posedge clk) if (rx_valid) begin              // 수신 비교·pop
-    if (rx_data !== sb[rd]) begin
-      errors=errors+1; $error("byte %0d: got %h exp %h", rd, rx_data, sb[rd]);
+  task automatic decode_one;                             // echo 를 TB가 직접 샘플
+    reg [7:0] got; integer i; begin
+      @(negedge tx_pin); repeat(BIT_CLK+BIT_CLK/2) @(posedge clk);  // 첫 data 중앙
+      for(i=0;i<8;i=i+1) begin got[i]=tx_pin; if(i<7) repeat(BIT_CLK)@(posedge clk); end
+      repeat(BIT_CLK)@(posedge clk);                     // stop 중앙
+      if(tx_pin!==1'b1) begin errors=errors+1; $error("STOP!=1 (%h)",got); end
+      if(got!==sb[rd]) begin errors=errors+1; $error("byte %0d: got %h exp %h",rd,got,sb[rd]); end
+      rd=rd+1;
     end
-    rd = rd + 1;
+  endtask
+
+  initial begin : decoder                                // echo NBYTES 수신·비교
+    integer n; @(negedge rst);
+    for(n=0;n<NBYTES;n=n+1) decode_one;
   end
-
-  initial begin
-    rst=1; start=0; repeat(4)@(posedge clk); rst=0;
-    for (i=0;i<8;i=i+1) begin                             // 8 바이트 송신
-      @(posedge clk); tx_data = 8'h3C ^ (i*8'h11); sb[wr]=tx_data; wr=wr+1;
-      start=1; @(posedge clk); start=0; wait(!busy);
+  initial begin : stimulus                               // NBYTES 송신
+    integer n; reg [7:0] b;
+    rst=1; rx_pin=1; repeat(4)@(posedge clk); rst=0; repeat(BIT_CLK)@(posedge clk);
+    for(n=0;n<NBYTES;n=n+1) begin
+      b = 8'h3C ^ (n*8'h11); sb[wr]=b; wr=wr+1;
+      send_frame(b); repeat(BIT_CLK)@(posedge clk);
     end
-    wait(rd==8);                                          // echo 전부 수신
-    if (errors==0 && rd==8) $display(" RESULT: PASS  (0 mismatch)");
-    else $display(" RESULT: FAIL  (errors=%0d rd=%0d)", errors, rd);
+    wait(rd==NBYTES);
+    if(errors==0 && rd==NBYTES) $display(" RESULT: PASS  (0 mismatch)");
+    else $display(" RESULT: FAIL  (%0d mismatch)", errors);
     $finish;
   end
 endmodule`;
@@ -48,7 +57,7 @@ export default function UartVerifySlide() {
         <SlideHeader
           badge="실습 · 프로토콜 검증"
           title="scoreboard 기반 송수신 일치 검증"
-          subtitle="전송 바이트를 큐에 적재 · RX valid마다 pop 후 비교 · 프레임/순서/값 자동 판정"
+          subtitle="rx_pin 으로 프레임 주입 · tx_pin echo 를 TB가 직접 디코드해 큐와 pop·비교 · 프레임/순서/값 자동 판정"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '0.75rem' }}>
@@ -60,7 +69,7 @@ export default function UartVerifySlide() {
             display: 'flex', flexDirection: 'column',
           }}>
             <div style={{ fontSize: '0.6rem', color: DAY12, fontWeight: 800, marginBottom: '0.2rem', letterSpacing: '0.05em' }}>
-              uart_verify_tb.v — loopback scoreboard
+              tb_uart_loop.sv — 핀-레벨 echo scoreboard
             </div>
             <VerilogCode code={code} style={{ fontSize: '0.555rem', lineHeight: 1.35 }} />
           </div>
@@ -84,7 +93,7 @@ export default function UartVerifySlide() {
                 <circle cx="222" cy="32" r="16" fill="rgba(72,187,120,0.12)" stroke="#48BB78" strokeWidth="1.5" />
                 <text x="222" y="36" fontSize="10" fontWeight="800" fill="#48BB78" textAnchor="middle">=?</text>
                 <path d="M254 32 H280" stroke="#48BB78" strokeWidth="1.3" markerEnd="url(#v12)" />
-                <text x="270" y="22" fontSize="6.5" fill="#4A6FA5" fontFamily='"JetBrains Mono", monospace'>RX</text>
+                <text x="268" y="22" fontSize="6.5" fill="#4A6FA5" fontFamily='"JetBrains Mono", monospace'>tx_pin</text>
                 <defs><marker id="v12" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill={FPGA.textLight} /></marker></defs>
               </svg>
             </div>
@@ -95,10 +104,10 @@ export default function UartVerifySlide() {
             }}>
               <div style={{ fontSize: '0.7rem', fontWeight: 800, color: FPGA.dark, marginBottom: '0.25rem' }}>프로토콜 검증 항목</div>
               {[
-                { t: '값 일치', d: 'RX data == 전송 바이트', c: DAY12 },
+                { t: '값 일치', d: '디코드 바이트 == 전송 바이트', c: DAY12 },
                 { t: '순서·개수', d: 'rd 인덱스 == wr (누락/중복 0)', c: '#4A6FA5' },
                 { t: 'framing', d: 'start=0 · stop=1 · LSB 정렬', c: '#8B6FA5' },
-                { t: 'bit period', d: 'start→data 간격 = DIV clk', c: '#E8913A' },
+                { t: 'bit-center', d: '1.5+N·DIV clk 지점 샘플', c: '#E8913A' },
               ].map((x) => (
                 <div key={x.t} style={{ display: 'flex', gap: '0.45rem', alignItems: 'flex-start', padding: '0.12rem 0' }}>
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: x.c, marginTop: '6px', flexShrink: 0 }} />
