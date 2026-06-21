@@ -69,8 +69,6 @@ export default function SlideModal({
     position: 'fixed',
     inset: 0,
     background: 'rgba(15, 23, 42, 0.65)',
-    backdropFilter: 'blur(4px)',
-    WebkitBackdropFilter: 'blur(4px)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -79,8 +77,24 @@ export default function SlideModal({
     animation: 'fadeIn 0.2s ease',
   };
 
+  // blur(backdrop-filter)는 콘텐츠의 조상에 걸면 서브트리가 GPU 레이어로
+  // 합성·리샘플되어 텍스트가 뿌옇게 보인다. → 블러를 콘텐츠와 형제인
+  // 별도 언더레이로 분리하고 zIndex:-1 로 콘텐츠 "뒤"에 깔아, 배경만
+  // 흐리게 하고 콘텐츠는 필터 밖에서 선명하게 렌더한다.
+  // (zIndex 없이 position:absolute 만 주면 paint order 상 positioned 요소가
+  //  static 콘텐츠보다 위에 그려져 콘텐츠까지 블러된다 — 반드시 -1.)
+  const blurUnderlay: CSSProperties = {
+    position: 'absolute',
+    inset: 0,
+    zIndex: -1,
+    backdropFilter: 'blur(4px)',
+    WebkitBackdropFilter: 'blur(4px)',
+    pointerEvents: 'none',
+  };
+
   return createPortal(
     <div onClick={handleBackdropClick} style={{ ...defaultBackdrop, ...backdropStyle }}>
+      <div aria-hidden style={blurUnderlay} />
       {bare ? (
         <div onClick={stopPropagation} style={{ display: 'contents' }}>
           {children}

@@ -20,13 +20,15 @@ module tb_seq_detect;
 
   integer i;
 
-  seq_detect dut (.clk(clk), .rst(rst), .din(din), .found(found));
+  // 시뮬은 en=1 고정 → 1비트/클럭 연속 스트리밍(알고리즘 검증).
+  // 보드에서는 en 이 step 버튼 펄스로 바뀐다(seq_top.v).
+  seq_detect dut (.clk(clk), .rst(rst), .en(1'b1), .din(din), .found(found));
 
   always #5 clk = ~clk;               // 100MHz
 
-  // reset 중 found 는 항상 0 이어야 함
+  // reset 중 found 가 1 로 단정되면 안 됨 (전원 직후 X 는 위반 아님)
   always @(posedge clk)
-    if (rst && found !== 1'b0) begin
+    if (rst && found === 1'b1) begin
       errors = errors + 1;
       $error("found HIGH during reset t=%0t", $time);
     end

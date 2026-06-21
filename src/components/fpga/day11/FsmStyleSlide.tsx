@@ -209,7 +209,9 @@ export default function FsmStyleSlide() {
                   background: on
                     ? `linear-gradient(135deg, ${s.c}1A, ${s.c}2E)`
                     : `linear-gradient(135deg, ${s.c}07, ${s.c}10)`,
-                  border: `1.5px solid ${s.c}${on ? '88' : '2A'}`,
+                  borderRight: `1.5px solid ${s.c}${on ? '88' : '2A'}`,
+                  borderBottom: `1.5px solid ${s.c}${on ? '88' : '2A'}`,
+                  borderLeft: `1.5px solid ${s.c}${on ? '88' : '2A'}`,
                   borderTop: `3px solid ${s.c}`,
                   borderRadius: '9px', padding: '0.5rem 0.75rem 0.55rem',
                   boxShadow: on ? `0 4px 14px ${s.c}3A` : shadow.card,
