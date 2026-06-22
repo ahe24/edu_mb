@@ -30,8 +30,8 @@ const labTasks: {
     num: 1,
     title: '신호등 Moore FSM',
     items: [
-      <><C>traffic_light.v</C> · 3상태 타이머 천이</>,
-      <>T_* 작게 override → 순환·안전 default 확인</>,
+      <><C>traffic_light.v</C> · 3상태 <C>en</C> 게이트 · RGB LED 3개(YEL=R+G)</>,
+      <>제공 TB가 en 펄스 구동 → 순환·RGB 색·안전 default 확인</>,
     ],
     color: '#4A6FA5',
     cmd: 'make sim',
