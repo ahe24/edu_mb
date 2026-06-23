@@ -38,10 +38,10 @@ const labTasks: {
   },
   {
     num: 2,
-    title: 'RGB PWM 밝기 FSM',
+    title: 'RGB PWM 밝기 ±5%',
     items: [
-      <><C>pwm_rgb.v</C> · 1kHz PWM · RGB duty 50% 상한</>,
-      <>btn_p 펄스로 OFF→DIM→MID→MAX(50%)</>,
+      <><C>pwm_gen.v</C> 구현 · 0~100% ±5% · top·debounce·led_driver 제공</>,
+      <>버튼 2개로 0→100→0% · duty 측정 self-check</>,
     ],
     color: DAY11,
     cmd: 'make wave',

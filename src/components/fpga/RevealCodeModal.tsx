@@ -8,7 +8,7 @@ import VerilogCode from './VerilogCode';
 const MONO = '"JetBrains Mono", monospace';
 
 interface RevealCodeModalProps {
-  /** 코드 라벨 (예: "pwm_rgb.v — 설계") */
+  /** 코드 라벨 (예: "pwm_gen.v — 설계") */
   title: string;
   /** 강조색 */
   accent: string;

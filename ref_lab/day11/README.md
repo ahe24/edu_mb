@@ -8,10 +8,11 @@ FSM 설계 실습 묶음. 각 프로젝트는 권장 구조(`rtl / testbench / s
 | 폴더 | 실습 | 내용 |
 |------|------|------|
 | [`traffic_light/`](traffic_light/) | 실습 1 | 타이머 기반 신호등 Moore FSM — RED→GRN→YEL 순환, one-hot 출력, FUNC_SIM 타이머 축소 |
-| [`pwm_rgb/`](pwm_rgb/) | 실습 2 | 버튼 밝기 순환 mode FSM + PWM — OFF/DIM/MID/BRT, duty 측정 self-check |
+| [`pwm_rgb/`](pwm_rgb/) | 실습 2 | 2버튼 밝기 ±5% PWM — top·pwm_gen·debounce·led_driver 분해, 0~100% duty 측정 self-check |
 | [`seq_detect/`](seq_detect/) | 실습 3 | "101" 시퀀스 검출 FSM — overlap 처리, found 펄스 집계 self-check |
 
-> 순서 무관 — 주제별로 독립. 셋 다 Moore FSM 정석(상태 reg + 조합 next + 조합 출력).
+> 순서 무관 — 주제별로 독립. 신호등·시퀀스는 Moore FSM 정석(상태 reg + 조합 next + 조합 출력),
+> pwm_rgb 는 saturating 밝기 카운터 + PWM 비교 + 모듈 분해(통합·계층) 학습.
 
 ## 공통 — 100MHz 클럭 다루기
 
