@@ -1,36 +1,36 @@
 // =============================================================================
-// Day 11 â€” pwm_top.v   (ì œê³µ ëª¨ë“ˆ â€” ë³´ë“œ ìµœìƒìœ„: ë°°ì„  + ìƒìŠ¹ì—£ì§€ ê²€ì¶œ)
-// ë²„íŠ¼ 2ê°œë¡œ ë°ê¸°ë¥¼ ì¡°ì ˆí•˜ëŠ” ë³´ë“œ top. êµ¬ì„±ìš”ì†Œë¥¼ ì¸ìŠ¤í„´ìŠ¤/ë°°ì„ ë§Œ í•œë‹¤.
+// Day 11 ¡ª pwm_top.v   (Á¦°ø ¸ğµâ ¡ª º¸µå ÃÖ»óÀ§: ¹è¼± + »ó½Â¿§Áö °ËÃâ)
+// ¹öÆ° 2°³·Î ¹à±â¸¦ Á¶ÀıÇÏ´Â º¸µå top. ±¸¼º¿ä¼Ò¸¦ ÀÎ½ºÅÏ½º/¹è¼±¸¸ ÇÑ´Ù.
 //
-//   BTN0 â†’ rst    : ë°ê¸° 0% ë¡œ ë³µê·€ (ë™ê¸° active-high)
-//   BTN1 â†’ btn_up : ëˆ„ë¥¼ ë•Œë§ˆë‹¤ +5%  (rawÂ·ë¹„ë™ê¸°)
-//   BTN2 â†’ btn_dn : ëˆ„ë¥¼ ë•Œë§ˆë‹¤ -5%
-//   RGB LD0 ë…¹ìƒ‰ + ë‹¨ìƒ‰ User LED ì— ë™ì¼ ë°ê¸° ì¶œë ¥
+//   BTN0 ¡æ rst    : ¹à±â 0% ·Î º¹±Í (µ¿±â active-high)
+//   BTN1 ¡æ btn_up : ´©¸¦ ¶§¸¶´Ù +5%  (raw¡¤ºñµ¿±â)
+//   BTN2 ¡æ btn_dn : ´©¸¦ ¶§¸¶´Ù -5%
+//   RGB LD0 ³ì»ö + ´Ü»ö User LED ¿¡ µ¿ÀÏ ¹à±â Ãâ·Â
 //
-// ë°ì´í„° íë¦„ (êµ¬ì„±ìš”ì†Œ 4ë‹¨ê³„):
-//   BTN1(raw) â”€â–º[â‘  debounce]â”€â–º up_lvl â”€â–º[â‘¡ edge]â”€â–º up_p â”
-//   BTN2(raw) â”€â–º[â‘  debounce]â”€â–º dn_lvl â”€â–º[â‘¡ edge]â”€â–º dn_p â”¤â–º[â‘¢ pwm_gen]â”€â–º pwm â”€â–º[â‘£ led_driver]â”€â–º LED
+// µ¥ÀÌÅÍ Èå¸§ (±¸¼º¿ä¼Ò 4´Ü°è):
+//   BTN1(raw) ¦¡¢º[¨ç debounce]¦¡¢º up_lvl ¦¡¢º[¨è edge]¦¡¢º up_p ¦¤
+//   BTN2(raw) ¦¡¢º[¨ç debounce]¦¡¢º dn_lvl ¦¡¢º[¨è edge]¦¡¢º dn_p ¦©¢º[¨é pwm_gen]¦¡¢º pwm ¦¡¢º[¨ê led_driver]¦¡¢º LED
 //
-// ì™œ? 100MHz ì—ì„œ ë²„íŠ¼ì„ ì†ìœ¼ë¡œ ëˆ„ë¥´ë©´ ì±„í„°ë§Â·ë©”íƒ€ì•ˆì • + ëˆ„ë¥´ëŠ” ë™ì•ˆ ìˆ˜ì–µ í´ëŸ­.
-//   â‘  ë²„íŠ¼ì„ ê¹¨ë—í•œ ë ˆë²¨ë¡œ, â‘¡ ëˆ„ë¥¸ "ìˆœê°„"ë§Œ 1í´ëŸ­ í„ìŠ¤ë¡œ ë°”ê¿” â‘¢ pwm_gen ì´
-//   í•œ ë²ˆì— ì •í™•íˆ STEP% ë§Œ ì¦ê°í•˜ê²Œ í•œë‹¤. (Day10 debounce.v ê·¸ëŒ€ë¡œ ì¬ì‚¬ìš©)
+// ¿Ö? 100MHz ¿¡¼­ ¹öÆ°À» ¼ÕÀ¸·Î ´©¸£¸é Ã¤ÅÍ¸µ¡¤¸ŞÅ¸¾ÈÁ¤ + ´©¸£´Â µ¿¾È ¼ö¾ï Å¬·°.
+//   ¨ç ¹öÆ°À» ±ú²ıÇÑ ·¹º§·Î, ¨è ´©¸¥ "¼ø°£"¸¸ 1Å¬·° ÆŞ½º·Î ¹Ù²ã ¨é pwm_gen ÀÌ
+//   ÇÑ ¹ø¿¡ Á¤È®È÷ STEP% ¸¸ Áõ°¨ÇÏ°Ô ÇÑ´Ù. (Day10 debounce.v ±×´ë·Î Àç»ç¿ë)
 // =============================================================================
 module pwm_top (
-  input  wire clk,            // 100MHz ì‹œìŠ¤í…œ í´ëŸ­
-  input  wire rst,            // BTN0 (ë™ê¸° active-high)
-  input  wire btn_up,         // BTN1 (+5% ë²„íŠ¼, rawÂ·ë¹„ë™ê¸°)
-  input  wire btn_dn,         // BTN2 (-5% ë²„íŠ¼, rawÂ·ë¹„ë™ê¸°)
-  output wire rgb_r,          // RGB LD0 ì  (off)
-  output wire rgb_g,          // RGB LD0 ë…¹ (ë°ê¸°)
-  output wire rgb_b,          // RGB LD0 ì²­ (off)
-  output wire mono            // ë‹¨ìƒ‰ User LED (ë°ê¸°)
+  input  wire clk,            // 100MHz ½Ã½ºÅÛ Å¬·°
+  input  wire rst,            // BTN0 (µ¿±â active-high)
+  input  wire btn_up,         // BTN1 (+5% ¹öÆ°, raw¡¤ºñµ¿±â)
+  input  wire btn_dn,         // BTN2 (-5% ¹öÆ°, raw¡¤ºñµ¿±â)
+  output wire rgb_r,          // RGB LD0 Àû (off)
+  output wire rgb_g,          // RGB LD0 ³ì (¹à±â)
+  output wire rgb_b,          // RGB LD0 Ã» (off)
+  output wire mono            // ´Ü»ö User LED (¹à±â)
 );
-  // â”€â”€ â‘  ë²„íŠ¼ 2ê°œ ë””ë°”ìš´ìŠ¤(+2FF ë™ê¸°í™”) â€” Day10 ì¬ì‚¬ìš© â”€â”€
+  // ¦¡¦¡ ¨ç ¹öÆ° 2°³ µğ¹Ù¿î½º(+2FF µ¿±âÈ­) ¡ª Day10 Àç»ç¿ë ¦¡¦¡
   wire up_lvl, dn_lvl;
   debounce u_db_up (.clk(clk), .rst(rst), .btn_in(btn_up), .btn_out(up_lvl));
   debounce u_db_dn (.clk(clk), .rst(rst), .btn_in(btn_dn), .btn_out(dn_lvl));
 
-  // â”€â”€ â‘¡ ìƒìŠ¹ì—£ì§€ ê²€ì¶œ â€” ëˆ„ë¥¸ ìˆœê°„ë§Œ 1í´ëŸ­ í„ìŠ¤ â”€â”€
+  // ¦¡¦¡ ¨è »ó½Â¿§Áö °ËÃâ ¡ª ´©¸¥ ¼ø°£¸¸ 1Å¬·° ÆŞ½º ¦¡¦¡
   reg up_d, dn_d;
   always @(posedge clk)
     if (rst) {up_d, dn_d} <= 2'b00;
@@ -38,7 +38,7 @@ module pwm_top (
   wire up_p = up_lvl & ~up_d;
   wire dn_p = dn_lvl & ~dn_d;
 
-  // â”€â”€ â‘¢ PWM ìƒì„±ê¸°(ì§ì ‘ êµ¬í˜„) â†’ â‘£ LED ë“œë¼ì´ë²„ â”€â”€
+  // ¦¡¦¡ ¨é PWM »ı¼º±â(Á÷Á¢ ±¸Çö) ¡æ ¨ê LED µå¶óÀÌ¹ö ¦¡¦¡
   wire pwm;
   pwm_gen u_pwm (.clk(clk), .rst(rst), .up_p(up_p), .dn_p(dn_p), .pwm(pwm));
   led_driver u_led (.pwm(pwm), .rgb_r(rgb_r), .rgb_g(rgb_g), .rgb_b(rgb_b), .mono(mono));

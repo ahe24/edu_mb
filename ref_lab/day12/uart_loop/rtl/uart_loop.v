@@ -1,21 +1,21 @@
 // =============================================================================
-// Day 12 â€” uart_loop.v
-// UART echo ë£¨í”„ë°± top. baud_gen Ã—2 + uart_rx + uart_tx í†µí•©.
-//   rx_pin ìœ¼ë¡œ ë°›ì€ ë°”ì´íŠ¸(valid)ë¥¼ ê·¸ëŒ€ë¡œ uart_tx start ë¡œ ì—°ê²° â†’ ì¦‰ì‹œ ì¬ì „ì†¡.
-//   b1   = 1Ã— tick   (TX ë¹„íŠ¸ íƒ€ì´ë°)
-//   b16  = 16Ã— tick  (RX oversample) â€” BAUDÃ—16
-//   ë³´ë“œ: rx_pin=USB-UART RXD, tx_pin=USB-UART TXD (fpga/arty.xdc ì°¸ê³ ).
+// Day 12 ¡ª uart_loop.v
+// UART echo ·çÇÁ¹é top. baud_gen ¡¿2 + uart_rx + uart_tx ÅëÇÕ.
+//   rx_pin À¸·Î ¹ŞÀº ¹ÙÀÌÆ®(valid)¸¦ ±×´ë·Î uart_tx start ·Î ¿¬°á ¡æ Áï½Ã ÀçÀü¼Û.
+//   b1   = 1¡¿ tick   (TX ºñÆ® Å¸ÀÌ¹Ö)
+//   b16  = 16¡¿ tick  (RX oversample) ¡ª BAUD¡¿16
+//   º¸µå: rx_pin=USB-UART RXD, tx_pin=USB-UART TXD (fpga/arty.xdc Âü°í).
 //
-//   â€» CLK_HZ/BAUD ëŠ” parameter â€” ê¸°ë³¸ê°’ì€ ì‹¤ì œ 100MHz/115200(í•©ì„±Â·ë³´ë“œ ë™ì¼).
-//     ì‹œë®¬ì€ TB ì—ì„œ ì‘ì€ ê°’ìœ¼ë¡œ override í•´ DIV ì¶•ì†Œ(ë¹ ë¥¸ íšŒê·€). RTL í•œ ë²Œ ìœ ì§€.
+//   ¡Ø CLK_HZ/BAUD ´Â parameter ¡ª ±âº»°ªÀº ½ÇÁ¦ 100MHz/115200(ÇÕ¼º¡¤º¸µå µ¿ÀÏ).
+//     ½Ã¹ÄÀº TB ¿¡¼­ ÀÛÀº °ªÀ¸·Î override ÇØ DIV Ãà¼Ò(ºü¸¥ È¸±Í). RTL ÇÑ ¹ú À¯Áö.
 // =============================================================================
 module uart_loop #(
   parameter integer CLK_HZ = 100_000_000,
   parameter integer BAUD   = 115200
 )(
   input  wire clk, rst,
-  input  wire rx_pin,           // FT2232 â†’ FPGA
-  output wire tx_pin            // FPGA â†’ FT2232
+  input  wire rx_pin,           // FT2232 ¡æ FPGA
+  output wire tx_pin            // FPGA ¡æ FT2232
 );
   wire tick, tick16, valid;
   wire [7:0] rdata;
@@ -23,10 +23,10 @@ module uart_loop #(
   baud_gen #(.CLK_HZ(CLK_HZ), .BAUD(BAUD))    u_b1 (.clk,.rst,.tick(tick));
   baud_gen #(.CLK_HZ(CLK_HZ), .BAUD(BAUD*16)) u_b16(.clk,.rst,.tick(tick16));
 
-  // ìˆ˜ì‹ 
+  // ¼ö½Å
   uart_rx u_rx (.clk,.rst,.tick16,.rx_in(rx_pin),
                 .data(rdata), .valid(valid));
-  // ë°›ì€ ë°”ì´íŠ¸ë¥¼ ê·¸ëŒ€ë¡œ ì¬ì „ì†¡ (echo)
+  // ¹ŞÀº ¹ÙÀÌÆ®¸¦ ±×´ë·Î ÀçÀü¼Û (echo)
   uart_tx u_tx (.clk,.rst,.tick,.start(valid),.data(rdata),
                 .tx(tx_pin), .busy());
 endmodule

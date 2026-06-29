@@ -1,35 +1,35 @@
 // =============================================================================
-// Day 11 â€” top_traffic_light.v  (ë³´ë“œ ìµœìƒìœ„ â€” "ë°°ì„ /êµ¬ì„±ìš”ì†Œ"ë§Œ ë‹´ë‹¹)
-// ë‹¨ì¼ 100MHz í´ëŸ­ + í´ëŸ­ ì¸ì—ì´ë¸”(tick) íŒ¨í„´. ì‹ í˜¸ë“± FSM ì„ ë³´ë“œì—ì„œ ëŠë¦¬ê²Œ êµ¬ë™.
+// Day 11 ¡ª top_traffic_light.v  (º¸µå ÃÖ»óÀ§ ¡ª "¹è¼±/±¸¼º¿ä¼Ò"¸¸ ´ã´ç)
+// ´ÜÀÏ 100MHz Å¬·° + Å¬·° ÀÎ¿¡ÀÌºí(tick) ÆĞÅÏ. ½ÅÈ£µî FSM À» º¸µå¿¡¼­ ´À¸®°Ô ±¸µ¿.
 //
-//   clk  â†’ 100MHz ì‹œìŠ¤í…œ í´ëŸ­        rst â†’ BTN0 (ë™ê¸° active-high)
-//   rgb_led_r/g/b[2:0] â†’ RGB LED LD0/LD1/LD2 (RED / YEL=R+G / GRN ë¨í”„)
-//   mono_led[2:0]      â†’ mono LED LD4/LD5/LD6 (ìƒíƒœ one-hot ë””ë²„ê·¸)
+//   clk  ¡æ 100MHz ½Ã½ºÅÛ Å¬·°        rst ¡æ BTN0 (µ¿±â active-high)
+//   rgb_led_r/g/b[2:0] ¡æ RGB LED LD0/LD1/LD2 (RED / YEL=R+G / GRN ·¥ÇÁ)
+//   mono_led[2:0]      ¡æ mono LED LD4/LD5/LD6 (»óÅÂ one-hot µğ¹ö±×)
 //
-// ë°ì´í„° íë¦„ (êµ¬ì„±ìš”ì†Œ 2ë‹¨ê³„):
-//   clk(100MHz) â”€â–º[â‘  tick_gen DIV=1ì–µ]â”€â–º tick(1Hz, 1í´ëŸ­ í­) â”€â–º en
-//                                        [â‘¡ traffic_light FSM] â”€â–º RGB/mono LED
+// µ¥ÀÌÅÍ Èå¸§ (±¸¼º¿ä¼Ò 2´Ü°è):
+//   clk(100MHz) ¦¡¢º[¨ç tick_gen DIV=1¾ï]¦¡¢º tick(1Hz, 1Å¬·° Æø) ¦¡¢º en
+//                                        [¨è traffic_light FSM] ¦¡¢º RGB/mono LED
 //
-// ì™œ ì´ë ‡ê²Œ? 100MHz ë¥¼ ê·¸ëŒ€ë¡œ ì¹´ìš´íŠ¸í•˜ë©´ 30í‹± = 300ns ë¼ LED ë³€í™”ê°€ ì•ˆ ë³´ì¸ë‹¤.
-//   tick_gen ìœ¼ë¡œ 1ì´ˆë§ˆë‹¤ en 1í„ìŠ¤ë¥¼ ë§Œë“¤ì–´ FSM ì„ "ì´ˆë‹¹ 1ì¹¸"ì”© ì „ì§„ â†’
-//   30/25/5 í‹± = 30s/25s/5s. clk ì„ ë¶„ì£¼í•´ ìƒˆ í´ëŸ­ìœ¼ë¡œ ì“°ì§€ ë§ ê²ƒ(íŒŒìƒ í´ëŸ­ ê¸ˆì§€).
-//   â€» tick_gen ì€ Day10 ì—ì„œ ë§Œë“  ì›ë³¸ ì¬ì‚¬ìš© (fpga/board_flist.f ì˜ ìƒëŒ€ì°¸ì¡°).
+// ¿Ö ÀÌ·¸°Ô? 100MHz ¸¦ ±×´ë·Î Ä«¿îÆ®ÇÏ¸é 30Æ½ = 300ns ¶ó LED º¯È­°¡ ¾È º¸ÀÎ´Ù.
+//   tick_gen À¸·Î 1ÃÊ¸¶´Ù en 1ÆŞ½º¸¦ ¸¸µé¾î FSM À» "ÃÊ´ç 1Ä­"¾¿ ÀüÁø ¡æ
+//   30/25/5 Æ½ = 30s/25s/5s. clk À» ºĞÁÖÇØ »õ Å¬·°À¸·Î ¾²Áö ¸» °Í(ÆÄ»ı Å¬·° ±İÁö).
+//   ¡Ø tick_gen Àº Day10 ¿¡¼­ ¸¸µç ¿øº» Àç»ç¿ë (fpga/board_flist.f ÀÇ »ó´ëÂüÁ¶).
 // =============================================================================
 module top_traffic_light (
-  input  wire       clk,        // 100MHz ì‹œìŠ¤í…œ í´ëŸ­
-  input  wire       rst,        // BTN0 (ë™ê¸° active-high)
-  output wire [2:0] rgb_led_r,  // RGB LED Rì±„ë„ â†’ LD0/LD1/LD2
-  output wire [2:0] rgb_led_g,  // RGB LED Gì±„ë„
-  output wire [2:0] rgb_led_b,  // RGB LED Bì±„ë„ (ë¯¸ì‚¬ìš© â†’ 0)
-  output wire [2:0] mono_led    // ìƒíƒœ one-hot ë””ë²„ê·¸ â†’ LD4/LD5/LD6
+  input  wire       clk,        // 100MHz ½Ã½ºÅÛ Å¬·°
+  input  wire       rst,        // BTN0 (µ¿±â active-high)
+  output wire [2:0] rgb_led_r,  // RGB LED RÃ¤³Î ¡æ LD0/LD1/LD2
+  output wire [2:0] rgb_led_g,  // RGB LED GÃ¤³Î
+  output wire [2:0] rgb_led_b,  // RGB LED BÃ¤³Î (¹Ì»ç¿ë ¡æ 0)
+  output wire [2:0] mono_led    // »óÅÂ one-hot µğ¹ö±× ¡æ LD4/LD5/LD6
 );
-  // â”€â”€ â‘  1Hz tick ìƒì„±: DIV í´ëŸ­ë§ˆë‹¤ 1í´ëŸ­ í­ en í„ìŠ¤ (DIV ì€ tick_gen `ifdef ë¶„ê¸°) â”€â”€
+  // ¦¡¦¡ ¨ç 1Hz tick »ı¼º: DIV Å¬·°¸¶´Ù 1Å¬·° Æø en ÆŞ½º (DIV Àº tick_gen `ifdef ºĞ±â) ¦¡¦¡
   wire tick;
   tick_gen u_tick (
     .clk(clk), .rst(rst), .tick(tick)
   );
 
-  // â”€â”€ â‘¡ FSM ì½”ì–´: en(=tick) ì¸ í´ëŸ­ì—ì„œë§Œ íƒ€ì´ë¨¸ 1ì¹¸ ì „ì§„ â†’ ì´ˆë‹¹ í•œ ì¹¸ â”€â”€
+  // ¦¡¦¡ ¨è FSM ÄÚ¾î: en(=tick) ÀÎ Å¬·°¿¡¼­¸¸ Å¸ÀÌ¸Ó 1Ä­ ÀüÁø ¡æ ÃÊ´ç ÇÑ Ä­ ¦¡¦¡
   traffic_light u_fsm (
     .clk(clk), .rst(rst), .en(tick),
     .rgb_led_r(rgb_led_r), .rgb_led_g(rgb_led_g), .rgb_led_b(rgb_led_b),

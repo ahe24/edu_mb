@@ -1,29 +1,29 @@
 // =============================================================================
-// Day 10 â€” debounce.v
-// ê¸°ê³„ì‹ ë²„íŠ¼ì˜ ì±„í„°ë§(bounce) ì œê±° + ë¹„ë™ê¸° ì…ë ¥ 2FF ë™ê¸°í™”.
-//   â‘  btn_in ì€ í´ëŸ­ê³¼ ë¬´ê´€í•œ ë¹„ë™ê¸° ì…ë ¥ â†’ s0/s1 2ë‹¨ FF ë¡œ ë©”íƒ€ì•ˆì • ë°©ì§€.
-//   â‘¡ s1 ì´ btn_out ê³¼ ë‹¤ë¥¸ ìƒíƒœë¥¼ STABLE í´ëŸ­ ë™ì•ˆ ìœ ì§€í•˜ë©´ btn_out ì— ë°˜ì˜.
-//      (ì§§ì€ ê¸€ë¦¬ì¹˜ëŠ” ì¹´ìš´í„°ê°€ ë¦¬ì…‹ë˜ì–´ í¡ìˆ˜)
-//   ì‹œë®¬ì—ì„  STABLE ì„ ì‘ê²Œ override í•´ ë¹¨ë¦¬ í™•ì¸.
+// Day 10 ¡ª debounce.v
+// ±â°è½Ä ¹öÆ°ÀÇ Ã¤ÅÍ¸µ(bounce) Á¦°Å + ºñµ¿±â ÀÔ·Â 2FF µ¿±âÈ­.
+//   ¨ç btn_in Àº Å¬·°°ú ¹«°üÇÑ ºñµ¿±â ÀÔ·Â ¡æ s0/s1 2´Ü FF ·Î ¸ŞÅ¸¾ÈÁ¤ ¹æÁö.
+//   ¨è s1 ÀÌ btn_out °ú ´Ù¸¥ »óÅÂ¸¦ STABLE Å¬·° µ¿¾È À¯ÁöÇÏ¸é btn_out ¿¡ ¹İ¿µ.
+//      (ÂªÀº ±Û¸®Ä¡´Â Ä«¿îÅÍ°¡ ¸®¼ÂµÇ¾î Èí¼ö)
+//   ½Ã¹Ä¿¡¼± STABLE À» ÀÛ°Ô override ÇØ »¡¸® È®ÀÎ.
 // =============================================================================
 module debounce #(
   parameter integer STABLE = 1_000_000  // ~10ms @100MHz
 )(
   input  wire clk,
   input  wire rst,
-  input  wire btn_in,        // ë…¸ì´ì¦ˆ ìˆëŠ” raw ë²„íŠ¼ (ë¹„ë™ê¸°)
-  output reg  btn_out        // ì•ˆì •í™”ëœ ë²„íŠ¼
+  input  wire btn_in,        // ³ëÀÌÁî ÀÖ´Â raw ¹öÆ° (ºñµ¿±â)
+  output reg  btn_out        // ¾ÈÁ¤È­µÈ ¹öÆ°
 );
   reg [19:0] cnt;
-  reg        s0, s1;         // 2ë‹¨ ë™ê¸°í™” FF
+  reg        s0, s1;         // 2´Ü µ¿±âÈ­ FF
 
-  always @(posedge clk)      // â‘  ë©”íƒ€ì•ˆì • ë°©ì§€ 2FF
+  always @(posedge clk)      // ¨ç ¸ŞÅ¸¾ÈÁ¤ ¹æÁö 2FF
     if (rst) {s1, s0} <= 2'b00;
     else     {s1, s0} <= {s0, btn_in};
 
-  always @(posedge clk) begin // â‘¡ ì¹´ìš´í„° ê¸°ë°˜ ì•ˆì •í™”
+  always @(posedge clk) begin // ¨è Ä«¿îÅÍ ±â¹İ ¾ÈÁ¤È­
     if (rst)                  begin cnt <= 0; btn_out <= 1'b0; end
-    else if (s1 == btn_out)   cnt <= 0;                       // ë³€í™” ì—†ìŒ â†’ ë¦¬ì…‹
+    else if (s1 == btn_out)   cnt <= 0;                       // º¯È­ ¾øÀ½ ¡æ ¸®¼Â
     else if (cnt == STABLE-1) begin btn_out <= s1; cnt <= 0; end
     else                      cnt <= cnt + 1'b1;
   end

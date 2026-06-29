@@ -1,12 +1,12 @@
 // =============================================================================
-// Day 12 â€” tb_uart_tx.sv
-// uart_tx self-checking TB. start+data êµ¬ë™ â†’ tick ë§ˆë‹¤ tx ë¥¼ í”„ë ˆì„ìœ¼ë¡œ ìº¡ì²˜ â†’
-// start(0)+data 8ë¹„íŠ¸(LSB first)+stop(1) ì¬ì¡°ë¦½í•´ ë³´ë‚¸ ë°”ì´íŠ¸ì™€ ë¹„êµ.
-//   ì‹œë®¬ ê°€ì†: baud_gen CLK_HZ=160, BAUD=10 â†’ DIV=16 tick.
-//   ê° baud êµ¬ê°„(tick ì‚¬ì´)ì— tx ê°€ ìœ ì§€í•˜ëŠ” ê°’ì„ tick ì‹œì ì— ìº¡ì²˜.
-//   í”„ë ˆì„ = [start, d0..d7, stop] ì´ 10ë¹„íŠ¸. start!=0 / stop!=1 / ê°’ ë¶ˆì¼ì¹˜ ì‹œ $error.
-//   busy ê°€ ì „ì†¡ í›„ idle ì—ì„œ deassert ë˜ëŠ”ì§€ë„ í™•ì¸.
-//   $error 0 ê±´ = PASS.
+// Day 12 ¡ª tb_uart_tx.sv
+// uart_tx self-checking TB. start+data ±¸µ¿ ¡æ tick ¸¶´Ù tx ¸¦ ÇÁ·¹ÀÓÀ¸·Î Ä¸Ã³ ¡æ
+// start(0)+data 8ºñÆ®(LSB first)+stop(1) ÀçÁ¶¸³ÇØ º¸³½ ¹ÙÀÌÆ®¿Í ºñ±³.
+//   ½Ã¹Ä °¡¼Ó: baud_gen CLK_HZ=160, BAUD=10 ¡æ DIV=16 tick.
+//   °¢ baud ±¸°£(tick »çÀÌ)¿¡ tx °¡ À¯ÁöÇÏ´Â °ªÀ» tick ½ÃÁ¡¿¡ Ä¸Ã³.
+//   ÇÁ·¹ÀÓ = [start, d0..d7, stop] ÃÑ 10ºñÆ®. start!=0 / stop!=1 / °ª ºÒÀÏÄ¡ ½Ã $error.
+//   busy °¡ Àü¼Û ÈÄ idle ¿¡¼­ deassert µÇ´ÂÁöµµ È®ÀÎ.
+//   $error 0 °Ç = PASS.
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -26,40 +26,40 @@ module tb_uart_tx;
 
   always #5 clk = ~clk;
 
-  // í•œ ë°”ì´íŠ¸ë¥¼ ë³´ë‚´ê³  tx í”„ë ˆì„ì„ ìº¡ì²˜í•´ ì¬ì¡°ë¦½Â·ë¹„êµ
+  // ÇÑ ¹ÙÀÌÆ®¸¦ º¸³»°í tx ÇÁ·¹ÀÓÀ» Ä¸Ã³ÇØ ÀçÁ¶¸³¡¤ºñ±³
   task send_check(input [7:0] b);
     reg [9:0] frame;     // [0]=start .. [9]=stop
     reg [7:0] got;
     integer   k;
     begin
-      // start í„ìŠ¤ (1-clk)
+      // start ÆŞ½º (1-clk)
       @(posedge clk); data = b; start = 1'b1;
       @(posedge clk); start = 1'b0;
 
-      // 10ê°œ baud êµ¬ê°„ì„ tick ì‹œì ì— ìº¡ì²˜ (start + 8 data + stop)
+      // 10°³ baud ±¸°£À» tick ½ÃÁ¡¿¡ Ä¸Ã³ (start + 8 data + stop)
       for (k = 0; k < 10; k = k + 1) begin
-        @(posedge clk iff (tick && busy));   // ë‹¤ìŒ tick ê¹Œì§€ ëŒ€ê¸°
+        @(posedge clk iff (tick && busy));   // ´ÙÀ½ tick ±îÁö ´ë±â
         frame[k] = tx;
       end
 
-      // í”„ë ˆì´ë° ê²€ì‚¬
+      // ÇÁ·¹ÀÌ¹Ö °Ë»ç
       if (frame[0] !== 1'b0) begin
         errors = errors + 1; $error("START bit != 0 (byte %h)", b);
       end
       if (frame[9] !== 1'b1) begin
         errors = errors + 1; $error("STOP bit != 1 (byte %h)", b);
       end
-      // data LSB first ì¬ì¡°ë¦½
+      // data LSB first ÀçÁ¶¸³
       got = frame[8:1];
       if (got !== b) begin
         errors = errors + 1; $error("DATA mismatch got=%h exp=%h", got, b);
       end
 
-      // idle ë³µê·€ í›„ busy í•´ì œ í™•ì¸
+      // idle º¹±Í ÈÄ busy ÇØÁ¦ È®ÀÎ
       wait (!busy);
       repeat (2) @(posedge clk);
       if (busy !== 1'b0) begin
-        errors = errors + 1; $error("busy ê°€ idle ì—ì„œ deassert ì•ˆë¨");
+        errors = errors + 1; $error("busy °¡ idle ¿¡¼­ deassert ¾ÈµÊ");
       end
     end
   endtask

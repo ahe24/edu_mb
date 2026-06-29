@@ -1,31 +1,31 @@
 ## ==================================================================
-## Day 11 seq_detect â€” arty.xdc (Arty A7-35T Master ë°œì·Œ)
-## ë³´ë“œ top = seq_top  (clk 100MHz)
-##   clk      â†’ 100MHz ì˜¤ì‹¤ë ˆì´í„°
-##   rst      â†’ í‘¸ì‹œë²„íŠ¼ BTN0          (FSM S0 ë³µê·€)
-##   step_btn â†’ í‘¸ì‹œë²„íŠ¼ BTN1          (ë¹„íŠ¸ 1ê°œ íˆ¬ìž… = en íŽ„ìŠ¤)
-##   din      â†’ ìŠ¬ë¼ì´ë“œ ìŠ¤ìœ„ì¹˜ SW0    (ë„£ì„ ë¹„íŠ¸ ê°’ 0/1)
-##   found    â†’ User LED LD4           (S101 ë„ë‹¬ ì ë“±, ë‹¤ìŒ step ê¹Œì§€ ìœ ì§€)
+## Day 11 seq_detect ¡ª arty.xdc (Arty A7-35T Master ¹ßÃé)
+## º¸µå top = seq_top  (clk 100MHz)
+##   clk      ¡æ 100MHz ¿À½Ç·¹ÀÌÅÍ
+##   rst      ¡æ Çª½Ã¹öÆ° BTN0          (FSM S0 º¹±Í)
+##   step_btn ¡æ Çª½Ã¹öÆ° BTN1          (ºñÆ® 1°³ ÅõÀÔ = en ÆÞ½º)
+##   din      ¡æ ½½¶óÀÌµå ½ºÀ§Ä¡ SW0    (³ÖÀ» ºñÆ® °ª 0/1)
+##   found    ¡æ User LED LD4           (S101 µµ´Þ Á¡µî, ´ÙÀ½ step ±îÁö À¯Áö)
 ##
-## â€» ì‹œë®¬ì€ XDC ë¶ˆí•„ìš” â€” Vivado í•©ì„±Â·ë³´ë“œ êµ¬í˜„ ì‹œì—ë§Œ ì‚¬ìš©.
-## â€» ì†ìœ¼ë¡œ 1ë¹„íŠ¸/í´ëŸ­ì€ ë¶ˆê°€(100MHz). ê·¸ëž˜ì„œ seq_top ì´ BTN1 ì„
-##    debounceâ†’ìƒìŠ¹ì—£ì§€â†’1í´ëŸ­ step(en) ìœ¼ë¡œ ë°”ê¿” ë¹„íŠ¸ ë‹¨ìœ„ë¡œ íˆ¬ìž…í•œë‹¤.
-##    clk ìžì²´ëŠ” ë¶„ì£¼í•˜ì§€ ì•ŠìŒ(ì„¤ê³„ëŠ” 100MHz ë™ê¸° ìœ ì§€).
-## ì“°ì§€ ì•ŠëŠ” í•€ì€ ì£¼ì„ ì²˜ë¦¬í•´ ì´í›„ ì‹¤ìŠµì—ì„œ ê³„ì† ìž¬ì‚¬ìš©.
+## ¡Ø ½Ã¹ÄÀº XDC ºÒÇÊ¿ä ¡ª Vivado ÇÕ¼º¡¤º¸µå ±¸Çö ½Ã¿¡¸¸ »ç¿ë.
+## ¡Ø ¼ÕÀ¸·Î 1ºñÆ®/Å¬·°Àº ºÒ°¡(100MHz). ±×·¡¼­ seq_top ÀÌ BTN1 À»
+##    debounce¡æ»ó½Â¿§Áö¡æ1Å¬·° step(en) À¸·Î ¹Ù²ã ºñÆ® ´ÜÀ§·Î ÅõÀÔÇÑ´Ù.
+##    clk ÀÚÃ¼´Â ºÐÁÖÇÏÁö ¾ÊÀ½(¼³°è´Â 100MHz µ¿±â À¯Áö).
+## ¾²Áö ¾Ê´Â ÇÉÀº ÁÖ¼® Ã³¸®ÇØ ÀÌÈÄ ½Ç½À¿¡¼­ °è¼Ó Àç»ç¿ë.
 ## ==================================================================
 
-## â”€â”€ 100MHz ì‹œìŠ¤í…œ í´ëŸ­ â”€â”€
+## ¦¡¦¡ 100MHz ½Ã½ºÅÛ Å¬·° ¦¡¦¡
 set_property -dict { PACKAGE_PIN E3  IOSTANDARD LVCMOS33 } [get_ports { clk }];
 create_clock -name sys_clk -period 10.0 [get_ports { clk }];
 
-## â”€â”€ rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0 â”€â”€
+## ¦¡¦¡ rst ¡æ Çª½Ã¹öÆ° BTN0 ¦¡¦¡
 set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { rst }];
 
-## â”€â”€ step_btn â†’ í‘¸ì‹œë²„íŠ¼ BTN1 (ë¹„íŠ¸ íˆ¬ìž…) â”€â”€
+## ¦¡¦¡ step_btn ¡æ Çª½Ã¹öÆ° BTN1 (ºñÆ® ÅõÀÔ) ¦¡¦¡
 set_property -dict { PACKAGE_PIN C9  IOSTANDARD LVCMOS33 } [get_ports { step_btn }];
 
-## â”€â”€ din â†’ ìŠ¬ë¼ì´ë“œ ìŠ¤ìœ„ì¹˜ SW0 (ë„£ì„ ë¹„íŠ¸ ê°’) â”€â”€
+## ¦¡¦¡ din ¡æ ½½¶óÀÌµå ½ºÀ§Ä¡ SW0 (³ÖÀ» ºñÆ® °ª) ¦¡¦¡
 set_property -dict { PACKAGE_PIN A8  IOSTANDARD LVCMOS33 } [get_ports { din }];
 
-## â”€â”€ found â†’ User LED LD4 (íŒ¨í„´ ë°œê²¬ ì ë“±) â”€â”€
+## ¦¡¦¡ found ¡æ User LED LD4 (ÆÐÅÏ ¹ß°ß Á¡µî) ¦¡¦¡
 set_property -dict { PACKAGE_PIN H5  IOSTANDARD LVCMOS33 } [get_ports { found }];

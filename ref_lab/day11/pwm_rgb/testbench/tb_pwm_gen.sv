@@ -1,16 +1,16 @@
 // =============================================================================
-// Day 11 â€” tb_pwm_gen.sv   (â˜… ì§ì ‘ êµ¬í˜„ ëª¨ë“ˆ pwm_gen ìê°€ê²€ì¦ â˜…)
-// up_p/dn_p í„ìŠ¤ë¡œ ë°ê¸°ë¥¼ 0â†’100â†’0% ê¹Œì§€ Â±5% ì“¸ì–´ë‚´ë©° ê° ë‹¨ê³„ PWM duty ì¸¡ì •.
-// í•œ PWM ì£¼ê¸°(PERIOD í´ëŸ­) ë™ì•ˆ pwm HIGH í´ëŸ­ ìˆ˜ë¥¼ ì„¸ì–´ ê¸°ëŒ€ pct(%)ì™€ ë¹„êµ.
-//   Â· +define+FUNC_SIM ë¡œ ì»´íŒŒì¼ â†’ pwm_gen ì˜ PERIOD=100 (HIGH ìˆ˜ = pct ê·¸ëŒ€ë¡œ).
-//   Â· ê²€ì¦: 0â†’100% ìƒìŠ¹ / 100â†’0% í•˜ê°• / 0Â·100% í¬í™” / upÂ·dn ë™ì‹œì…ë ¥ ë¬´ë³€í™” /
-//          reset ì¤‘ pwm=0. $error 0 ê±´ = PASS.
+// Day 11 ¡ª tb_pwm_gen.sv   (¡Ú Á÷Á¢ ±¸Çö ¸ğµâ pwm_gen ÀÚ°¡°ËÁõ ¡Ú)
+// up_p/dn_p ÆŞ½º·Î ¹à±â¸¦ 0¡æ100¡æ0% ±îÁö ¡¾5% ¾µ¾î³»¸ç °¢ ´Ü°è PWM duty ÃøÁ¤.
+// ÇÑ PWM ÁÖ±â(PERIOD Å¬·°) µ¿¾È pwm HIGH Å¬·° ¼ö¸¦ ¼¼¾î ±â´ë pct(%)¿Í ºñ±³.
+//   ¡¤ +define+FUNC_SIM ·Î ÄÄÆÄÀÏ ¡æ pwm_gen ÀÇ PERIOD=100 (HIGH ¼ö = pct ±×´ë·Î).
+//   ¡¤ °ËÁõ: 0¡æ100% »ó½Â / 100¡æ0% ÇÏ°­ / 0¡¤100% Æ÷È­ / up¡¤dn µ¿½ÃÀÔ·Â ¹«º¯È­ /
+//          reset Áß pwm=0. $error 0 °Ç = PASS.
 // =============================================================================
 `timescale 1ns/1ps
 
 module tb_pwm_gen;
 
-  localparam integer PERIOD = 100;   // FUNC_SIM ê¸°ì¤€ (duty ì¹´ìš´íŠ¸ == pct%)
+  localparam integer PERIOD = 100;   // FUNC_SIM ±âÁØ (duty Ä«¿îÆ® == pct%)
   localparam integer STEP   = 5;
 
   reg  clk = 1'b0, rst, up_p, dn_p;
@@ -19,9 +19,9 @@ module tb_pwm_gen;
 
   pwm_gen dut (.clk(clk), .rst(rst), .up_p(up_p), .dn_p(dn_p), .pwm(pwm));
 
-  always #5 clk = ~clk;              // 100MHz í‘œí˜„
+  always #5 clk = ~clk;              // 100MHz Ç¥Çö
 
-  // cnt==0 ê²½ê³„ë¡œ ì •ë ¬ í›„ í•œ ì£¼ê¸° ë™ì•ˆ pwm HIGH ìˆ˜ ì¸¡ì • â†’ ê¸°ëŒ€ pct ì™€ ë¹„êµ
+  // cnt==0 °æ°è·Î Á¤·Ä ÈÄ ÇÑ ÁÖ±â µ¿¾È pwm HIGH ¼ö ÃøÁ¤ ¡æ ±â´ë pct ¿Í ºñ±³
   task automatic check_duty(input integer exp_pct);
     integer high, i;
     begin
@@ -52,17 +52,17 @@ module tb_pwm_gen;
     end
     rst = 0;
 
-    check_duty(0);                                            // ì´ˆê¸° 0%
-    for (k = 1; k <= 20; k = k + 1) begin pulse_up; check_duty(k*STEP); end  // 0â†’100% (+5%)
-    pulse_up; check_duty(100);                                // 100%ì—ì„œ +5% â†’ ìƒí•œ í¬í™”
+    check_duty(0);                                            // ÃÊ±â 0%
+    for (k = 1; k <= 20; k = k + 1) begin pulse_up; check_duty(k*STEP); end  // 0¡æ100% (+5%)
+    pulse_up; check_duty(100);                                // 100%¿¡¼­ +5% ¡æ »óÇÑ Æ÷È­
 
-    for (k = 19; k >= 0; k = k - 1) begin pulse_dn; check_duty(k*STEP); end  // 100â†’0% (-5%)
-    pulse_dn; check_duty(0);                                  // 0%ì—ì„œ -5% â†’ í•˜í•œ í¬í™”
+    for (k = 19; k >= 0; k = k - 1) begin pulse_dn; check_duty(k*STEP); end  // 100¡æ0% (-5%)
+    pulse_dn; check_duty(0);                                  // 0%¿¡¼­ -5% ¡æ ÇÏÇÑ Æ÷È­
 
-    pulse_up; pulse_up; check_duty(10);                       // 10% ë¡œ ì˜¬ë¦° ë’¤
-    @(negedge clk); up_p = 1'b1; dn_p = 1'b1;                 // upÂ·dn ë™ì‹œ ì…ë ¥
+    pulse_up; pulse_up; check_duty(10);                       // 10% ·Î ¿Ã¸° µÚ
+    @(negedge clk); up_p = 1'b1; dn_p = 1'b1;                 // up¡¤dn µ¿½Ã ÀÔ·Â
     @(negedge clk); up_p = 1'b0; dn_p = 1'b0;
-    check_duty(10);                                           // ë™ì‹œ â†’ ë³€í™” ì—†ìŒ
+    check_duty(10);                                           // µ¿½Ã ¡æ º¯È­ ¾øÀ½
 
     if (errors == 0) $display(" RESULT: PASS  (0 mismatch)");
     else             $display(" RESULT: FAIL  (%0d mismatch)", errors);

@@ -1,6 +1,6 @@
 // =============================================================================
-// Day 05 â€” tb_blk_nb_demo.sv
-// _bad / _good ëª¨ë“ˆì„ ë™ì¼ stimulus ë¡œ ë³‘ë ¬ êµ¬ë™, Visualizer íŒŒí˜•ìœ¼ë¡œ ë¹„êµ.
+// Day 05 ¡ª tb_blk_nb_demo.sv
+// _bad / _good ¸ğµâÀ» µ¿ÀÏ stimulus ·Î º´·Ä ±¸µ¿, Visualizer ÆÄÇüÀ¸·Î ºñ±³.
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -14,15 +14,15 @@ module tb_blk_nb_demo;
   logic [3:0]  a  = 4'h0;
   logic [3:0]  b  = 4'h0;
 
-  // --- DUT ì¸ìŠ¤í„´ìŠ¤ (P1) -----------------------------------------------------
+  // --- DUT ÀÎ½ºÅÏ½º (P1) -----------------------------------------------------
   logic q1_bad,  q2_bad;
   logic q1_good, q2_good;
   pipe2_bad  u_pipe_bad  (.clk(clk), .d(d), .q1(q1_bad),  .q2(q2_bad));
   pipe2_good u_pipe_good (.clk(clk), .d(d), .q1(q1_good), .q2(q2_good));
 
-  // --- P2 (CP15) â€” sim demo ë¯¸í¬í•¨ (race ê°€ sim scheduling ì˜ì¡´) -------------
+  // --- P2 (CP15) ¡ª sim demo ¹ÌÆ÷ÇÔ (race °¡ sim scheduling ÀÇÁ¸) -------------
 
-  // --- DUT ì¸ìŠ¤í„´ìŠ¤ (P4) -----------------------------------------------------
+  // --- DUT ÀÎ½ºÅÏ½º (P4) -----------------------------------------------------
   logic [4:0] tmp_bad,  out_bad;
   logic [4:0] tmp_good, out_good;
   mac_bad  u_mac_bad  (.clk(clk), .a(a), .b(b), .tmp(tmp_bad),  .out(out_bad));
@@ -35,7 +35,7 @@ module tb_blk_nb_demo;
     $display(" t(ns) | d | q2_bad q2_good | mac_bad mac_good ");
     $display("------------------------------------------------------------");
 
-    // P1 í„ìŠ¤ ì‹œí€€ìŠ¤ â€” q2 latency ë¹„êµ (bad: 0, good: 2 cycle)
+    // P1 ÆŞ½º ½ÃÄö½º ¡ª q2 latency ºñ±³ (bad: 0, good: 2 cycle)
     @(negedge clk); d = 1'b1;
     @(negedge clk); d = 1'b0;
     @(negedge clk); d = 1'b1;
@@ -43,7 +43,7 @@ module tb_blk_nb_demo;
     @(negedge clk); d = 1'b1;
     @(negedge clk); d = 1'b0;
 
-    // P4 MAC ì…ë ¥ ë³€ê²½ â€” out latency ë¹„êµ (bad: 1, good: 2 cycle)
+    // P4 MAC ÀÔ·Â º¯°æ ¡ª out latency ºñ±³ (bad: 1, good: 2 cycle)
     @(negedge clk); a = 4'h3; b = 4'h5;
     @(negedge clk); a = 4'h7; b = 4'h2;
     @(negedge clk); a = 4'h1; b = 4'h1;
@@ -56,7 +56,7 @@ module tb_blk_nb_demo;
     $finish;
   end
 
-  // --- ì½˜ì†” ëª¨ë‹ˆí„° ----------------------------------------------------------
+  // --- ÄÜ¼Ö ¸ğ´ÏÅÍ ----------------------------------------------------------
   initial begin
     $monitor("%5t |  %b |   %b      %b    |   %2d      %2d",
              $time, d, q2_bad, q2_good, out_bad, out_good);

@@ -1,23 +1,23 @@
 ## ==================================================================
-## Day 12 uart_loop â€” arty.xdc (Arty A7-35T Master ë°œì·Œ)
-## ë³´ë“œ top = uart_loop (USB-UART echo ë£¨í”„ë°±)
-##   clk â†’ 100MHz   rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0
-##   rx_pin â†’ USB-UART RXD (FT2232 â†’ FPGA, Master ì˜ uart_txd_in=A9)
-##   tx_pin â†’ USB-UART TXD (FPGA â†’ FT2232, Master ì˜ uart_rxd_out=D10)
-## â€» Arty ë§ˆìŠ¤í„° ì‹ í˜¸ëª… ê¸°ì¤€: í˜¸ìŠ¤íŠ¸ê°€ ë³´ë‚´ëŠ” ì„ (uart_txd_in)ì´ FPGA ì…ë ¥(rx_pin),
-##   FPGA ê°€ ë‚´ë³´ë‚´ëŠ” ì„ (uart_rxd_out)ì´ ì¶œë ¥(tx_pin) â€” ë§¤í•‘ ë°©í–¥ ì£¼ì˜.
-## â€» ì‹œë®¬ë ˆì´ì…˜ ë‹¨ê³„ì—ì„œëŠ” XDC ë¶ˆí•„ìš” â€” Vivado í•©ì„±Â·ë³´ë“œ êµ¬í˜„ ì‹œì—ë§Œ ì‚¬ìš©.
+## Day 12 uart_loop ¡ª arty.xdc (Arty A7-35T Master ¹ßÃé)
+## º¸µå top = uart_loop (USB-UART echo ·çÇÁ¹é)
+##   clk ¡æ 100MHz   rst ¡æ Çª½Ã¹öÆ° BTN0
+##   rx_pin ¡æ USB-UART RXD (FT2232 ¡æ FPGA, Master ÀÇ uart_txd_in=A9)
+##   tx_pin ¡æ USB-UART TXD (FPGA ¡æ FT2232, Master ÀÇ uart_rxd_out=D10)
+## ¡Ø Arty ¸¶½ºÅÍ ½ÅÈ£¸í ±âÁØ: È£½ºÆ®°¡ º¸³»´Â ¼±(uart_txd_in)ÀÌ FPGA ÀÔ·Â(rx_pin),
+##   FPGA °¡ ³»º¸³»´Â ¼±(uart_rxd_out)ÀÌ Ãâ·Â(tx_pin) ¡ª ¸ÅÇÎ ¹æÇâ ÁÖÀÇ.
+## ¡Ø ½Ã¹Ä·¹ÀÌ¼Ç ´Ü°è¿¡¼­´Â XDC ºÒÇÊ¿ä ¡ª Vivado ÇÕ¼º¡¤º¸µå ±¸Çö ½Ã¿¡¸¸ »ç¿ë.
 ## ==================================================================
 
-## â”€â”€ 100MHz ì‹œìŠ¤í…œ í´ëŸ­ â”€â”€
+## ¦¡¦¡ 100MHz ½Ã½ºÅÛ Å¬·° ¦¡¦¡
 set_property -dict { PACKAGE_PIN E3  IOSTANDARD LVCMOS33 } [get_ports { clk }];
 create_clock -name sys_clk -period 10.0 [get_ports { clk }];
 
-## â”€â”€ rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0 â”€â”€
+## ¦¡¦¡ rst ¡æ Çª½Ã¹öÆ° BTN0 ¦¡¦¡
 set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { rst }];
 
-## â”€â”€ rx_pin â†’ USB-UART RXD (í˜¸ìŠ¤íŠ¸â†’FPGA, Master uart_txd_in=A9) â”€â”€
+## ¦¡¦¡ rx_pin ¡æ USB-UART RXD (È£½ºÆ®¡æFPGA, Master uart_txd_in=A9) ¦¡¦¡
 set_property -dict { PACKAGE_PIN A9  IOSTANDARD LVCMOS33 } [get_ports { rx_pin }];
 
-## â”€â”€ tx_pin â†’ USB-UART TXD (FPGAâ†’í˜¸ìŠ¤íŠ¸, Master uart_rxd_out=D10) â”€â”€
+## ¦¡¦¡ tx_pin ¡æ USB-UART TXD (FPGA¡æÈ£½ºÆ®, Master uart_rxd_out=D10) ¦¡¦¡
 set_property -dict { PACKAGE_PIN D10 IOSTANDARD LVCMOS33 } [get_ports { tx_pin }];

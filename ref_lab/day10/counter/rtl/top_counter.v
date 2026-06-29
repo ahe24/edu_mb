@@ -1,23 +1,23 @@
 // =============================================================================
-// Day 10 â€” top_counter.v  (ë³´ë“œ êµ¬í˜„ top)
-// ë‹¨ì¼ 100MHz í´ëŸ­ + í´ëŸ­ ì¸ì—ì´ë¸”(tick) íŒ¨í„´.
-// counter ëŠ” 100MHz clk ë¡œ ë™ì‘í•˜ë˜, tick(1Hz) & en_sw ì¼ ë•Œë§Œ +1 â†’
-// LED ë¡œ ì´ˆë‹¹ 1ì”© ì¦ê°€í•˜ëŠ” ê²ƒì„ ëˆˆìœ¼ë¡œ í™•ì¸.
-//   â€» clk ì„ ë¶„ì£¼í•´ counter ì˜ clk ìœ¼ë¡œ ì“°ì§€ ë§ ê²ƒ(íŒŒìƒ í´ëŸ­). en ìœ¼ë¡œ ì œì–´.
+// Day 10 ¡ª top_counter.v  (º¸µå ±¸Çö top)
+// ´ÜÀÏ 100MHz Å¬·° + Å¬·° ÀÎ¿¡ÀÌºí(tick) ÆĞÅÏ.
+// counter ´Â 100MHz clk ·Î µ¿ÀÛÇÏµÇ, tick(1Hz) & en_sw ÀÏ ¶§¸¸ +1 ¡æ
+// LED ·Î ÃÊ´ç 1¾¿ Áõ°¡ÇÏ´Â °ÍÀ» ´«À¸·Î È®ÀÎ.
+//   ¡Ø clk À» ºĞÁÖÇØ counter ÀÇ clk À¸·Î ¾²Áö ¸» °Í(ÆÄ»ı Å¬·°). en À¸·Î Á¦¾î.
 // =============================================================================
 module top_counter (
   input  wire       clk,      // 100MHz
   input  wire       rst,      // BTN0
-  input  wire       en_sw,    // SW0 â€” ì¹´ìš´íŠ¸ í—ˆìš©
+  input  wire       en_sw,    // SW0 ¡ª Ä«¿îÆ® Çã¿ë
   output wire [3:0] cnt
 );
   wire tick;
 
-  tick_gen u_tick (              // DIV ì€ tick_gen ë‚´ë¶€ `ifdef FUNC_SIM ë¡œ ë¶„ê¸°
+  tick_gen u_tick (              // DIV Àº tick_gen ³»ºÎ `ifdef FUNC_SIM ·Î ºĞ±â
     .clk(clk), .rst(rst), .tick(tick)
   );
 
-  counter #(.W(4)) u_cnt (       // W=4 = LED 4ê°œ, ì‹œë®¬Â·ë³´ë“œ ë™ì¼(ì‹¤ì œ í­)
+  counter #(.W(4)) u_cnt (       // W=4 = LED 4°³, ½Ã¹Ä¡¤º¸µå µ¿ÀÏ(½ÇÁ¦ Æø)
     .clk(clk), .rst(rst), .en(tick & en_sw), .cnt(cnt)
   );
 endmodule

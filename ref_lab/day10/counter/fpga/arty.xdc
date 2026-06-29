@@ -1,24 +1,24 @@
 ## ==================================================================
-## Day 10 counter â€” arty.xdc (Arty A7-35T Master ë°œì·Œ)
-## ë³´ë“œ top = top_counter (clk 100MHz + tick_gen í´ëŸ­ ì¸ì—ì´ë¸”)
-##   clk â†’ 100MHz   rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0   en_sw â†’ ìŠ¬ë¼ì´ë“œ ìŠ¤ìœ„ì¹˜ SW0
-##   cnt[3:0] â†’ User LED LD4~LD7
-## ì“°ì§€ ì•ŠëŠ” í•€ì€ ì£¼ì„ ì²˜ë¦¬í•´ ì´í›„ ì‹¤ìŠµì—ì„œ ê³„ì† ì¬ì‚¬ìš©.
-## â€» ì‹œë®¬ë ˆì´ì…˜ ë‹¨ê³„ì—ì„œëŠ” XDC ë¶ˆí•„ìš” â€” Vivado í•©ì„±Â·ë³´ë“œ êµ¬í˜„ ì‹œì—ë§Œ ì‚¬ìš©.
-## â€» clk ì„ ë¶„ì£¼í•´ ìƒˆ í´ëŸ­ìœ¼ë¡œ ì“°ì§€ ë§ ê²ƒ â€” en(tick) ìœ¼ë¡œ ëŠë¦° ë™ì‘ êµ¬í˜„.
+## Day 10 counter ¡ª arty.xdc (Arty A7-35T Master ¹ßÃé)
+## º¸µå top = top_counter (clk 100MHz + tick_gen Å¬·° ÀÎ¿¡ÀÌºí)
+##   clk ¡æ 100MHz   rst ¡æ Çª½Ã¹öÆ° BTN0   en_sw ¡æ ½½¶óÀÌµå ½ºÀ§Ä¡ SW0
+##   cnt[3:0] ¡æ User LED LD4~LD7
+## ¾²Áö ¾Ê´Â ÇÉÀº ÁÖ¼® Ã³¸®ÇØ ÀÌÈÄ ½Ç½À¿¡¼­ °è¼Ó Àç»ç¿ë.
+## ¡Ø ½Ã¹Ä·¹ÀÌ¼Ç ´Ü°è¿¡¼­´Â XDC ºÒÇÊ¿ä ¡ª Vivado ÇÕ¼º¡¤º¸µå ±¸Çö ½Ã¿¡¸¸ »ç¿ë.
+## ¡Ø clk À» ºĞÁÖÇØ »õ Å¬·°À¸·Î ¾²Áö ¸» °Í ¡ª en(tick) À¸·Î ´À¸° µ¿ÀÛ ±¸Çö.
 ## ==================================================================
 
-## â”€â”€ 100MHz ì‹œìŠ¤í…œ í´ëŸ­ â”€â”€
+## ¦¡¦¡ 100MHz ½Ã½ºÅÛ Å¬·° ¦¡¦¡
 set_property -dict { PACKAGE_PIN E3  IOSTANDARD LVCMOS33 } [get_ports { clk }];
 create_clock -name sys_clk -period 10.0 [get_ports { clk }];
 
-## â”€â”€ rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0 â”€â”€
+## ¦¡¦¡ rst ¡æ Çª½Ã¹öÆ° BTN0 ¦¡¦¡
 set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { rst }];
 
-## â”€â”€ en_sw â†’ ìŠ¬ë¼ì´ë“œ ìŠ¤ìœ„ì¹˜ SW0 (ì¹´ìš´íŠ¸ í—ˆìš©) â”€â”€
+## ¦¡¦¡ en_sw ¡æ ½½¶óÀÌµå ½ºÀ§Ä¡ SW0 (Ä«¿îÆ® Çã¿ë) ¦¡¦¡
 set_property -dict { PACKAGE_PIN A8  IOSTANDARD LVCMOS33 } [get_ports { en_sw }];
 
-## â”€â”€ cnt[3:0] â†’ User LED LD4~LD7 â”€â”€
+## ¦¡¦¡ cnt[3:0] ¡æ User LED LD4~LD7 ¦¡¦¡
 set_property -dict { PACKAGE_PIN H5  IOSTANDARD LVCMOS33 } [get_ports { cnt[0] }];
 set_property -dict { PACKAGE_PIN J5  IOSTANDARD LVCMOS33 } [get_ports { cnt[1] }];
 set_property -dict { PACKAGE_PIN T9  IOSTANDARD LVCMOS33 } [get_ports { cnt[2] }];

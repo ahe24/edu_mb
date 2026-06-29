@@ -1,25 +1,25 @@
 // =============================================================================
-// Day 11 â€” tb_traffic_light.sv  (FSM ì½”ì–´ ë‹¨ë… ê²€ì¦)
-// DUT ëŠ” en í´ëŸ­ ì¸ì—ì´ë¸” FSM â€” TB ê°€ EN_DIV í´ëŸ­ë§ˆë‹¤ en 1íŽ„ìŠ¤ë¥¼ ì¤˜ì„œ 1í‹±ì”© ì „ì§„.
-//   â€» ë³´ë“œ 1Hz tick_gen(DIV=1ì–µ)ì€ ì—¬ê¸°ì„œ ì‹œë®¬ ì•ˆ í•¨ â€” en ì„ ì§ì ‘ ë¹¨ë¦¬ ì¤˜ì„œ
-//     ë¶„ì£¼ ì—†ì´ ìˆ˜ë°± í´ëŸ­ì´ë©´ ìˆœí™˜ ê´€ì°°. FUNC_SIM ê°™ì€ íƒ€ì´ë¨¸ ì¶•ì†Œ ë¶ˆí•„ìš”.
-// reference ëª¨ë¸ê³¼ ë§¤ í´ëŸ­ RGB/mono LED ë¹„êµ â€” $error 0 ê±´ = PASS.
-//   ê²€ì¦ í¬ì¸íŠ¸: â‘  REDâ†’GRNâ†’YELâ†’RED ìˆœì„œÂ·ìœ ì§€ í‹± ìˆ˜ â‘¡ ìƒíƒœ one-hot(mono)
-//   â‘¢ RGB ìƒ‰ ì •í™• â€” íŠ¹ížˆ YEL = R+G (RGB LED ëŠ” ë…¸ëž‘ í•€ì´ ì—†ìŒ) â‘£ en ê²Œì´íŒ….
+// Day 11 ¡ª tb_traffic_light.sv  (FSM ÄÚ¾î ´Üµ¶ °ËÁõ)
+// DUT ´Â en Å¬·° ÀÎ¿¡ÀÌºí FSM ¡ª TB °¡ EN_DIV Å¬·°¸¶´Ù en 1ÆÞ½º¸¦ Áà¼­ 1Æ½¾¿ ÀüÁø.
+//   ¡Ø º¸µå 1Hz tick_gen(DIV=1¾ï)Àº ¿©±â¼­ ½Ã¹Ä ¾È ÇÔ ¡ª en À» Á÷Á¢ »¡¸® Áà¼­
+//     ºÐÁÖ ¾øÀÌ ¼ö¹é Å¬·°ÀÌ¸é ¼øÈ¯ °üÂû. FUNC_SIM °°Àº Å¸ÀÌ¸Ó Ãà¼Ò ºÒÇÊ¿ä.
+// reference ¸ðµ¨°ú ¸Å Å¬·° RGB/mono LED ºñ±³ ¡ª $error 0 °Ç = PASS.
+//   °ËÁõ Æ÷ÀÎÆ®: ¨ç RED¡æGRN¡æYEL¡æRED ¼ø¼­¡¤À¯Áö Æ½ ¼ö ¨è »óÅÂ one-hot(mono)
+//   ¨é RGB »ö Á¤È® ¡ª Æ¯È÷ YEL = R+G (RGB LED ´Â ³ë¶û ÇÉÀÌ ¾øÀ½) ¨ê en °ÔÀÌÆÃ.
 // =============================================================================
 `timescale 1ns/1ps
 
 module tb_traffic_light;
 
   localparam RED=2'd0, GRN=2'd1, YEL=2'd2;
-  localparam [7:0] T_RED=30, T_GRN=25, T_YEL=5;   // DUT ì™€ ë™ì¼ (í‹± ë‹¨ìœ„, ì‹¤ì œ ê°’)
-  localparam integer EN_DIV = 4;                  // en íŽ„ìŠ¤ ì£¼ê¸°(í´ëŸ­) â€” ê²Œì´íŒ… ê²€ì¦ìš©
+  localparam [7:0] T_RED=30, T_GRN=25, T_YEL=5;   // DUT ¿Í µ¿ÀÏ (Æ½ ´ÜÀ§, ½ÇÁ¦ °ª)
+  localparam integer EN_DIV = 4;                  // en ÆÞ½º ÁÖ±â(Å¬·°) ¡ª °ÔÀÌÆÃ °ËÁõ¿ë
 
   reg        clk = 1'b0, rst;
   wire [2:0] rgb_led_r, rgb_led_g, rgb_led_b, mono_led;
   integer    errors = 0;
 
-  // â”€â”€ en íŽ„ìŠ¤ â€” EN_DIV í´ëŸ­ë§ˆë‹¤ 1í´ëŸ­ í­ HIGH (ë³´ë“œ tick_gen ì˜ tick ì—­í• ) â”€â”€
+  // ¦¡¦¡ en ÆÞ½º ¡ª EN_DIV Å¬·°¸¶´Ù 1Å¬·° Æø HIGH (º¸µå tick_gen ÀÇ tick ¿ªÇÒ) ¦¡¦¡
   reg [7:0] encnt = 0;
   always @(posedge clk)
     if (rst)                  encnt <= 0;
@@ -27,7 +27,7 @@ module tb_traffic_light;
     else                      encnt <= encnt + 1'b1;
   wire en = (~rst) & (encnt==EN_DIV-1);
 
-  // â”€â”€ golden ëª¨ë¸ â€” DUT ì™€ ë™ì¼ ê·œì¹™ (ìƒíƒœ+íƒ€ì´ë¨¸), ê°™ì€ en ìœ¼ë¡œ ê²Œì´íŠ¸ â”€â”€
+  // ¦¡¦¡ golden ¸ðµ¨ ¡ª DUT ¿Í µ¿ÀÏ ±ÔÄ¢ (»óÅÂ+Å¸ÀÌ¸Ó), °°Àº en À¸·Î °ÔÀÌÆ® ¦¡¦¡
   reg  [1:0] mstate; reg [7:0] mtmr;
   reg  [1:0] mnext;
   reg  [2:0] m_r, m_g, m_b, m_mono;
@@ -57,7 +57,7 @@ module tb_traffic_light;
     default: mnext = RED;
   endcase
 
-  // ê¸°ëŒ€ mono(one-hot) + RGB ìƒ‰ ë””ì½”ë“œ (DUT ì™€ ë™ì¼)
+  // ±â´ë mono(one-hot) + RGB »ö µðÄÚµå (DUT ¿Í µ¿ÀÏ)
   always @* case (mstate)
     RED:     m_mono = 3'b100;
     GRN:     m_mono = 3'b001;
@@ -68,19 +68,19 @@ module tb_traffic_light;
   always @* begin
     m_r = 3'b000; m_g = 3'b000; m_b = 3'b000;
     case (mstate)
-      RED:     m_r[0] = 1'b1;                          // LD0 ë¹¨ê°•
-      YEL:     begin m_r[1] = 1'b1; m_g[1] = 1'b1; end // LD1 ë¹¨ê°•+ì´ˆë¡ = ë…¸ëž‘
-      GRN:     m_g[2] = 1'b1;                          // LD2 ì´ˆë¡
+      RED:     m_r[0] = 1'b1;                          // LD0 »¡°­
+      YEL:     begin m_r[1] = 1'b1; m_g[1] = 1'b1; end // LD1 »¡°­+ÃÊ·Ï = ³ë¶û
+      GRN:     m_g[2] = 1'b1;                          // LD2 ÃÊ·Ï
       default: m_r[0] = 1'b1;
     endcase
   end
 
-  // one-hot ê²€ì‚¬ â€” ìƒíƒœ í‘œì‹œëŠ” í•­ìƒ ì •í™•ížˆ í•œ ë¹„íŠ¸ë§Œ HIGH
+  // one-hot °Ë»ç ¡ª »óÅÂ Ç¥½Ã´Â Ç×»ó Á¤È®È÷ ÇÑ ºñÆ®¸¸ HIGH
   function automatic is_onehot(input [2:0] v);
     is_onehot = (v==3'b100) || (v==3'b010) || (v==3'b001);
   endfunction
 
-  // ìžë™ íŒì • â€” ë§¤ í´ëŸ­ RGB/mono ì¼ì¹˜(!==) + ìƒíƒœ one-hot
+  // ÀÚµ¿ ÆÇÁ¤ ¡ª ¸Å Å¬·° RGB/mono ÀÏÄ¡(!==) + »óÅÂ one-hot
   always @(posedge clk)
     if (!rst) begin
       if ({rgb_led_r,rgb_led_g,rgb_led_b,mono_led} !== {m_r,m_g,m_b,m_mono}) begin
@@ -96,7 +96,7 @@ module tb_traffic_light;
 
   initial begin
     rst = 1; repeat (2) @(posedge clk); rst = 0;
-    // REDâ†’GRNâ†’YEL ì—¬ëŸ¬ ë°”í€´ (í‹± 60ê°œ/ë°”í€´ Ã— EN_DIV í´ëŸ­/í‹± Ã— 3ë°”í€´ + ì—¬ìœ )
+    // RED¡æGRN¡æYEL ¿©·¯ ¹ÙÄû (Æ½ 60°³/¹ÙÄû ¡¿ EN_DIV Å¬·°/Æ½ ¡¿ 3¹ÙÄû + ¿©À¯)
     repeat (3*(T_RED+T_GRN+T_YEL)*EN_DIV + 4*EN_DIV) @(posedge clk);
 
     if (errors == 0) $display(" RESULT: PASS  (0 mismatch)");

@@ -1,39 +1,39 @@
 ## ==================================================================
-## Day 11 traffic_light â€” arty.xdc (Arty A7-35T Master ë°œì·Œ)
-## ë³´ë“œ top = top_traffic_light (clk 100MHz + tick_gen 1Hz í´ëŸ­ ì¸ì—ì´ë¸”)
-##   clk â†’ 100MHz   rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0
-##   ëž¨í”„ 3ê°œ = RGB LED 3ê°œ ë…ë¦½ êµ¬ë™ (LD0=RED, LD1=YEL, LD2=GRN)
-##     â€» RGB LED ëŠ” ë…¸ëž‘ í•€ì´ ì—†ìŒ â†’ YEL ëž¨í”„(LD1)ëŠ” R+G ë‘ ì±„ë„ì„ ë™ì‹œì— ì¼¬.
-##   mono_led[2:0] â†’ LD4/LD5/LD6 : ìƒíƒœ one-hot ë””ë²„ê·¸ í‘œì‹œ(ìƒ‰ê³¼ ë¬´ê´€)
-##   í•©ì„± íŒŒì¼ë¦¬ìŠ¤íŠ¸ = fpga/board_flist.f (tick_gen + traffic_light + top)
-## ì“°ì§€ ì•ŠëŠ” í•€ì€ ì£¼ì„ ì²˜ë¦¬í•´ ì´í›„ ì‹¤ìŠµì—ì„œ ê³„ì† ìž¬ì‚¬ìš©.
-## â€» ì‹œë®¬ë ˆì´ì…˜ ë‹¨ê³„ì—ì„œëŠ” XDC ë¶ˆí•„ìš” â€” Vivado í•©ì„±Â·ë³´ë“œ êµ¬í˜„ ì‹œì—ë§Œ ì‚¬ìš©.
-## â€» top ì•ˆì˜ tick_gen ì´ 100MHzâ†’1Hz en íŽ„ìŠ¤ â†’ FSM ì´ˆë‹¹ í•œ ì¹¸(30/25/5 í‹±).
-##   clk ì„ ë¶„ì£¼í•´ ìƒˆ í´ëŸ­ìœ¼ë¡œ ì“°ì§€ ë§ ê²ƒ(íŒŒìƒ í´ëŸ­ ê¸ˆì§€).
+## Day 11 traffic_light ¡ª arty.xdc (Arty A7-35T Master ¹ßÃé)
+## º¸µå top = top_traffic_light (clk 100MHz + tick_gen 1Hz Å¬·° ÀÎ¿¡ÀÌºí)
+##   clk ¡æ 100MHz   rst ¡æ Çª½Ã¹öÆ° BTN0
+##   ·¥ÇÁ 3°³ = RGB LED 3°³ µ¶¸³ ±¸µ¿ (LD0=RED, LD1=YEL, LD2=GRN)
+##     ¡Ø RGB LED ´Â ³ë¶û ÇÉÀÌ ¾øÀ½ ¡æ YEL ·¥ÇÁ(LD1)´Â R+G µÎ Ã¤³ÎÀ» µ¿½Ã¿¡ ÄÔ.
+##   mono_led[2:0] ¡æ LD4/LD5/LD6 : »óÅÂ one-hot µð¹ö±× Ç¥½Ã(»ö°ú ¹«°ü)
+##   ÇÕ¼º ÆÄÀÏ¸®½ºÆ® = fpga/board_flist.f (tick_gen + traffic_light + top)
+## ¾²Áö ¾Ê´Â ÇÉÀº ÁÖ¼® Ã³¸®ÇØ ÀÌÈÄ ½Ç½À¿¡¼­ °è¼Ó Àç»ç¿ë.
+## ¡Ø ½Ã¹Ä·¹ÀÌ¼Ç ´Ü°è¿¡¼­´Â XDC ºÒÇÊ¿ä ¡ª Vivado ÇÕ¼º¡¤º¸µå ±¸Çö ½Ã¿¡¸¸ »ç¿ë.
+## ¡Ø top ¾ÈÀÇ tick_gen ÀÌ 100MHz¡æ1Hz en ÆÞ½º ¡æ FSM ÃÊ´ç ÇÑ Ä­(30/25/5 Æ½).
+##   clk À» ºÐÁÖÇØ »õ Å¬·°À¸·Î ¾²Áö ¸» °Í(ÆÄ»ý Å¬·° ±ÝÁö).
 ## ==================================================================
 
-## â”€â”€ 100MHz ì‹œìŠ¤í…œ í´ëŸ­ â”€â”€
+## ¦¡¦¡ 100MHz ½Ã½ºÅÛ Å¬·° ¦¡¦¡
 set_property -dict { PACKAGE_PIN E3  IOSTANDARD LVCMOS33 } [get_ports { clk }];
 create_clock -name sys_clk -period 10.0 [get_ports { clk }];
 
-## â”€â”€ rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0 (ë™ê¸° active-high) â”€â”€
+## ¦¡¦¡ rst ¡æ Çª½Ã¹öÆ° BTN0 (µ¿±â active-high) ¦¡¦¡
 set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { rst }];
 
-## â”€â”€ ëž¨í”„ = RGB LED (LD0=RED / LD1=YEL=R+G / LD2=GRN), B ë¯¸ì‚¬ìš© â”€â”€
-## RGB LED 0 (LD0) â€” RED ëž¨í”„
+## ¦¡¦¡ ·¥ÇÁ = RGB LED (LD0=RED / LD1=YEL=R+G / LD2=GRN), B ¹Ì»ç¿ë ¦¡¦¡
+## RGB LED 0 (LD0) ¡ª RED ·¥ÇÁ
 set_property -dict { PACKAGE_PIN G6  IOSTANDARD LVCMOS33 } [get_ports { rgb_led_r[0] }];
 set_property -dict { PACKAGE_PIN F6  IOSTANDARD LVCMOS33 } [get_ports { rgb_led_g[0] }];
 set_property -dict { PACKAGE_PIN E1  IOSTANDARD LVCMOS33 } [get_ports { rgb_led_b[0] }];
-## RGB LED 1 (LD1) â€” YEL ëž¨í”„ (R+G ë™ì‹œ ì ë“± = ë…¸ëž‘)
+## RGB LED 1 (LD1) ¡ª YEL ·¥ÇÁ (R+G µ¿½Ã Á¡µî = ³ë¶û)
 set_property -dict { PACKAGE_PIN G3  IOSTANDARD LVCMOS33 } [get_ports { rgb_led_r[1] }];
 set_property -dict { PACKAGE_PIN J4  IOSTANDARD LVCMOS33 } [get_ports { rgb_led_g[1] }];
 set_property -dict { PACKAGE_PIN G4  IOSTANDARD LVCMOS33 } [get_ports { rgb_led_b[1] }];
-## RGB LED 2 (LD2) â€” GRN ëž¨í”„
+## RGB LED 2 (LD2) ¡ª GRN ·¥ÇÁ
 set_property -dict { PACKAGE_PIN J3  IOSTANDARD LVCMOS33 } [get_ports { rgb_led_r[2] }];
 set_property -dict { PACKAGE_PIN J2  IOSTANDARD LVCMOS33 } [get_ports { rgb_led_g[2] }];
 set_property -dict { PACKAGE_PIN H4  IOSTANDARD LVCMOS33 } [get_ports { rgb_led_b[2] }];
 
-## â”€â”€ mono LED ìƒíƒœ one-hot ë””ë²„ê·¸ (R=LD6 / Y=LD5 / G=LD4) â”€â”€
+## ¦¡¦¡ mono LED »óÅÂ one-hot µð¹ö±× (R=LD6 / Y=LD5 / G=LD4) ¦¡¦¡
 set_property -dict { PACKAGE_PIN H5  IOSTANDARD LVCMOS33 } [get_ports { mono_led[0] }];
 set_property -dict { PACKAGE_PIN J5  IOSTANDARD LVCMOS33 } [get_ports { mono_led[1] }];
 set_property -dict { PACKAGE_PIN T9  IOSTANDARD LVCMOS33 } [get_ports { mono_led[2] }];

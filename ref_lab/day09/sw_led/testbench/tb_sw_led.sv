@@ -1,8 +1,8 @@
 // =============================================================================
-// Day 09 â€” tb_sw_led.sv
-// sw 16ì¡°í•©(0000~1111)ì„ ìˆœì°¨ ì¸ê°€, led = sw / led_n = ~sw ë¥¼
-//   â‘  $display ë¡œ ê´€ì°° (Visualizer íŒŒí˜•ê³¼ ëŒ€ì¡°)
-//   â‘¡ golden ê¸°ëŒ€ê°’ê³¼ self-checking ìë™ íŒì • ($error 0 ê±´ = PASS)
+// Day 09 ¡ª tb_sw_led.sv
+// sw 16Á¶ÇÕ(0000~1111)À» ¼øÂ÷ ÀÎ°¡, led = sw / led_n = ~sw ¸¦
+//   ¨ç $display ·Î °üÂû (Visualizer ÆÄÇü°ú ´ëÁ¶)
+//   ¨è golden ±â´ë°ª°ú self-checking ÀÚµ¿ ÆÇÁ¤ ($error 0 °Ç = PASS)
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -19,14 +19,14 @@ module tb_sw_led;
 
   initial begin
     $display("============================================================");
-    $display(" Day09 sw_led â€” pass-through / invert self-checking TB");
+    $display(" Day09 sw_led ¡ª pass-through / invert self-checking TB");
     $display("------------------------------------------------------------");
 
     for (i = 0; i < 16; i = i + 1) begin
-      sw = i[3:0];  #10;                       // ì¸ê°€ í›„ ì¡°í•© ì§€ì—° ëŒ€ê¸°
+      sw = i[3:0];  #10;                       // ÀÎ°¡ ÈÄ Á¶ÇÕ Áö¿¬ ´ë±â
       $display("sw=%b | led=%b led_n=%b", sw, led, led_n);
 
-      if (led !== sw || led_n !== ~sw) begin   // !== : X/Z ê¹Œì§€ ê²€ì¶œ
+      if (led !== sw || led_n !== ~sw) begin   // !== : X/Z ±îÁö °ËÃâ
         errors = errors + 1;
         $error("MISMATCH @ sw=%b : led=%b(exp %b) led_n=%b(exp %b)",
                sw, led, sw, led_n, ~sw);

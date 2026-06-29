@@ -1,12 +1,12 @@
 // =============================================================================
-// Day 05 Lab â€” broken_rtl.v
-// DO-254 CP Â· SS ìœ„ë°˜ 12ê±´ ì˜ë„ì  ì£¼ì…
-// ëª©ì : Sim-Synth mismatch Â· í•©ì„± ë¶ˆê°€ êµ¬ë¬¸ ê²€ì¶œ ì‹¤ìŠµ
-// ì°¸ê³ : lint methodology standard -goal DO-254 í™œì„± ìƒíƒœ ê¸°ì¤€
+// Day 05 Lab ¡ª broken_rtl.v
+// DO-254 CP ¡¤ SS À§¹İ 12°Ç ÀÇµµÀû ÁÖÀÔ
+// ¸ñÀû: Sim-Synth mismatch ¡¤ ÇÕ¼º ºÒ°¡ ±¸¹® °ËÃâ ½Ç½À
+// Âü°í: lint methodology standard -goal DO-254 È°¼º »óÅÂ ±âÁØ
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// top: broken_rtl â€” ì „ ê²°í•¨ ì„œë¸Œëª¨ë“ˆ í†µí•©
+// top: broken_rtl ¡ª Àü °áÇÔ ¼­ºê¸ğµâ ÅëÇÕ
 // -----------------------------------------------------------------------------
 module broken_rtl (
   input  wire        clk,
@@ -35,9 +35,9 @@ endmodule
 
 
 // -----------------------------------------------------------------------------
-// #1 CP17 â€” Sequential ë¸”ë¡ì—ì„œ `=` ì‚¬ìš© (race)
-// #2 CP15 â€” Combo ë¸”ë¡ì—ì„œ `<=` ì‚¬ìš©
-// #3 CP18 â€” ë™ì¼ always ë¸”ë¡ì—ì„œ blocking/NB í˜¼ìš©
+// #1 CP17 ¡ª Sequential ºí·Ï¿¡¼­ `=` »ç¿ë (race)
+// #2 CP15 ¡ª Combo ºí·Ï¿¡¼­ `<=` »ç¿ë
+// #3 CP18 ¡ª µ¿ÀÏ always ºí·Ï¿¡¼­ blocking/NB È¥¿ë
 // -----------------------------------------------------------------------------
 module fifo_ctrl (
   input  wire       clk,
@@ -48,147 +48,147 @@ module fifo_ctrl (
 
   reg [7:0] stage1, stage2;
 
-  // â”€â”€ [#1 CP17 ê²°í•¨] sequential ë¸”ë¡ì—ì„œ blocking í• ë‹¹ â†’ race condition
+  // ¦¡¦¡ [#1 CP17 °áÇÔ] sequential ºí·Ï¿¡¼­ blocking ÇÒ´ç ¡æ race condition
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n)
-      stage1 = 8'h00;           // â† CP17 (should be <=)
+      stage1 = 8'h00;           // ¡ç CP17 (should be <=)
     else
-      stage1 = din;             // â† CP17 (should be <=)
+      stage1 = din;             // ¡ç CP17 (should be <=)
   end
 
-  // â”€â”€ [#2 CP15 ê²°í•¨] combo ë¸”ë¡ì—ì„œ non-blocking â†’ sim-synth mismatch
+  // ¦¡¦¡ [#2 CP15 °áÇÔ] combo ºí·Ï¿¡¼­ non-blocking ¡æ sim-synth mismatch
   always @(*) begin
-    stage2 <= stage1 + 8'h01;   // â† CP15 (should be =)
+    stage2 <= stage1 + 8'h01;   // ¡ç CP15 (should be =)
   end
 
-  // â”€â”€ [#3 CP18 ê²°í•¨] ë™ì¼ always ë‚´ blocking / non-blocking í˜¼ìš©
+  // ¦¡¦¡ [#3 CP18 °áÇÔ] µ¿ÀÏ always ³» blocking / non-blocking È¥¿ë
   reg [7:0] tmp;
   always @(posedge clk) begin
     tmp  = stage2 & 8'hF0;      // blocking
-    dout <= tmp | 8'h01;        // non-blocking â† CP18 í˜¼ìš©
+    dout <= tmp | 8'h01;        // non-blocking ¡ç CP18 È¥¿ë
   end
 
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #4 CP8 â€” ê°ë„ ë¦¬ìŠ¤íŠ¸ ë¶ˆì™„ì „ì„±
+// #4 CP8 ¡ª °¨µµ ¸®½ºÆ® ºÒ¿ÏÀü¼º
 // -----------------------------------------------------------------------------
 module decoder_badsens (
   input  wire a, b, c,
   output reg  y
 );
-  // â”€â”€ [#4 CP8 ê²°í•¨] c ëˆ„ë½ â€” simì€ c ë³€ê²½ ë¬´ì‹œ, synthëŠ” c ë°˜ì˜ â†’ mismatch
-  always @(a or b) begin    // â† missing c
+  // ¦¡¦¡ [#4 CP8 °áÇÔ] c ´©¶ô ¡ª simÀº c º¯°æ ¹«½Ã, synth´Â c ¹İ¿µ ¡æ mismatch
+  always @(a or b) begin    // ¡ç missing c
     y = a & b & c;
   end
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #5 SS6 â€” ì¤‘ë³µ êµ¬ë™ (multi-driver)
+// #5 SS6 ¡ª Áßº¹ ±¸µ¿ (multi-driver)
 // -----------------------------------------------------------------------------
 module mux_multidrv (
   input  wire       sel,
   input  wire [7:0] a, b,
   output wire [7:0] y
 );
-  // â”€â”€ [#5 SS6 ê²°í•¨] y ì‹ í˜¸ ë‘ ê³³ì—ì„œ êµ¬ë™ â†’ í•©ì„± ì˜¤ë¥˜
+  // ¦¡¦¡ [#5 SS6 °áÇÔ] y ½ÅÈ£ µÎ °÷¿¡¼­ ±¸µ¿ ¡æ ÇÕ¼º ¿À·ù
   assign y = a;                  // driver 1
-  assign y = sel ? b : a;        // driver 2  â† SS6
+  assign y = sel ? b : a;        // driver 2  ¡ç SS6
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #6 SS3 â€” ì¡°í•© í”¼ë“œë°± ë£¨í”„ (combo loop)
+// #6 SS3 ¡ª Á¶ÇÕ ÇÇµå¹é ·çÇÁ (combo loop)
 // -----------------------------------------------------------------------------
 module feedback_loop (
   input  wire d,
   output wire q
 );
   wire n1, n2;
-  // â”€â”€ [#6 SS3 ê²°í•¨] n1 â† n2 â† n1 zero-delay ë£¨í”„
+  // ¦¡¦¡ [#6 SS3 °áÇÔ] n1 ¡ç n2 ¡ç n1 zero-delay ·çÇÁ
   assign n1 = n2 & d;
-  assign n2 = n1 | d;            // â† SS3 combo_loop
+  assign n2 = n1 | d;            // ¡ç SS3 combo_loop
   assign q  = n1;
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #7 unsynth â€” initial ë¸”ë¡ (RTL ì‚¬ìš© ê¸ˆì§€)
+// #7 unsynth ¡ª initial ºí·Ï (RTL »ç¿ë ±İÁö)
 // -----------------------------------------------------------------------------
 module init_block (
   output reg q
 );
-  // â”€â”€ [#7 CP unsynth ê²°í•¨] synth ë¬´ì‹œ â†’ sim ì´ˆê¸°ê°’ë§Œ ì¡´ì¬
-  initial q = 1'b0;              // â† unsynth_initial_stmt
+  // ¦¡¦¡ [#7 CP unsynth °áÇÔ] synth ¹«½Ã ¡æ sim ÃÊ±â°ª¸¸ Á¸Àç
+  initial q = 1'b0;              // ¡ç unsynth_initial_stmt
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #8 CP15 â€” always ë¸”ë¡ ë‚´ delay (í•©ì„± ë¬´ì‹œ)
+// #8 CP15 ¡ª always ºí·Ï ³» delay (ÇÕ¼º ¹«½Ã)
 // -----------------------------------------------------------------------------
 module delay_block (
   input  wire clk,
   input  wire d,
   output reg  q
 );
-  // â”€â”€ [#8 CP15 ê²°í•¨] sequential ë¸”ë¡ ë‚´ delay â†’ synth ë¬´ì‹œ
+  // ¦¡¦¡ [#8 CP15 °áÇÔ] sequential ºí·Ï ³» delay ¡æ synth ¹«½Ã
   always @(posedge clk) begin
-    q <= #3 d;                   // â† nonblocking_assign_and_delay_in_always
+    q <= #3 d;                   // ¡ç nonblocking_assign_and_delay_in_always
   end
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #9 unsynth â€” $display task (RTL ì¡´ì¬ ì‹œ ë¬´ì‹œ)
+// #9 unsynth ¡ª $display task (RTL Á¸Àç ½Ã ¹«½Ã)
 // -----------------------------------------------------------------------------
 module display_leak (
   input wire clk,
   input wire sig
 );
-  // â”€â”€ [#9 CP unsynth ê²°í•¨] synthëŠ” ë¬´ì‹œ Â· testbenchë¡œ ì´ë™ í•„ìš”
+  // ¦¡¦¡ [#9 CP unsynth °áÇÔ] synth´Â ¹«½Ã ¡¤ testbench·Î ÀÌµ¿ ÇÊ¿ä
   always @(posedge clk) begin
-    $display("sig=%b", sig);     // â† unsynth_display_task
+    $display("sig=%b", sig);     // ¡ç unsynth_display_task
   end
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #10 SS6 â€” force / release (í•©ì„± ë¶ˆê°€)
+// #10 SS6 ¡ª force / release (ÇÕ¼º ºÒ°¡)
 // -----------------------------------------------------------------------------
 module force_bad (
   input  wire clk,
   output reg  q
 );
-  // â”€â”€ [#10 SS6 ê²°í•¨] force êµ¬ë¬¸ â€” sim ì „ìš© Â· RTL ë¶ˆê°€
+  // ¦¡¦¡ [#10 SS6 °áÇÔ] force ±¸¹® ¡ª sim Àü¿ë ¡¤ RTL ºÒ°¡
   always @(posedge clk) begin
-    force q = 1'b1;              // â† unsynth_force_release
+    force q = 1'b1;              // ¡ç unsynth_force_release
   end
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #11 SS17 â€” ë¯¸êµ¬ë™ ì‹ í˜¸
+// #11 SS17 ¡ª ¹Ì±¸µ¿ ½ÅÈ£
 // -----------------------------------------------------------------------------
 module undriven (
   output wire y
 );
-  wire internal;                 // â† [#11 SS17 ê²°í•¨] ì–´ë””ì—ì„œë„ êµ¬ë™ë˜ì§€ ì•ŠìŒ
+  wire internal;                 // ¡ç [#11 SS17 °áÇÔ] ¾îµğ¿¡¼­µµ ±¸µ¿µÇÁö ¾ÊÀ½
   assign y = internal;
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #12 SS18 â€” ë ˆì§€ìŠ¤í„° ì œì–´ì„± ë¯¸í™•ë³´ (resetÂ·enable ì—†ìŒ)
+// #12 SS18 ¡ª ·¹Áö½ºÅÍ Á¦¾î¼º ¹ÌÈ®º¸ (reset¡¤enable ¾øÀ½)
 // -----------------------------------------------------------------------------
 module flop_no_ctrl (
   input  wire clk,
   input  wire d,
   output reg  q
 );
-  // â”€â”€ [#12 SS18 ê²°í•¨] resetÂ·enable ì—†ìŒ â†’ ì´ˆê¸°ê°’ ë¶ˆëª…í™• Â· X ì „íŒŒ ìœ„í—˜
+  // ¦¡¦¡ [#12 SS18 °áÇÔ] reset¡¤enable ¾øÀ½ ¡æ ÃÊ±â°ª ºÒ¸íÈ® ¡¤ X ÀüÆÄ À§Çè
   always @(posedge clk) begin
-    q <= d;                      // â† flop_without_control
+    q <= d;                      // ¡ç flop_without_control
   end
 endmodule

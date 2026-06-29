@@ -1,23 +1,23 @@
 ## ==================================================================
-## Day 09 sw_led â€” arty.xdc (Arty A7-35T Master ë°œì·Œ)
-##   sw[3:0]  â†’ SW0~SW3        led[3:0]  â†’ LD4~LD7 (ë…¹ìƒ‰, í†µê³¼)
-##   led_n[3:0] â†’ RGB LED íŒŒë€ ì±„ë„ (ë°˜ì „ ì¶œë ¥, ë‹¨ìƒ‰ ë…¹ìƒ‰ê³¼ ìƒ‰ êµ¬ë¶„)
-## ì“°ì§€ ì•ŠëŠ” í•€ì€ ì£¼ì„ ì²˜ë¦¬í•´ ì´í›„ ì‹¤ìŠµì—ì„œ ê³„ì† ì¬ì‚¬ìš©.
+## Day 09 sw_led ¡ª arty.xdc (Arty A7-35T Master ¹ßÃé)
+##   sw[3:0]  ¡æ SW0~SW3        led[3:0]  ¡æ LD4~LD7 (³ì»ö, Åë°ú)
+##   led_n[3:0] ¡æ RGB LED ÆÄ¶õ Ã¤³Î (¹İÀü Ãâ·Â, ´Ü»ö ³ì»ö°ú »ö ±¸ºĞ)
+## ¾²Áö ¾Ê´Â ÇÉÀº ÁÖ¼® Ã³¸®ÇØ ÀÌÈÄ ½Ç½À¿¡¼­ °è¼Ó Àç»ç¿ë.
 ## ==================================================================
 
-## â”€â”€ ìŠ¬ë¼ì´ë“œ ìŠ¤ìœ„ì¹˜ SW0~SW3 â”€â”€
+## ¦¡¦¡ ½½¶óÀÌµå ½ºÀ§Ä¡ SW0~SW3 ¦¡¦¡
 set_property -dict { PACKAGE_PIN A8  IOSTANDARD LVCMOS33 } [get_ports { sw[0] }];
 set_property -dict { PACKAGE_PIN C11 IOSTANDARD LVCMOS33 } [get_ports { sw[1] }];
 set_property -dict { PACKAGE_PIN C10 IOSTANDARD LVCMOS33 } [get_ports { sw[2] }];
 set_property -dict { PACKAGE_PIN A10 IOSTANDARD LVCMOS33 } [get_ports { sw[3] }];
 
-## â”€â”€ ë‹¨ìƒ‰ User LED LD4~LD7 (í†µê³¼: led = sw) â”€â”€
+## ¦¡¦¡ ´Ü»ö User LED LD4~LD7 (Åë°ú: led = sw) ¦¡¦¡
 set_property -dict { PACKAGE_PIN H5  IOSTANDARD LVCMOS33 } [get_ports { led[0] }];
 set_property -dict { PACKAGE_PIN J5  IOSTANDARD LVCMOS33 } [get_ports { led[1] }];
 set_property -dict { PACKAGE_PIN T9  IOSTANDARD LVCMOS33 } [get_ports { led[2] }];
 set_property -dict { PACKAGE_PIN T10 IOSTANDARD LVCMOS33 } [get_ports { led[3] }];
 
-## â”€â”€ ë°˜ì „ ì¶œë ¥ led_n â†’ RGB LED íŒŒë€ ì±„ë„ LD0~LD3_B â”€â”€
+## ¦¡¦¡ ¹İÀü Ãâ·Â led_n ¡æ RGB LED ÆÄ¶õ Ã¤³Î LD0~LD3_B ¦¡¦¡
 set_property -dict { PACKAGE_PIN E1  IOSTANDARD LVCMOS33 } [get_ports { led_n[0] }];  ;# LD0_B
 set_property -dict { PACKAGE_PIN G4  IOSTANDARD LVCMOS33 } [get_ports { led_n[1] }];  ;# LD1_B
 set_property -dict { PACKAGE_PIN H4  IOSTANDARD LVCMOS33 } [get_ports { led_n[2] }];  ;# LD2_B

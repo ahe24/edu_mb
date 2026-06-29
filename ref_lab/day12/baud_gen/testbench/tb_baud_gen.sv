@@ -1,9 +1,9 @@
 // =============================================================================
-// Day 12 â€” tb_baud_gen.sv
-// baud_gen self-checking TB. tick ê°„ í´ëŸ­ ìˆ˜ = DIV ì¸ì§€, tick ì´ 1í´ëŸ­ í­ì¸ì§€ ìë™ íŒì •.
-//   ì‹œë®¬ ê°€ì†: CLK_HZ=160, BAUD=10 â†’ DIV=16 (ì‹¤ì œ 868 ëŒ€ì‹  ì‘ì€ ê°’ìœ¼ë¡œ ë¹ ë¥´ê²Œ).
-//   tick í„ìŠ¤ ê°„ê²©ì„ í´ëŸ­ìœ¼ë¡œ ì„¸ì–´ DIV ì™€ ë¹„êµ, tick í­ì´ 2í´ëŸ­ ì´ìƒì´ë©´ $error.
-//   $error 0 ê±´ = PASS.
+// Day 12 ¡ª tb_baud_gen.sv
+// baud_gen self-checking TB. tick °£ Å¬·° ¼ö = DIV ÀÎÁö, tick ÀÌ 1Å¬·° ÆøÀÎÁö ÀÚµ¿ ÆÇÁ¤.
+//   ½Ã¹Ä °¡¼Ó: CLK_HZ=160, BAUD=10 ¡æ DIV=16 (½ÇÁ¦ 868 ´ë½Å ÀÛÀº °ªÀ¸·Î ºü¸£°Ô).
+//   tick ÆŞ½º °£°İÀ» Å¬·°À¸·Î ¼¼¾î DIV ¿Í ºñ±³, tick ÆøÀÌ 2Å¬·° ÀÌ»óÀÌ¸é $error.
+//   $error 0 °Ç = PASS.
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -16,28 +16,28 @@ module tb_baud_gen;
   reg     clk = 1'b0, rst;
   wire    tick;
   integer errors  = 0;
-  integer gap     = 0;     // ì§ì „ tick ì´í›„ ê²½ê³¼ í´ëŸ­
-  integer ticks   = 0;     // ê´€ì¸¡í•œ tick ê°œìˆ˜
-  integer hi_len  = 0;     // í˜„ì¬ tick HIGH ì—°ì† í´ëŸ­
+  integer gap     = 0;     // Á÷Àü tick ÀÌÈÄ °æ°ú Å¬·°
+  integer ticks   = 0;     // °üÃøÇÑ tick °³¼ö
+  integer hi_len  = 0;     // ÇöÀç tick HIGH ¿¬¼Ó Å¬·°
 
   baud_gen #(.CLK_HZ(CLK_HZ), .BAUD(BAUD)) dut (.clk(clk), .rst(rst), .tick(tick));
 
-  always #5 clk = ~clk;    // 100MHz ìŠ¤ì¼€ì¼
+  always #5 clk = ~clk;    // 100MHz ½ºÄÉÀÏ
 
-  // tick ê°„ê²© = DIV ê²€ì¦ + 1í´ëŸ­ í­ ê²€ì¦
+  // tick °£°İ = DIV °ËÁõ + 1Å¬·° Æø °ËÁõ
   always @(posedge clk) begin
     if (rst) begin gap <= 0; hi_len <= 0; end
     else begin
-      // í­: tick ì´ ì—°ì† HIGH ë©´ ëˆ„ì  â†’ 2 ì´ìƒì´ë©´ 1í´ëŸ­ í­ ìœ„ë°˜
+      // Æø: tick ÀÌ ¿¬¼Ó HIGH ¸é ´©Àû ¡æ 2 ÀÌ»óÀÌ¸é 1Å¬·° Æø À§¹İ
       if (tick) begin
         hi_len <= hi_len + 1;
         if (hi_len >= 1) begin
           errors = errors + 1;
-          $error("WIDTH t=%0t tick HIGH 2í´ëŸ­ ì´ìƒ", $time);
+          $error("WIDTH t=%0t tick HIGH 2Å¬·° ÀÌ»ó", $time);
         end
       end else hi_len <= 0;
 
-      // ê°„ê²©: tick ë§ˆë‹¤ ì§ì „ tick ì´í›„ í´ëŸ­ ìˆ˜ê°€ DIV ì¸ì§€
+      // °£°İ: tick ¸¶´Ù Á÷Àü tick ÀÌÈÄ Å¬·° ¼ö°¡ DIV ÀÎÁö
       if (tick) begin
         if (ticks > 0 && gap !== DIV) begin
           errors = errors + 1;
@@ -53,11 +53,11 @@ module tb_baud_gen;
     rst = 1;
     repeat (3) @(posedge clk);
     rst = 0;
-    repeat (DIV*8 + 4) @(posedge clk);   // ì—¬ëŸ¬ tick ì£¼ê¸° ê´€ì¸¡
+    repeat (DIV*8 + 4) @(posedge clk);   // ¿©·¯ tick ÁÖ±â °üÃø
 
     if (ticks < 3) begin
       errors = errors + 1;
-      $error("tick ë¯¸ë°œìƒ/ë¶€ì¡± ticks=%0d", ticks);
+      $error("tick ¹Ì¹ß»ı/ºÎÁ· ticks=%0d", ticks);
     end
 
     if (errors == 0) $display(" RESULT: PASS  (0 mismatch)");

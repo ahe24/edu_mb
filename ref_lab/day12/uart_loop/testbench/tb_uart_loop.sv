@@ -1,38 +1,38 @@
 // =============================================================================
-// Day 12 â€” tb_uart_loop.sv
-// uart_loop echo ë£¨í”„ë°± scoreboard self-checking TB.
-//   rx_pin ìœ¼ë¡œ ìƒì„±í•œ í”„ë ˆì„ì„ ì£¼ì… â†’ ê¸°ëŒ€ ë°”ì´íŠ¸ë¥¼ queue ì— push â†’
-//   tx_pin ìœ¼ë¡œ ë˜ëŒì•„ì˜¤ëŠ” echo í”„ë ˆì„ì„ ë””ì½”ë“œí•´ queue ì™€ popÂ·ë¹„êµ.
-//   í”„ë ˆì„/ìˆœì„œ/ê°’ ìë™ íŒì • â€” $error 0 ê±´ = PASS.
+// Day 12 ¡ª tb_uart_loop.sv
+// uart_loop echo ·çÇÁ¹é scoreboard self-checking TB.
+//   rx_pin À¸·Î »ı¼ºÇÑ ÇÁ·¹ÀÓÀ» ÁÖÀÔ ¡æ ±â´ë ¹ÙÀÌÆ®¸¦ queue ¿¡ push ¡æ
+//   tx_pin À¸·Î µÇµ¹¾Æ¿À´Â echo ÇÁ·¹ÀÓÀ» µğÄÚµåÇØ queue ¿Í pop¡¤ºñ±³.
+//   ÇÁ·¹ÀÓ/¼ø¼­/°ª ÀÚµ¿ ÆÇÁ¤ ¡ª $error 0 °Ç = PASS.
 //
-//   ì‹œë®¬ ê°€ì†: uart_loop override CLK_HZ=160, BAUD=10
-//     â†’ 1Ã— DIV=16, 16Ã— DIV=1 â†’ 1ë¹„íŠ¸ = 16 í´ëŸ­ (TXÂ·RX ì •í•©).
-//   4000-í´ëŸ­ ëŒ€ê¸° ë¶ˆí•„ìš” â€” N ë°”ì´íŠ¸ê°€ ë¹ ë¥´ê²Œ ì™„ë£Œ.
+//   ½Ã¹Ä °¡¼Ó: uart_loop override CLK_HZ=160, BAUD=10
+//     ¡æ 1¡¿ DIV=16, 16¡¿ DIV=1 ¡æ 1ºñÆ® = 16 Å¬·° (TX¡¤RX Á¤ÇÕ).
+//   4000-Å¬·° ´ë±â ºÒÇÊ¿ä ¡ª N ¹ÙÀÌÆ®°¡ ºü¸£°Ô ¿Ï·á.
 // =============================================================================
 `timescale 1ns/1ps
 
 module tb_uart_loop;
 
   localparam integer CLK_HZ  = 160;
-  localparam integer BAUD    = 10;     // 1Ã— DIV=16
-  localparam integer BIT_CLK = CLK_HZ / BAUD;   // 16 í´ëŸ­ / ë¹„íŠ¸
+  localparam integer BAUD    = 10;     // 1¡¿ DIV=16
+  localparam integer BIT_CLK = CLK_HZ / BAUD;   // 16 Å¬·° / ºñÆ®
   localparam integer NBYTES  = 8;
 
   reg  clk = 1'b0, rst, rx_pin;
   wire tx_pin;
   integer errors = 0;
 
-  // DUT â€” ì‘ì€ baud ë¡œ override
+  // DUT ¡ª ÀÛÀº baud ·Î override
   uart_loop #(.CLK_HZ(CLK_HZ), .BAUD(BAUD))
     dut (.clk(clk), .rst(rst), .rx_pin(rx_pin), .tx_pin(tx_pin));
 
   always #5 clk = ~clk;
 
-  // scoreboard queue â€” ë³´ë‚¸ ë°”ì´íŠ¸ ì ì¬, echo ë””ì½”ë“œ ì‹œ pop
+  // scoreboard queue ¡ª º¸³½ ¹ÙÀÌÆ® ÀûÀç, echo µğÄÚµå ½Ã pop
   reg [7:0] sb [0:63];
   integer   wr = 0, rd = 0;
 
-  // â”€â”€ rx_pin ìœ¼ë¡œ í”„ë ˆì„ ì£¼ì… â”€â”€
+  // ¦¡¦¡ rx_pin À¸·Î ÇÁ·¹ÀÓ ÁÖÀÔ ¦¡¦¡
   task tx_bit(input v);
     integer k;
     begin for (k = 0; k < BIT_CLK; k = k + 1) @(posedge clk) rx_pin = v; end
@@ -47,26 +47,26 @@ module tb_uart_loop;
     end
   endtask
 
-  // â”€â”€ tx_pin echo í”„ë ˆì„ ë””ì½”ë“œ (bit-center ìƒ˜í”Œ) â”€â”€
-  //   start í•˜ê°•ì—£ì§€ ê²€ì¶œ â†’ 1.5 ë¹„íŠ¸ ëŒ€ê¸°(start ì¤‘ì•™â†’ì²« data ì¤‘ì•™) â†’
-  //   ë¹„íŠ¸ë§ˆë‹¤ BIT_CLK ê°„ê²© LSB first ìƒ˜í”Œ â†’ stop í™•ì¸.
+  // ¦¡¦¡ tx_pin echo ÇÁ·¹ÀÓ µğÄÚµå (bit-center »ùÇÃ) ¦¡¦¡
+  //   start ÇÏ°­¿§Áö °ËÃâ ¡æ 1.5 ºñÆ® ´ë±â(start Áß¾Ó¡æÃ¹ data Áß¾Ó) ¡æ
+  //   ºñÆ®¸¶´Ù BIT_CLK °£°İ LSB first »ùÇÃ ¡æ stop È®ÀÎ.
   task automatic decode_one;
     reg [7:0] got;
     integer   i, j;
     begin
-      @(negedge tx_pin);                  // start ì§„ì…
-      repeat (BIT_CLK + BIT_CLK/2) @(posedge clk);   // ì²« data ë¹„íŠ¸ ì¤‘ì•™
+      @(negedge tx_pin);                  // start ÁøÀÔ
+      repeat (BIT_CLK + BIT_CLK/2) @(posedge clk);   // Ã¹ data ºñÆ® Áß¾Ó
       for (i = 0; i < 8; i = i + 1) begin
         got[i] = tx_pin;                  // LSB first
         if (i < 7) repeat (BIT_CLK) @(posedge clk);
       end
-      repeat (BIT_CLK) @(posedge clk);    // stop ë¹„íŠ¸ ì¤‘ì•™
+      repeat (BIT_CLK) @(posedge clk);    // stop ºñÆ® Áß¾Ó
       if (tx_pin !== 1'b1) begin
         errors = errors + 1; $error("echo STOP bit != 1 (got %h)", got);
       end
-      // scoreboard ë¹„êµÂ·pop
+      // scoreboard ºñ±³¡¤pop
       if (rd >= wr) begin
-        errors = errors + 1; $error("ì˜ˆìƒë³´ë‹¤ ë§ì€ echo (got %h)", got);
+        errors = errors + 1; $error("¿¹»óº¸´Ù ¸¹Àº echo (got %h)", got);
       end else begin
         if (got !== sb[rd]) begin
           errors = errors + 1;
@@ -77,30 +77,30 @@ module tb_uart_loop;
     end
   endtask
 
-  // echo ë””ì½”ë” â€” NBYTES ë§Œí¼ ìˆ˜ì‹ 
+  // echo µğÄÚ´õ ¡ª NBYTES ¸¸Å­ ¼ö½Å
   initial begin : decoder
     integer n;
     @(negedge rst);
     for (n = 0; n < NBYTES; n = n + 1) decode_one;
   end
 
-  // ìê·¹ â€” NBYTES ì†¡ì‹ 
+  // ÀÚ±Ø ¡ª NBYTES ¼Û½Å
   initial begin : stimulus
     integer n;
     reg [7:0] b;
     rst = 1; rx_pin = 1'b1;               // idle = 1
     repeat (4) @(posedge clk);
     rst = 0;
-    repeat (BIT_CLK) @(posedge clk);      // idle ì•ˆì •
+    repeat (BIT_CLK) @(posedge clk);      // idle ¾ÈÁ¤
 
     for (n = 0; n < NBYTES; n = n + 1) begin
       b = 8'h3C ^ (n * 8'h11);
       sb[wr] = b; wr = wr + 1;
       send_frame(b);
-      repeat (BIT_CLK) @(posedge clk);    // í”„ë ˆì„ ê°„ idle
+      repeat (BIT_CLK) @(posedge clk);    // ÇÁ·¹ÀÓ °£ idle
     end
 
-    // ëª¨ë“  echo ë””ì½”ë“œ ì™„ë£Œ ëŒ€ê¸°
+    // ¸ğµç echo µğÄÚµå ¿Ï·á ´ë±â
     wait (rd == NBYTES);
     repeat (BIT_CLK) @(posedge clk);
 

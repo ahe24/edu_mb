@@ -1,8 +1,8 @@
 // =============================================================================
-// Day 10 â€” tb_counter.sv
-// reference model ê¸°ë°˜ self-checking TB.
-// DUT ì™€ ë™ì¼ ê·œì¹™ì˜ ê¸°ëŒ€ ëª¨ë¸(model)ì„ ë³‘ë ¬ êµ¬ë™, ë§¤ í´ëŸ­ cnt ë¥¼ ìë™ ë¹„êµ.
-//   $error 0 ê±´ = PASS. íŒŒí˜• ìœ¡ì•ˆ í™•ì¸ ì—†ì´ íšŒê·€(CI)ì— ê·¸ëŒ€ë¡œ ì‚¬ìš©.
+// Day 10 ¡ª tb_counter.sv
+// reference model ±â¹İ self-checking TB.
+// DUT ¿Í µ¿ÀÏ ±ÔÄ¢ÀÇ ±â´ë ¸ğµ¨(model)À» º´·Ä ±¸µ¿, ¸Å Å¬·° cnt ¸¦ ÀÚµ¿ ºñ±³.
+//   $error 0 °Ç = PASS. ÆÄÇü À°¾È È®ÀÎ ¾øÀÌ È¸±Í(CI)¿¡ ±×´ë·Î »ç¿ë.
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -12,19 +12,19 @@ module tb_counter;
 
   reg          clk = 1'b0, rst, en;
   wire [W-1:0] cnt;
-  reg  [W-1:0] model;                 // golden ê¸°ëŒ€ê°’
+  reg  [W-1:0] model;                 // golden ±â´ë°ª
   integer      errors = 0;
 
   counter #(.W(W)) dut (.clk(clk), .rst(rst), .en(en), .cnt(cnt));
 
   always #5 clk = ~clk;               // 100MHz
 
-  // ê¸°ëŒ€ ëª¨ë¸ â€” DUT ì™€ ë™ì¼í•œ ê·œì¹™
+  // ±â´ë ¸ğµ¨ ¡ª DUT ¿Í µ¿ÀÏÇÑ ±ÔÄ¢
   always @(posedge clk)
     if (rst)     model <= 0;
     else if (en) model <= model + 1'b1;
 
-  // ìë™ íŒì • â€” !== ë¡œ X/Z ê¹Œì§€ ê²€ì¶œ
+  // ÀÚµ¿ ÆÇÁ¤ ¡ª !== ·Î X/Z ±îÁö °ËÃâ
   always @(posedge clk)
     if (!rst && cnt !== model) begin
       errors = errors + 1;
@@ -35,7 +35,7 @@ module tb_counter;
     rst = 1; en = 0;
     repeat (2) @(posedge clk);
     rst = 0; en = 1;
-    repeat (20) @(posedge clk);       // wrap(15â†’0) í¬í•¨ ì¶©ë¶„íˆ
+    repeat (20) @(posedge clk);       // wrap(15¡æ0) Æ÷ÇÔ ÃæºĞÈ÷
 
     if (errors == 0) $display(" RESULT: PASS  (0 mismatch)");
     else             $display(" RESULT: FAIL  (%0d mismatch)", errors);

@@ -1,32 +1,32 @@
 ## ==================================================================
-## Day 11 pwm_rgb â€” arty.xdc (Arty A7-35T Master ë°œì·Œ)
-## ë³´ë“œ top = pwm_top (clk 100MHz, PWM 1kHz)
-##   clk â†’ 100MHz   rst â†’ BTN0   btn_up â†’ BTN1(+5%)   btn_dn â†’ BTN2(-5%)
-##   RGB LED LD0 (ë…¹ìƒ‰ = ë°ê¸°, ì Â·ì²­ off) + ë‹¨ìƒ‰ User LED LD4 (ë™ì¼ ë°ê¸°)
-## â€» ë°ê¸° 0~100% Â±5% â€” duty ìƒí•œ ì—†ìŒ. RGB ê°€ 100%ì—ì„œ ëˆˆë¶€ì‹œë©´ ë‹¨ìƒ‰ LED ë¡œ í™•ì¸.
-## â€» PWM ì£¼íŒŒìˆ˜ 200Hz~1kHz (PWM_HZ). 100MHz Ã· 100,000 = 1kHz(1ms).
-## â€» btn_up/btn_dn ëŠ” raw ë²„íŠ¼ â€” top ë‚´ë¶€ debounce+ìƒìŠ¹ì—£ì§€ë¡œ 1íŽ„ìŠ¤ ìƒì„±.
-## â€» ì‹œë®¬ë ˆì´ì…˜ ë‹¨ê³„ì—ì„œëŠ” XDC ë¶ˆí•„ìš” â€” Vivado í•©ì„±Â·ë³´ë“œ êµ¬í˜„ ì‹œì—ë§Œ ì‚¬ìš©.
-## ì“°ì§€ ì•ŠëŠ” í•€ì€ ì£¼ì„ ì²˜ë¦¬í•´ ì´í›„ ì‹¤ìŠµì—ì„œ ê³„ì† ìž¬ì‚¬ìš©.
+## Day 11 pwm_rgb ¡ª arty.xdc (Arty A7-35T Master ¹ßÃé)
+## º¸µå top = pwm_top (clk 100MHz, PWM 1kHz)
+##   clk ¡æ 100MHz   rst ¡æ BTN0   btn_up ¡æ BTN1(+5%)   btn_dn ¡æ BTN2(-5%)
+##   RGB LED LD0 (³ì»ö = ¹à±â, Àû¡¤Ã» off) + ´Ü»ö User LED LD4 (µ¿ÀÏ ¹à±â)
+## ¡Ø ¹à±â 0~100% ¡¾5% ¡ª duty »óÇÑ ¾øÀ½. RGB °¡ 100%¿¡¼­ ´«ºÎ½Ã¸é ´Ü»ö LED ·Î È®ÀÎ.
+## ¡Ø PWM ÁÖÆÄ¼ö 200Hz~1kHz (PWM_HZ). 100MHz ¡À 100,000 = 1kHz(1ms).
+## ¡Ø btn_up/btn_dn ´Â raw ¹öÆ° ¡ª top ³»ºÎ debounce+»ó½Â¿§Áö·Î 1ÆÞ½º »ý¼º.
+## ¡Ø ½Ã¹Ä·¹ÀÌ¼Ç ´Ü°è¿¡¼­´Â XDC ºÒÇÊ¿ä ¡ª Vivado ÇÕ¼º¡¤º¸µå ±¸Çö ½Ã¿¡¸¸ »ç¿ë.
+## ¾²Áö ¾Ê´Â ÇÉÀº ÁÖ¼® Ã³¸®ÇØ ÀÌÈÄ ½Ç½À¿¡¼­ °è¼Ó Àç»ç¿ë.
 ## ==================================================================
 
-## â”€â”€ 100MHz ì‹œìŠ¤í…œ í´ëŸ­ â”€â”€
+## ¦¡¦¡ 100MHz ½Ã½ºÅÛ Å¬·° ¦¡¦¡
 set_property -dict { PACKAGE_PIN E3  IOSTANDARD LVCMOS33 } [get_ports { clk }];
 create_clock -name sys_clk -period 10.0 [get_ports { clk }];
 
-## â”€â”€ rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0 â”€â”€
+## ¦¡¦¡ rst ¡æ Çª½Ã¹öÆ° BTN0 ¦¡¦¡
 set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { rst }];
 
-## â”€â”€ btn_up â†’ í‘¸ì‹œë²„íŠ¼ BTN1 (+5%) â”€â”€
+## ¦¡¦¡ btn_up ¡æ Çª½Ã¹öÆ° BTN1 (+5%) ¦¡¦¡
 set_property -dict { PACKAGE_PIN C9  IOSTANDARD LVCMOS33 } [get_ports { btn_up }];
 
-## â”€â”€ btn_dn â†’ í‘¸ì‹œë²„íŠ¼ BTN2 (-5%) â”€â”€
+## ¦¡¦¡ btn_dn ¡æ Çª½Ã¹öÆ° BTN2 (-5%) ¦¡¦¡
 set_property -dict { PACKAGE_PIN B9  IOSTANDARD LVCMOS33 } [get_ports { btn_dn }];
 
-## â”€â”€ RGB LED LD0 â€” ë…¹ìƒ‰ë§Œ ë°ê¸° í‘œì‹œ(ì Â·ì²­ off) â”€â”€
+## ¦¡¦¡ RGB LED LD0 ¡ª ³ì»ö¸¸ ¹à±â Ç¥½Ã(Àû¡¤Ã» off) ¦¡¦¡
 set_property -dict { PACKAGE_PIN F6  IOSTANDARD LVCMOS33 } [get_ports { rgb_g }];
 set_property -dict { PACKAGE_PIN G6  IOSTANDARD LVCMOS33 } [get_ports { rgb_r }];
 set_property -dict { PACKAGE_PIN E1  IOSTANDARD LVCMOS33 } [get_ports { rgb_b }];
 
-## â”€â”€ ë‹¨ìƒ‰ User LED LD4 â€” ë™ì¼ ë°ê¸°(100% í’€ë ˆì¸ì§€ í™•ì¸ìš©) â”€â”€
+## ¦¡¦¡ ´Ü»ö User LED LD4 ¡ª µ¿ÀÏ ¹à±â(100% Ç®·¹ÀÎÁö È®ÀÎ¿ë) ¦¡¦¡
 set_property -dict { PACKAGE_PIN H5  IOSTANDARD LVCMOS33 } [get_ports { mono }];

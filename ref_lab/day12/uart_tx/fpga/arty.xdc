@@ -1,14 +1,14 @@
 ## ==================================================================
-## Day 12 uart_tx â€” arty.xdc (Arty A7-35T Master ë°œì·Œ)
-## â€» ì‹œë®¬ ì „ìš© â€” ë‹¨ë… í•€ ë°°ì¹˜ ë¶ˆí•„ìš”, uart_loop ì—ì„œ í†µí•© ì‚¬ìš©.
-##   uart_tx ì˜ tx ì¶œë ¥ì€ USB-UART ë¡œ í†µí•©(uart_loop)ì—ì„œ D10 ì— ë§¤í•‘.
-##   ì•„ëž˜ clk/rst ëŠ” í†µí•© top í•©ì„± ì‹œ ì°¸ê³ ìš©.
-## â€» ì‹œë®¬ë ˆì´ì…˜ ë‹¨ê³„ì—ì„œëŠ” XDC ë¶ˆí•„ìš” â€” Vivado í•©ì„±Â·ë³´ë“œ êµ¬í˜„ ì‹œì—ë§Œ ì‚¬ìš©.
+## Day 12 uart_tx ¡ª arty.xdc (Arty A7-35T Master ¹ßÃé)
+## ¡Ø ½Ã¹Ä Àü¿ë ¡ª ´Üµ¶ ÇÉ ¹èÄ¡ ºÒÇÊ¿ä, uart_loop ¿¡¼­ ÅëÇÕ »ç¿ë.
+##   uart_tx ÀÇ tx Ãâ·ÂÀº USB-UART ·Î ÅëÇÕ(uart_loop)¿¡¼­ D10 ¿¡ ¸ÅÇÎ.
+##   ¾Æ·¡ clk/rst ´Â ÅëÇÕ top ÇÕ¼º ½Ã Âü°í¿ë.
+## ¡Ø ½Ã¹Ä·¹ÀÌ¼Ç ´Ü°è¿¡¼­´Â XDC ºÒÇÊ¿ä ¡ª Vivado ÇÕ¼º¡¤º¸µå ±¸Çö ½Ã¿¡¸¸ »ç¿ë.
 ## ==================================================================
 
-## â”€â”€ 100MHz ì‹œìŠ¤í…œ í´ëŸ­ â”€â”€
+## ¦¡¦¡ 100MHz ½Ã½ºÅÛ Å¬·° ¦¡¦¡
 set_property -dict { PACKAGE_PIN E3  IOSTANDARD LVCMOS33 } [get_ports { clk }];
 create_clock -name sys_clk -period 10.0 [get_ports { clk }];
 
-## â”€â”€ rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0 â”€â”€
+## ¦¡¦¡ rst ¡æ Çª½Ã¹öÆ° BTN0 ¦¡¦¡
 set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { rst }];

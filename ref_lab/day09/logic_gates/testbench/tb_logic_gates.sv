@@ -1,14 +1,14 @@
 // =============================================================================
-// Day 09 â€” tb_logic_gates.sv
-// sw 4 ì¡°í•©(00â†’01â†’10â†’11)ì„ ìˆœì°¨ ì¸ê°€, led / rgb0 / rgb1 / rgb2 ë¥¼
-//   â‘  $display ë¡œ ê´€ì°° (Visualizer íŒŒí˜•ê³¼ ëŒ€ì¡°)
-//   â‘¡ golden ê¸°ëŒ€ê°’ê³¼ self-checking ìë™ íŒì • ($error 0 ê±´ = PASS)
+// Day 09 ¡ª tb_logic_gates.sv
+// sw 4 Á¶ÇÕ(00¡æ01¡æ10¡æ11)À» ¼øÂ÷ ÀÎ°¡, led / rgb0 / rgb1 / rgb2 ¸¦
+//   ¨ç $display ·Î °üÂû (Visualizer ÆÄÇü°ú ´ëÁ¶)
+//   ¨è golden ±â´ë°ª°ú self-checking ÀÚµ¿ ÆÇÁ¤ ($error 0 °Ç = PASS)
 // =============================================================================
 `timescale 1ns/1ps
 
 module tb_logic_gates;
 
-  // --- DUT ì—°ê²° ì‹ í˜¸ ---------------------------------------------------------
+  // --- DUT ¿¬°á ½ÅÈ£ ---------------------------------------------------------
   reg  [1:0] sw;
   wire [1:0] led;
   wire [2:0] rgb0, rgb1, rgb2;
@@ -18,7 +18,7 @@ module tb_logic_gates;
     .rgb0(rgb0), .rgb1(rgb1), .rgb2(rgb2)
   );
 
-  // --- golden ê¸°ëŒ€ê°’ (ì¡°í•©ë…¼ë¦¬ â†’ ì½”ë“œë¡œ ì§ì ‘ ê³„ì‚°) ---------------------------
+  // --- golden ±â´ë°ª (Á¶ÇÕ³í¸® ¡æ ÄÚµå·Î Á÷Á¢ °è»ê) ---------------------------
   function automatic [2:0] exp_rgb (input bit hit, input [2:0] color);
     exp_rgb = hit ? color : 3'b000;
   endfunction
@@ -30,16 +30,16 @@ module tb_logic_gates;
     reg [1:0] e_led;
     reg [2:0] e_rgb0, e_rgb1, e_rgb2;
     begin
-      sw = s;  #10;                       // ì¸ê°€ í›„ ì¡°í•© ì§€ì—° ëŒ€ê¸°
+      sw = s;  #10;                       // ÀÎ°¡ ÈÄ Á¶ÇÕ Áö¿¬ ´ë±â
       e_led  = s;
-      e_rgb0 = exp_rgb(s[0] & s[1], 3'b101);  // AND â†’ R+B
-      e_rgb1 = exp_rgb(s[0] | s[1], 3'b011);  // OR  â†’ G+B
-      e_rgb2 = exp_rgb(s[0] ^ s[1], 3'b110);  // XOR â†’ R+G
+      e_rgb0 = exp_rgb(s[0] & s[1], 3'b101);  // AND ¡æ R+B
+      e_rgb1 = exp_rgb(s[0] | s[1], 3'b011);  // OR  ¡æ G+B
+      e_rgb2 = exp_rgb(s[0] ^ s[1], 3'b110);  // XOR ¡æ R+G
 
       $display("sw=%b | led=%b rgb0=%b rgb1=%b rgb2=%b",
                sw, led, rgb0, rgb1, rgb2);
 
-      // !== ì‚¬ìš© â€” X/Z ë¶ˆì¼ì¹˜ê¹Œì§€ ê²€ì¶œ
+      // !== »ç¿ë ¡ª X/Z ºÒÀÏÄ¡±îÁö °ËÃâ
       if (led !== e_led || rgb0 !== e_rgb0 || rgb1 !== e_rgb1 || rgb2 !== e_rgb2) begin
         errors = errors + 1;
         $error("MISMATCH @ sw=%b : led=%b(exp %b) rgb0=%b(exp %b) rgb1=%b(exp %b) rgb2=%b(exp %b)",
@@ -50,11 +50,11 @@ module tb_logic_gates;
 
   initial begin
     $display("============================================================");
-    $display(" Day09 logic_gates â€” AND/OR/XOR â†’ RGB LED self-checking TB");
+    $display(" Day09 logic_gates ¡ª AND/OR/XOR ¡æ RGB LED self-checking TB");
     $display("------------------------------------------------------------");
 
     for (i = 0; i < 4; i = i + 1)
-      check(i[1:0]);                       // 00 â†’ 01 â†’ 10 â†’ 11
+      check(i[1:0]);                       // 00 ¡æ 01 ¡æ 10 ¡æ 11
 
     $display("------------------------------------------------------------");
     if (errors == 0) $display(" RESULT: PASS  (0 mismatch)");

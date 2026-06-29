@@ -1,16 +1,16 @@
 ## ==================================================================
-## Day 10 blinker â€” arty.xdc (Arty A7-35T Master ë°œì·Œ)
-##   clk â†’ 100MHz (create_clock í•„ìˆ˜)   rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0   led â†’ LED LD4
-## clk ì„ ë¶„ì£¼í•´ ìƒˆ í´ëŸ­ìœ¼ë¡œ ì“°ì§€ ë§ ê²ƒ â€” ì¹´ìš´í„°ë¡œ led í† ê¸€(ë‹¨ì¼ í´ëŸ­ ë„ë©”ì¸).
-## â€» ì‹œë®¬ë ˆì´ì…˜ ë‹¨ê³„ì—ì„œëŠ” XDC ë¶ˆí•„ìš” â€” Vivado í•©ì„±Â·ë³´ë“œ êµ¬í˜„ ì‹œì—ë§Œ ì‚¬ìš©.
+## Day 10 blinker ¡ª arty.xdc (Arty A7-35T Master ¹ßÃé)
+##   clk ¡æ 100MHz (create_clock ÇÊ¼ö)   rst ¡æ Çª½Ã¹öÆ° BTN0   led ¡æ LED LD4
+## clk À» ºĞÁÖÇØ »õ Å¬·°À¸·Î ¾²Áö ¸» °Í ¡ª Ä«¿îÅÍ·Î led Åä±Û(´ÜÀÏ Å¬·° µµ¸ŞÀÎ).
+## ¡Ø ½Ã¹Ä·¹ÀÌ¼Ç ´Ü°è¿¡¼­´Â XDC ºÒÇÊ¿ä ¡ª Vivado ÇÕ¼º¡¤º¸µå ±¸Çö ½Ã¿¡¸¸ »ç¿ë.
 ## ==================================================================
 
-## â”€â”€ 100MHz ì‹œìŠ¤í…œ í´ëŸ­ â”€â”€
+## ¦¡¦¡ 100MHz ½Ã½ºÅÛ Å¬·° ¦¡¦¡
 set_property -dict { PACKAGE_PIN E3  IOSTANDARD LVCMOS33 } [get_ports { clk }];
 create_clock -name sys_clk -period 10.0 [get_ports { clk }];
 
-## â”€â”€ rst â†’ í‘¸ì‹œë²„íŠ¼ BTN0 â”€â”€
+## ¦¡¦¡ rst ¡æ Çª½Ã¹öÆ° BTN0 ¦¡¦¡
 set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { rst }];
 
-## â”€â”€ led â†’ User LED LD4 â”€â”€
+## ¦¡¦¡ led ¡æ User LED LD4 ¦¡¦¡
 set_property -dict { PACKAGE_PIN H5  IOSTANDARD LVCMOS33 } [get_ports { led }];

@@ -1,19 +1,19 @@
 // =============================================================================
-// Day 12 â€” uart_rx.v
-// UART ìˆ˜ì‹ ê¸°. 16Ã— oversample ë¡œ start í•˜ê°•ì—£ì§€ ê²€ì¶œ í›„ ê° ë¹„íŠ¸ ì¤‘ì•™ì—ì„œ ìƒ˜í”Œ.
-//   rx_in ì€ ë¹„ë™ê¸° ì…ë ¥ â†’ 2FF ë™ê¸°í™”(metastability ë°©ì–´) í›„ ì‚¬ìš©.
-//   IDLE ì—ì„œ rx==0(start) ê²€ì¶œ â†’ START ì¤‘ì•™(os==7) í™•ì¸ â†’
-//   DATA ëŠ” 16í‹±ë§ˆë‹¤(os==15) ë¹„íŠ¸ ì¤‘ì•™ ìƒ˜í”Œ, LSB first ì‹œí”„íŠ¸ â†’ STOP í›„ valid.
-//   data ì¶œë ¥ì€ STOP ì‹œì ì— í™•ì •, valid ëŠ” 1í´ëŸ­ í„ìŠ¤.
+// Day 12 ¡ª uart_rx.v
+// UART ¼ö½Å±â. 16¡¿ oversample ·Î start ÇÏ°­¿§Áö °ËÃâ ÈÄ °¢ ºñÆ® Áß¾Ó¿¡¼­ »ùÇÃ.
+//   rx_in Àº ºñµ¿±â ÀÔ·Â ¡æ 2FF µ¿±âÈ­(metastability ¹æ¾î) ÈÄ »ç¿ë.
+//   IDLE ¿¡¼­ rx==0(start) °ËÃâ ¡æ START Áß¾Ó(os==7) È®ÀÎ ¡æ
+//   DATA ´Â 16Æ½¸¶´Ù(os==15) ºñÆ® Áß¾Ó »ùÇÃ, LSB first ½ÃÇÁÆ® ¡æ STOP ÈÄ valid.
+//   data Ãâ·ÂÀº STOP ½ÃÁ¡¿¡ È®Á¤, valid ´Â 1Å¬·° ÆŞ½º.
 // =============================================================================
 module uart_rx (
   input  wire       clk, rst,
-  input  wire       tick16,     // 16Ã— baud tick
-  input  wire       rx_in,      // ì§ë ¬ ì…ë ¥ (raw)
+  input  wire       tick16,     // 16¡¿ baud tick
+  input  wire       rx_in,      // Á÷·Ä ÀÔ·Â (raw)
   output reg  [7:0] data,
   output reg        valid
 );
-  reg s0, s1;                    // 2FF ë™ê¸°í™” (ë¹„ë™ê¸° ì…ë ¥)
+  reg s0, s1;                    // 2FF µ¿±âÈ­ (ºñµ¿±â ÀÔ·Â)
   always @(posedge clk) {s1, s0} <= {s0, rx_in};
   wire rx = s1;
 
@@ -24,10 +24,10 @@ module uart_rx (
     valid <= 1'b0;
     if (rst) begin state<=IDLE; os<=0; end
     else if (tick16) case (state)
-      IDLE:  if (!rx) begin state<=START; os<=0; end        // start í•˜ê°•
-      START: if (os==4'd7) begin os<=0; state<=DATA; idx<=0; end // ì¤‘ì•™ í™•ì¸
+      IDLE:  if (!rx) begin state<=START; os<=0; end        // start ÇÏ°­
+      START: if (os==4'd7) begin os<=0; state<=DATA; idx<=0; end // Áß¾Ó È®ÀÎ
              else os<=os+1'b1;
-      DATA:  if (os==4'd15) begin os<=0; sh<={rx, sh[7:1]};  // ë¹„íŠ¸ ì¤‘ì•™ ìƒ˜í”Œ
+      DATA:  if (os==4'd15) begin os<=0; sh<={rx, sh[7:1]};  // ºñÆ® Áß¾Ó »ùÇÃ
                if (idx==3'd7) state<=STOP; else idx<=idx+1'b1; end
              else os<=os+1'b1;
       STOP:  if (os==4'd15) begin data<=sh; valid<=1'b1; state<=IDLE; end

@@ -1,22 +1,22 @@
 // =============================================================================
-// Day 10 â€” counter.v
-// N-bit ë™ê¸° ì¹´ìš´í„°. í´ëŸ­ ì—£ì§€ë§ˆë‹¤ en ì´ë©´ +1, Wë¹„íŠ¸ í•œê³„ì—ì„œ ìë™ wrap.
-//   rst : ë™ê¸° active-high â€” í´ëŸ­ ì—£ì§€ì—ì„œë§Œ 0
-//   en  : 1ì¼ ë•Œë§Œ ì¦ê°€, 0ì´ë©´ ê°’ ìœ ì§€
+// Day 10 ¡ª counter.v
+// N-bit µ¿±â Ä«¿îÅÍ. Å¬·° ¿§Áö¸¶´Ù en ÀÌ¸é +1, WºñÆ® ÇÑ°è¿¡¼­ ÀÚµ¿ wrap.
+//   rst : µ¿±â active-high ¡ª Å¬·° ¿§Áö¿¡¼­¸¸ 0
+//   en  : 1ÀÏ ¶§¸¸ Áõ°¡, 0ÀÌ¸é °ª À¯Áö
 // =============================================================================
 module counter #(
-  parameter integer W = 4          // ë¹„íŠ¸ í­
+  parameter integer W = 4          // ºñÆ® Æø
 )(
   input  wire         clk,
-  input  wire         rst,         // ë™ê¸° active-high
-  input  wire         en,          // 1ì¼ ë•Œë§Œ ì¦ê°€
+  input  wire         rst,         // µ¿±â active-high
+  input  wire         en,          // 1ÀÏ ¶§¸¸ Áõ°¡
   output reg  [W-1:0] cnt
 );
 
   always @(posedge clk) begin
-    if (rst)      cnt <= {W{1'b0}};   // 0ìœ¼ë¡œ
-    else if (en)  cnt <= cnt + 1'b1;  // ì¦ê°€ (Wë¹„íŠ¸ ìë™ wrap)
-    // en=0 ì´ë©´ ê°’ ìœ ì§€
+    if (rst)      cnt <= {W{1'b0}};   // 0À¸·Î
+    else if (en)  cnt <= cnt + 1'b1;  // Áõ°¡ (WºñÆ® ÀÚµ¿ wrap)
+    // en=0 ÀÌ¸é °ª À¯Áö
   end
 
 endmodule

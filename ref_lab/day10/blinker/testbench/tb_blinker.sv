@@ -1,30 +1,30 @@
 // =============================================================================
-// Day 10 â€” tb_blinker.sv
-// +define+FUNC_SIM ë¡œ ì»´íŒŒì¼í•˜ë©´ DUT ì˜ DIV ê°€ ì¶•ì†Œë¼ ë¶„ì£¼ë¥¼ ë¹¨ë¦¬ í™•ì¸.
-// reference model ê³¼ ë§¤ í´ëŸ­ led ë¹„êµ â€” $error 0 ê±´ = PASS.
-//   â€» DUT ì™€ ë™ì¼í•˜ê²Œ DIV ë„ FUNC_SIM ìœ¼ë¡œ ë§ì¶° golden ëª¨ë¸ ì¼ì¹˜.
+// Day 10 ¡ª tb_blinker.sv
+// +define+FUNC_SIM ·Î ÄÄÆÄÀÏÇÏ¸é DUT ÀÇ DIV °¡ Ãà¼ÒµÅ ºĞÁÖ¸¦ »¡¸® È®ÀÎ.
+// reference model °ú ¸Å Å¬·° led ºñ±³ ¡ª $error 0 °Ç = PASS.
+//   ¡Ø DUT ¿Í µ¿ÀÏÇÏ°Ô DIV µµ FUNC_SIM À¸·Î ¸ÂÃç golden ¸ğµ¨ ÀÏÄ¡.
 // =============================================================================
 `timescale 1ns/1ps
 
 module tb_blinker;
 
-  // DUT ë‚´ë¶€ DIV ì™€ ë™ì¼ ê·œì¹™ â€” ê°™ì€ +define+FUNC_SIM ë¡œ ì¼ì¹˜
+  // DUT ³»ºÎ DIV ¿Í µ¿ÀÏ ±ÔÄ¢ ¡ª °°Àº +define+FUNC_SIM ·Î ÀÏÄ¡
 `ifdef FUNC_SIM
-  localparam integer DIV = 4;          // ì‹œë®¬ìš© (ë³´ë“œëŠ” 50_000_000)
+  localparam integer DIV = 4;          // ½Ã¹Ä¿ë (º¸µå´Â 50_000_000)
 `else
   localparam integer DIV = 50_000_000;
 `endif
 
   reg  clk = 1'b0, rst;
   wire led;
-  reg  mled; reg [25:0] mcnt;          // golden ëª¨ë¸
+  reg  mled; reg [25:0] mcnt;          // golden ¸ğµ¨
   integer errors = 0;
 
   blinker dut (.clk(clk), .rst(rst), .led(led));
 
   always #5 clk = ~clk;               // 100MHz
 
-  // ê¸°ëŒ€ ëª¨ë¸ â€” DUT ì™€ ë™ì¼ ê·œì¹™
+  // ±â´ë ¸ğµ¨ ¡ª DUT ¿Í µ¿ÀÏ ±ÔÄ¢
   always @(posedge clk)
     if (rst)               begin mcnt <= 0; mled <= 1'b0; end
     else if (mcnt == DIV-1) begin mcnt <= 0; mled <= ~mled; end
@@ -38,7 +38,7 @@ module tb_blinker;
 
   initial begin
     rst = 1; repeat (2) @(posedge clk); rst = 0;
-    repeat (40) @(posedge clk);        // ì—¬ëŸ¬ í† ê¸€ ì£¼ê¸° ê´€ì°°
+    repeat (40) @(posedge clk);        // ¿©·¯ Åä±Û ÁÖ±â °üÂû
 
     if (errors == 0) $display(" RESULT: PASS  (0 mismatch)");
     else             $display(" RESULT: FAIL  (%0d mismatch)", errors);

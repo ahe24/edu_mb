@@ -1,19 +1,19 @@
 ## ==================================================================
-## Day 10 debounce â€” arty.xdc (Arty A7-35T Master ë°œì·Œ)
-##   clk â†’ 100MHz (create_clock)  rst â†’ BTN1  btn_in â†’ BTN0  btn_out â†’ LED LD4
-## btn_in ì€ í´ëŸ­ê³¼ ë¬´ê´€í•œ ë¹„ë™ê¸° ì…ë ¥ â†’ 2FF ë™ê¸°í™” í›„ ë””ë°”ìš´ìŠ¤.
-## â€» ì‹œë®¬ë ˆì´ì…˜ ë‹¨ê³„ì—ì„œëŠ” XDC ë¶ˆí•„ìš” â€” Vivado í•©ì„±Â·ë³´ë“œ êµ¬í˜„ ì‹œì—ë§Œ ì‚¬ìš©.
+## Day 10 debounce ¡ª arty.xdc (Arty A7-35T Master ¹ßÃé)
+##   clk ¡æ 100MHz (create_clock)  rst ¡æ BTN1  btn_in ¡æ BTN0  btn_out ¡æ LED LD4
+## btn_in Àº Å¬·°°ú ¹«°üÇÑ ºñµ¿±â ÀÔ·Â ¡æ 2FF µ¿±âÈ­ ÈÄ µğ¹Ù¿î½º.
+## ¡Ø ½Ã¹Ä·¹ÀÌ¼Ç ´Ü°è¿¡¼­´Â XDC ºÒÇÊ¿ä ¡ª Vivado ÇÕ¼º¡¤º¸µå ±¸Çö ½Ã¿¡¸¸ »ç¿ë.
 ## ==================================================================
 
-## â”€â”€ 100MHz ì‹œìŠ¤í…œ í´ëŸ­ â”€â”€
+## ¦¡¦¡ 100MHz ½Ã½ºÅÛ Å¬·° ¦¡¦¡
 set_property -dict { PACKAGE_PIN E3  IOSTANDARD LVCMOS33 } [get_ports { clk }];
 create_clock -name sys_clk -period 10.0 [get_ports { clk }];
 
-## â”€â”€ rst â†’ í‘¸ì‹œë²„íŠ¼ BTN1 â”€â”€
+## ¦¡¦¡ rst ¡æ Çª½Ã¹öÆ° BTN1 ¦¡¦¡
 set_property -dict { PACKAGE_PIN C9  IOSTANDARD LVCMOS33 } [get_ports { rst }];
 
-## â”€â”€ btn_in â†’ í‘¸ì‹œë²„íŠ¼ BTN0 (raw, ë¹„ë™ê¸°) â”€â”€
+## ¦¡¦¡ btn_in ¡æ Çª½Ã¹öÆ° BTN0 (raw, ºñµ¿±â) ¦¡¦¡
 set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { btn_in }];
 
-## â”€â”€ btn_out â†’ User LED LD4 â”€â”€
+## ¦¡¦¡ btn_out ¡æ User LED LD4 ¦¡¦¡
 set_property -dict { PACKAGE_PIN H5  IOSTANDARD LVCMOS33 } [get_ports { btn_out }];

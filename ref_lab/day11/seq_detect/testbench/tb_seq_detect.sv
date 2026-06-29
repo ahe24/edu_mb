@@ -1,9 +1,9 @@
 // =============================================================================
-// Day 11 â€” tb_seq_detect.sv
-// ì•Œë ¤ì§„ ë¹„íŠ¸ ìŠ¤íŠ¸ë¦¼ì„ MSB-first ë¡œ í˜ë ¤ë³´ë‚´ë©° "101" ê²€ì¶œ found í„ìŠ¤ ìˆ˜ë¥¼ ì§‘ê³„.
-// ê¸°ëŒ€ í„ìŠ¤ ìˆ˜(overlap ê³ ë ¤)ì™€ ë¹„êµ â€” $error 0 ê±´ = PASS.
-//   ìŠ¤íŠ¸ë¦¼ 1011011 â†’ S0â†’S1â†’S10â†’S101*â†’S1â†’S10â†’S101*â†’S1 â†’ found 2íšŒ(overlap ë•ë¶„).
-//   ì¶”ê°€ ê²€ì¦: reset ì¤‘ found ê°€ ì ˆëŒ€ 1 ì´ ë˜ì§€ ì•Šì•„ì•¼ í•¨.
+// Day 11 ¡ª tb_seq_detect.sv
+// ¾Ë·ÁÁø ºñÆ® ½ºÆ®¸²À» MSB-first ·Î Èê·Áº¸³»¸ç "101" °ËÃâ found ÆŞ½º ¼ö¸¦ Áı°è.
+// ±â´ë ÆŞ½º ¼ö(overlap °í·Á)¿Í ºñ±³ ¡ª $error 0 °Ç = PASS.
+//   ½ºÆ®¸² 1011011 ¡æ S0¡æS1¡æS10¡æS101*¡æS1¡æS10¡æS101*¡æS1 ¡æ found 2È¸(overlap ´öºĞ).
+//   Ãß°¡ °ËÁõ: reset Áß found °¡ Àı´ë 1 ÀÌ µÇÁö ¾Ê¾Æ¾ß ÇÔ.
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -14,41 +14,41 @@ module tb_seq_detect;
   integer errors  = 0;
   integer pulses  = 0;
 
-  localparam [6:0] STREAM   = 7'b1011011;   // MSB-first ë¡œ din ì— ì¸ê°€
+  localparam [6:0] STREAM   = 7'b1011011;   // MSB-first ·Î din ¿¡ ÀÎ°¡
   localparam       LEN      = 7;
-  localparam       EXP_HITS = 2;            // overlap í—ˆìš© ì‹œ 2íšŒ
+  localparam       EXP_HITS = 2;            // overlap Çã¿ë ½Ã 2È¸
 
   integer i;
 
-  // ì‹œë®¬ì€ en=1 ê³ ì • â†’ 1ë¹„íŠ¸/í´ëŸ­ ì—°ì† ìŠ¤íŠ¸ë¦¬ë°(ì•Œê³ ë¦¬ì¦˜ ê²€ì¦).
-  // ë³´ë“œì—ì„œëŠ” en ì´ step ë²„íŠ¼ í„ìŠ¤ë¡œ ë°”ë€ë‹¤(seq_top.v).
+  // ½Ã¹ÄÀº en=1 °íÁ¤ ¡æ 1ºñÆ®/Å¬·° ¿¬¼Ó ½ºÆ®¸®¹Ö(¾Ë°í¸®Áò °ËÁõ).
+  // º¸µå¿¡¼­´Â en ÀÌ step ¹öÆ° ÆŞ½º·Î ¹Ù²ï´Ù(seq_top.v).
   seq_detect dut (.clk(clk), .rst(rst), .en(1'b1), .din(din), .found(found));
 
   always #5 clk = ~clk;               // 100MHz
 
-  // reset ì¤‘ found ê°€ 1 ë¡œ ë‹¨ì •ë˜ë©´ ì•ˆ ë¨ (ì „ì› ì§í›„ X ëŠ” ìœ„ë°˜ ì•„ë‹˜)
+  // reset Áß found °¡ 1 ·Î ´ÜÁ¤µÇ¸é ¾È µÊ (Àü¿ø Á÷ÈÄ X ´Â À§¹İ ¾Æ´Ô)
   always @(posedge clk)
     if (rst && found === 1'b1) begin
       errors = errors + 1;
       $error("found HIGH during reset t=%0t", $time);
     end
 
-  // found í„ìŠ¤ ì§‘ê³„ (rst í•´ì œ êµ¬ê°„ë§Œ)
+  // found ÆŞ½º Áı°è (rst ÇØÁ¦ ±¸°£¸¸)
   always @(posedge clk)
     if (!rst && found) pulses = pulses + 1;
 
   initial begin
     rst = 1; din = 0;
-    repeat (3) @(posedge clk);        // reset ì¤‘ found 0 í™•ì¸ êµ¬ê°„
+    repeat (3) @(posedge clk);        // reset Áß found 0 È®ÀÎ ±¸°£
     rst = 0;
 
-    // MSB-first ì§ë ¬ ì¸ê°€ â€” din ì„ negedge ì— ì„¸íŒ…, posedge ì—ì„œ ìƒ˜í”Œ
+    // MSB-first Á÷·Ä ÀÎ°¡ ¡ª din À» negedge ¿¡ ¼¼ÆÃ, posedge ¿¡¼­ »ùÇÃ
     for (i = LEN-1; i >= 0; i = i - 1) begin
       @(negedge clk); din = STREAM[i];
       @(posedge clk);
     end
     @(negedge clk); din = 0;
-    repeat (2) @(posedge clk);        // ë§ˆì§€ë§‰ ì²œì´ì˜ found ë°˜ì˜ ì—¬ìœ 
+    repeat (2) @(posedge clk);        // ¸¶Áö¸· ÃµÀÌÀÇ found ¹İ¿µ ¿©À¯
 
     if (pulses !== EXP_HITS) begin
       errors = errors + 1;

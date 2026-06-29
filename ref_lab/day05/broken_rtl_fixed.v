@@ -1,6 +1,6 @@
 // =============================================================================
-// Day 05 Lab â€” broken_rtl_fixed.v  (ê°•ì‚¬ìš© Â· ìˆ˜ì •ë³¸ ì°¸ì¡°)
-// 12ê±´ ê²°í•¨ ìˆ˜ì • Â· DO-254 Error severity 0ê±´ ê¸°ëŒ€
+// Day 05 Lab ¡ª broken_rtl_fixed.v  (°­»ç¿ë ¡¤ ¼öÁ¤º» ÂüÁ¶)
+// 12°Ç °áÇÔ ¼öÁ¤ ¡¤ DO-254 Error severity 0°Ç ±â´ë
 // =============================================================================
 
 module broken_rtl (
@@ -21,7 +21,7 @@ endmodule
 
 
 // -----------------------------------------------------------------------------
-// Fix #1Â·#2Â·#3: CP17/CP15/CP18 â€” ì¼ê´€ëœ NB ì‚¬ìš©
+// Fix #1¡¤#2¡¤#3: CP17/CP15/CP18 ¡ª ÀÏ°üµÈ NB »ç¿ë
 // -----------------------------------------------------------------------------
 module fifo_ctrl (
   input  wire       clk,
@@ -31,18 +31,18 @@ module fifo_ctrl (
 );
   reg [7:0] stage1, stage2, tmp;
 
-  // Fix #1 CP17: sequential ë¸”ë¡ì—ì„œ NB ì‚¬ìš©
+  // Fix #1 CP17: sequential ºí·Ï¿¡¼­ NB »ç¿ë
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n)  stage1 <= 8'h00;
     else         stage1 <= din;
   end
 
-  // Fix #2 CP15: combo ë¸”ë¡ì—ì„œ blocking ì‚¬ìš©
+  // Fix #2 CP15: combo ºí·Ï¿¡¼­ blocking »ç¿ë
   always @(*) begin
     stage2 = stage1 + 8'h01;
   end
 
-  // Fix #3 CP18: ë™ì¼ ë¸”ë¡ì—ì„œ NB ì¼ê´€ ì‚¬ìš©
+  // Fix #3 CP18: µ¿ÀÏ ºí·Ï¿¡¼­ NB ÀÏ°ü »ç¿ë
   always @(posedge clk) begin
     tmp  <= stage2 & 8'hF0;
     dout <= tmp | 8'h01;
@@ -51,7 +51,7 @@ endmodule
 
 
 // -----------------------------------------------------------------------------
-// Fix #4 CP8: always @(*) ì‚¬ìš©ìœ¼ë¡œ ê°ë„ë¦¬ìŠ¤íŠ¸ ì™„ì „í™”
+// Fix #4 CP8: always @(*) »ç¿ëÀ¸·Î °¨µµ¸®½ºÆ® ¿ÏÀüÈ­
 // -----------------------------------------------------------------------------
 module decoder_badsens (
   input  wire a, b, c,
@@ -64,7 +64,7 @@ endmodule
 
 
 // -----------------------------------------------------------------------------
-// Fix #5 SS6: ë‹¨ì¼ driverë¡œ í†µí•©
+// Fix #5 SS6: ´ÜÀÏ driver·Î ÅëÇÕ
 // -----------------------------------------------------------------------------
 module mux_multidrv (
   input  wire       sel,
@@ -75,10 +75,10 @@ module mux_multidrv (
 endmodule
 
 
-// ë‚˜ë¨¸ì§€ ê²°í•¨ #6~#12 ëª¨ë“ˆì€ ì œê±°ë˜ê³  (ë˜ëŠ” ì•„ë˜ì™€ ê°™ì´ ì•ˆì „ êµ¬ì¡°ë¡œ ì¬ì‘ì„±)
-// topì—ì„œ ì¸ìŠ¤í„´ìŠ¤ ì œê±°.
+// ³ª¸ÓÁö °áÇÔ #6~#12 ¸ğµâÀº Á¦°ÅµÇ°í (¶Ç´Â ¾Æ·¡¿Í °°ÀÌ ¾ÈÀü ±¸Á¶·Î ÀçÀÛ¼º)
+// top¿¡¼­ ÀÎ½ºÅÏ½º Á¦°Å.
 
-// Fix #6 SS3: FF ì‚½ì…ìœ¼ë¡œ combo loop í•´ì†Œ
+// Fix #6 SS3: FF »ğÀÔÀ¸·Î combo loop ÇØ¼Ò
 module feedback_loop (
   input  wire clk, rst_n, d,
   output reg  q
@@ -89,7 +89,7 @@ module feedback_loop (
   end
 endmodule
 
-// Fix #7 unsynth: reset ê¸°ë°˜ ì´ˆê¸°í™”
+// Fix #7 unsynth: reset ±â¹İ ÃÊ±âÈ­
 module init_block (
   input  wire clk, rst_n,
   output reg  q
@@ -99,7 +99,7 @@ module init_block (
   end
 endmodule
 
-// Fix #8 CP15: delay ì œê±°
+// Fix #8 CP15: delay Á¦°Å
 module delay_block (
   input  wire clk, d,
   output reg  q
@@ -107,14 +107,14 @@ module delay_block (
   always @(posedge clk) q <= d;
 endmodule
 
-// Fix #9 unsynth: $display ì œê±° (testbenchë¡œ ì´ë™)
+// Fix #9 unsynth: $display Á¦°Å (testbench·Î ÀÌµ¿)
 module display_leak (
   input wire clk, sig
 );
-  // ë¡œê¹…ì€ testbenchë¡œ ë¶„ë¦¬
+  // ·Î±ëÀº testbench·Î ºĞ¸®
 endmodule
 
-// Fix #10 SS6: force ì œê±° Â· ì •ìƒ êµ¬ì¡°
+// Fix #10 SS6: force Á¦°Å ¡¤ Á¤»ó ±¸Á¶
 module force_bad (
   input  wire clk, rst_n,
   output reg  q
@@ -125,7 +125,7 @@ module force_bad (
   end
 endmodule
 
-// Fix #11 SS17: internal ì‹ í˜¸ êµ¬ë™
+// Fix #11 SS17: internal ½ÅÈ£ ±¸µ¿
 module undriven (
   input  wire d,
   output wire y
@@ -133,7 +133,7 @@ module undriven (
   assign y = d;
 endmodule
 
-// Fix #12 SS18: reset + enable ì œì–´ í™•ë³´
+// Fix #12 SS18: reset + enable Á¦¾î È®º¸
 module flop_no_ctrl (
   input  wire clk, rst_n, en, d,
   output reg  q

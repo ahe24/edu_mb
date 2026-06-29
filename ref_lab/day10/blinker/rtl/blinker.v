@@ -1,27 +1,27 @@
 // =============================================================================
-// Day 10 â€” blinker.v
-// í´ëŸ­ ë¶„ì£¼ LED ì ë©¸ê¸°. 100MHz í´ëŸ­ì„ ì¹´ìš´í„°ë¡œ ë¶„ì£¼í•´ led ë¥¼ ì¼ì • ì£¼ê¸°ë¡œ í† ê¸€.
-//   â€» í´ëŸ­ì„ ë¶„ì£¼í•´ ìƒˆ í´ëŸ­ì„ ë§Œë“œëŠ” ê²ƒì´ ì•„ë‹ˆë¼, ë‹¨ì¼ clk ë¡œ ì¹´ìš´í„°ë¥¼ ëŒë ¤
-//     cnt==DIV-1 ë§ˆë‹¤ led ë¥¼ ë°˜ì „(ë‹¨ì¼ í´ëŸ­ ë„ë©”ì¸).
-//   LED ì£¼ê¸° = 2 Ã— DIV Ã— Tclk. DIV=50M, Tclk=10ns â†’ 1ì´ˆ ON / 1ì´ˆ OFF.
-//   ì‹œë®¬ì€ +define+FUNC_SIM ë¡œ ì»´íŒŒì¼ â†’ DIV ì¶•ì†Œí•´ ë¹¨ë¦¬ í™•ì¸(ë™ì¼ RTL).
+// Day 10 ¡ª blinker.v
+// Å¬·° ºĞÁÖ LED Á¡¸ê±â. 100MHz Å¬·°À» Ä«¿îÅÍ·Î ºĞÁÖÇØ led ¸¦ ÀÏÁ¤ ÁÖ±â·Î Åä±Û.
+//   ¡Ø Å¬·°À» ºĞÁÖÇØ »õ Å¬·°À» ¸¸µå´Â °ÍÀÌ ¾Æ´Ï¶ó, ´ÜÀÏ clk ·Î Ä«¿îÅÍ¸¦ µ¹·Á
+//     cnt==DIV-1 ¸¶´Ù led ¸¦ ¹İÀü(´ÜÀÏ Å¬·° µµ¸ŞÀÎ).
+//   LED ÁÖ±â = 2 ¡¿ DIV ¡¿ Tclk. DIV=50M, Tclk=10ns ¡æ 1ÃÊ ON / 1ÃÊ OFF.
+//   ½Ã¹ÄÀº +define+FUNC_SIM ·Î ÄÄÆÄÀÏ ¡æ DIV Ãà¼ÒÇØ »¡¸® È®ÀÎ(µ¿ÀÏ RTL).
 // =============================================================================
 module blinker (
   input  wire clk,
-  input  wire rst,          // ë™ê¸° active-high
+  input  wire rst,          // µ¿±â active-high
   output reg  led
 );
-  // ê¸°ëŠ¥ê²€ì¦ ì»´íŒŒì¼(+define+FUNC_SIM)ì´ë©´ DIV ì¶•ì†Œ â†’ ë¹¨ë¦¬ í† ê¸€, í•©ì„±ì€ ì‹¤ì œ ê°’
+  // ±â´É°ËÁõ ÄÄÆÄÀÏ(+define+FUNC_SIM)ÀÌ¸é DIV Ãà¼Ò ¡æ »¡¸® Åä±Û, ÇÕ¼ºÀº ½ÇÁ¦ °ª
 `ifdef FUNC_SIM
-  localparam integer DIV = 4;            // ì‹œë®¬ìš©
+  localparam integer DIV = 4;            // ½Ã¹Ä¿ë
 `else
-  localparam integer DIV = 50_000_000;   // 100MHz â†’ ~1Hz
+  localparam integer DIV = 50_000_000;   // 100MHz ¡æ ~1Hz
 `endif
 
   reg [25:0] cnt;
   always @(posedge clk) begin
     if (rst)               begin cnt <= 0; led <= 1'b0; end
-    else if (cnt == DIV-1) begin cnt <= 0; led <= ~led; end  // ì£¼ê¸°ë§ˆë‹¤ í† ê¸€
+    else if (cnt == DIV-1) begin cnt <= 0; led <= ~led; end  // ÁÖ±â¸¶´Ù Åä±Û
     else                   cnt <= cnt + 1'b1;
   end
 endmodule

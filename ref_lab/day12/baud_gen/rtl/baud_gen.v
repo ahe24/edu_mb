@@ -1,22 +1,22 @@
 // =============================================================================
-// Day 12 â€” baud_gen.v
-// baud rate tick ìƒì„±ê¸°. ì‹œìŠ¤í…œ í´ëŸ­ì„ DIV ë¶„ì£¼í•´ 1í´ëŸ­ í­ tick í„ìŠ¤ ì¶œë ¥.
-//   â€» í´ëŸ­ì„ ë¶„ì£¼í•´ ìƒˆ í´ëŸ­ì„ ë§Œë“œëŠ” ê²ƒì´ ì•„ë‹ˆë¼, ë‹¨ì¼ clk ì¹´ìš´í„°ê°€
-//     cnt==DIV-1 ë§ˆë‹¤ tick ì„ 1í´ëŸ­ HIGH (ë‹¨ì¼ í´ëŸ­ ë„ë©”ì¸).
-//   DIV = CLK_HZ / BAUD. 100MHz / 115200 â‰ˆ 868.
-//   TX ëŠ” 1Ã— tick, RX ëŠ” 16Ã— tick(BAUDÃ—16)ìœ¼ë¡œ ë¹„íŠ¸ ì¤‘ì•™ ìƒ˜í”Œ.
-//   â€» DIV ì€ parameter â€” ì‹œë®¬ì€ TB ì—ì„œ ì‘ì€ CLK_HZ/BAUD ë¡œ ì¸ìŠ¤í„´ìŠ¤í•´ ë¹ ë¥´ê²Œ í™•ì¸
-//     (RTL ê¸°ë³¸ê°’ì€ ì‹¤ì œ 100MHz/115200 ìœ ì§€, í•©ì„± ë™ì¼).
+// Day 12 ¡ª baud_gen.v
+// baud rate tick »ı¼º±â. ½Ã½ºÅÛ Å¬·°À» DIV ºĞÁÖÇØ 1Å¬·° Æø tick ÆŞ½º Ãâ·Â.
+//   ¡Ø Å¬·°À» ºĞÁÖÇØ »õ Å¬·°À» ¸¸µå´Â °ÍÀÌ ¾Æ´Ï¶ó, ´ÜÀÏ clk Ä«¿îÅÍ°¡
+//     cnt==DIV-1 ¸¶´Ù tick À» 1Å¬·° HIGH (´ÜÀÏ Å¬·° µµ¸ŞÀÎ).
+//   DIV = CLK_HZ / BAUD. 100MHz / 115200 ¡Ö 868.
+//   TX ´Â 1¡¿ tick, RX ´Â 16¡¿ tick(BAUD¡¿16)À¸·Î ºñÆ® Áß¾Ó »ùÇÃ.
+//   ¡Ø DIV Àº parameter ¡ª ½Ã¹ÄÀº TB ¿¡¼­ ÀÛÀº CLK_HZ/BAUD ·Î ÀÎ½ºÅÏ½ºÇØ ºü¸£°Ô È®ÀÎ
+//     (RTL ±âº»°ªÀº ½ÇÁ¦ 100MHz/115200 À¯Áö, ÇÕ¼º µ¿ÀÏ).
 // =============================================================================
 module baud_gen #(
   parameter integer CLK_HZ = 100_000_000,
   parameter integer BAUD   = 115200
 )(
   input  wire clk,
-  input  wire rst,               // ë™ê¸° active-high
-  output reg  tick               // baud rate 1-clk í„ìŠ¤
+  input  wire rst,               // µ¿±â active-high
+  output reg  tick               // baud rate 1-clk ÆŞ½º
 );
-  localparam integer DIV = CLK_HZ / BAUD;   // â‰ˆ 868
+  localparam integer DIV = CLK_HZ / BAUD;   // ¡Ö 868
   reg [$clog2(DIV)-1:0] cnt;
   always @(posedge clk)
     if (rst)             begin cnt <= 0; tick <= 1'b0; end

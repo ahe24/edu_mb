@@ -1,6 +1,6 @@
 // =============================================================================
-// Day 06 Lab â€” latent_bug_fixed.v  (ê°•ì‚¬ìš© Â· ìˆ˜ì •ë³¸ ì°¸ì¡°)
-// 15ê±´ ì ì¬ ê²°í•¨ ìˆ˜ì • Â· alias violation 0ê±´ Â· latch count 0 ê¸°ëŒ€
+// Day 06 Lab ¡ª latent_bug_fixed.v  (°­»ç¿ë ¡¤ ¼öÁ¤º» ÂüÁ¶)
+// 15°Ç ÀáÀç °áÇÔ ¼öÁ¤ ¡¤ alias violation 0°Ç ¡¤ latch count 0 ±â´ë
 // =============================================================================
 
 module latent_bug (
@@ -28,7 +28,7 @@ module latent_bug (
 endmodule
 
 
-// Fix #1 SS4: else ì¶”ê°€
+// Fix #1 SS4: else Ãß°¡
 module mux_latch (
   input  wire       en,
   input  wire [7:0] d,
@@ -41,7 +41,7 @@ module mux_latch (
 endmodule
 
 
-// Fix #2 SS2-a: default ì¶”ê°€
+// Fix #2 SS2-a: default Ãß°¡
 module case_no_default (
   input  wire [1:0] sel,
   input  wire [7:0] a, b,
@@ -58,7 +58,7 @@ module case_no_default (
 endmodule
 
 
-// Fix #5 CP7-W1: ìŠ¬ë¼ì´ìŠ¤ or saturation
+// Fix #5 CP7-W1: ½½¶óÀÌ½º or saturation
 module width_ovfl (
   input  wire [7:0]  a,
   input  wire [15:0] b,
@@ -69,7 +69,7 @@ module width_ovfl (
 endmodule
 
 
-// Fix #6 CP7-W2: zero extension ëª…ì‹œ
+// Fix #6 CP7-W2: zero extension ¸í½Ã
 module width_udfl (
   input  wire [7:0] a,
   input  wire [3:0] b,
@@ -79,7 +79,7 @@ module width_udfl (
 endmodule
 
 
-// Fix #7 CP7-W3: signed í†µì¼
+// Fix #7 CP7-W3: signed ÅëÀÏ
 module sign_compare (
   input  wire signed [7:0] a,
   input  wire        [7:0] b,
@@ -89,7 +89,7 @@ module sign_compare (
 endmodule
 
 
-// Fix #9 SS18: reset + enable ì œì–´ ì¶”ê°€
+// Fix #9 SS18: reset + enable Á¦¾î Ãß°¡
 module ff_no_reset (
   input  wire clk, rst_n, en, d,
   output reg  q
@@ -101,14 +101,14 @@ module ff_no_reset (
 endmodule
 
 
-// Fix #11~#15: safe FSM (one-hot Â· default â†’ reset state Â· async reset)
+// Fix #11~#15: safe FSM (one-hot ¡¤ default ¡æ reset state ¡¤ async reset)
 module fsm_latent (
   input  wire       clk,
   input  wire       rst_n,
   input  wire [3:0] in,
   output reg  [3:0] state
 );
-  // one-hot ì¸ì½”ë”© Â· 4 state
+  // one-hot ÀÎÄÚµù ¡¤ 4 state
   localparam [3:0] S_IDLE = 4'b0001,
                    S_RUN  = 4'b0010,
                    S_WAIT = 4'b0100,

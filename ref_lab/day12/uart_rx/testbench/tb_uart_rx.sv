@@ -1,20 +1,20 @@
 // =============================================================================
-// Day 12 â€” tb_uart_rx.sv
-// uart_rx self-checking TB. rx_in ì„ ì •í™•í•œ ë¹„íŠ¸ ì£¼ê¸°ë¡œ bit-bang â†’ ì•Œë ¤ì§„ ë°”ì´íŠ¸ ì£¼ì…,
-// valid ê°€ 1íšŒ í„ìŠ¤ + data == ë³´ë‚¸ ë°”ì´íŠ¸ì¸ì§€ ìë™ íŒì •.
-//   ì‹œë®¬ ê°€ì†: baud_gen CLK_HZ=160, BAUD=160 â†’ DIV=1 â†’ tick16 ë§¤ í´ëŸ­.
-//   âˆ´ 1ë¹„íŠ¸ = 16 tick16 = 16 í´ëŸ­. send_byte ê°€ ë¹„íŠ¸ë‹¹ 16í´ëŸ­ ìœ ì§€ë¡œ í”„ë ˆì„ ìƒì„±.
-//   í”„ë ˆì„ = start(0) + 8 data(LSB first) + stop(1).
-//   2FF ë™ê¸°í™” í™•ì¸: rx_in ì„ ë¹„ì •ë ¬ ì‹œì ì— ë°”ê¿”ë„ ì •ìƒ ìˆ˜ì‹ .
-//   valid ì¤‘ë³µ/ëˆ„ë½, data ë¶ˆì¼ì¹˜ ì‹œ $error. $error 0 ê±´ = PASS.
+// Day 12 ¡ª tb_uart_rx.sv
+// uart_rx self-checking TB. rx_in À» Á¤È®ÇÑ ºñÆ® ÁÖ±â·Î bit-bang ¡æ ¾Ë·ÁÁø ¹ÙÀÌÆ® ÁÖÀÔ,
+// valid °¡ 1È¸ ÆŞ½º + data == º¸³½ ¹ÙÀÌÆ®ÀÎÁö ÀÚµ¿ ÆÇÁ¤.
+//   ½Ã¹Ä °¡¼Ó: baud_gen CLK_HZ=160, BAUD=160 ¡æ DIV=1 ¡æ tick16 ¸Å Å¬·°.
+//   ¡Å 1ºñÆ® = 16 tick16 = 16 Å¬·°. send_byte °¡ ºñÆ®´ç 16Å¬·° À¯Áö·Î ÇÁ·¹ÀÓ »ı¼º.
+//   ÇÁ·¹ÀÓ = start(0) + 8 data(LSB first) + stop(1).
+//   2FF µ¿±âÈ­ È®ÀÎ: rx_in À» ºñÁ¤·Ä ½ÃÁ¡¿¡ ¹Ù²ãµµ Á¤»ó ¼ö½Å.
+//   valid Áßº¹/´©¶ô, data ºÒÀÏÄ¡ ½Ã $error. $error 0 °Ç = PASS.
 // =============================================================================
 `timescale 1ns/1ps
 
 module tb_uart_rx;
 
   localparam integer CLK_HZ = 160;
-  localparam integer BAUD   = 160;   // DIV = 1 â†’ tick16 ë§¤ í´ëŸ­
-  localparam integer BIT_CLK = 16;   // 1ë¹„íŠ¸ = 16 í´ëŸ­
+  localparam integer BAUD   = 160;   // DIV = 1 ¡æ tick16 ¸Å Å¬·°
+  localparam integer BIT_CLK = 16;   // 1ºñÆ® = 16 Å¬·°
 
   reg        clk = 1'b0, rst, rx_in;
   wire [7:0] data;
@@ -29,11 +29,11 @@ module tb_uart_rx;
 
   always #5 clk = ~clk;
 
-  // valid í„ìŠ¤ ê´€ì¸¡ â†’ ìˆ˜ì‹  ë°”ì´íŠ¸ ì ì¬
+  // valid ÆŞ½º °üÃø ¡æ ¼ö½Å ¹ÙÀÌÆ® ÀûÀç
   always @(posedge clk)
     if (valid) begin valid_cnt = valid_cnt + 1; last_data = data; end
 
-  // rx_in ì„ dur í´ëŸ­ ë™ì•ˆ v ë¡œ ìœ ì§€
+  // rx_in À» dur Å¬·° µ¿¾È v ·Î À¯Áö
   task drive_bit(input v, input integer dur);
     integer k;
     begin
@@ -41,7 +41,7 @@ module tb_uart_rx;
     end
   endtask
 
-  // 1ë°”ì´íŠ¸ë¥¼ ì§ë ¬ í”„ë ˆì„ìœ¼ë¡œ ì†¡ì¶œ (start + 8 LSB-first + stop)
+  // 1¹ÙÀÌÆ®¸¦ Á÷·Ä ÇÁ·¹ÀÓÀ¸·Î ¼ÛÃâ (start + 8 LSB-first + stop)
   task send_byte(input [7:0] b);
     integer i;
     begin
@@ -52,16 +52,16 @@ module tb_uart_rx;
     end
   endtask
 
-  // 1ë°”ì´íŠ¸ ì†¡ì¶œ í›„ validÂ·data ê²€ì¦
+  // 1¹ÙÀÌÆ® ¼ÛÃâ ÈÄ valid¡¤data °ËÁõ
   task send_check(input [7:0] b);
     integer prev;
     begin
       prev = valid_cnt;
       send_byte(b);
-      drive_bit(1'b1, BIT_CLK);              // idle ì—¬ìœ  (valid ì•ˆì°©)
+      drive_bit(1'b1, BIT_CLK);              // idle ¿©À¯ (valid ¾ÈÂø)
       if (valid_cnt !== prev + 1) begin
         errors = errors + 1;
-        $error("valid í„ìŠ¤ != 1 (byte %h) cnt=%0d", b, valid_cnt - prev);
+        $error("valid ÆŞ½º != 1 (byte %h) cnt=%0d", b, valid_cnt - prev);
       end
       if (last_data !== b) begin
         errors = errors + 1;
@@ -74,7 +74,7 @@ module tb_uart_rx;
     rst = 1; rx_in = 1'b1;          // idle = 1
     repeat (3) @(posedge clk);
     rst = 0;
-    drive_bit(1'b1, BIT_CLK);       // idle ì•ˆì •
+    drive_bit(1'b1, BIT_CLK);       // idle ¾ÈÁ¤
 
     send_check(8'h55);
     send_check(8'hA3);

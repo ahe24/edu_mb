@@ -1,15 +1,15 @@
 // =============================================================================
-// Day 10 â€” tb_debounce.sv
-// ë°©í–¥ì„±(directed) self-checking TB. STABLE ì„ ì‘ê²Œ override.
-//   - ì§§ì€ ê¸€ë¦¬ì¹˜(STABLE ë¯¸ë§Œ)ëŠ” í¡ìˆ˜ â†’ btn_out ë¶ˆë³€
-//   - ì§€ì† ì…ë ¥(STABLE ì´ˆê³¼)ì€ btn_out ì— ë°˜ì˜
-//   expect_out() ìë™ íŒì • â€” $error 0 ê±´ = PASS.
+// Day 10 ¡ª tb_debounce.sv
+// ¹æÇâ¼º(directed) self-checking TB. STABLE À» ÀÛ°Ô override.
+//   - ÂªÀº ±Û¸®Ä¡(STABLE ¹Ì¸¸)´Â Èí¼ö ¡æ btn_out ºÒº¯
+//   - Áö¼Ó ÀÔ·Â(STABLE ÃÊ°ú)Àº btn_out ¿¡ ¹İ¿µ
+//   expect_out() ÀÚµ¿ ÆÇÁ¤ ¡ª $error 0 °Ç = PASS.
 // =============================================================================
 `timescale 1ns/1ps
 
 module tb_debounce;
 
-  localparam STABLE = 4;               // ë°ëª¨ (ë³´ë“œëŠ” 1_000_000)
+  localparam STABLE = 4;               // µ¥¸ğ (º¸µå´Â 1_000_000)
 
   reg  clk = 1'b0, rst, btn_in;
   wire btn_out;
@@ -32,16 +32,16 @@ module tb_debounce;
     repeat (4) @(posedge clk);
     expect_out(1'b0, "idle low");
 
-    // ì§§ì€ ê¸€ë¦¬ì¹˜ (STABLE ë¯¸ë§Œ) â†’ í¡ìˆ˜
+    // ÂªÀº ±Û¸®Ä¡ (STABLE ¹Ì¸¸) ¡æ Èí¼ö
     btn_in = 1; repeat (2) @(posedge clk); btn_in = 0;
     repeat (8) @(posedge clk);
     expect_out(1'b0, "short glitch absorbed");
 
-    // ì§€ì† high (sync 2 + STABLE ì—¬ìœ ) â†’ ë°˜ì˜
+    // Áö¼Ó high (sync 2 + STABLE ¿©À¯) ¡æ ¹İ¿µ
     btn_in = 1; repeat (STABLE + 6) @(posedge clk);
     expect_out(1'b1, "sustained high");
 
-    // ì§€ì† low â†’ ë°˜ì˜
+    // Áö¼Ó low ¡æ ¹İ¿µ
     btn_in = 0; repeat (STABLE + 6) @(posedge clk);
     expect_out(1'b0, "sustained low");
 

@@ -1,27 +1,27 @@
 ## ==================================================================
-## Day 09 mux4 â€” arty.xdc  (Arty A7-35T Master ë°œì·Œ)
-##   sw[1:0] = sel â†’ SW0,SW1        rgb[2:0] â†’ RGB LED LD0
+## Day 09 mux4 ¡ª arty.xdc  (Arty A7-35T Master ¹ßÃé)
+##   sw[1:0] = sel ¡æ SW0,SW1        rgb[2:0] ¡æ RGB LED LD0
 ## rgb[2:0] = {R, G, B}  (rgb[2]=R, rgb[1]=G, rgb[0]=B)
-## ì“°ì§€ ì•ŠëŠ” í•€ì€ ì£¼ì„ ì²˜ë¦¬í•´ ì´í›„ ì‹¤ìŠµì—ì„œ ê³„ì† ìž¬ì‚¬ìš©.
-## â€» ì‹œë®¬ë ˆì´ì…˜ ë‹¨ê³„ì—ì„œëŠ” XDC ë¶ˆí•„ìš” â€” Vivado í•©ì„±Â·ë³´ë“œ êµ¬í˜„ ì‹œì—ë§Œ ì‚¬ìš©.
+## ¾²Áö ¾Ê´Â ÇÉÀº ÁÖ¼® Ã³¸®ÇØ ÀÌÈÄ ½Ç½À¿¡¼­ °è¼Ó Àç»ç¿ë.
+## ¡Ø ½Ã¹Ä·¹ÀÌ¼Ç ´Ü°è¿¡¼­´Â XDC ºÒÇÊ¿ä ¡ª Vivado ÇÕ¼º¡¤º¸µå ±¸Çö ½Ã¿¡¸¸ »ç¿ë.
 ## ==================================================================
 
-## â”€â”€ ìŠ¬ë¼ì´ë“œ ìŠ¤ìœ„ì¹˜ SW0~SW3 (sel = sw[1:0]) â”€â”€
+## ¦¡¦¡ ½½¶óÀÌµå ½ºÀ§Ä¡ SW0~SW3 (sel = sw[1:0]) ¦¡¦¡
 set_property -dict { PACKAGE_PIN A8  IOSTANDARD LVCMOS33 } [get_ports { sw[0] }];
 set_property -dict { PACKAGE_PIN C11 IOSTANDARD LVCMOS33 } [get_ports { sw[1] }];
 # set_property -dict { PACKAGE_PIN C10 IOSTANDARD LVCMOS33 } [get_ports { sw[2] }];
 # set_property -dict { PACKAGE_PIN A10 IOSTANDARD LVCMOS33 } [get_ports { sw[3] }];
 
-## â”€â”€ RGB LED LD0 â†’ rgb (ì„ íƒëœ ìƒ‰) â”€â”€
+## ¦¡¦¡ RGB LED LD0 ¡æ rgb (¼±ÅÃµÈ »ö) ¦¡¦¡
 set_property -dict { PACKAGE_PIN G6  IOSTANDARD LVCMOS33 } [get_ports { rgb[2] }];  ;# LD0_R
 set_property -dict { PACKAGE_PIN F6  IOSTANDARD LVCMOS33 } [get_ports { rgb[1] }];  ;# LD0_G
 set_property -dict { PACKAGE_PIN E1  IOSTANDARD LVCMOS33 } [get_ports { rgb[0] }];  ;# LD0_B
 
-## â”€â”€ ë‹¨ìƒ‰ User LED LD4~LD7 â€” ë¯¸ì‚¬ìš© (í•„ìš” ì‹œ í™œì„±í™”) â”€â”€
+## ¦¡¦¡ ´Ü»ö User LED LD4~LD7 ¡ª ¹Ì»ç¿ë (ÇÊ¿ä ½Ã È°¼ºÈ­) ¦¡¦¡
 # set_property -dict { PACKAGE_PIN H5  IOSTANDARD LVCMOS33 } [get_ports { led[0] }];
 # set_property -dict { PACKAGE_PIN J5  IOSTANDARD LVCMOS33 } [get_ports { led[1] }];
 
-## â”€â”€ ì¶”ê°€ RGB LED LD1~LD3 â€” ë¯¸ì‚¬ìš© (í•„ìš” ì‹œ í™œì„±í™”) â”€â”€
+## ¦¡¦¡ Ãß°¡ RGB LED LD1~LD3 ¡ª ¹Ì»ç¿ë (ÇÊ¿ä ½Ã È°¼ºÈ­) ¦¡¦¡
 # set_property -dict { PACKAGE_PIN G3 IOSTANDARD LVCMOS33 } [get_ports { rgb1[2] }];  ;# LD1_R
 # set_property -dict { PACKAGE_PIN J4 IOSTANDARD LVCMOS33 } [get_ports { rgb1[1] }];  ;# LD1_G
 # set_property -dict { PACKAGE_PIN G4 IOSTANDARD LVCMOS33 } [get_ports { rgb1[0] }];  ;# LD1_B

@@ -1,12 +1,12 @@
 // =============================================================================
-// Day 06 Lab â€” latent_bug.v
-// DO-254 CPÂ·SS ì ì¬ ìœ„ë°˜ 15ê±´ ì˜ë„ì  ì£¼ì…
-// ëª©ì : í•©ì„± ê°€ëŠ¥í•˜ë‚˜ ì˜ë„ì™€ ë‹¤ë¥¸ íšŒë¡œ ìƒì„± â€” ì ì¬ ì„¤ê³„ ì˜¤ë¥˜ íƒì§€ ì‹¤ìŠµ
-// ì°¸ê³ : lint methodology standard -goal DO-254 í™œì„± + DAL-A/B ìƒí–¥ override
+// Day 06 Lab ¡ª latent_bug.v
+// DO-254 CP¡¤SS ÀáÀç À§¹İ 15°Ç ÀÇµµÀû ÁÖÀÔ
+// ¸ñÀû: ÇÕ¼º °¡´ÉÇÏ³ª ÀÇµµ¿Í ´Ù¸¥ È¸·Î »ı¼º ¡ª ÀáÀç ¼³°è ¿À·ù Å½Áö ½Ç½À
+// Âü°í: lint methodology standard -goal DO-254 È°¼º + DAL-A/B »óÇâ override
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// top: latent_bug â€” ì „ ê²°í•¨ ì„œë¸Œëª¨ë“ˆ í†µí•©
+// top: latent_bug ¡ª Àü °áÇÔ ¼­ºê¸ğµâ ÅëÇÕ
 // -----------------------------------------------------------------------------
 module latent_bug (
   input  wire        clk,
@@ -38,23 +38,23 @@ endmodule
 
 
 // -----------------------------------------------------------------------------
-// #1 SS4 â€” Latch Inference (if ì—†ëŠ” else)
+// #1 SS4 ¡ª Latch Inference (if ¾ø´Â else)
 // -----------------------------------------------------------------------------
 module mux_latch (
   input  wire       en,
   input  wire [7:0] d,
   output reg  [7:0] q
 );
-  // â”€â”€ [#1 SS4 ê²°í•¨] else ì—†ìŒ â†’ latch ì¶”ë¡ 
+  // ¦¡¦¡ [#1 SS4 °áÇÔ] else ¾øÀ½ ¡æ latch Ãß·Ğ
   always @(*) begin
     if (en) q = d;
-    // else ëˆ„ë½ â† SS4 latch_inferred
+    // else ´©¶ô ¡ç SS4 latch_inferred
   end
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #2 SS2-a â€” case default ëˆ„ë½
+// #2 SS2-a ¡ª case default ´©¶ô
 // -----------------------------------------------------------------------------
 module case_no_default (
   input  wire [1:0] sel,
@@ -66,23 +66,23 @@ module case_no_default (
       2'b00: y = a;
       2'b01: y = b;
       2'b10: y = a + b;
-      // â”€â”€ [#2 SS2-a ê²°í•¨] default ëˆ„ë½ â†’ 2'b11ì—ì„œ latch ì¶”ë¡ 
+      // ¦¡¦¡ [#2 SS2-a °áÇÔ] default ´©¶ô ¡æ 2'b11¿¡¼­ latch Ãß·Ğ
     endcase
   end
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #3 SS2-b â€” casex don't-care (safety-critical ê¸ˆì§€ ê¶Œê³ )
+// #3 SS2-b ¡ª casex don't-care (safety-critical ±İÁö ±Ç°í)
 // -----------------------------------------------------------------------------
 module case_casex (
   input  wire [1:0] sel,
   output reg  [7:0] y
 );
   always @(*) begin
-    // â”€â”€ [#3 SS2-b ê²°í•¨] casex â€” sim/synth í•´ì„ ìƒì´
+    // ¦¡¦¡ [#3 SS2-b °áÇÔ] casex ¡ª sim/synth ÇØ¼® »óÀÌ
     casex (sel)
-      2'b0x: y = 8'hAA;        // â† case_with_x_z
+      2'b0x: y = 8'hAA;        // ¡ç case_with_x_z
       2'b10: y = 8'h55;
       default: y = 8'h00;
     endcase
@@ -91,17 +91,17 @@ endmodule
 
 
 // -----------------------------------------------------------------------------
-// #4 SS2-c â€” unique case ì¤‘ë³µ ë§¤ì¹­
+// #4 SS2-c ¡ª unique case Áßº¹ ¸ÅÄª
 // -----------------------------------------------------------------------------
 module case_dup (
   input  wire [2:0] sel,
   output reg  [7:0] y
 );
   always @(*) begin
-    // â”€â”€ [#4 SS2-c ê²°í•¨] 3'b00x + 3'b001 ì¤‘ë³µ
+    // ¦¡¦¡ [#4 SS2-c °áÇÔ] 3'b00x + 3'b001 Áßº¹
     unique case (sel)
-      3'b00?: y = 8'h11;       // â† case_item_duplicate
-      3'b001: y = 8'h22;       // â† overlap with above
+      3'b00?: y = 8'h11;       // ¡ç case_item_duplicate
+      3'b001: y = 8'h22;       // ¡ç overlap with above
       3'b010: y = 8'h33;
       default: y = 8'h00;
     endcase
@@ -110,57 +110,57 @@ endmodule
 
 
 // -----------------------------------------------------------------------------
-// #5 CP7-W1 â€” Width Overflow (ìƒìœ„ 8bit ì†Œì‹¤)
+// #5 CP7-W1 ¡ª Width Overflow (»óÀ§ 8bit ¼Ò½Ç)
 // -----------------------------------------------------------------------------
 module width_ovfl (
   input  wire [7:0]  a,
   input  wire [15:0] b,
   output wire [7:0]  y
 );
-  // â”€â”€ [#5 CP7-W1 ê²°í•¨] ì¢Œë³€ 8bit < ìš°ë³€ 16bit â†’ silent truncation
-  assign y = a + b;           // â† assign_width_overflow
+  // ¦¡¦¡ [#5 CP7-W1 °áÇÔ] ÁÂº¯ 8bit < ¿ìº¯ 16bit ¡æ silent truncation
+  assign y = a + b;           // ¡ç assign_width_overflow
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #6 CP7-W2 â€” Width Underflow (zero extension ì˜ë„ ë¶ˆëª…)
+// #6 CP7-W2 ¡ª Width Underflow (zero extension ÀÇµµ ºÒ¸í)
 // -----------------------------------------------------------------------------
 module width_udfl (
   input  wire [7:0] a,
   input  wire [3:0] b,
   output wire [7:0] y
 );
-  // â”€â”€ [#6 CP7-W2 ê²°í•¨] ì¢Œë³€ 8bit > ìš°ë³€ 4bit â†’ ì˜ë„ ëª¨í˜¸ zero extension
+  // ¦¡¦¡ [#6 CP7-W2 °áÇÔ] ÁÂº¯ 8bit > ¿ìº¯ 4bit ¡æ ÀÇµµ ¸ğÈ£ zero extension
   wire [7:0] tmp;
-  assign tmp = b;              // â† assign_width_underflow
+  assign tmp = b;              // ¡ç assign_width_underflow
   assign y   = a | tmp;
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #7 CP7-W3 â€” Signed / Unsigned í˜¼ìš© ë¹„êµ
+// #7 CP7-W3 ¡ª Signed / Unsigned È¥¿ë ºñ±³
 // -----------------------------------------------------------------------------
 module sign_compare (
   input  wire signed [7:0] a,
   input  wire        [7:0] b,
   output wire              gt
 );
-  // â”€â”€ [#7 CP7-W3 ê²°í•¨] signed vs unsigned ë¹„êµ â†’ ê²°ê³¼ ì™œê³¡
-  assign gt = (a > b);         // â† comparison_width_mismatch
+  // ¦¡¦¡ [#7 CP7-W3 °áÇÔ] signed vs unsigned ºñ±³ ¡æ °á°ú ¿Ö°î
+  assign gt = (a > b);         // ¡ç comparison_width_mismatch
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #8 CP7-W4 â€” case selector width ë¶ˆì¼ì¹˜
+// #8 CP7-W4 ¡ª case selector width ºÒÀÏÄ¡
 // -----------------------------------------------------------------------------
 module case_sel_width (
   input  wire [3:0] sel,
   output reg  [7:0] y
 );
   always @(*) begin
-    // â”€â”€ [#8 CP7-W4 ê²°í•¨] selector 4bit vs label 3bit â†’ case_width_mismatch
+    // ¦¡¦¡ [#8 CP7-W4 °áÇÔ] selector 4bit vs label 3bit ¡æ case_width_mismatch
     case (sel)
-      3'b000: y = 8'h01;       // â† label bit 3 vs selector bit 4
+      3'b000: y = 8'h01;       // ¡ç label bit 3 vs selector bit 4
       3'b001: y = 8'h02;
       default: y = 8'h00;
     endcase
@@ -169,39 +169,39 @@ endmodule
 
 
 // -----------------------------------------------------------------------------
-// #9 SS18 â€” FF ì œì–´ ë¶€ì¬ (reset Â· enable ì—†ìŒ)
+// #9 SS18 ¡ª FF Á¦¾î ºÎÀç (reset ¡¤ enable ¾øÀ½)
 // -----------------------------------------------------------------------------
 module ff_no_reset (
   input  wire clk,
   input  wire d,
   output reg  q
 );
-  // â”€â”€ [#9 SS18 ê²°í•¨] reset ì—†ìŒ Â· DAL-A/B ì—ì„œ Error ìƒí–¥
+  // ¦¡¦¡ [#9 SS18 °áÇÔ] reset ¾øÀ½ ¡¤ DAL-A/B ¿¡¼­ Error »óÇâ
   always @(posedge clk) begin
-    q <= d;                    // â† flop_without_control
+    q <= d;                    // ¡ç flop_without_control
   end
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #10 SS17 â€” Undriven signal
+// #10 SS17 ¡ª Undriven signal
 // -----------------------------------------------------------------------------
 module undriven_net (
   output wire y
 );
-  wire internal;               // â”€â”€ [#10 SS17 ê²°í•¨] êµ¬ë™ì ì—†ìŒ
-  assign y = internal;         // â† undriven_signal ì „íŒŒ
+  wire internal;               // ¦¡¦¡ [#10 SS17 °áÇÔ] ±¸µ¿ÀÚ ¾øÀ½
+  assign y = internal;         // ¡ç undriven_signal ÀüÆÄ
 endmodule
 
 
 // -----------------------------------------------------------------------------
-// #11~#15 â€” FSM ì ì¬ ì˜¤ë¥˜ (CP5 Â· CP6)
+// #11~#15 ¡ª FSM ÀáÀç ¿À·ù (CP5 ¡¤ CP6)
 //
-// #11 CP6  fsm_with_unreachable_state â€” S_ORPHAN ì§„ì… ë¶ˆê°€
-// #12 CP6  fsm_with_deadend_state     â€” S_TRAP íƒˆì¶œ ë¶ˆê°€
-// #13 CP5  fsm_state_value_hardcoded  â€” 4bit regì— 5ê°œ stateë§Œ ì‚¬ìš©
-// #14 CP6  fsm_without_default_state  â€” case default ëˆ„ë½
-// #15 CP6  fsm_without_reset_state    â€” reset ì „ì´ ì—†ìŒ
+// #11 CP6  fsm_with_unreachable_state ¡ª S_ORPHAN ÁøÀÔ ºÒ°¡
+// #12 CP6  fsm_with_deadend_state     ¡ª S_TRAP Å»Ãâ ºÒ°¡
+// #13 CP5  fsm_state_value_hardcoded  ¡ª 4bit reg¿¡ 5°³ state¸¸ »ç¿ë
+// #14 CP6  fsm_without_default_state  ¡ª case default ´©¶ô
+// #15 CP6  fsm_without_reset_state    ¡ª reset ÀüÀÌ ¾øÀ½
 // -----------------------------------------------------------------------------
 module fsm_latent (
   input  wire       clk,
@@ -209,22 +209,22 @@ module fsm_latent (
   input  wire [3:0] in,
   output reg  [3:0] state
 );
-  // â”€â”€ [#13 CP5 ê²°í•¨] 4bit stateì— 5ê°œ state â€” 11ê°œ ë¯¸ì •ì˜ ì¡°í•©
+  // ¦¡¦¡ [#13 CP5 °áÇÔ] 4bit state¿¡ 5°³ state ¡ª 11°³ ¹ÌÁ¤ÀÇ Á¶ÇÕ
   localparam [3:0] S_IDLE   = 4'd0,
                    S_RUN    = 4'd1,
                    S_WAIT   = 4'd2,
                    S_TRAP   = 4'd3,   // deadend (#12)
                    S_ORPHAN = 4'd4;   // unreachable (#11)
 
-  // â”€â”€ [#15 CP6 ê²°í•¨] reset ì „ì´ ë¶„ê¸° ì—†ìŒ
-  always @(posedge clk) begin      // â† posedge clk only, no reset
+  // ¦¡¦¡ [#15 CP6 °áÇÔ] reset ÀüÀÌ ºĞ±â ¾øÀ½
+  always @(posedge clk) begin      // ¡ç posedge clk only, no reset
     case (state)
       S_IDLE:   state <= (in[0]) ? S_RUN : S_WAIT;
       S_RUN:    state <= (in[1]) ? S_WAIT : S_RUN;
       S_WAIT:   state <= (in[2]) ? S_TRAP : S_IDLE;
-      S_TRAP:   state <= S_TRAP;   // â† [#12] íƒˆì¶œ ì „ì´ ì—†ìŒ
-      // â”€â”€ [#11] S_ORPHAN ì§„ì… ì „ì´ ì–´ë””ì—ë„ ì—†ìŒ
-      // â”€â”€ [#14] default ë¶„ê¸° ì—†ìŒ â†’ 11ê°œ ë¯¸ì •ì˜ ì¡°í•©ì—ì„œ ì„ì˜ ê±°ë™
+      S_TRAP:   state <= S_TRAP;   // ¡ç [#12] Å»Ãâ ÀüÀÌ ¾øÀ½
+      // ¦¡¦¡ [#11] S_ORPHAN ÁøÀÔ ÀüÀÌ ¾îµğ¿¡µµ ¾øÀ½
+      // ¦¡¦¡ [#14] default ºĞ±â ¾øÀ½ ¡æ 11°³ ¹ÌÁ¤ÀÇ Á¶ÇÕ¿¡¼­ ÀÓÀÇ °Åµ¿
     endcase
   end
 endmodule

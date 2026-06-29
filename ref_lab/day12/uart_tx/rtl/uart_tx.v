@@ -1,32 +1,32 @@
 // =============================================================================
-// Day 12 â€” uart_tx.v
-// UART ì†¡ì‹ ê¸°. startâ†’dataâ†’stop FSM ì´ baud tick ë§ˆë‹¤ í•œ ë¹„íŠ¸ì”© ì§ë ¬ ì¶œë ¥.
-//   tx idle=1. start(1-clk) ì‹œ data ë˜ì¹˜ í›„ STARTâ†’DATAÃ—8â†’STOP ì§„í–‰.
-//   DATA êµ¬ê°„ì€ shift register ë¡œ LSB first ì „ì†¡.
-//   busy ëŠ” ì „ì†¡ ì¤‘ HIGH, IDLE ë³µê·€ ì‹œ LOW.
+// Day 12 ¡ª uart_tx.v
+// UART ¼Û½Å±â. start¡ædata¡æstop FSM ÀÌ baud tick ¸¶´Ù ÇÑ ºñÆ®¾¿ Á÷·Ä Ãâ·Â.
+//   tx idle=1. start(1-clk) ½Ã data ·¡Ä¡ ÈÄ START¡æDATA¡¿8¡æSTOP ÁøÇà.
+//   DATA ±¸°£Àº shift register ·Î LSB first Àü¼Û.
+//   busy ´Â Àü¼Û Áß HIGH, IDLE º¹±Í ½Ã LOW.
 // =============================================================================
 module uart_tx (
   input  wire       clk, rst,
-  input  wire       tick,        // baud 1Ã— tick
-  input  wire       start,       // ì „ì†¡ ìš”ì²­ (1-clk)
+  input  wire       tick,        // baud 1¡¿ tick
+  input  wire       start,       // Àü¼Û ¿äÃ» (1-clk)
   input  wire [7:0] data,
-  output reg        tx,          // ì§ë ¬ ì¶œë ¥ (idle=1)
+  output reg        tx,          // Á÷·Ä Ãâ·Â (idle=1)
   output reg        busy
 );
   localparam IDLE=2'd0, START=2'd1, DATA=2'd2, STOP=2'd3;
   reg [1:0] state;
   reg [2:0] idx;
   reg [7:0] sh;
-  reg       pend;     // start ìš”ì²­ ë³´ë¥˜ â€” ë‹¤ìŒ tick ê²½ê³„ì—ì„œ í”„ë ˆì„ ì‹œì‘(start bit ì •ë ¬)
+  reg       pend;     // start ¿äÃ» º¸·ù ¡ª ´ÙÀ½ tick °æ°è¿¡¼­ ÇÁ·¹ÀÓ ½ÃÀÛ(start bit Á¤·Ä)
 
   always @(posedge clk)
     if (rst) begin state<=IDLE; tx<=1'b1; busy<=1'b0; pend<=1'b0; end
     else case (state)
       IDLE:  begin tx<=1'b1; busy<=1'b0;
-               if (start) begin sh<=data; pend<=1'b1; end          // ìš”ì²­ ë³´ë¥˜(busy ì•„ì§)
-               // free-running tick ê²½ê³„ì— ë§ì¶° start bit ì‹œì‘ â†’ í•œ ë¹„íŠ¸ í­ ë³´ì¥
+               if (start) begin sh<=data; pend<=1'b1; end          // ¿äÃ» º¸·ù(busy ¾ÆÁ÷)
+               // free-running tick °æ°è¿¡ ¸ÂÃç start bit ½ÃÀÛ ¡æ ÇÑ ºñÆ® Æø º¸Àå
                if (pend && tick) begin pend<=1'b0; busy<=1'b1; tx<=1'b0; state<=START; end end
-      START: begin tx<=1'b0;                      // start bit (ì •í™•íˆ 1 tick ì£¼ê¸°)
+      START: begin tx<=1'b0;                      // start bit (Á¤È®È÷ 1 tick ÁÖ±â)
                if (tick) begin state<=DATA; idx<=0; end end
       DATA:  begin tx<=sh[0];                     // LSB first
                if (tick) begin sh<={1'b0, sh[7:1]};

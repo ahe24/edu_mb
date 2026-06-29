@@ -1,34 +1,34 @@
 // =============================================================================
-// Day 11 â€” traffic_light.v  (FSM ì½”ì–´ â€” "ì•Œê³ ë¦¬ì¦˜"ë§Œ ë‹´ë‹¹)
-// íƒ€ì´ë¨¸ ê¸°ë°˜ ì‹ í˜¸ë“± Moore FSM. REDâ†’GRNâ†’YEL ìˆœí™˜, ê° ìƒíƒœë¥¼ íƒ€ì´ë¨¸ë¡œ ìœ ì§€.
-//   rst   : ë™ê¸° active-high â€” í´ëŸ­ ì—£ì§€ì—ì„œ RED ë¡œ ë³µê·€
-//   en    : í´ëŸ­ ì¸ì—ì´ë¸” â€” en=1 ì¸ í´ëŸ­ì—ì„œë§Œ íƒ€ì´ë¨¸/ìƒíƒœê°€ 1ì¹¸ ì „ì§„.
-//           (ì‹œë®¬: TB ê°€ en í„ìŠ¤ë¡œ ë¹ ë¥´ê²Œ êµ¬ë™. ë³´ë“œ: tick_gen ì˜ 1Hz tick = en)
+// Day 11 ¡ª traffic_light.v  (FSM ÄÚ¾î ¡ª "¾Ë°í¸®Áò"¸¸ ´ã´ç)
+// Å¸ÀÌ¸Ó ±â¹İ ½ÅÈ£µî Moore FSM. RED¡æGRN¡æYEL ¼øÈ¯, °¢ »óÅÂ¸¦ Å¸ÀÌ¸Ó·Î À¯Áö.
+//   rst   : µ¿±â active-high ¡ª Å¬·° ¿§Áö¿¡¼­ RED ·Î º¹±Í
+//   en    : Å¬·° ÀÎ¿¡ÀÌºí ¡ª en=1 ÀÎ Å¬·°¿¡¼­¸¸ Å¸ÀÌ¸Ó/»óÅÂ°¡ 1Ä­ ÀüÁø.
+//           (½Ã¹Ä: TB °¡ en ÆŞ½º·Î ºü¸£°Ô ±¸µ¿. º¸µå: tick_gen ÀÇ 1Hz tick = en)
 //
-// ì¶œë ¥ â€” ë¨í”„ 3ê°œë¥¼ ë³´ë“œ RGB LED 3ê°œ(LD0/LD1/LD2)ë¡œ ë…ë¦½ êµ¬ë™:
-//   rgb_led_r/g/b[2:0] : RGB LED i ì˜ R/G/B ì±„ë„ (i=LDë²ˆí˜¸, [0]=LD0 â€¦)
-//     LD0=RED ë¨í”„ â†’ R          LD1=YEL ë¨í”„ â†’ R+G          LD2=GRN ë¨í”„ â†’ G
-//     â€» RGB LED ëŠ” "ë…¸ë‘" ì „ìš© í•€ì´ ì—†ë‹¤ â€” ë…¸ë‘ = ë¹¨ê°•+ì´ˆë¡ ë™ì‹œ ì ë“±(ê°€ì‚°í˜¼í•©).
-//     â€» íŒŒë‘(B)ì€ ì‹ í˜¸ë“±ì— ë¯¸ì‚¬ìš© â†’ í•­ìƒ 0.  í•œ ë²ˆì— í•œ ë¨í”„ë§Œ ì ë“±(ìƒì¶© ë°©ì§€).
-//   mono_led[2:0]      : ìƒíƒœ one-hot(ì–´ë–¤ ë¨í”„) ë””ë²„ê·¸ í‘œì‹œ â†’ LD4/LD5/LD6
-//                        [2]=R [1]=Y [0]=G â€” ìƒ‰ê³¼ ë¬´ê´€í•˜ê²Œ "í˜„ì¬ ìƒíƒœ" í™•ì¸ìš©.
-//   default ëŠ” í•­ìƒ ì ìƒ‰(RED) â€” fail-safe.
+// Ãâ·Â ¡ª ·¥ÇÁ 3°³¸¦ º¸µå RGB LED 3°³(LD0/LD1/LD2)·Î µ¶¸³ ±¸µ¿:
+//   rgb_led_r/g/b[2:0] : RGB LED i ÀÇ R/G/B Ã¤³Î (i=LD¹øÈ£, [0]=LD0 ¡¦)
+//     LD0=RED ·¥ÇÁ ¡æ R          LD1=YEL ·¥ÇÁ ¡æ R+G          LD2=GRN ·¥ÇÁ ¡æ G
+//     ¡Ø RGB LED ´Â "³ë¶û" Àü¿ë ÇÉÀÌ ¾ø´Ù ¡ª ³ë¶û = »¡°­+ÃÊ·Ï µ¿½Ã Á¡µî(°¡»êÈ¥ÇÕ).
+//     ¡Ø ÆÄ¶û(B)Àº ½ÅÈ£µî¿¡ ¹Ì»ç¿ë ¡æ Ç×»ó 0.  ÇÑ ¹ø¿¡ ÇÑ ·¥ÇÁ¸¸ Á¡µî(»óÃæ ¹æÁö).
+//   mono_led[2:0]      : »óÅÂ one-hot(¾î¶² ·¥ÇÁ) µğ¹ö±× Ç¥½Ã ¡æ LD4/LD5/LD6
+//                        [2]=R [1]=Y [0]=G ¡ª »ö°ú ¹«°üÇÏ°Ô "ÇöÀç »óÅÂ" È®ÀÎ¿ë.
+//   default ´Â Ç×»ó Àû»ö(RED) ¡ª fail-safe.
 //
-// â€» T_* ëŠ” "í‹± ë‹¨ìœ„" â€” en 1í„ìŠ¤ = 1í‹±. ë³´ë“œëŠ” tick_gen ìœ¼ë¡œ en ì´ 1Hz â†’
-//   30/25/5 í‹± = 30s/25s/5s. clk ì„ ë¶„ì£¼í•´ ìƒˆ í´ëŸ­ìœ¼ë¡œ ì“°ì§€ ë§ ê²ƒ(íŒŒìƒ í´ëŸ­ ê¸ˆì§€).
-//   ë³´ë“œ ë°°ì„ (tick_gen ì—°ê²°)ì€ top_traffic_light.v ì°¸ê³ .
+// ¡Ø T_* ´Â "Æ½ ´ÜÀ§" ¡ª en 1ÆŞ½º = 1Æ½. º¸µå´Â tick_gen À¸·Î en ÀÌ 1Hz ¡æ
+//   30/25/5 Æ½ = 30s/25s/5s. clk À» ºĞÁÖÇØ »õ Å¬·°À¸·Î ¾²Áö ¸» °Í(ÆÄ»ı Å¬·° ±İÁö).
+//   º¸µå ¹è¼±(tick_gen ¿¬°á)Àº top_traffic_light.v Âü°í.
 // =============================================================================
 module traffic_light (
   input  wire       clk,
-  input  wire       rst,        // ë™ê¸° active-high
-  input  wire       en,         // í´ëŸ­ ì¸ì—ì´ë¸” â€” ì´ í´ëŸ­ì—ì„œë§Œ 1í‹± ì „ì§„
-  output reg  [2:0] rgb_led_r,  // RGB LED Rì±„ë„ [i]=LDi (LD0/LD1/LD2)
-  output reg  [2:0] rgb_led_g,  // RGB LED Gì±„ë„
-  output reg  [2:0] rgb_led_b,  // RGB LED Bì±„ë„ â€” ì‹ í˜¸ë“± ë¯¸ì‚¬ìš©(í•­ìƒ 0)
-  output reg  [2:0] mono_led    // ìƒíƒœ one-hot ë””ë²„ê·¸ [2]=R [1]=Y [0]=G â†’ LD4~6
+  input  wire       rst,        // µ¿±â active-high
+  input  wire       en,         // Å¬·° ÀÎ¿¡ÀÌºí ¡ª ÀÌ Å¬·°¿¡¼­¸¸ 1Æ½ ÀüÁø
+  output reg  [2:0] rgb_led_r,  // RGB LED RÃ¤³Î [i]=LDi (LD0/LD1/LD2)
+  output reg  [2:0] rgb_led_g,  // RGB LED GÃ¤³Î
+  output reg  [2:0] rgb_led_b,  // RGB LED BÃ¤³Î ¡ª ½ÅÈ£µî ¹Ì»ç¿ë(Ç×»ó 0)
+  output reg  [2:0] mono_led    // »óÅÂ one-hot µğ¹ö±× [2]=R [1]=Y [0]=G ¡æ LD4~6
 );
   localparam RED=2'd0, GRN=2'd1, YEL=2'd2;
-  localparam [7:0] T_RED=30, T_GRN=25, T_YEL=5;   // í‹± ë‹¨ìœ„ (ë³´ë“œ 1Hz â†’ 30s/25s/5s)
+  localparam [7:0] T_RED=30, T_GRN=25, T_YEL=5;   // Æ½ ´ÜÀ§ (º¸µå 1Hz ¡æ 30s/25s/5s)
 
   reg [1:0] state, next;
   reg [7:0] tmr;
@@ -36,36 +36,36 @@ module traffic_light (
               (state==GRN && tmr==T_GRN-1) ||
               (state==YEL && tmr==T_YEL-1);
 
-  always @(posedge clk)                 // â‘  ìƒíƒœ+íƒ€ì´ë¨¸ (en ê²Œì´íŠ¸)
+  always @(posedge clk)                 // ¨ç »óÅÂ+Å¸ÀÌ¸Ó (en °ÔÀÌÆ®)
     if (rst)         begin state<=RED; tmr<=0; end
-    else if (en) begin                  // en=1 ì¸ í‹±ì—ì„œë§Œ ì „ì§„, en=0 ì´ë©´ ìœ ì§€
+    else if (en) begin                  // en=1 ÀÎ Æ½¿¡¼­¸¸ ÀüÁø, en=0 ÀÌ¸é À¯Áö
       if (done)      begin state<=next; tmr<=0; end
       else           tmr <= tmr + 1'b1;
     end
 
-  always @* case (state)                // â‘¡ ë‹¤ìŒ ìƒíƒœ
+  always @* case (state)                // ¨è ´ÙÀ½ »óÅÂ
     RED:     next = GRN;
     GRN:     next = YEL;
     YEL:     next = RED;
-    default: next = RED;                // ì•ˆì „: ì ìƒ‰
+    default: next = RED;                // ¾ÈÀü: Àû»ö
   endcase
 
-  always @* case (state)                // â‘¢ ìƒíƒœ one-hot (mono LED ë””ë²„ê·¸, Moore)
+  always @* case (state)                // ¨é »óÅÂ one-hot (mono LED µğ¹ö±×, Moore)
     RED:     mono_led = 3'b100;
     GRN:     mono_led = 3'b001;
     YEL:     mono_led = 3'b010;
-    default: mono_led = 3'b100;         // ì•ˆì „: ì ìƒ‰
+    default: mono_led = 3'b100;         // ¾ÈÀü: Àû»ö
   endcase
 
-  always @* begin                       // â‘£ ë¨í”„ â†’ RGB LED ìƒ‰ ë””ì½”ë“œ (Moore)
+  always @* begin                       // ¨ê ·¥ÇÁ ¡æ RGB LED »ö µğÄÚµå (Moore)
     rgb_led_r = 3'b000;
     rgb_led_g = 3'b000;
-    rgb_led_b = 3'b000;                 // íŒŒë‘ ë¯¸ì‚¬ìš©
+    rgb_led_b = 3'b000;                 // ÆÄ¶û ¹Ì»ç¿ë
     case (state)
-      RED:     rgb_led_r[0] = 1'b1;                            // LD0: ë¹¨ê°•
-      YEL:     begin rgb_led_r[1] = 1'b1; rgb_led_g[1] = 1'b1; end // LD1: ë¹¨ê°•+ì´ˆë¡ = ë…¸ë‘ â˜…
-      GRN:     rgb_led_g[2] = 1'b1;                            // LD2: ì´ˆë¡
-      default: rgb_led_r[0] = 1'b1;                            // ì•ˆì „: ì ìƒ‰(LD0)
+      RED:     rgb_led_r[0] = 1'b1;                            // LD0: »¡°­
+      YEL:     begin rgb_led_r[1] = 1'b1; rgb_led_g[1] = 1'b1; end // LD1: »¡°­+ÃÊ·Ï = ³ë¶û ¡Ú
+      GRN:     rgb_led_g[2] = 1'b1;                            // LD2: ÃÊ·Ï
+      default: rgb_led_r[0] = 1'b1;                            // ¾ÈÀü: Àû»ö(LD0)
     endcase
   end
 endmodule
