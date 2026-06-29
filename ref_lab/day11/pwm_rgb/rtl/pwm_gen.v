@@ -1,55 +1,55 @@
 // =============================================================================
-// Day 11 â€” pwm_gen.v   â˜… ì§ì ‘ êµ¬í˜„ ëª¨ë“ˆ â˜…
-// 2ë²„íŠ¼(ì¦ê°€/ê°ì†Œ) íŽ„ìŠ¤ë¡œ ë°ê¸° pct ë¥¼ Â±STEP% ì¡°ì ˆí•˜ê³ , ê·¸ ë¹„ìœ¨ë¡œ PWM ì¶œë ¥.
-//   rst   : ë™ê¸° active-high
-//   up_p  : +STEP% 1-clk íŽ„ìŠ¤ (top ì˜ ë””ë°”ìš´ì„œ+ìƒìŠ¹ì—£ì§€ ì¶œë ¥)
-//   dn_p  : -STEP% 1-clk íŽ„ìŠ¤
-//   pwm   : PWM ë¹„íŠ¸ â€” cnt<duty ë™ì•ˆ ON (duty 0~100%, ìƒí•œ ì—†ìŒ)
+// Day 11 ? pwm_gen.v   ¡Ú Á÷Á¢ ±¸Çö ¸ðµâ ¡Ú
+// 2¹öÆ°(Áõ°¡/°¨¼Ò) ÆÞ½º·Î PWM ºñ±³ ÀÓ°è°ª duty ¸¦ ¡¾STEP% ¸¸Å­ Á¶ÀýÇÏ°í PWM Ãâ·Â.
+//   rst   : µ¿±â active-high
+//   up_p  : +STEP% 1-clk ÆÞ½º (top ÀÇ µð¹Ù¿î¼­+»ó½Â¿§Áö Ãâ·Â)
+//   dn_p  : -STEP% 1-clk ÆÞ½º
+//   pwm   : PWM ºñÆ® ? cnt<duty µ¿¾È ON (duty 0~100%, »óÇÑ ¾øÀ½)
 //
-//   â”€â”€ ë™ìž‘ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-//   Â· pct(0..100%) ë¥¼ STEP% ë‹¨ìœ„ë¡œ saturating up/down. 0/100% ì—ì„œ í¬í™”.
-//   Â· duty = pct*PERIOD/100 â†’ PWM ì¹´ìš´í„° cnt(0..PERIOD-1) ì™€ ë¹„êµí•´ ì ë“±.
-//   Â· up_pÂ·dn_p ë™ì‹œ ìž…ë ¥ ì‹œ ë³€í™” ì—†ìŒ(ì„œë¡œ ê°€ë“œ).
+//   ¦¡¦¡ ¼³°è ÇÙ½É: °ö¼À¡¤³ª´°¼À ¾øÀÌ duty Á÷Á¢ ´©»ê ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+//   ¡¤ %(pct) Áß°£Ç¥ÇöÀ» µÎÁö ¾Ê°í, duty ¸¦ Ä«¿îÆ® ´ÜÀ§·Î ¡¾STEP_CNT °¡°¨»ê.
+//     STEP_CNT = (PERIOD*STEP)/100 Àº localparam ¡æ ÇÕ¼º Àü »ó¼öÁ¢±â·Î literal.
+//     (º¸µå PERIOD=100,000 ¡æ 5000 / ½Ã¹Ä PERIOD=100 ¡æ 5. ÇÏµå¿þ¾î °ö¡¤³ª´°¼À 0°³)
+//   ¡¤ ³²´Â ¿¬»ê: »ó¼ö °¡°¨»ê 1°³ + »ó¼ö ºñ±³ + cnt Ä«¿îÅÍ + cnt<duty ºñ±³±â»Ó.
+//   ¡¤ 0%¡¤100% ¿¡¼­ Æ÷È­. up_p¡¤dn_p µ¿½Ã ÀÔ·Â ½Ã º¯È­ ¾øÀ½(¼­·Î °¡µå).
 //
-//   â”€â”€ ë³´ë“œ ê¸°ì¤€ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-//   Â· ë©”ì¸ í´ëŸ­ 100MHz, PWM ì£¼íŒŒìˆ˜ 200Hz~1kHz ê¶Œìž¥(ìƒíƒœí‘œì‹œ LED ë””ë° ëŒ€ì—­).
-//     PWM_HZ=1000 â†’ PERIOD = CLK_HZ/PWM_HZ = 100,000 í´ëŸ­(1ms).
-//   Â· ì‹œë®¬ì€ +define+FUNC_SIM ìœ¼ë¡œ PERIOD=100 (100ì˜ ë°°ìˆ˜ë¼ % ê°€ ì •í™•).
-//     â†’ self-check TB ê°€ í•œ ì£¼ê¸° HIGH ìˆ˜ = pct(%) ë¡œ ë°”ë¡œ ê²€ì¦.
+//   ¦¡¦¡ º¸µå ±âÁØ ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+//   ¡¤ ¸ÞÀÎ Å¬·° 100MHz, PWM ÁÖÆÄ¼ö 200Hz~1kHz ±ÇÀå(»óÅÂÇ¥½Ã LED µð¹Ö ´ë¿ª).
+//     PWM_HZ=1000 ¡æ PERIOD = CLK_HZ/PWM_HZ = 100,000 Å¬·°(1ms).
+//   ¡¤ ½Ã¹ÄÀº +define+FUNC_SIM À¸·Î PERIOD=100, STEP_CNT=5 ¡æ duty(Ä«¿îÆ®)=pct(%).
+//     ¡æ self-check TB °¡ ÇÑ ÁÖ±â HIGH ¼ö = pct(%) ·Î ¹Ù·Î °ËÁõ.
 // =============================================================================
 module pwm_gen #(
-  parameter integer CLK_HZ = 100_000_000,   // ë©”ì¸ í´ëŸ­ 100MHz
-  parameter integer PWM_HZ = 1000,          // PWM ì£¼íŒŒìˆ˜ (200~1000 ê¶Œìž¥)
-  parameter integer STEP   = 5              // ë²„íŠ¼ 1íšŒë‹¹ ë°ê¸° ì¦ê° (%)
+  parameter integer CLK_HZ = 100_000_000,   // ¸ÞÀÎ Å¬·° 100MHz
+  parameter integer PWM_HZ = 1000,          // PWM ÁÖÆÄ¼ö (200~1000 ±ÇÀå)
+  parameter integer STEP   = 5              // ¹öÆ° 1È¸´ç ¹à±â Áõ°¨ (%)
 )(
   input  wire clk,
-  input  wire rst,          // ë™ê¸° active-high
-  input  wire up_p,         // +STEP% 1-clk íŽ„ìŠ¤
-  input  wire dn_p,         // -STEP% 1-clk íŽ„ìŠ¤
-  output wire pwm           // PWM ì¶œë ¥ (0~100%)
+  input  wire rst,          // µ¿±â active-high
+  input  wire up_p,         // +STEP% 1-clk ÆÞ½º
+  input  wire dn_p,         // -STEP% 1-clk ÆÞ½º
+  output wire pwm           // PWM Ãâ·Â (0~100%)
 );
 `ifdef FUNC_SIM
-  localparam integer PERIOD = 100;             // ì‹œë®¬: % ê°€ ì •í™• (100ì˜ ë°°ìˆ˜)
+  localparam integer PERIOD = 100;             // ½Ã¹Ä: % °¡ Á¤È® (100ÀÇ ¹è¼ö)
 `else
   localparam integer PERIOD = CLK_HZ / PWM_HZ; // 100MHz/1kHz = 100,000 (1ms)
 `endif
-  localparam integer DW = $clog2(PERIOD + 1);  // duty/cnt í­ (PERIOD í‘œí˜„)
+  localparam integer DW       = $clog2(PERIOD + 1);   // duty/cnt Æø (PERIOD Ç¥Çö)
+  localparam integer STEP_CNT = (PERIOD * STEP) / 100; // ¡Ú ÄÄÆÄÀÏÅ¸ÀÓ »ó¼ö: 5% = PERIOD/20
 
-  // â”€â”€ ë°ê¸° pct: STEP% ë‹¨ìœ„ saturating up/down (0~100%) â”€â”€
-  reg [6:0] pct;
+  // ¦¡¦¡ duty ¸¦ Ä«¿îÆ® ´ÜÀ§·Î Á÷Á¢ ¡¾STEP_CNT ´©»ê (°ö¼À¡¤³ª´°¼À ¾øÀ½) ¦¡¦¡
+  reg [DW-1:0] duty;
   always @(posedge clk)
-    if (rst)                pct <= 7'd0;
-    else if (up_p && !dn_p) pct <= (pct >= 100 - STEP) ? 7'd100 : pct + STEP;   // ìƒí•œ 100%
-    else if (dn_p && !up_p) pct <= (pct <= STEP)        ? 7'd0   : pct - STEP;   // í•˜í•œ 0%
+    if (rst)                duty <= 0;
+    else if (up_p && !dn_p) duty <= (duty >= PERIOD - STEP_CNT) ? PERIOD : duty + STEP_CNT;  // »óÇÑ 100%
+    else if (dn_p && !up_p) duty <= (duty <=          STEP_CNT) ? 0      : duty - STEP_CNT;  // ÇÏÇÑ 0%
 
-  // â”€â”€ pct(%) â†’ duty ì¹´ìš´íŠ¸. ìƒí•œ ì—†ìŒ(50% ì œí•œ ì œê±°) â”€â”€
-  wire [DW-1:0] duty = (pct * PERIOD) / 100;
-
-  // â”€â”€ PWM ì£¼ê¸° ì¹´ìš´í„° (0..PERIOD-1 ë°˜ë³µ) â”€â”€
+  // ¦¡¦¡ PWM ÁÖ±â Ä«¿îÅÍ (0..PERIOD-1 ¹Ýº¹) ¦¡¦¡
   reg [DW-1:0] cnt;
   always @(posedge clk)
     if (rst || cnt == PERIOD - 1) cnt <= 0;
     else                          cnt <= cnt + 1'b1;
 
-  assign pwm = (cnt < duty);    // duty ë¹„ìœ¨ë§Œí¼ ON
+  assign pwm = (cnt < duty);    // duty ºñÀ²¸¸Å­ ON
 endmodule

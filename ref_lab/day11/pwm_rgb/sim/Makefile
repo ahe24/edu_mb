@@ -10,7 +10,7 @@
 #   make wave       — Visualizer 로 design.bin + qwave.db 오픈 (post-sim)
 #   make clean      — work · 생성물 정리
 # -----------------------------------------------------------------------------
-#   파형: clk / rst / up_p / dn_p / pct / duty / cnt / pwm 을 묶어 밝기 ±5% 확인.
+#   파형: clk / rst / up_p / dn_p / duty / cnt / pwm 을 묶어 밝기 ±5% 확인.
 #   콘솔 RESULT: PASS 면 0→100→0% 각 단계 measured duty 가 기대 pct(%)와 일치.
 # =============================================================================
 

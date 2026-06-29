@@ -220,8 +220,35 @@ module top_traffic_light (
     .mono_led(mono_led));
 endmodule
 
-// ── tick_gen.v (Day10 원본 재사용 — board_flist.f 에서 상대참조, 사본 금지) ──
-//   DIV=100_000_000 → 100MHz 를 1Hz en 펄스로. (+define+FUNC_SIM 면 DIV=4 통합시뮬)`;
+// ── tick_gen.v 은 Day10 공용 모듈을 그대로 재사용 (아래 제공 파일에 동봉) ──
+//   board_flist.f 는 ../../../day10/counter/rtl/tick_gen.v 상대참조(원본 1곳·사본 금지).`;
+
+// 공용 1Hz en 생성기 — Day10 원본을 그대로 재사용 (제공)
+// 원본: ref_lab/day10/counter/rtl/tick_gen.v  (board_flist.f 상대참조, 사본 금지)
+const tickGenCode = `// =============================================================================
+// tick_gen.v — Day10 공용 모듈 재사용 (제공 — 그대로 복사해 사용)
+// 보드 100MHz 에서 1클럭 폭 tick(클럭 인에이블) 생성 — 파생 클럭 금지(단일 도메인).
+//   DIV 클럭마다 tick 1클럭 HIGH → top 에서 traffic_light.en 으로 연결.
+//   시뮬: +define+FUNC_SIM → DIV 축소(빠른 순환) · 합성: 실제 값(1억 = 1Hz).
+// ※ Day10~11 동일 파일 공유 — top_traffic_light 이 이 모듈을 인스턴스화.
+// =============================================================================
+module tick_gen (
+  input  wire clk,        // 보드 메인 클럭 100MHz
+  input  wire rst,        // 동기 active-high
+  output reg  tick        // DIV 클럭마다 1클럭 폭 HIGH
+);
+\`ifdef FUNC_SIM
+  localparam integer DIV = 4;            // 시뮬용 (빠른 순환)
+\`else
+  localparam integer DIV = 100_000_000;  // 100MHz → 1Hz
+\`endif
+
+  reg [26:0] cnt;
+  always @(posedge clk)
+    if (rst)               begin cnt <= 0; tick <= 1'b0; end
+    else if (cnt == DIV-1) begin cnt <= 0; tick <= 1'b1; end
+    else                   begin cnt <= cnt + 1'b1; tick <= 1'b0; end
+endmodule`;
 
 /** 실물형 슬라이드 스위치 — 라벨은 본체 왼쪽 같은 줄 */
 function SlideSwitch({ cx, cy, on, onToggle, label }: { cx: number; cy: number; on: boolean; onToggle: () => void; label: string }) {
@@ -526,15 +553,20 @@ export default function TrafficLightSlide() {
                   modalSubtitle="Arty A7-35T 발췌 · clk(100MHz) · rst(BTN0) · RGB LED LD0/LD1/LD2 · mono LD4~6"
                   code={xdcCode}
                 />
-                <div style={{ gridColumn: '1 / -1' }}>
-                  <ProvidedFileModal
-                    filename="top_traffic_light.v"
-                    accent="#4A6FA5"
-                    hint={<>보드 배선 <strong>tick_gen 1Hz → en</strong> (Day10 tick_gen 재사용)</>}
-                    modalSubtitle="보드 top · tick_gen(1Hz en) + traffic_light · board_flist.f 로 합성"
-                    code={topCode}
-                  />
-                </div>
+                <ProvidedFileModal
+                  filename="top_traffic_light.v"
+                  accent="#4A6FA5"
+                  hint={<>보드 배선 <strong>tick_gen → en</strong></>}
+                  modalSubtitle="보드 top · tick_gen(1Hz en) + traffic_light · board_flist.f 로 합성"
+                  code={topCode}
+                />
+                <ProvidedFileModal
+                  filename="tick_gen.v"
+                  accent="#8B6FA5"
+                  hint={<>1Hz en 생성 <strong>Day10 공용 모듈</strong></>}
+                  modalSubtitle="Day10 원본 재사용 · 100MHz→1Hz en · +define+FUNC_SIM 시 DIV 축소"
+                  code={tickGenCode}
+                />
               </div>
             </div>
           </div>

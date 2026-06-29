@@ -127,8 +127,8 @@ export default function FsmStyleSlide() {
       <div className="fpga-content-wrap">
         <SlideHeader
           badge="STEP 2 · 코딩 스타일"
-          title="FSM 코딩 스타일 — 1 · 2 · 3-process 중 무엇을?"
-          subtitle="상태·천이·출력을 몇 개의 always로 나누나 · 같은 6-state 컨트롤러를 세 스타일로 · safety-critical은 책임 분리가 명확한 3-process 권장"
+          title="FSM 코딩 스타일 — 1 · 2 · 3-process 구조 비교"
+          subtitle="상태·천이·출력의 always 블록 분리 방식"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.28fr 1fr', gap: '0.75rem' }}>

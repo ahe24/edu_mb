@@ -38,7 +38,7 @@ BTN2(raw) ─►[① debounce]─► dn_lvl ─►[② edge]─► dn_p ┤►[�
 |------|------|:----:|
 | `debounce` ① | 버튼 채터링 제거 + 2FF 동기화 (Day10 재사용) | 제공 |
 | `pwm_top` ②  | 보드 top — 디바운서 2개 인스턴스 + 상승엣지 검출 + 배선 | 제공 |
-| `pwm_gen` ③  | 밝기 pct ±5% saturating(0~100%) + PWM 카운터/비교 | **직접** |
+| `pwm_gen` ③  | duty ±5% 누산(곱·나눗셈 없이) + PWM 카운터/비교 | **직접** |
 | `led_driver` ④ | PWM 1비트를 RGB 녹색 + 단색 User LED 에 분배 | 제공 |
 
 ## 보드 기준 — PWM 주파수와 밝기 (50% 상한 제거)
@@ -50,11 +50,18 @@ BTN2(raw) ─►[① debounce]─► dn_lvl ─►[② edge]─► dn_p ┤►[�
   RGB 가 100%에서 눈부시면 **단색 User LED** 로 풀레인지를 편하게 확인(둘 다 같은 PWM).
 - up·dn **동시 입력 시 변화 없음**(`pwm_gen` 에서 서로 가드).
 
-## 설계 — pct(%) → duty
+## 설계 — duty 직접 누산 (곱셈·나눗셈 없음)
 
-`pct` 0..100 을 `STEP=5` 단위 saturating up/down → `duty = pct*PERIOD/100`.
+`%` 중간표현을 두지 않고 `duty`(비교 임계값)를 **카운트 단위로 직접 ±`STEP_CNT` 가감산**.
+`STEP_CNT = (PERIOD*STEP)/100` 은 `localparam` → 합성 전 **상수접기**로 literal
+(보드 `PERIOD=100,000` → 5000 / 시뮬 `PERIOD=100` → 5). 즉 하드웨어에 곱셈기·나눗셈기 없음.
+`duty` 가 변수 `pct` 와 상수를 곱하고 100으로 나누던 `wire = pct*PERIOD/100` 구조를
+제거 — 남는 연산은 **상수 가감산 1개 + 상수 비교 + `cnt` 카운터 + `cnt<duty` 비교기**뿐.
 PWM 카운터 `cnt` 가 0..PERIOD-1 반복, `pwm = (cnt < duty)` → duty 비율만큼 ON.
 PWM 1kHz(1ms 주기)면 눈에는 깜빡임 없이 연속 밝기로 보임.
+
+> `STEP_CNT`(=5000)는 2의 거듭제곱이 아니어도 됨 — 상수 가산기는 값과 무관하게 비용이 같아
+> 시프트 트릭 없이 정확히 5%(=1/20) 스텝을 유지. (`pwm`·`cnt` 만으로 TB 검증 가능.)
 
 ## self-checking
 

@@ -32,16 +32,16 @@ const portsCode = `module pwm_gen #(
 \`else
   localparam integer PERIOD = CLK_HZ/PWM_HZ;  // =100,000 (1kHz, 1ms)
 \`endif
-  localparam integer DW = $clog2(PERIOD+1);`;
+  localparam integer DW       = $clog2(PERIOD+1);
+  localparam integer STEP_CNT = (PERIOD*STEP)/100; // ★상수접기: 5% = PERIOD/20 (보드 5000/sim 5)`;
 
-const bodyShown = `  reg [6:0] pct;                            // 밝기 0..100 (%)
-  always @(posedge clk)                     // ±STEP% saturating up/down
-    if (rst)                pct <= 7'd0;
-    else if (up_p && !dn_p) pct <= (pct >= 100-STEP) ? 7'd100 : pct + STEP;
-    else if (dn_p && !up_p) pct <= (pct <= STEP)      ? 7'd0   : pct - STEP;
+const bodyShown = `  reg [DW-1:0] duty;                        // PWM 비교 임계값 (카운트 단위)
+  always @(posedge clk)                     // 곱·나눗셈 없이 ±STEP_CNT 상수 누산
+    if (rst)                duty <= 0;
+    else if (up_p && !dn_p) duty <= (duty >= PERIOD-STEP_CNT) ? PERIOD : duty + STEP_CNT;
+    else if (dn_p && !up_p) duty <= (duty <=         STEP_CNT) ? 0      : duty - STEP_CNT;
 
-  wire [DW-1:0] duty = (pct * PERIOD) / 100; // % → 카운트 (상한 없음)
-  reg  [DW-1:0] cnt;
+  reg [DW-1:0] cnt;
   always @(posedge clk)                      // PWM 주기 카운터
     if (rst || cnt==PERIOD-1) cnt <= 0; else cnt <= cnt + 1'b1;
   assign pwm = (cnt < duty);                 // duty 비율만큼 ON
@@ -171,6 +171,16 @@ export default function PwmModeSlide() {
 
   const barFillH = 150 * bright;
 
+  // ── 타이밍도 좌표 (한 주기 cnt 0..DMAX-1) ──
+  const TX0 = 150, TW = 186, TYH = 72, TYL = 116;
+  const cellW = TW / DMAX;
+  const xDuty = TX0 + dutyDemo * cellW;          // duty 경계 (cnt=dutyDemo)
+  const xCnt = TX0 + (cnt + 0.5) * cellW;        // 현재 cnt 셀 중앙
+  const wavePath =
+    dutyDemo <= 0    ? `M${TX0} ${TYL} H${TX0 + TW}` :          // 0% → 항상 LOW
+    dutyDemo >= DMAX ? `M${TX0} ${TYH} H${TX0 + TW}` :          // 100% → 항상 HIGH
+    `M${TX0} ${TYH} H${xDuty} V${TYL} H${TX0 + TW}`;            // cnt<duty HIGH, 이후 LOW
+
   return (
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
@@ -190,7 +200,7 @@ export default function PwmModeSlide() {
               boxShadow: shadow.card, display: 'flex', flexDirection: 'column',
             }}>
               <div style={{ fontSize: '0.62rem', fontWeight: 700, color: FPGA.textLight, textAlign: 'center', marginBottom: '0.05rem' }}>
-                <strong style={{ color: DAY11 }}>▲▼ 버튼</strong>이 pct ±5% → duty 결정 · <strong style={{ color: BLUE }}>clk</strong>마다 cnt가 <strong style={{ color: ORANGE }}>duty와 비교</strong>해 pwm ON/OFF
+                <strong style={{ color: DAY11 }}>▲▼ 버튼</strong>이 duty를 ±5%(PERIOD/20) 누산 · <strong style={{ color: BLUE }}>clk</strong>마다 cnt가 <strong style={{ color: ORANGE }}>duty와 비교</strong>해 pwm ON/OFF
               </div>
               <svg viewBox="0 0 470 220" style={{ flex: 1, minHeight: 0, width: '100%' }}>
                 {/* 밝기 세로 바 (0~100%) */}
@@ -204,26 +214,49 @@ export default function PwmModeSlide() {
                 ))}
                 <text x="58" y="205" fontSize="11" fontWeight="800" fill={p === 100 ? ORANGE : DAY11} textAnchor="middle" fontFamily={MONO}>{p}%</text>
 
-                {/* PWM 비교 영역 */}
-                <text x="150" y="34" fontSize="7.5" fontWeight="800" fill={ORANGE} fontFamily={MONO}>PWM: cnt &lt; duty</text>
-                {/* cnt 막대 */}
-                <text x="150" y="62" fontSize="7" fontWeight="800" fill={BLUE} fontFamily={MONO}>cnt</text>
-                <rect x="184" y="54" width="140" height="11" rx="3" fill="#E6ECF4" />
-                <rect x="184" y="54" width={140 * ((cnt + 1) / DMAX)} height="11" rx="3" fill={BLUE} />
-                <text x="254" y="63" fontSize="7" fontWeight="800" fill="#fff" textAnchor="middle" fontFamily={MONO}>{cnt}/{DMAX - 1}</text>
-                {/* duty 막대 (상한 없음) */}
-                <text x="150" y="86" fontSize="7" fontWeight="800" fill={ORANGE} fontFamily={MONO}>duty</text>
-                <rect x="184" y="78" width="140" height="11" rx="3" fill="#F1E6D6" />
-                <rect x="184" y="78" width={140 * (p / 100)} height="11" rx="3" fill={ORANGE} />
-                <text x="332" y="87" fontSize="7" fontWeight="800" fill="#5A4326" fontFamily={MONO}>{p}%</text>
-                <text x="184" y="100" fontSize="5.8" fontWeight="700" fill={DAY11} fontFamily={MONO}>상한 없음 (0~100%)</text>
-                {/* pwm 결과 */}
-                <text x="150" y="124" fontSize="7" fontWeight="800" fill={DAY11} fontFamily={MONO}>pwm</text>
-                <rect x="184" y="115" width="36" height="13" rx="3" fill={pwmOn ? DAY11 : '#DDE6E2'} />
-                <text x="202" y="124.5" fontSize="8" fontWeight="800" fill={pwmOn ? '#fff' : '#7A8B85'} textAnchor="middle" fontFamily={MONO}>{pwmOn ? 1 : 0}</text>
-                <text x="230" y="124.5" fontSize="6.3" fill={FPGA.textLight} fontFamily={MONO}>= (cnt &lt; duty)</text>
+                {/* ── PWM 타이밍도 (한 주기 cnt 0..DMAX-1) ── */}
+                <text x={TX0} y="32" fontSize="7.5" fontWeight="800" fill={ORANGE} fontFamily={MONO}>PWM 타이밍도 — cnt &lt; duty 동안 pwm = 1</text>
+
+                {/* ON/OFF 구간 음영 */}
+                <rect x={TX0} y={TYH - 9} width={Math.max(0, xDuty - TX0)} height={TYL - TYH + 18} fill={`${DAY11}1F`} />
+                <rect x={xDuty} y={TYH - 9} width={Math.max(0, TX0 + TW - xDuty)} height={TYL - TYH + 18} fill="#E7ECF3" />
+                {dutyDemo > 1 && (
+                  <text x={(TX0 + xDuty) / 2} y={TYH - 1} fontSize="5.6" fontWeight="700" fill={DAY11} textAnchor="middle" fontFamily={MONO}>ON (1)</text>
+                )}
+                {dutyDemo < DMAX - 1 && (
+                  <text x={(xDuty + TX0 + TW) / 2} y={TYH - 1} fontSize="5.6" fontWeight="700" fill="#8593A8" textAnchor="middle" fontFamily={MONO}>OFF (0)</text>
+                )}
+
+                {/* 0/1 레벨 가이드 */}
+                <line x1={TX0} y1={TYH} x2={TX0 + TW} y2={TYH} stroke={FPGA.border} strokeWidth="0.5" strokeDasharray="2 2" />
+                <line x1={TX0} y1={TYL} x2={TX0 + TW} y2={TYL} stroke={FPGA.border} strokeWidth="0.7" />
+                <text x={TX0 - 5} y={TYH + 2.5} fontSize="6.5" fontWeight="800" fill={DAY11} textAnchor="end" fontFamily={MONO}>1</text>
+                <text x={TX0 - 5} y={TYL + 2.5} fontSize="6.5" fontWeight="800" fill={FPGA.textLight} textAnchor="end" fontFamily={MONO}>0</text>
+
+                {/* pwm 파형 */}
+                <path d={wavePath} stroke={DAY11} strokeWidth="2.3" fill="none" strokeLinejoin="round" />
+
+                {/* duty 경계선 */}
+                <line x1={xDuty} y1={TYH - 14} x2={xDuty} y2={TYL + 12} stroke={ORANGE} strokeWidth="1.3" strokeDasharray="3 2" />
+                <text x={xDuty} y={TYL + 22} fontSize="6.2" fontWeight="800" fill={ORANGE} textAnchor="middle" fontFamily={MONO}>duty {dutyDemo}</text>
+
+                {/* cnt 커서 */}
+                <line x1={xCnt} y1={TYH - 14} x2={xCnt} y2={TYL + 12} stroke={BLUE} strokeWidth="1.4" />
+                <path d={`M${xCnt - 3.2} ${TYH - 19} L${xCnt + 3.2} ${TYH - 19} L${xCnt} ${TYH - 13} z`} fill={BLUE} />
+                <circle cx={xCnt} cy={pwmOn ? TYH : TYL} r="3.1" fill={BLUE} stroke="#fff" strokeWidth="1.1" />
+                <text x={xCnt} y={TYH - 22} fontSize="6" fontWeight="800" fill={BLUE} textAnchor="middle" fontFamily={MONO}>cnt {cnt}</text>
+
+                {/* x축 끝 라벨 */}
+                <text x={TX0} y={TYL + 22} fontSize="5.6" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>0</text>
+                <text x={TX0 + TW} y={TYL + 22} fontSize="5.6" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>{DMAX - 1}</text>
+
+                {/* pwm 결과 readout */}
+                <rect x={TX0} y={TYL + 30} width="34" height="13" rx="3" fill={pwmOn ? DAY11 : '#DDE6E2'} />
+                <text x={TX0 + 17} y={TYL + 39.5} fontSize="7.6" fontWeight="800" fill={pwmOn ? '#fff' : '#7A8B85'} textAnchor="middle" fontFamily={MONO}>pwm {pwmOn ? 1 : 0}</text>
+                <text x={TX0 + 40} y={TYL + 39.5} fontSize="6.2" fontWeight="700" fill={FPGA.text} fontFamily={MONO}>{pwmOn ? `cnt ${cnt} < duty ${dutyDemo} → ON` : `cnt ${cnt} ≥ duty ${dutyDemo} → OFF`}</text>
+
                 {/* 주파수 메모 */}
-                <text x="150" y="150" fontSize="6.1" fill={FPGA.textLight} fontFamily={MONO}>PWM 1kHz(주기 100,000clk) → 깜빡임 없이 연속 밝기</text>
+                <text x={TX0} y={TYL + 54} fontSize="6" fill={FPGA.textLight} fontFamily={MONO}>PWM 1kHz(주기 100,000clk) · duty {p}% → 깜빡임 없이 연속 밝기</text>
 
                 {/* LED 2개 — RGB 녹 + 단색 (같은 밝기) */}
                 <text x="410" y="28" fontSize="7" fontWeight="800" fill={FPGA.textLight} textAnchor="middle" fontFamily={MONO}>RGB(녹) · 단색</text>
@@ -263,7 +296,7 @@ export default function PwmModeSlide() {
                 password={REVEAL_PW}
                 portsCode={portsCode}
                 fullCode={`${portsCode}\n${bodyShown}`}
-                subtitle="밝기 ±5% saturating(0~100%) + PWM 비교 · PWM 1kHz"
+                subtitle="duty ±STEP_CNT 상수 누산(곱·나눗셈 없음) + PWM 비교 · PWM 1kHz"
                 inlineStyle={{ fontSize: '0.56rem', lineHeight: 1.4 }}
               />
               <button
@@ -379,7 +412,7 @@ export default function PwmModeSlide() {
               borderRadius: '8px', padding: '0.42rem 0.7rem',
             }}>
               <ul style={{ margin: 0, paddingLeft: '0.9rem', fontSize: '0.6rem', color: FPGA.text, lineHeight: 1.5 }}>
-                <li><strong>버튼 2개 ±5% saturating</strong> · 0~100% (상한 없음). RGB 100% 눈부심 시 단색 LED 로 확인.</li>
+                <li><strong>duty 직접 ±STEP_CNT 누산</strong> — 곱셈·나눗셈 없이 상수 가감산만(0~100% 포화). RGB 100% 눈부심 시 단색 LED 확인.</li>
                 <li><code>btn_up/dn</code>은 top 내부 <strong>디바운스+상승엣지 1펄스</strong>. <strong>pwm_gen만 구현</strong>, top·led_driver·debounce 제공.</li>
               </ul>
             </div>
