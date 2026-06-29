@@ -9,7 +9,7 @@ const DAY12 = '#177E89';
 const code = `module tb_uart_loop;                  // DUT = 보드 top, rx_pin/tx_pin 2핀만
   localparam CLK_HZ=160, BAUD=10, BIT_CLK=16, NBYTES=8;  // 시뮬 가속 1× DIV=16
   reg clk=0, rst, rx_pin;  wire tx_pin;  integer errors=0;
-  uart_loop #(.CLK_HZ(CLK_HZ),.BAUD(BAUD)) dut (.clk,.rst,.rx_pin,.tx_pin);
+  uart_loop #(.CLK_HZ(CLK_HZ),.BAUD(BAUD)) dut (.clk(clk),.rst(rst),.rx_pin(rx_pin),.tx_pin(tx_pin));
   always #5 clk = ~clk;
 
   reg [7:0] sb [0:63];  integer wr=0, rd=0;              // scoreboard queue

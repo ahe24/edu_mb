@@ -25,13 +25,13 @@ const portsCode = `module uart_loop #(
   wire tick, tick16, valid;
   wire [7:0] rdata;`;
 
-const bodyShown = `  baud_gen #(.CLK_HZ(CLK_HZ), .BAUD(BAUD))    u_b1 (.clk,.rst,.tick(tick));
-  baud_gen #(.CLK_HZ(CLK_HZ), .BAUD(BAUD*16)) u_b16(.clk,.rst,.tick(tick16));
+const bodyShown = `  baud_gen #(.CLK_HZ(CLK_HZ), .BAUD(BAUD))    u_b1 (.clk(clk),.rst(rst),.tick(tick));
+  baud_gen #(.CLK_HZ(CLK_HZ), .BAUD(BAUD*16)) u_b16(.clk(clk),.rst(rst),.tick(tick16));
   // 수신
-  uart_rx u_rx (.clk,.rst,.tick16,.rx_in(rx_pin),
+  uart_rx u_rx (.clk(clk),.rst(rst),.tick16(tick16),.rx_in(rx_pin),
                 .data(rdata), .valid(valid));
   // 받은 바이트를 그대로 재전송 (echo) — valid → start
-  uart_tx u_tx (.clk,.rst,.tick,.start(valid),.data(rdata),
+  uart_tx u_tx (.clk(clk),.rst(rst),.tick(tick),.start(valid),.data(rdata),
                 .tx(tx_pin), .busy());
 endmodule`;
 
