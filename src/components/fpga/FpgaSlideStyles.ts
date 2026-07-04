@@ -46,6 +46,25 @@ export const shadow = {
   table: '0 2px 12px rgba(0, 0, 0, 0.08)',
 } as const;
 
+/**
+ * 한 변만 강조한 카드 테두리 4변 개별 지정.
+ * `border` 단축속성과 `borderLeft`/`borderTop`을 같은 style 객체에 섞으면
+ * React가 리렌더 시 경고("mixing shorthand and non-shorthand")하므로 사용.
+ *   ...edgeBorder(FPGA.border, 'left', FPGA.accent)          // 왼쪽 4px 강조
+ *   ...edgeBorder(`${c.color}30`, 'top', c.color, '3px')     // 상단 3px 강조
+ */
+export const edgeBorder = (
+  base: string,
+  side: 'left' | 'top',
+  accent: string,
+  w = '4px',
+) => ({
+  borderTop: side === 'top' ? `${w} solid ${accent}` : `1px solid ${base}`,
+  borderRight: `1px solid ${base}`,
+  borderBottom: `1px solid ${base}`,
+  borderLeft: side === 'left' ? `${w} solid ${accent}` : `1px solid ${base}`,
+});
+
 // ── Slide background (section data-background-color에 사용) ──
 export const slideBg = FPGA.bg;
 export const slideBgAlt = FPGA.bgAlt;

@@ -10,7 +10,7 @@ import 'reveal.js/reveal.css';
  * - 슬라이드 배경: 부드러운 라이트 그레이
  * - 강조색: Steel Blue (#4A6FA5) 계열
  */
-export default function FpgaRevealWrapper({ children, header }: { children: React.ReactNode; header?: string }) {
+export default function FpgaRevealWrapper({ children, header, backHref = '/fpga', backLabel = '← 커리큘럼' }: { children: React.ReactNode; header?: string; backHref?: string; backLabel?: string }) {
   const deckRef = useRef<HTMLDivElement>(null);
   const deckInstance = useRef<any>(null);
   const keyHandler = useRef<((e: KeyboardEvent) => void) | null>(null);
@@ -136,8 +136,8 @@ export default function FpgaRevealWrapper({ children, header }: { children: Reac
         {/* 뒤로가기 버튼 */}
         {mounted && !isPrintPDF && (
           <Link
-            href="/fpga"
-            aria-label="FPGA 커리큘럼 페이지로 돌아가기"
+            href={backHref}
+            aria-label="뒤로 가기"
             style={{
               position: 'fixed',
               bottom: '8px',
@@ -155,7 +155,7 @@ export default function FpgaRevealWrapper({ children, header }: { children: Reac
               padding: '2px 8px',
               borderRadius: '4px',
             }}
-          >← 커리큘럼</Link>
+          >{backLabel}</Link>
         )}
 
         {/* Footer (인쇄 모드에서 숨김) */}
