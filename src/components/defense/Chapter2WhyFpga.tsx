@@ -212,19 +212,31 @@ function ChipTypesSlide() {
 const REASONS = [
   {
     icon: '🔧', title: '소량 다품종', tag: 'ASIC NRE 회피',
-    desc: 'ASIC은 초기 마스크(NRE) 비용이 수백만 달러 규모 → 수십·수백 대 생산엔 비경제적. FPGA는 초기비용 없이 소량·다품종을 소화',
+    points: [
+      { k: 'ASIC', t: '마스크(NRE) 비용 수백만 달러 → 수십~수백 대 생산엔 비경제적' },
+      { k: 'FPGA', t: '초기비용 없이 소량·다품종 대응' },
+    ],
   },
   {
     icon: '⏳', title: '20~30년 장기 운용', tag: '단종·업그레이드 대응',
-    desc: '무기체계 수명주기는 수십 년. 부품 단종(EOL)이나 요구 변경 시 비트스트림 재프로그래밍으로 야전에서 기능 갱신·대체',
+    points: [
+      { k: '수명주기', t: '수십 년 운용, 부품 단종(EOL)·요구 변경 필연' },
+      { k: 'FPGA', t: '비트스트림 재프로그래밍 → 야전에서 기능 갱신·대체' },
+    ],
   },
   {
     icon: '⏱️', title: '결정론적 실시간', tag: '지터 없는 고정 지연',
-    desc: 'CPU 인터럽트·캐시가 유발하는 지연 변동 없이, 하드웨어 병렬 파이프라인으로 고정 지연 보장 — 유도·표적추적·센서융합에 필수',
+    points: [
+      { k: 'CPU', t: '인터럽트·캐시로 지연 변동(지터) 발생' },
+      { k: 'FPGA', t: '병렬 파이프라인 고정 지연 → 유도·표적추적·센서융합에 필수' },
+    ],
   },
   {
     icon: '🔌', title: '유연한 I/O 통합', tag: 'SWaP 절감',
-    desc: 'MIL-STD-1553·SpaceWire·각종 센서·레거시 버스를 재구성 가능한 I/O로 한 칩에 통합 → 보드 복잡도·크기·무게·전력(SWaP) 절감',
+    points: [
+      { k: '인터페이스', t: 'MIL-STD-1553 · SpaceWire · 각종 센서 · 레거시 버스' },
+      { k: 'FPGA', t: '재구성 I/O로 한 칩 통합 → 크기·무게·전력(SWaP) 절감' },
+    ],
   },
 ];
 
@@ -273,7 +285,7 @@ function ValueContrastChart() {
               stroke={FPGA.border} strokeWidth="1" strokeDasharray="3,5" opacity="0.7" />
       ))}
 
-      {/* 가치관 정반대 대각선 (상용 SoC ↔ 무기체계) */}
+      {/* 설계 기준 대비 대각선 (상용 SoC ↔ 무기체계) */}
       <line x1="345" y1="185" x2="140" y2="103" stroke={FPGA.accent} strokeWidth="1.5"
             strokeDasharray="6,5" opacity="0.55" />
 
@@ -319,9 +331,12 @@ function WhyDefenseSlide() {
             <div style={{
               background: `linear-gradient(135deg, rgba(232,145,58,0.10), rgba(232,145,58,0.03))`,
               ...edgeBorder(`${FPGA.accent}30`, 'left', FPGA.accent),
-              borderRadius: '10px', padding: '0.7rem 1.1rem', fontSize: '0.9rem', color: FPGA.text, flexShrink: 0,
+              borderRadius: '10px', padding: '0.6rem 1.1rem', fontSize: '0.88rem', color: FPGA.text, flexShrink: 0,
+              display: 'flex', flexDirection: 'column', gap: '0.25rem',
             }}>
-              스마트폰 칩(최신 공정 · 대량 · 단명)과 <strong style={{ color: FPGA.accent }}>정반대의 가치관</strong> — 최고 성능보다 <strong style={{ color: FPGA.dark }}>예측 가능성과 수명</strong>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: FPGA.accent }}>최적화 목표 자체가 다름</div>
+              <div><strong style={{ color: FPGA.dark }}>스마트폰 AP</strong> — PPA(성능·전력·면적) · 단위 원가</div>
+              <div><strong style={{ color: FPGA.accent }}>무기체계</strong> — 결정론적 동작 · 수명주기 지원</div>
             </div>
           </div>
 
@@ -343,7 +358,13 @@ function WhyDefenseSlide() {
                     padding: '2px 9px', borderRadius: '999px', whiteSpace: 'nowrap', flexShrink: 0,
                   }}>{r.tag}</span>
                 </div>
-                <div style={{ fontSize: '0.83rem', color: FPGA.textLight, lineHeight: 1.55 }}>{r.desc}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                  {r.points.map((p) => (
+                    <div key={p.k} style={{ fontSize: '0.83rem', color: FPGA.textLight, lineHeight: 1.45 }}>
+                      <strong style={{ color: p.k === 'FPGA' ? FPGA.primary : FPGA.text }}>{p.k}</strong> — {p.t}
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>

@@ -12,6 +12,7 @@
 
 import { FPGA, slideBg, shadow, edgeBorder } from '../fpga/FpgaSlideStyles';
 import SlideHeader from '../fpga/SlideHeader';
+import ImagePlaceholder from '../ImagePlaceholder';
 
 const CH3 = '3장 · 민수 vs 국방';
 
@@ -24,12 +25,12 @@ const chip = (color: string) => ({
 
 /* ══════════ 슬라이드 10 — 동작 vs 증명 (+ 방산 V 모델) ══════════ */
 
-/* V 모델 좌(정의·설계) ↔ 우(통합·검증) 레벨 대응 · 대표 게이트/산출물 */
+/* V 모델 좌(정의·설계) ↔ 우(통합·검증) 레벨 대응 · 대표 기술검토/산출물 */
 const V_LEVELS = [
-  { y: 26,  lx: 34,  rx: 816, lt: '운용 개념',      lg: 'ConOps',    rt: '인수 · 운용',  rg: 'PCA',       vl: '운용 확인' },
-  { y: 84,  lx: 92,  rx: 758, lt: '시스템 요구사항', lg: 'SRR · SRS', rt: '시스템 검증',  rg: 'SVR · FCA', vl: '요구 검증' },
-  { y: 142, lx: 150, rx: 700, lt: '예비 설계',      lg: 'SFR · PDR', rt: '통합 시험',    rg: 'TRR',       vl: '설계 검증' },
-  { y: 200, lx: 208, rx: 642, lt: '상세 설계',      lg: 'CDR',       rt: '단위 시험',    rg: '구조 커버리지', vl: '구현 검증' },
+  { y: 26, lx: 34, rx: 816, lt: '운용 개념', lg: 'ConOps', rt: '인수 · 운용', rg: 'PCA', vl: '운용 확인' },
+  { y: 84, lx: 92, rx: 758, lt: '시스템 요구사항', lg: 'SRR · SRS', rt: '시스템 검증', rg: 'SVR · FCA', vl: '요구 검증' },
+  { y: 142, lx: 150, rx: 700, lt: '예비 설계', lg: 'SFR · PDR', rt: '통합 시험', rg: 'TRR', vl: '설계 검증' },
+  { y: 200, lx: 208, rx: 642, lt: '상세 설계', lg: 'CDR', rt: '단위 시험', rg: '구조 커버리지', vl: '구현 검증' },
 ];
 
 function VBox({ x, y, w = 150, h = 46, title, gate, color, gbg, gtext }: {
@@ -90,9 +91,9 @@ function VModelSvg() {
 
       {/* 다리 방향 캡션 (빈 삼각 코너 활용) */}
       <text x={38} y={250} fontSize={13} fontWeight={800} fill={FPGA.primary}>정의 · 설계</text>
-      <text x={38} y={268} fontSize={10.5} fontWeight={600} fill={FPGA.textLight}>요구 → 설계 · 하강</text>
+      <text x={38} y={268} fontSize={10.5} fontWeight={600} fill={FPGA.textLight}>요구 → 설계</text>
       <text x={962} y={250} textAnchor="end" fontSize={13} fontWeight={800} fill={FPGA.accent}>통합 · 검증</text>
-      <text x={962} y={268} textAnchor="end" fontSize={10.5} fontWeight={600} fill={FPGA.textLight}>시험 → 인수 · 상승</text>
+      <text x={962} y={268} textAnchor="end" fontSize={10.5} fontWeight={600} fill={FPGA.textLight}>시험 → 인수</text>
     </svg>
   );
 }
@@ -123,8 +124,8 @@ function ThesisSlide() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0 0.1rem 0.1rem' }}>
               <span style={{ fontSize: '0.82rem', fontWeight: 800, color: FPGA.dark }}>방산 개발 V 모델 <span style={{ color: FPGA.textLight, fontWeight: 600 }}>· V&amp;V 생명주기</span></span>
               <span style={{ display: 'flex', gap: '0.85rem', fontSize: '0.7rem', fontWeight: 700 }}>
-                <span style={{ color: FPGA.primary }}>■ 정의·설계 게이트</span>
-                <span style={{ color: FPGA.accent }}>■ 통합·검증 게이트</span>
+                <span style={{ color: FPGA.primary }}>■ 정의·설계 검토회의</span>
+                <span style={{ color: FPGA.accent }}>■ 통합·검증 검토·감사</span>
                 <span style={{ color: FPGA.textLight }}>┄ 설계 ↔ 시험 추적</span>
               </span>
             </div>
@@ -133,12 +134,21 @@ function ThesisSlide() {
             </div>
           </div>
 
-          {/* 결론 배너 */}
+          {/* V 모델이 '증명'을 강제하는 장치 */}
           <div style={{
-            background: FPGA.dark, color: '#fff', borderRadius: '12px', padding: '0.7rem 1.4rem',
-            fontSize: '1.05rem', fontWeight: 700, textAlign: 'center', boxShadow: shadow.deep,
+            background: FPGA.dark, borderRadius: '12px', padding: '0.65rem 1.2rem',
+            boxShadow: shadow.deep, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.1rem',
           }}>
-            국방에서 &lsquo;완성&rsquo;이란 &lsquo;동작&rsquo;이 아니라 <span style={{ color: FPGA.accent }}>&lsquo;동작함의 증명&rsquo;</span>
+            {[
+              ['설계 ↔ 시험 1:1 대응', '모든 설계 레벨에 대응 시험 존재 · 설계 산출물이 곧 시험 합격 기준'],
+              ['기술검토회의 통과', '단계마다 공식 기술검토회의 — 증빙 없이는 다음 단계 진행 불가'],
+              ['검증 조기 계획', '시험 계획은 설계와 동시 수립 · 결함 발견이 늦을수록 수정 비용 급증'],
+            ].map(([t, d], i) => (
+              <div key={t} style={{ paddingLeft: i ? '1.1rem' : 0, borderLeft: i ? '1px solid rgba(255,255,255,0.18)' : 'none' }}>
+                <div style={{ fontSize: '0.84rem', fontWeight: 800, color: FPGA.accent }}>{t}</div>
+                <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.88)', lineHeight: 1.45, marginTop: '2px' }}>{d}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -212,7 +222,7 @@ function TraceabilitySlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader badge={CH3} title="요구사항 추적성 (Traceability)" subtitle="요구사항 → 설계 → 코드 → 검증 전 구간 양방향 연결" />
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '1.3rem' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '0.9rem' }}>
           <div style={{ fontSize: '0.82rem', fontWeight: 700, color: FPGA.primary, textAlign: 'center' }}>순방향 전개 →</div>
           <div style={{ display: 'flex', alignItems: 'stretch', gap: '0.6rem' }}>
             {TRACE.map((n, i) => (
@@ -239,6 +249,13 @@ function TraceabilitySlide() {
                 <div style={{ fontSize: '0.8rem', color: FPGA.textLight }}>{b}</div>
               </div>
             ))}
+          </div>
+          {/* 실제 도구 화면 (1901×623 가로형) — 전체 폭 하단 배치, 클릭 확대 */}
+          <div style={{ flexShrink: 0, background: FPGA.white, border: `1px solid ${FPGA.border}`, borderRadius: '12px', padding: '0.55rem 0.7rem 0.4rem', boxShadow: shadow.card }}>
+            <ImagePlaceholder src="/images/defense/traceability.png" label="추적성 도구 화면" desc="요구사항 추적성 관리 도구 그래픽 뷰" maxHeight="245px" />
+            <div style={{ marginTop: '0.3rem', fontSize: '0.74rem', color: FPGA.textLight, textAlign: 'center' }}>
+              추적성 관리 도구 그래픽 뷰 — 상하위 요구사항 ↔ HDL 코드 ↔ 테스트벤치 · 테스트플랜 ↔ 시험 결과(PASS/FAIL) 링크
+            </div>
           </div>
         </div>
       </div>
