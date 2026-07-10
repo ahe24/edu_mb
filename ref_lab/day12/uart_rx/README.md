@@ -24,8 +24,8 @@ uart_rx/
 ## 설계 — 수신 흐름
 
 - `rx_in` 비동기 입력 → 2FF(`s0`,`s1`) 동기화로 metastability 방어.
-- IDLE 에서 `rx==0`(start) 검출 → START 중앙(os==7)에서 진입 확정.
-- DATA 는 16틱마다(os==15) 비트 **중앙** 샘플, LSB first 시프트.
+- IDLE 에서 `rx==0`(start) 검출 → START 중앙(os_cnt==7)에서 진입 확정.
+- DATA 는 16틱마다(os_cnt==15) 비트 **중앙** 샘플, LSB first 시프트.
 - STOP 후 `data` 확정 + `valid` 1클럭 펄스.
 
 ## self-checking
