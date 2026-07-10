@@ -63,7 +63,7 @@ const curriculum = [
       {
         week: 7, title: 'Testbench 고도화 및 커버리지 분석',
         days: [
-          { day: 13, title: '재사용 Testbench 구조 및 SVA Assertion 기초', ready: false },
+          { day: 13, title: '재사용 Testbench 구조 및 SVA Assertion 기초', ready: true },
           { day: 14, title: '코드 커버리지 측정 및 커버리지 클로저', ready: false },
         ],
       },
