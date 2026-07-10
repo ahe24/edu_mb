@@ -154,7 +154,7 @@ export default function FpgaCurriculumPage() {
           Safety-Critical FPGA 설계 검증 과정
         </h1>
         <p style={{ fontSize: '1rem', color: FPGA.textLight, maxWidth: '520px', margin: '0 auto' }}>
-          3개월 (12주) · 24회차 · 총 84시간 과정
+          설계 검증에서 최종 산출물 까지 단계적 로드맵
         </p>
       </div>
 
