@@ -78,3 +78,4 @@ ref_lab/**/sim/*.wlf
 ref_lab/**/sim/*.vstf
 ref_lab/**/sim/*.ses
 ref_lab/**/sim/*.log
+ref_lab/**/sim/*.bak
