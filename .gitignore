@@ -79,3 +79,9 @@ ref_lab/**/sim/*.vstf
 ref_lab/**/sim/*.ses
 ref_lab/**/sim/*.log
 ref_lab/**/sim/*.bak
+ref_lab/**/sim/*.ucdb
+ref_lab/**/sim/*.rpt
+ref_lab/**/sim/covhtmlreport/
+ref_lab/**/*.ucdb
+*.utf8
+questa_sim_user.txt

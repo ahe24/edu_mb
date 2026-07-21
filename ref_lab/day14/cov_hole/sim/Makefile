@@ -13,6 +13,7 @@
 # =============================================================================
 
 TOP   := tb_trip_boost
+DUT   := trip_top
 FLIST := flist.f
 OPT   := opt_cov
 UCDB  := boost.ucdb
@@ -25,10 +26,10 @@ all: cov
 cov:
 	vlib work
 	vmap work work
-	vlog -f $(FLIST) +cover=$(COVER)
-	vopt $(TOP) -o $(OPT) +cover=$(COVER) +acc -debug
+	vlog -f $(FLIST)
+	vopt $(TOP) -o $(OPT) +cover=$(COVER)+$(DUT). +acc -debug
 	vsim -c -coverage $(OPT) \
-	     -do "run -all; coverage save $(UCDB); coverage report; quit -f"
+	     -do "coverage save -onexit $(UCDB); run -all; quit -f"
 	@echo "OK ― UCDB: $(UCDB)"
 
 report:

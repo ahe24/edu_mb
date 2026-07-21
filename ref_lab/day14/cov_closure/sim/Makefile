@@ -14,6 +14,7 @@
 # =============================================================================
 
 TOP    := tb_trip_boost
+DUT    := trip_top
 FLIST  := flist.f
 OPT    := opt_cov
 COVER  := bcesf
@@ -27,10 +28,10 @@ all: closure
 cov:
 	vlib work
 	vmap work work
-	vlog -f $(FLIST) +cover=$(COVER)
-	vopt $(TOP) -o $(OPT) +cover=$(COVER) +acc -debug
+	vlog -f $(FLIST)
+	vopt $(TOP) -o $(OPT) +cover=$(COVER)+$(DUT). +acc -debug
 	vsim -c -coverage $(OPT) \
-	     -do "run -all; coverage save $(UCDB); quit -f"
+	     -do "coverage save -onexit $(UCDB); run -all; quit -f"
 	@echo "OK ― 제외 전 UCDB: $(UCDB)"
 
 # Coverage View 모드에서 제외(사유) 적용 → 재저장

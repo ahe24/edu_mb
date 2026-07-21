@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FPGA, slideBg, shadow } from '../FpgaSlideStyles';
 import SlideHeader from '../SlideHeader';
-import RevealCodeModal from '../RevealCodeModal';
+import ProvidedFileModal from '../ProvidedFileModal';
 
 const DAY14 = '#0B7285';
 const ORANGE = '#E8913A';
@@ -13,24 +13,18 @@ const PURPLE = '#8B6FA5';
 const RED = '#E53E3E';
 const MONO = '"JetBrains Mono", monospace';
 
-// 구현부 임시 잠금 암호 (기록: ref_lab/SOLUTION_PASSWORDS.txt)
-const REVEAL_PW = '8351';
-
-const excludePorts = `# exclude.do — 도달불가 홀을 사유와 함께 제외(waiver)
-#   Coverage View 모드(vsim -viewcov)에서 실행 — -comment 는 여기서만 지원
-transcript on
-# ⋯ 제외 명령 (아래 잠금)`;
-
-const excludeFull = `# exclude.do — 커버리지 클로저 [정답]
+const excludeCode = `# exclude.do — 커버리지 클로저 : 도달불가 홀을 사유와 함께 제외(waiver)
+#   Coverage View 모드(vsim -viewcov <ucdb>)에서 실행 — -comment 는 여기서만 지원
 transcript on
 
-# [도달불가] trip_ctrl.v:69  default: state <= MONITOR;
-#   state 는 2비트 전수(0~3) 열거 → case default 원천 도달불가.
+# [도달불가] trip_fsm.v:71  default: state <= MONITOR;
+#   state 는 2비트 전수 열거(0~3) → case default 는 원천 도달불가.
 #   방어적 코딩으로 코드는 유지, 커버리지는 사유 남기고 제외.
-coverage exclude -srcfile trip_ctrl.v -linerange 69 \\
-  -comment "UNREACH: state 2-bit fully-enumerated; default is defensive"
+#   -srcfile 은 UCDB 에 기록된 경로(flist.f 기준 상대경로)와 일치해야 매칭된다.
+coverage exclude -srcfile ../../rtl/trip_fsm.v -linerange 71 \\
+  -comment "UNREACH: state 2-bit fully-enumerated; default is defensive/unreachable"
 
-coverage report   # 제외 반영 → 100% (waiver 1건)`;
+coverage report   # 제외 반영 → DUT 전체 100.00% (waiver 1건)`;
 
 type Dec = 'add' | 'excl' | 'bug';
 const DECISIONS: { key: Dec; n: string; title: string; when: string; action: string; color: string }[] = [
@@ -90,7 +84,7 @@ export default function ClosureSlide() {
               })}
             </div>
 
-            {/* trip_ctrl 적용 예 */}
+            {/* trip_fsm 적용 예 */}
             <div style={{
               flex: 1, minHeight: 0,
               background: `linear-gradient(135deg, ${cur.color}0A, ${cur.color}16)`,
@@ -99,7 +93,7 @@ export default function ClosureSlide() {
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
             }}>
               <div style={{ fontSize: '0.62rem', fontWeight: 800, color: cur.color, marginBottom: '0.15rem' }}>
-                trip_ctrl 적용 — {cur.title}
+                trip_fsm 적용 — {cur.title}
               </div>
               <div style={{ fontSize: '0.62rem', color: FPGA.text, lineHeight: 1.5 }}>
                 {sel === 'add' && <>WARN→MONITOR 회복, en=0, clear 미도달 → 자극 부재일 뿐 · <strong>실습2 보강</strong>으로 해소.</>}
@@ -109,25 +103,15 @@ export default function ClosureSlide() {
             </div>
           </div>
 
-          {/* ── 우: exclude.do 잠금 + 클로저 결과 + 함정 ── */}
+          {/* ── 우: exclude.do + 클로저 결과 + 함정 ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minHeight: 0 }}>
-            <div style={{
-              flex: 1, minHeight: 0,
-              background: '#1A2235', borderRadius: '10px',
-              padding: '0.55rem 0.85rem', boxShadow: shadow.card,
-              borderLeft: `3px solid ${ORANGE}`,
-              display: 'flex', flexDirection: 'column',
-            }}>
-              <RevealCodeModal
-                title="exclude.do — 제외 판정 작성"
-                accent={ORANGE}
-                password={REVEAL_PW}
-                portsCode={excludePorts}
-                fullCode={excludeFull}
-                subtitle="사유(-comment)는 HTML 리포트 툴팁 = 심사 증적 · exclude.do 는 형상관리 대상"
-                inlineStyle={{ fontSize: '0.58rem', lineHeight: 1.5 }}
-              />
-            </div>
+            <ProvidedFileModal
+              filename="exclude.do"
+              accent={ORANGE}
+              hint={<>제외 판정 스크립트 — 사유(-comment)는 심사 증적 (제공)</>}
+              modalSubtitle="사유(-comment)는 HTML 리포트 툴팁 = 심사 증적 · exclude.do 는 형상관리 대상"
+              code={excludeCode}
+            />
 
             {/* 클로저 결과 */}
             <div style={{
@@ -135,11 +119,11 @@ export default function ClosureSlide() {
               border: `1px solid ${GREEN}35`, borderLeft: `4px solid ${GREEN}`,
               borderRadius: '9px', padding: '0.45rem 0.8rem', boxShadow: shadow.card, flexShrink: 0,
             }}>
-              <div style={{ fontSize: '0.64rem', fontWeight: 800, color: '#2F855A', marginBottom: '0.2rem' }}>클로저 달성</div>
+              <div style={{ fontSize: '0.64rem', fontWeight: 800, color: '#2F855A', marginBottom: '0.2rem' }}>클로저 달성(실측)</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.6rem', fontFamily: MONO, color: FPGA.text }}>
-                <span>branch/fsm <strong style={{ color: ORANGE }}>92%</strong></span>
+                <span>branch 93%·stmt 95% <strong style={{ color: ORANGE }}>(98.57%)</strong></span>
                 <span style={{ color: GREEN }}>—제외→</span>
-                <span><strong style={{ color: '#2F855A' }}>100%</strong> + waiver 1건</span>
+                <span><strong style={{ color: '#2F855A' }}>100.00%</strong> + waiver 1건</span>
                 <span style={{ marginLeft: 'auto', color: FPGA.textLight }}>= 검증 종료 근거</span>
               </div>
             </div>

@@ -68,10 +68,12 @@ const TYPES: {
   },
 ];
 
-// 미니 코드 (trip_ctrl.v) — 각 라인이 어떤 커버리지 유형의 계측 소재인지 태그
+// 미니 코드 (trip_top 서브모듈 통합 요약) — 각 라인이 어떤 커버리지 유형의 계측 소재인지 태그
+// 실제는 vote2oo3.v/warn_counter.v/trip_fsm.v 3개 파일로 분리 — 한눈 비교용 통합 예시.
 // cm=주석 라인 (항상 회색). state 는 2비트(0~3) 전수 → default 는 원천 도달불가(실습4 제외 소재)
 const CODE: { t: string; on: Key[]; cm?: boolean }[] = [
-  { t: 'module trip_ctrl #(parameter WARN_LIMIT=3) (', on: [] },
+  { t: '// vote2oo3 + warn_counter + trip_fsm 통합 요약', on: [], cm: true },
+  { t: 'module trip_top_demo #(parameter WARN_LIMIT=3) (', on: [] },
   { t: '  input        clk, rst, en,   // rst: 동기·active-high', on: ['t'] },
   { t: '  input  [2:0] sensor,         // 3중 초과-임계 플래그', on: ['t'] },
   { t: '  input        clear,          // LATCH 운전원 해제', on: ['t'] },
@@ -106,7 +108,7 @@ export default function CovTypesSlide() {
         <SlideHeader
           badge="개념 · 커버리지 종류"
           title="코드 커버리지 종류 — 계측 대상"
-          subtitle="유형 클릭 시 예제 코드에서 계측 대상 강조 · 한 DUT(trip_ctrl.v), 서로 다른 관점"
+          subtitle="유형 클릭 시 예제 코드에서 계측 대상 강조 · 한 DUT(trip_top), 서로 다른 관점"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.42fr 1fr', gap: '0.75rem' }}>
@@ -118,7 +120,7 @@ export default function CovTypesSlide() {
             display: 'flex', flexDirection: 'column', minHeight: 0,
           }}>
             <div style={{ fontSize: '0.6rem', color: cur.color, fontWeight: 800, marginBottom: '0.2rem', letterSpacing: '0.04em', flexShrink: 0 }}>
-              trip_ctrl.v — <span style={{ color: '#7C90B0' }}>{cur.label} 관점 강조</span>
+trip_top 통합 요약 — <span style={{ color: '#7C90B0' }}>{cur.label} 관점 강조</span>
             </div>
             <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
               {CODE.map((ln, i) => {

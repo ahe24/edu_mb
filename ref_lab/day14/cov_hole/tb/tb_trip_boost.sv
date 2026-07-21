@@ -1,14 +1,16 @@
 // =============================================================================
-// tb_trip_boost.sv ¡ª ½Ç½À2(cov_hole) º¸°­ Testbench
-//   ±âº» TB °¡ ³²±ä È¦À» ÀÚ±Ø º¸°­À¸·Î ¸Ş¿î´Ù. ±³À°»ı ±¸Çö ´ë»óÀº boost_scenario ÅÂ½ºÅ©.
+// tb_trip_boost.sv â€• ì‹¤ìŠµ2(cov_hole) ë³´ê°• Testbench
+//   ê¸°ë³¸ TB ê°€ ë‚¨ê¸´ í™€ì„ ìê¸° ê²€ì‚¬ì—ì„œ ë©”ìš´ë‹¤. ì œê³µë˜ëŠ” ê²ƒì€ drive ìœ í‹¸(hold)ê³¼
+//   ìê¸°ê²€ì‚¬(check/report) í•˜ë„¤ìŠ¤, 5ê°€ì§€ ë¯¸ë„ë‹¬ ì‹œë‚˜ë¦¬ì˜¤ë¥¼ boost_scenario ì— ë‹´ëŠ”ë‹¤.
 //
-//   [Á¦°ø]  clk/reset ÇÏ³×½º ¡¤ drive À¯Æ¿(step/hold) ¡¤ ÀÚ±â°Ë»ç ¡¤ report
-//   [±¸Çö]  boost_scenario ¡ª ¾Æ·¡ 4°¡Áö ¹Ìµµ´Ş ½Ã³ª¸®¿À¸¦ Ãß°¡ ÀÚ±Ø:
-//            (1) en=0 ±¸°£        ¡æ en ºĞ±â false µµ´Ş
-//            (2) ÀÏ½Ã ÃÊ°ú È¸º¹    ¡æ WARN¡æMONITOR ÃµÀÌ (if(!vote) true)
-//            (3) sensor Á¶ÇÕ ´Ù¾ç  ¡æ vote °öÇ× condition/expression º¸°­
-//            (4) LATCH ¿¡¼­ clear ¡æ LATCH¡æMONITOR ÃµÀÌ (if(clear) true)
-//   ¡æ default(µµ´ŞºÒ°¡) ¸¸ È¦·Î ³²´Â´Ù ¡æ ½Ç½À4(cov_closure)¿¡¼­ Á¦¿Ü Ã³¸®.
+//   [ì œê³µ]  clk/reset í•˜ë„¤ìŠ¤ Â· drive ìœ í‹¸(hold) Â· ìê¸°ê²€ì‚¬ Â· report
+//   [ë‚´ìš©]  boost_scenario ì˜ 5ê°€ì§€ ë¯¸ë„ë‹¬ ì‹œë‚˜ë¦¬ì˜¤ë¡œ ì¶”ê°€ ìê·¹:
+//            (1) en=0 êµ¬ê°„         â†’ trip_fsm en ë¶„ê¸° false ë„ë‹¬
+//            (2) ì¼ì‹œ ì´ˆê³¼ íšŒë³µ     â†’ trip_fsm WARNâ†’MONITOR ì²œì´ (if(!vote) true)
+//            (3) sensor ì¡°í•© ì „ìˆ˜   â†’ vote2oo3 expression ì»¤ë²„ë¦¬ì§€ ë³´ê°•
+//            (4) LATCH ì—ì„œ clear  â†’ trip_fsm LATCHâ†’MONITOR ì²œì´ (if(clear) true)
+//            (5) TRIP_S ì¤‘ reset   â†’ trip_fsm TRIP_Sâ†’MONITOR ì²œì´(ë¦¬ì…‹ ìµœìš°ì„  í™•ì¸)
+//   â€» default(ë„ë‹¬ë¶ˆê°€) í™€ì€ ê·¸ëŒ€ë¡œ ë‚¨ëŠ”ë‹¤ â†’ ì‹¤ìŠµ4(cov_closure)ì—ì„œ ì œì™¸ ì²˜ë¦¬.
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -24,15 +26,15 @@ module tb_trip_boost;
 
     integer    errors = 0;
 
-    trip_ctrl #(.WARN_LIMIT(WARN_LIMIT)) dut (
+    trip_top #(.WARN_LIMIT(WARN_LIMIT)) dut (
         .clk(clk), .rst(rst), .en(en), .sensor(sensor),
         .clear(clear), .trip(trip), .state(state)
     );
 
     always #5 clk = ~clk;
 
-    // -------- drive À¯Æ¿ [Á¦°ø] --------
-    task hold(input [2:0] s, input integer n);      // sensor ¸¦ n Å¬·° À¯Áö
+    // -------- drive ìœ í‹¸ [ì œê³µ] --------
+    task hold(input [2:0] s, input integer n);      // sensor ë¥¼ n í´ëŸ­ ìœ ì§€
         integer k;
         begin sensor = s; for (k=0;k<n;k=k+1) @(posedge clk); end
     endtask
@@ -42,36 +44,41 @@ module tb_trip_boost;
               repeat (2) @(posedge clk); rst=1'b0; end
     endtask
 
-    // -------- ±³À°»ı ±¸Çö : ¹Ìµµ´Ş È¦ º¸°­ ÀÚ±Ø --------
+    // -------- ë³´ê°• ì‹œë‚˜ë¦¬ì˜¤ : ë¯¸ë„ë‹¬ í™€ ê²¨ëƒ¥ ìê·¹ --------
     task boost_scenario;
         begin
-            // (1) en=0 ±¸°£ ¡ª enable ºĞ±â false ¸¦ µµ´Ş
+            // (1) en=0 êµ¬ê°„ â†’ enable ë¶„ê¸° false ë¡œ ë„ë‹¬
             en = 1'b0;
             hold(3'b111, 3);
             en = 1'b1;
 
-            // (2) ÀÏ½Ã ÃÊ°ú È¸º¹ ¡ª WARN ÁøÀÔ ÈÄ vote Á¦°Å ¡æ WARN¡æMONITOR
-            hold(3'b110, 2);        // 2oo3 ¼º¸³ ¡æ WARN
-            hold(3'b000, 3);        // vote ¼Ò¸ê ¡æ È¸º¹
+            // (2) ì¼ì‹œ ì´ˆê³¼ íšŒë³µ â†’ WARN ì§„ì… í›„ vote ì†Œë©¸ â†’ WARNâ†’MONITOR
+            hold(3'b110, 2);        // 2oo3 ì„±ë¦½ â†’ WARN
+            hold(3'b000, 3);        // vote ì†Œë©¸ â†’ íšŒë³µ
 
-            // (3) sensor Á¶ÇÕ ´Ù¾çÈ­ ¡ª vote °öÇ× condition/expression º¸°­
-            hold(3'b100, 1);        // ´ÜÀÏ ¼¾¼­(ÅõÇ¥ ¹Ì¼º¸³)
-            hold(3'b010, 1);
-            hold(3'b001, 1);
-            hold(3'b011, 1);        // b&c °öÇ×
-            hold(3'b101, 1);        // a&c °öÇ×
-            hold(3'b000, 1);
+            // (3) sensor ì¡°í•© ì „ìˆ˜ â†’ vote2oo3 ê³±í•­ë³„ ê°œë³„ ê¸°ì—¬ ì…ì¦(expression ì»¤ë²„ë¦¬ì§€)
+            hold(3'b000, 1); hold(3'b001, 1); hold(3'b010, 1); hold(3'b011, 1);
+            hold(3'b100, 1); hold(3'b101, 1); hold(3'b110, 1); hold(3'b111, 1);
+            hold(3'b000, 3);        // ì¹´ìš´í„° ì›ìœ„ì¹˜(íšŒë³µ ë°˜ì˜ ì—¬ìœ )
 
-            // (4) TRIP¡æLATCH µµ´Ş ÈÄ clear ¡ª LATCH¡æMONITOR ÃµÀÌ
-            hold(3'b111, WARN_LIMIT + 4);   // Áö¼Ó ÃÊ°ú ¡æ LATCH
-            check(state === 2'd3, "LATCH µµ´Ş È®ÀÎ");
+            // (4) TRIPâ†’LATCH ë„ë‹¬ í›„ clear â†’ LATCHâ†’MONITOR ì²œì´
+            hold(3'b111, WARN_LIMIT + 8);
+            check(state === 2'd3, "LATCH ë„ë‹¬ í™•ì¸");
             clear = 1'b1; @(posedge clk);
             clear = 1'b0; @(posedge clk);
-            check(state === 2'd0, "clear ·Î MONITOR È¸º¹");
+            check(state === 2'd0, "clear ë¡œ MONITOR íšŒë³µ");
+
+            // (5) TRIP_S ì§„ì… ìˆœê°„ reset â†’ ë¦¬ì…‹ì´ ìµœìš°ì„ ìœ¼ë¡œ ê°•ì œë˜ëŠ”ì§€ í™•ì¸
+            sensor = 3'b111;
+            @(posedge clk); #1;
+            while (state !== 2'd2) begin @(posedge clk); #1; end   // TRIP_S ì§„ì…ê¹Œì§€ ëŒ€ê¸°(NBA ì •ì°© í›„ ìƒ˜í”Œ)
+            rst = 1'b1; @(posedge clk);
+            rst = 1'b0; @(posedge clk);
+            check(state === 2'd0, "TRIP_S ì¤‘ reset ì€ ì¦‰ì‹œ MONITOR ë¡œ ê°•ì œë˜ì–´ì•¼ í•œë‹¤");
         end
     endtask
 
-    // -------- ½Ã³ª¸®¿À --------
+    // -------- ì‹œë‚˜ë¦¬ì˜¤ ì‹¤í–‰ --------
     initial begin
         do_reset;
         boost_scenario;
@@ -79,14 +86,14 @@ module tb_trip_boost;
         $finish;
     end
 
-    // -------- ÀÚ±â°Ë»ç À¯Æ¿ [Á¦°ø] --------
+    // -------- ìê¸°ê²€ì‚¬ ìœ í‹¸ [ì œê³µ] --------
     task check(input cond, input [50*8:1] msg);
         begin if (!cond) begin errors=errors+1; $error("%0s", msg); end end
     endtask
 
     task report;
         begin
-            if (errors == 0) $display(" RESULT: PASS  (º¸°­ ÀÚ±Ø Á¤»ó ¡ª make report ·Î Ä¿¹ö¸®Áö »ó½Â È®ÀÎ)");
+            if (errors == 0) $display(" RESULT: PASS  (ë³´ê°• ìê·¹ ë°˜ì˜ â€• make report ë¡œ ì»¤ë²„ë¦¬ì§€ ìƒìŠ¹ í™•ì¸)");
             else             $display(" RESULT: FAIL  (%0d error)", errors);
         end
     endtask

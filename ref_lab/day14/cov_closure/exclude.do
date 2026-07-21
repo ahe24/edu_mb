@@ -11,10 +11,11 @@
 # =============================================================================
 transcript on
 
-# [도달불가] trip_ctrl.v:69  default: state <= MONITOR;
+# [도달불가] trip_fsm.v:71  default: state <= MONITOR;
 #   state 는 2비트 전수 열거(MONITOR/WARN/TRIP_S/LATCH = 0~3)라 case default 는
 #   원천 도달불가. 방어적 코딩 관행으로 코드는 유지하되 커버리지에서는 제외.
-coverage exclude -srcfile trip_ctrl.v -linerange 69 \
+#   -srcfile 은 UCDB 에 기록된 경로(flist.f 기준 상대경로)와 일치해야 함.
+coverage exclude -srcfile ../../rtl/trip_fsm.v -linerange 71 \
     -comment "UNREACH: state 2-bit fully-enumerated; default is defensive/unreachable"
 
 # 적용 결과 확인

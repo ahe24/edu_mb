@@ -1,20 +1,24 @@
 # =============================================================================
 # Day 14 ― cov_measure (커버리지 측정 · 리포트 해석)
-# QuestaSim 코드 커버리지 흐름 : comp(+cover) → opt(+cover) → sim(-coverage) → save → report
+# QuestaSim 코드 커버리지 흐름 : comp → opt(+cover, DUT 만 scope) → sim(-coverage) → save → report
 # 이 Makefile 은 sim/ 에서 실행, 생성물도 sim/ 에만.
 # =============================================================================
 #   make            = make cov   (전체 흐름 + UCDB 저장 + 요약 리포트)
-#   make cov        ― vlog +cover → vopt +cover=bcesf → vsim -coverage → coverage save
+#   make cov        ― vlog → vopt +cover=bcesf+DUT(scope) → vsim -coverage → coverage save
 #   make report     ― vcover report (요약) + -details (상세 홀 목록)
 #   make html       ― vcover report -html → covhtmlreport/index.html
 #   make gui        ― vsim -viewcov 로 UCDB 를 GUI 코드 커버리지 분석창에 로드
 #   make clean      ― work · 생성물 정리
 # -----------------------------------------------------------------------------
 #   +cover 문자 : b=branch c=condition e=expression s=statement f=fsm  (t=toggle 는 필요시)
+#   +cover=bcesf+trip_top. ― DUT(trip_top) + 하위 서브모듈 3개까지 재귀 계측(scope).
+#   말미 "." 은 하위 인스턴스로 재귀 적용 지시자 — 없으면 trip_top 자신(순수 배선)만 걸려 0건.
+#   TB(tb_trip)는 계측 대상 아님.
 #   기능은 PASS 여도 branch/condition/FSM 커버리지에 홀이 남는 것을 확인 → 실습2 로.
 # =============================================================================
 
 TOP   := tb_trip
+DUT   := trip_top
 FLIST := flist.f
 OPT   := opt_cov
 UCDB  := trip.ucdb
@@ -27,10 +31,10 @@ all: cov
 cov:
 	vlib work
 	vmap work work
-	vlog -f $(FLIST) +cover=$(COVER)
-	vopt $(TOP) -o $(OPT) +cover=$(COVER) +acc -debug
+	vlog -f $(FLIST)
+	vopt $(TOP) -o $(OPT) +cover=$(COVER)+$(DUT). +acc -debug
 	vsim -c -coverage $(OPT) \
-	     -do "run -all; coverage save $(UCDB); coverage report; quit -f"
+	     -do "coverage save -onexit $(UCDB); run -all; quit -f"
 	@echo "OK ― UCDB: $(UCDB)  (make report / make html / make gui 로 열람)"
 
 report:

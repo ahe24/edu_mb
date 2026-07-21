@@ -14,6 +14,7 @@
 # =============================================================================
 
 TOP    := tb_trip_sel
+DUT    := trip_top
 FLIST  := flist.f
 OPT    := opt_cov
 COVER  := bcesf
@@ -27,15 +28,15 @@ all: merge
 comp:
 	vlib work
 	vmap work work
-	vlog -f $(FLIST) +cover=$(COVER)
-	vopt $(TOP) -o $(OPT) +cover=$(COVER) +acc -debug
+	vlog -f $(FLIST)
+	vopt $(TOP) -o $(OPT) +cover=$(COVER)+$(DUT). +acc -debug
 
 # 각 시나리오를 독립 실행 → 이름별 UCDB
 run: comp
 	@for t in $(TESTS); do \
 	  echo "=== TEST=$$t ==="; \
 	  vsim -c -coverage $(OPT) +TEST=$$t \
-	       -do "run -all; coverage save -testname $$t $$t.ucdb; quit -f"; \
+	       -do "coverage save -onexit -testname $$t $$t.ucdb; run -all; quit -f"; \
 	done
 	@echo "OK ― 개별 UCDB: $(addsuffix .ucdb,$(TESTS))"
 

@@ -30,7 +30,7 @@ const labTasks: {
     num: 1,
     title: '커버리지 측정',
     items: [
-      <><C>make cov</C> · trip_ctrl 커버리지 수집</>,
+      <><C>make cov</C> · trip_top 커버리지 수집</>,
       <>요약/상세 리포트에서 홀 목록 읽기</>,
     ],
     color: '#4A6FA5',
@@ -40,7 +40,7 @@ const labTasks: {
     num: 2,
     title: '홀 보강',
     items: [
-      <><C>boost_scenario</C> · 미도달 4시나리오 자극</>,
+      <><C>boost_scenario</C> · 미도달 5시나리오 자극</>,
       <>재측정 → branch/condition/FSM 상승 확인</>,
     ],
     color: DAY14,

@@ -1,13 +1,13 @@
 // =============================================================================
-// tb_trip_sel.sv ¡ª ½Ç½À3(cov_merge) È¸±Í¿ë Testbench [Á¦°ø]
-//   ÇÏ³ªÀÇ TB ¸¦ +TEST plusarg ·Î 3°³ ½Ã³ª¸®¿À·Î ºĞ±â. °¢ ½ÇÇàÀÌ ¼­·Î ´Ù¸¥ È¦À»
-//   µ¤´Â´Ù ¡æ °³º° UCDB ´Â ºÎºĞ Ä¿¹ö, º´ÇÕ(vcover merge)ÇÏ¸é ÇÕÁıÇÕÀ¸·Î »ó½Â.
+// tb_trip_sel.sv â€• ì‹¤ìŠµ3(cov_merge) íšŒê·€ìš© Testbench [ì œê³µ]
+//   í•˜ë‚˜ì˜ TB ë¥¼ +TEST plusarg ë¡œ 3ê°œ ì‹œë‚˜ë¦¬ì˜¤ë¡œ ë¶„ê¸°. ê° ì‹¤í–‰ì´ ì„œë¡œ ë‹¤ë¥¸ í™€ì„
+//   ë®ëŠ”ë‹¤ â†’ ê°œë³„ UCDB ëŠ” ë¶€ë¶„ ì»¤ë²„, ë³‘í•©(vcover merge)í•˜ë©´ í•©ì§‘í•©ìœ¼ë¡œ ìƒìŠ¹.
 //
-//   +TEST=trip     : Áö¼Ó ÃÊ°ú ¡æ WARN¡æTRIP¡æLATCH  (Æ®¸³ °æ·Î)
-//   +TEST=recover  : ÀÏ½Ã ÃÊ°ú ¡æ WARN¡æMONITOR       (È¸º¹ ÃµÀÌ)
-//   +TEST=idle     : en=0 ±¸°£ + ´Ù¾çÇÑ sensor + clear (enable¡¤condition¡¤clear)
+//   +TEST=trip     : ì§€ì† ì´ˆê³¼ â†’ WARNâ†’TRIPâ†’LATCH â†’ clear  (íŠ¸ë¦½Â·í•´ì œ ê²½ë¡œ)
+//   +TEST=recover  : ì¼ì‹œ ì´ˆê³¼ â†’ WARNâ†’MONITOR              (íšŒë³µ ì²œì´)
+//   +TEST=idle     : en=0 êµ¬ê°„ + ë‹¤ì–‘í•œ sensor (WARN_LIMIT ë¯¸ë„ë‹¬, enableÂ·condition ë§Œ)
 //
-//   ¿äÁö : È¸±Í´Â "Å×½ºÆ®¸¶´Ù UCDB ÇÏ³ª", ÃÖÁ¾ Áõ°Å´Â ±× º´ÇÕº» ÇÏ³ª.
+//   ìš”ì§€ : íšŒê·€ëŠ” "í…ŒìŠ¤íŠ¸ë§ˆë‹¤ UCDB í•˜ë‚˜", ìµœì¢… ì¦ê±°ëŠ” ê·¸ ë³‘í•©ë³¸ í•˜ë‚˜.
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -20,9 +20,9 @@ module tb_trip_sel;
     reg  [2:0] sensor;
     wire       trip;
     wire [1:0] state;
-    reg [8*16:1] test;                    // ¼±ÅÃµÈ ½Ã³ª¸®¿À ÀÌ¸§
+    reg [8*16:1] test;                    // ì„ íƒëœ ì‹œë‚˜ë¦¬ì˜¤ ì´ë¦„
 
-    trip_ctrl #(.WARN_LIMIT(WARN_LIMIT)) dut (
+    trip_top #(.WARN_LIMIT(WARN_LIMIT)) dut (
         .clk(clk), .rst(rst), .en(en), .sensor(sensor),
         .clear(clear), .trip(trip), .state(state)
     );
@@ -41,23 +41,28 @@ module tb_trip_sel;
         if (!$value$plusargs("TEST=%s", test)) test = "trip";
 
         case (test)
-            "trip":    hold(3'b111, WARN_LIMIT + 6);         // Áö¼Ó ¡æ LATCH
+            "trip": begin
+                hold(3'b111, WARN_LIMIT + 8);                // ì§€ì† â†’ TRIP_S â†’ LATCH
+                clear=1'b1; @(posedge clk); clear=1'b0; @(posedge clk); // LATCH â†’ MONITOR
+            end
             "recover": begin
-                hold(3'b110, 2);                             // WARN ÁøÀÔ
-                hold(3'b000, 4);                             // È¸º¹
+                hold(3'b110, 2);                             // WARN ì§„ì…
+                hold(3'b000, 4);                             // íšŒë³µ
             end
             "idle": begin
-                en=1'b0; hold(3'b111, 3); en=1'b1;           // enable false
+                en=1'b0; hold(3'b111, 3); en=1'b1;           // enable false (WARN_LIMIT ëª» ì±„ì›€)
                 hold(3'b100,1); hold(3'b010,1); hold(3'b001,1);
-                hold(3'b011,1); hold(3'b101,1);              // condition ´Ù¾çÈ­
-                hold(3'b111, WARN_LIMIT + 4);                // LATCH µµ´Ş
+                hold(3'b011,1); hold(3'b101,1);              // condition ë‹¤ì–‘í™” (ì§§ê²Œ, TRIP_S ë¯¸ë„ë‹¬)
+                hold(3'b000, 2);                             // ì¹´ìš´í„° ì›ìœ„ì¹˜
+            end
+            default: begin
+                hold(3'b111, WARN_LIMIT + 8);
                 clear=1'b1; @(posedge clk); clear=1'b0; @(posedge clk);
             end
-            default:   hold(3'b111, WARN_LIMIT + 6);
         endcase
 
         repeat (2) @(posedge clk);
-        $display(" TEST=%0s ¿Ï·á", test);
+        $display(" TEST=%0s ì™„ë£Œ", test);
         $finish;
     end
 

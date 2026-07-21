@@ -9,10 +9,10 @@ const ORANGE = '#E8913A';
 const MONO = '"JetBrains Mono", monospace';
 
 const STEPS: { n: string; cmd: string; sub: string; hl?: boolean }[] = [
-  { n: '1', cmd: 'vlog -f flist.f +cover=bcesf', sub: '소스에 커버리지 계측 삽입 (b·c·e·s·f)' },
-  { n: '2', cmd: 'vopt tb_top -o opt_cov +cover=bcesf +acc', sub: '최적화 + 계측 확정' },
-  { n: '3', cmd: 'vsim -c -coverage opt_cov', sub: '커버리지 켜고 시뮬레이션' },
-  { n: '4', cmd: 'coverage save trip.ucdb', sub: 'UCDB 로 저장 — 자동 저장 아님!', hl: true },
+  { n: '1', cmd: 'vlog -f flist.f', sub: '소스 컴파일 — 계측은 3단계(opt)에서 부착' },
+  { n: '2', cmd: 'vopt tb_top -o opt_cov +cover=bcesf+trip_top. +acc', sub: 'DUT(trip_top 이하 재귀)만 계측 — 말미 "." 없으면 0건, TB 는 제외' },
+  { n: '3', cmd: 'vsim -c -coverage opt_cov', sub: '계측 켜고 시뮬레이션 준비' },
+  { n: '4', cmd: 'coverage save -onexit trip.ucdb  →  run -all', sub: '저장은 run 이전에 예약! batch 모드는 $finish 시 즉시 종료', hl: true },
   { n: '5', cmd: 'coverage report  ·  vcover report -html', sub: '요약/상세 · HTML → covhtmlreport/' },
 ];
 
@@ -97,11 +97,12 @@ export default function QuestaFlowSlide() {
               borderRadius: '9px', padding: '0.45rem 0.8rem', boxShadow: shadow.card, flexShrink: 0,
             }}>
               <div style={{ fontSize: '0.64rem', fontWeight: 800, color: '#B45309', marginBottom: '0.1rem' }}>
-                흔한 실수 — 저장 누락 시 데이터 소실
+                흔한 실수 — run 뒤에 save 두면 UCDB 소실
               </div>
               <div style={{ fontSize: '0.6rem', color: FPGA.text, lineHeight: 1.45 }}>
-                coverage 데이터는 기본적으로 <strong>자동 저장 안 됨</strong>. <code>coverage save</code>
-                (또는 <code>-onexit</code>) 실행해야 UCDB 에 보존 — 미실행 시 소실.
+                batch(<code>-c</code>) 모드는 <code>$finish</code> 시 즉시 종료(OnFinish=exit) — <code>run -all;
+                coverage save ...</code> 순서면 save 가 실행되지 않음. <code>coverage save -onexit</code>
+                을 run 이전에 등록해야 확실히 저장.
               </div>
             </div>
           </div>

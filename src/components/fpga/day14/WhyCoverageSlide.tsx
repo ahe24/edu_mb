@@ -21,7 +21,7 @@ const LC: Record<string, string> = { c: '#7C90B0', n: '#C9D4E5', m: '#FF7B72' };
 
 // 하나의 안전 트립 컨트롤러(3중 센서 2oo3 다수결 → 차단·래치)에서
 // "정상 운전 시나리오 테스트가 못 밟는" 서로 다른 사각지대 3종.
-// 신호명·유형은 Day14 전 슬라이드 공통(trip_ctrl.v: sensor/vote/state/trip/clear) 과 일치.
+// 신호명·유형은 Day14 전 슬라이드 공통(trip_top: sensor/vote/state/trip/clear) 과 일치.
 const SCENARIOS: { type: string; color: string; grow: number; title: string; code: { t: string; k: string }[]; why: string }[] = [
   {
     type: 'Branch', color: ORANGE, grow: 1,

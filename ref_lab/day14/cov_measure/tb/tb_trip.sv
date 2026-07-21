@@ -1,10 +1,10 @@
 // =============================================================================
-// tb_trip.sv ¡ª ½Ç½À1(cov_measure) ±âº» Testbench [Á¦°ø]
-//   ¸ñÀû : ÃÖ¼Ò ÀÚ±ØÀ¸·Î trip_ctrl À» µ¹·Á "PASS ÀÎµ¥ Ä¿¹ö¸®Áö´Â ³·´Ù"¸¦ °üÂû.
-//   ÀÚ±Ø : en=1 °íÁ¤, sensor=3'b111 Áö¼Ó ÀÎ°¡ ¡æ WARN ´©Àû ¡æ TRIP ¡æ LATCH.
-//   ¾àÁ¡ : clear ¾øÀ½, en=0 ¾øÀ½, ÀÏ½Ã ÃÊ°ú(transient) ¾øÀ½, sensor Á¶ÇÕ ´ÜÁ¶.
-//          ¡æ branch/condition/FSM È¦ÀÌ ´Ù¼ö ³²À½ (½Ç½À2 ¿¡¼­ º¸°­).
-//   ÆÇÁ¤ : ±â´ÉÀº Á¤»ó(ÀÚ±â°Ë»ç PASS) ¡ª ±×·¡µµ Ä¿¹ö¸®Áö´Â ºÎÁ·ÇÔÀ» ´ëºñ½ÃÅ´.
+// tb_trip.sv â€• ì‹¤ìŠµ1(cov_measure) ê¸°ë³¸ Testbench [ì œê³µ]
+//   ëª©ì  : ìµœì†Œ ìê·¹ìœ¼ë¡œ trip_top ì„ ëŒë ¤ "PASS ì¸ë° ì»¤ë²„ë¦¬ì§€ëŠ” ë‚®ë‹¤"ë¥¼ ê´€ì°°.
+//   ìê·¹ : en=1 ê³ ì •, sensor=3'b111 ì§€ì† ì¸ê°€ â†’ WARN ëˆ„ì  â†’ TRIP â†’ LATCH.
+//   ì•½ì  : clear ì—†ìŒ, en=0 ì—†ìŒ, ì¼ì‹œ ì´ˆê³¼(transient) ì—†ìŒ, sensor ì¡°í•© ë‹¨ì¡°.
+//          â†’ vote2oo3/warn_counter/trip_fsm ì„¸ ì„œë¸Œëª¨ë“ˆì— ê°ê° í™€ì´ ë‚¨ìŒ(ì‹¤ìŠµ2 ì—ì„œ ë³´ê°•).
+//   íŒì • : ê¸°ëŠ¥ì€ ì •ìƒ(ìê¸°ê²€ì‚¬ PASS) â€• ê·¸ë˜ë„ ì»¤ë²„ë¦¬ì§€ëŠ” ë¶€ì¡±í•¨ì„ ëŒ€ë¹„ì‹œí‚´.
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -20,33 +20,33 @@ module tb_trip;
 
     integer    errors = 0;
 
-    // DUT
-    trip_ctrl #(.WARN_LIMIT(WARN_LIMIT)) dut (
+    // DUT â€• trip_top (vote2oo3 + warn_counter + trip_fsm)
+    trip_top #(.WARN_LIMIT(WARN_LIMIT)) dut (
         .clk(clk), .rst(rst), .en(en), .sensor(sensor),
         .clear(clear), .trip(trip), .state(state)
     );
 
     always #5 clk = ~clk;                 // 100 MHz
 
-    // -------- ÀÚ±Ø ½Ã³ª¸®¿À --------
+    // -------- ìê·¹ ì‹œë‚˜ë¦¬ì˜¤ --------
     initial begin
         rst = 1'b1; en = 1'b1; clear = 1'b0; sensor = 3'b000;
         repeat (2) @(posedge clk);
         rst = 1'b0;
 
-        // Áö¼Ó ÃÊ°ú ¡ª 2oo3 ¼º¸³ÇÏ´Â 111 À» °è¼Ó ÀÎ°¡
+        // ì§€ì† ì´ˆê³¼ â€• 2oo3 ì„±ë¦½í•˜ëŠ” 111 ì„ ê³„ì† ì¸ê°€
         sensor = 3'b111;
         repeat (WARN_LIMIT + 6) @(posedge clk);
 
-        // trip ÀÌ ÀÛµ¿ÇØ LATCH ·Î ±»¾ú´ÂÁö È®ÀÎ
-        check(trip === 1'b1,           "trip ÀÌ Áö¼Ó ÃÊ°ú ÈÄ ÀÛµ¿ÇØ¾ß ÇÑ´Ù");
-        check(state === 2'd3 /*LATCH*/,"LATCH »óÅÂ·Î ±»¾î¾ß ÇÑ´Ù");
+        // trip ì´ ì‘ë™í•´ LATCH ë¡œ êµ³ì—ˆëŠ”ì§€ í™•ì¸
+        check(trip === 1'b1,           "trip ì€ ì§€ì† ì´ˆê³¼ ì‹œ ì‘ë™í•´ì•¼ í•œë‹¤");
+        check(state === 2'd3 /*LATCH*/,"LATCH ìƒíƒœë¡œ êµ³ì–´ì•¼ í•œë‹¤");
 
         report;
         $finish;
     end
 
-    // -------- ÀÚ±â°Ë»ç À¯Æ¿ --------
+    // -------- ìê¸°ê²€ì‚¬ ìœ í‹¸ --------
     task check(input cond, input [50*8:1] msg);
         begin
             if (!cond) begin
@@ -58,7 +58,7 @@ module tb_trip;
 
     task report;
         begin
-            if (errors == 0) $display(" RESULT: PASS  (±â´É Á¤»ó ¡ª Ä¿¹ö¸®Áö´Â report ·Î È®ÀÎ)");
+            if (errors == 0) $display(" RESULT: PASS  (ê¸°ëŠ¥ ì •ìƒ â€• ì»¤ë²„ë¦¬ì§€ëŠ” report ë¡œ í™•ì¸)");
             else             $display(" RESULT: FAIL  (%0d error)", errors);
         end
     endtask

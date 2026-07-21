@@ -14,19 +14,23 @@
 사유 없이 "95%" 로 끝내면 기술검토회의에서 "나머지 5% 는 무엇인가"에 답할 수 없다.
 제외는 **근거를 남기는 행위** — 무시가 아니다.
 
-## 도달불가 홀 — trip_ctrl.v:69 `default:`
+## 도달불가 홀 — trip_fsm.v:71 `default:`
 
 `state` 는 2비트 전수 열거(MONITOR/WARN/TRIP_S/LATCH = 0~3)라 `case` 의 `default` 는
 어떤 자극으로도 도달할 수 없다. 방어적 코딩으로 코드는 유지하되, 커버리지에서는 제외한다.
 
 ```tcl
-coverage exclude -srcfile trip_ctrl.v -linerange 69 \
+coverage exclude -srcfile ../../rtl/trip_fsm.v -linerange 71 \
     -comment "UNREACH: state 2-bit fully-enumerated; default is defensive/unreachable"
 ```
 
+- `-srcfile` 은 **UCDB 에 기록된 경로**(= `flist.f` 기준 상대경로)와 정확히 일치해야
+  매칭된다 — 파일명만 쓰면 "not found" 경고만 뜨고 제외가 적용되지 않는다.
 - `-comment` 사유는 **Coverage View 모드**(`vsim -viewcov`)에서만 지원 — live sim 불가.
 - 제외는 UCDB 에 저장되고, 사유는 HTML 리포트에서 **툴팁**으로 표시 → 심사 증적.
 - `exclude.do` 는 **형상관리 대상** — 무엇을 왜 제외했는지가 검토·감사의 대상.
+- 실측 : 제외 전 `trip_fsm` Branch 14/15(93.33%)·Statement 20/21(95.23%) → 제외 후
+  **DUT 전체 100.00%** (Branch 14/14, Statement 20/20, FSM state/transition 이미 100%).
 
 ## 실행
 

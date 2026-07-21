@@ -10,20 +10,21 @@ const GREEN = '#48BB78';
 const MONO = '"JetBrains Mono", monospace';
 
 type Test = 'trip' | 'recover' | 'idle';
-const TESTS: { key: Test; label: string; color: string }[] = [
-  { key: 'trip', label: '+TEST=trip', color: '#4A6FA5' },
-  { key: 'recover', label: '+TEST=recover', color: '#0891B2' },
-  { key: 'idle', label: '+TEST=idle', color: '#8B6FA5' },
+// 단독 실행 시 커버리지(실측, DUT 전체 가중) — 병합 95.79% 에 아무도 못 미침
+const TESTS: { key: Test; label: string; color: string; solo: number }[] = [
+  { key: 'trip', label: '+TEST=trip', color: '#4A6FA5', solo: 72.06 },
+  { key: 'recover', label: '+TEST=recover', color: '#0891B2', solo: 46.30 },
+  { key: 'idle', label: '+TEST=idle', color: '#8B6FA5', solo: 63.80 },
 ];
 
-// 커버리지 항목 × 담당 테스트
+// 커버리지 항목 × 담당 테스트 (실측 기준 재배분)
 const ITEMS: { area: string; by: Test }[] = [
   { area: 'WARN→TRIP_S→LATCH 트립 경로', by: 'trip' },
   { area: 'trip 작동 · LATCH 유지', by: 'trip' },
+  { area: 'LATCH clear → MONITOR 천이', by: 'trip' },
   { area: 'WARN→MONITOR 일시 초과 회복', by: 'recover' },
   { area: 'else if(en) false (en=0)', by: 'idle' },
-  { area: 'vote 곱항 condition 다양', by: 'idle' },
-  { area: 'LATCH clear → MONITOR', by: 'idle' },
+  { area: 'vote 곱항 expression 다양', by: 'idle' },
 ];
 
 export default function MergeSlide() {
@@ -45,18 +46,18 @@ export default function MergeSlide() {
             <div style={{ display: 'flex', gap: '0.35rem', flexShrink: 0 }}>
               {TESTS.map((t) => (
                 <button key={t.key} onClick={() => setSel(t.key)} style={{
-                  flex: 1, cursor: 'pointer', fontSize: '0.58rem', fontWeight: 800, fontFamily: MONO,
+                  flex: 1, cursor: 'pointer', fontSize: '0.56rem', fontWeight: 800, fontFamily: MONO,
                   color: sel === t.key ? '#fff' : t.color,
                   background: sel === t.key ? t.color : 'transparent',
                   border: `1.5px solid ${t.color}`, borderRadius: '6px', padding: '4px 0',
-                }}>{t.label}</button>
+                }}>{t.label} <span style={{ opacity: 0.75 }}>{t.solo}%</span></button>
               ))}
               <button onClick={() => setSel('merged')} style={{
-                flex: 1, cursor: 'pointer', fontSize: '0.58rem', fontWeight: 800, fontFamily: MONO,
+                flex: 1, cursor: 'pointer', fontSize: '0.56rem', fontWeight: 800, fontFamily: MONO,
                 color: sel === 'merged' ? '#fff' : GREEN,
                 background: sel === 'merged' ? GREEN : 'transparent',
                 border: `1.5px solid ${GREEN}`, borderRadius: '6px', padding: '4px 0',
-              }}>merged</button>
+              }}>merged <span style={{ opacity: 0.75 }}>95.79%</span></button>
             </div>
 
             {/* 매트릭스 */}
@@ -97,8 +98,8 @@ export default function MergeSlide() {
               })}
               <div style={{ marginTop: 'auto', paddingTop: '0.35rem', fontSize: '0.58rem', color: FPGA.textLight, textAlign: 'center' }}>
                 {sel === 'merged'
-                  ? <span style={{ color: '#2F855A', fontWeight: 700 }}>병합 = 세 테스트의 합집합 → 전 항목 커버</span>
-                  : <>개별 테스트는 <strong>부분만</strong> 커버 — 회귀 전체 합집합으로 완성</>}
+                  ? <span style={{ color: '#2F855A', fontWeight: 700 }}>병합 95.79% = 세 테스트의 합집합 → 어느 하나보다도 높음</span>
+                  : <>단독 {TESTS.find((t) => t.key === sel)?.solo}% — 병합 95.79% 에 <strong>못 미침</strong>, 합집합으로 완성</>}
               </div>
             </div>
 
@@ -107,7 +108,7 @@ export default function MergeSlide() {
               background: '#1A2235', borderRadius: '8px', padding: '0.4rem 0.7rem',
               fontFamily: MONO, fontSize: '0.56rem', color: '#A8D8E0', lineHeight: 1.7, flexShrink: 0,
             }}>
-              <div><span style={{ color: '#F6AD55', fontWeight: 700 }}>$ </span>coverage save -testname trip trip.ucdb <span style={{ color: '#5A6B87' }}># 각 테스트</span></div>
+              <div><span style={{ color: '#F6AD55', fontWeight: 700 }}>$ </span>coverage save -onexit -testname trip trip.ucdb <span style={{ color: '#5A6B87' }}># 각 테스트, run 이전 등록</span></div>
               <div><span style={{ color: '#F6AD55', fontWeight: 700 }}>$ </span>vcover merge -out merged.ucdb trip.ucdb recover.ucdb idle.ucdb</div>
             </div>
           </div>
