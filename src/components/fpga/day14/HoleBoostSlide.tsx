@@ -150,7 +150,7 @@ export default function HoleBoostSlide() {
             <ProvidedFileModal
               filename="tb_trip_boost.sv"
               accent={DAY14}
-              hint={<>5가지 미도달 시나리오 자극 — en=0 · 회복 · sensor 전수 · clear · TRIP_S reset (제공)</>}
+              hint={<>미도달 시나리오 자극 — en=0 · 회복 · sensor 전수 · clear · TRIP_S reset (제공)</>}
               modalSubtitle="실습1 의 홀을 그대로 겨냥한 추가 자극 — 실행 전 코드를 먼저 읽고 이해"
               code={boostCode}
             />

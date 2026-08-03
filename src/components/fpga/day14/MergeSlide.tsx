@@ -35,8 +35,8 @@ export default function MergeSlide() {
       <div className="fpga-content-wrap">
         <SlideHeader
           badge="실습 3 · 회귀 병합"
-          title="테스트마다 UCDB 하나 → 합집합이 증거"
-          subtitle="한 테스트로 100% 지양 · 각자 다른 부분 분담 후 vcover merge 로 합집합"
+          title="테스트별 UCDB 병합 → 전체 커버리지"
+          subtitle="단독 커버리지 100% 미달 · 항목별 분담 · vcover merge 합집합"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.12fr 1fr', gap: '0.75rem' }}>
@@ -137,7 +137,7 @@ export default function MergeSlide() {
               border: `1px solid ${DAY14}30`, borderLeft: `4px solid ${DAY14}`,
               borderRadius: '9px', padding: '0.45rem 0.8rem', boxShadow: shadow.card, flexShrink: 0,
             }}>
-              <div style={{ fontSize: '0.64rem', fontWeight: 800, color: DAY14, marginBottom: '0.1rem' }}>관리 관점 — 증거는 병합본 하나</div>
+              <div style={{ fontSize: '0.64rem', fontWeight: 800, color: DAY14, marginBottom: '0.1rem' }}>관리 관점 — 집계 기준 = 병합본 하나</div>
               <div style={{ fontSize: '0.6rem', color: FPGA.text, lineHeight: 1.45 }}>
                 회귀 커버리지 = 개별 UCDB 가 아닌 <strong>병합본 하나</strong> · <code>-testname</code> 으로
                 테스트별 기여 추적 — 대규모는 <code>-coverstore</code> 자동 저장.

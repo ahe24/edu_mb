@@ -77,7 +77,7 @@ export default function TitleSlide() {
           margin: '0 0 1.1rem',
         }}>
           코드 커버리지 측정 · 커버리지 클로저<br />
-          <span style={{ color: DAY14 }}>검증 충분성을 정량 증거로 증명</span>
+          <span style={{ color: DAY14 }}>statement · branch · condition · FSM coverage</span>
         </h1>
 
         <h3 style={{
@@ -89,7 +89,7 @@ export default function TitleSlide() {
           fontFamily: 'monospace',
           letterSpacing: '-0.02em',
         }}>
-          QuestaSim 커버리지 수집 · 홀 보강 · 회귀 병합 · 도달불가 제외로 검증 종료 판단
+          커버리지 수집 · 홀 보강 · 회귀 병합 · 도달불가 제외
         </h3>
 
         <div style={{

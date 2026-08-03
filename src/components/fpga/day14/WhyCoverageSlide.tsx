@@ -69,8 +69,8 @@ export default function WhyCoverageSlide() {
       <div className="fpga-content-wrap">
         <SlideHeader
           badge="개념 · 검증 충분성"
-          title="테스트 PASS 는 검증 충분성의 증거가 아님"
-          subtitle="정상 시나리오만 시험한 PASS — 정작 중요한 코드는 한 번도 안 돌았을 수 있음"
+          title="테스트 PASS ≠ 검증 충분성 증거"
+          subtitle="정상 시나리오 PASS — 핵심 코드 미실행 가능"
         />
 
         <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.3fr 0.85fr', gap: '0.75rem' }}>

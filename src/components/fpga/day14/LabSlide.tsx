@@ -98,8 +98,8 @@ export default function LabSlide() {
     <section data-background-color={slideBg}>
       <div className="fpga-content-wrap">
         <SlideHeader
-          badge="Hands-on · 실습 4종"
-          title="오늘의 실습 4종 · 측정 → 보강 → 병합 → 클로저"
+          badge="Hands-on · 오늘의 실습"
+          title="오늘의 실습 · 측정 → 보강 → 병합 → 클로저"
           subtitle="커버리지 측정 · 홀 보강 · 회귀 병합 · 남은 도달불가 홀 사유 제외 (순서 무관 · 실습4는 2 산출물 재사용)"
         />
 
