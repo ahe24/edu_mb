@@ -85,3 +85,6 @@ ref_lab/**/sim/covhtmlreport/
 ref_lab/**/*.ucdb
 *.utf8
 questa_sim_user.txt
+docs/KHNP_자문보고서_v1.docx
+docs/KHNP_자문보고서.docx
+docs/lint_regression_makefile_example.md
