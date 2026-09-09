@@ -3,6 +3,7 @@ module.exports = {
     {
       name: 'edu_mb_slides',
       script: 'server.js',
+      interpreter: require('os').homedir() + '/.nvm/versions/node/v22.17.0/bin/node',
       instances: 1,
       autorestart: true,
       watch: false,
