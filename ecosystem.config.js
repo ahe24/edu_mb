@@ -4,6 +4,7 @@ module.exports = {
       name: 'edu_mb_slides',
       script: 'server.js',
       interpreter: require('os').homedir() + '/.nvm/versions/node/v22.17.0/bin/node',
+      exec_mode: 'fork',
       instances: 1,
       autorestart: true,
       watch: false,
